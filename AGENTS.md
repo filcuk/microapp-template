@@ -33,7 +33,7 @@ Every HTML entry point should:
 2. Link `app/styles.css` (imports `tokens.css` + `components.css`)
 3. Call `initShell()` from `app/shell.js` as the first step in the page module
 
-`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, theme toggle, and jump-up. Do **not** duplicate footer, theme toggle, or jump-up markup in HTML.
+`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, theme toggle, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
 Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks.
 
@@ -43,7 +43,8 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | -------- | ------- |
 | `initX({ … })` | Single instance (dialog, combo, dropdown, expand) |
 | `initXBlocks(root)` | Scan a subtree for `.x` blocks (tabs, expand, tooltips) |
-| `initShell()` | Standard page boot |
+| `initShell()` | Standard page boot (footer, theme toggle, page nav) |
+| `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `render-shell.js` |
 | `setHidden(el, hidden)` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
@@ -106,6 +107,7 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 - Tooltips: `aria-describedby` linking trigger to `#tooltip` on show/hide; keyboard focus support
 - Prefer semantic HTML (`header`, `main`, `footer`, `button`)
 - Popup menus: `aria-expanded` on toggle buttons
+- Page nav: outer `<nav aria-label="Page navigation">`; jump buttons have `aria-label`; section links are plain anchors with hash `href`
 
 ## When extending this template
 

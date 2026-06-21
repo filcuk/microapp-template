@@ -24,7 +24,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
-| **Jump up** | Fixed `#jump-up` button; border ring shows scroll progress; appears after scrolling; click returns to top. [`app/jump-up.js`](app/jump-up.js). |
+| **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
 | **Banners** | `.banner.banner-important`, `.banner-info`, `.banner-success`, `.banner-note`, `.banner-warning`, `.banner-error` with left icon via `data-icon` (`important`, `info`, `success`, `note`, `warning`, `error`). |
@@ -46,8 +46,8 @@ app/
   components.css        # Layout shell and UI components
   theme-init.js         # Theme before first paint
   theme.js              # Theme preference module
-  render-shell.js       # Injects footer + jump-up markup
-  shell.js              # Shared page boot (render, icons, theme, jump-up)
+  render-shell.js       # Injects footer + page navigation markup
+  shell.js              # Shared page boot (render, icons, theme, page nav)
   document-listeners.js # Single document click / Escape registry
   dom.js                # setHidden(), resolveElements(), prefersReducedMotion()
   menu.js               # Shared popup menu logic (combo, dropdown)
@@ -56,7 +56,8 @@ app/
   dropdown.js       # Dropdown menu controller
   expand.js         # Expand / disclosure controller
   tabs.js           # Tabbed section controller
-  jump-up.js        # Scroll-to-top button
+  page-nav.js        # In-page heading nav + jump up/down
+  jump-up.js         # Re-exports page-nav (deprecated alias)
   icons.js          # Inline SVG icon registry
   tooltip.js        # Instant tooltips
   main.js           # index.html entry
@@ -99,7 +100,7 @@ The workflow copies only publishable files into `_site/` (`index.html`, `demo.ht
 ```javascript
 import { initShell } from "./shell.js";
 
-initShell(); // footer + jump-up + icons + theme in one call
+initShell(); // footer + page nav + icons + theme in one call
 ```
 
 Or wire individually:
@@ -227,27 +228,35 @@ const tabs = initTabs(document.getElementById("my-tabs"));
 
 Arrow keys move between tabs when the tab list is focused.
 
-### Jump up
+### Page navigation
 
-Injected by `initShell()` via [`app/render-shell.js`](app/render-shell.js). To customize repo links when forking:
+Injected by `initShell()` via [`app/render-shell.js`](app/render-shell.js). Collects `main h2[id]` headings automatically and shows plain section-title links (same weight and colour as `.section-heading`). Give each section heading a unique `id` and optional `.section-heading` class (`scroll-margin-top` is included).
 
 ```javascript
 import { initShell } from "./shell.js";
 
-initShell({ repoUrl: "https://github.com/you/your-app" });
+initShell(); // default: main h2[id]
+
+// Custom heading scan (e.g. h3 under a docs root):
+initShell({
+  pageNav: {
+    headingSelector: "main h3[id]",
+    headingRoot: document.getElementById("docs"),
+  },
+});
 ```
 
-Or wire manually:
+Standalone use without the full shell — insert markup from `PAGE_NAV_MARKUP` in `render-shell.js`, then:
 
 ```javascript
-import { renderPageShell } from "./render-shell.js";
-import { initJumpUpButton } from "./jump-up.js";
+import { initPageNavPanel } from "./page-nav.js";
 
-renderPageShell();
-initJumpUpButton();
+const nav = initPageNavPanel(); // defaults to #page-nav
+nav?.rebuild(); // call after adding/removing headings dynamically
+nav?.destroy(); // remove listeners when tearing down
 ```
 
-The accent border ring fills with scroll progress (`--scroll-progress`, 0–1). The button fades in after ~200px scroll.
+Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right; the section list appears when you hover anywhere along the right-edge trigger strip (or focus it via keyboard). On touch devices, focus the trigger area to open the section list. The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
 
 ### Code highlighting (Prism)
 
