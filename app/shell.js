@@ -1,16 +1,23 @@
 import { renderPageShell } from "./render-shell.js";
 import { initIcons } from "./icons.js";
 import { initTheme, initThemeToggle } from "./theme.js";
-import { initJumpUpButton } from "./jump-up.js";
+import { initPageNavPanel } from "./page-nav.js";
 
 /**
- * Render shared chrome, then boot icons, theme, and jump-up.
+ * Render shared chrome, then boot icons, theme, and page navigation.
  * Call once per HTML entry point before page-specific inits.
+ *
+ * @param {object} [options]
+ * @param {string} [options.repoUrl]
+ * @param {string} [options.brandUrl]
+ * @param {string} [options.brandName]
+ * @param {import("./page-nav.js").PageNavOptions} [options.pageNav] Passed to `initPageNavPanel()`
  */
 export function initShell(options = {}) {
-  renderPageShell(options);
+  const { pageNav, ...shellOptions } = options;
+  renderPageShell(shellOptions);
   initIcons();
   initTheme();
   initThemeToggle(document.getElementById("theme-toggle"));
-  initJumpUpButton();
+  initPageNavPanel("#page-nav", pageNav);
 }

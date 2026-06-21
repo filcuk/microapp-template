@@ -4,8 +4,30 @@ const DEFAULTS = {
   brandName: "Filcuk",
 };
 
+/** Required markup for {@link initPageNav} — also injected by {@link renderPageShell}. */
+export const PAGE_NAV_MARKUP = `<nav id="page-nav" class="page-nav" aria-label="Page navigation">
+  <div class="page-nav-trigger">
+    <div class="page-nav-stack">
+      <div class="page-nav-panel">
+        <ul class="page-nav-list"></ul>
+      </div>
+      <div class="page-nav-jumps">
+        <span class="page-nav-jump-ring" aria-hidden="true"></span>
+        <div class="page-nav-jump-inner">
+          <button type="button" class="page-nav-jump page-nav-jump-up" data-page-nav="up" aria-label="Back to top">
+            <span data-icon="chevron-up" data-icon-class="page-nav-icon-svg"></span>
+          </button>
+          <button type="button" class="page-nav-jump page-nav-jump-down" data-page-nav="down" aria-label="Jump to bottom">
+            <span data-icon="chevron-down" data-icon-class="page-nav-icon-svg"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>`;
+
 /**
- * Inject shared page chrome: footer (links + theme toggle) and jump-up button.
+ * Inject shared page chrome: footer (links + theme toggle) and page navigation.
  * Skips if `#app-page-footer` already exists.
  */
 export function renderPageShell(options = {}) {
@@ -35,11 +57,6 @@ export function renderPageShell(options = {}) {
         <button type="button" class="theme-toggle-btn" data-theme-mode="auto" data-icon="auto-mode" data-icon-class="theme-icon" aria-label="System theme" aria-pressed="false" title="System"></button>
       </div>
     </footer>
-    <button type="button" id="jump-up" class="jump-up" aria-label="Back to top" aria-hidden="true" tabindex="-1">
-      <span class="jump-up-ring" aria-hidden="true"></span>
-      <span class="jump-up-inner">
-        <span data-icon="chevron-up" data-icon-class="jump-up-icon-svg"></span>
-      </span>
-    </button>`
+    ${PAGE_NAV_MARKUP}`
   );
 }
