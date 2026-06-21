@@ -31,6 +31,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js) (`light-mode`, `dark-mode`, `auto-mode`, `lines`, …); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
 | **Toolbar helper** | `.toolbar` flex row for button groups. |
 | **Demo page** | [`demo.html`](demo.html) showcases all components. |
+| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) example on the demo page with line numbers; see [`app/prism.js`](app/prism.js) and [`app/vendor/prism/`](app/vendor/prism/). |
 | **GitHub Pages** | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes `index.html`, `demo.html`, and `app/`. |
 
 ## Project structure
@@ -60,7 +61,11 @@ app/
   tooltip.js        # Instant tooltips
   main.js           # index.html entry
   demo.js           # demo.html entry
-  res/icon.svg      # Placeholder logo
+  prism.css            # Prism token colours + line numbers (optional)
+  prism.js             # initPrism() helper
+  code-block.js        # Code block toggles + copy button
+  vendor/prism/        # Vendored Prism core, languages, plugins
+  res/icon.svg         # Placeholder logo
 ```
 
 ## Local preview
@@ -243,6 +248,42 @@ initJumpUpButton();
 ```
 
 The accent border ring fills with scroll progress (`--scroll-progress`, 0–1). The button fades in after ~200px scroll.
+
+### Code highlighting (Prism)
+
+Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for a Python example with line numbers, highlight toggle, and copy-on-hover.
+
+```html
+<link rel="stylesheet" href="app/prism.css" />
+<script defer src="app/vendor/prism/prism.min.js"></script>
+<script defer src="app/vendor/prism/prism-python.min.js"></script>
+<script defer src="app/vendor/prism/prism-line-numbers.min.js"></script>
+```
+
+```html
+<div class="code-block" data-code-copy="true">
+  <div class="code-block-toolbar" role="group" aria-label="Code block options">
+    <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers" aria-pressed="true">Line numbers</button>
+    <button type="button" class="btn code-block-toggle" data-code-toggle="highlight" aria-pressed="true">Highlight</button>
+  </div>
+  <div class="code-block-body">
+    <button type="button" class="code-block-copy btn" aria-label="Copy code">Copy</button>
+    <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
+    return f"Hello, {name}!"
+</code></pre>
+  </div>
+</div>
+```
+
+```javascript
+import { initCodeBlocks } from "./code-block.js";
+
+initCodeBlocks(document);
+```
+
+Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line numbers require highlighting to be on.
+
+Add other language components under `app/vendor/prism/` as needed from [Prism](https://prismjs.com/).
 
 ### Icons
 

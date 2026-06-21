@@ -8,6 +8,7 @@
   <link rel="icon" href="app/res/icon.svg" type="image/svg+xml" />
   <script src="app/theme-init.js"></script>
   <link rel="stylesheet" href="app/styles.css" />
+  <link rel="stylesheet" href="app/prism.css" />
 </head>
 
 <body>
@@ -261,6 +262,39 @@
       </div>
     </section>
 
+    <section class="demo-section" aria-labelledby="demo-code">
+      <h2 id="demo-code" class="section-heading">Code highlighting</h2>
+      <p class="demo-hint">
+        Syntax highlighting via
+        <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
+        Toggle line numbers or highlighting; hover the block to copy.
+      </p>
+      <div class="code-block" id="demo-code-block" data-code-copy="true">
+        <div class="code-block-toolbar" role="group" aria-label="Code block options">
+          <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+            aria-pressed="true">
+            Line numbers
+          </button>
+          <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+            aria-pressed="true">
+            Highlight
+          </button>
+        </div>
+        <div class="code-block-body">
+          <button type="button" class="code-block-copy btn" aria-label="Copy code">
+            Copy
+          </button>
+          <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
+    """Return a greeting."""
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    print(greet("world"))
+</code></pre>
+        </div>
+      </div>
+    </section>
+
     <section class="demo-section" aria-labelledby="demo-theme">
       <h2 id="demo-theme" class="section-heading">Theme</h2>
       <p>
@@ -323,6 +357,9 @@
     </div>
   </div>
 
+  <script defer src="app/vendor/prism/prism.min.js"></script>
+  <script defer src="app/vendor/prism/prism-python.min.js"></script>
+  <script defer src="app/vendor/prism/prism-line-numbers.min.js"></script>
   <script type="module" src="app/demo.js"></script>
 </body>
 

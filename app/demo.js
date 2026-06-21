@@ -5,12 +5,14 @@ import { initCombo } from "./combo.js";
 import { initDropdown } from "./dropdown.js";
 import { initExpands } from "./expand.js";
 import { initTabsBlocks } from "./tabs.js";
+import { initCodeBlocks } from "./code-block.js";
 import { setHidden } from "./dom.js";
 
 initShell();
 initTooltips(document);
 initExpands(document);
 initTabsBlocks(document);
+initCodeBlocks(document);
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");
