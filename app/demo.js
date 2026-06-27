@@ -6,6 +6,7 @@ import { initExpands } from "./expand.js";
 import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
 import { setHidden } from "./dom.js";
+import { showBanner, hideBanner } from "./banner.js";
 
 initShell();
 initExpands(document);
@@ -78,11 +79,13 @@ const sectionErrorBanner = document.getElementById("demo-section-error");
 document.getElementById("demo-section-submit")?.addEventListener("click", () => {
   const hasText = Boolean(sectionInput?.value.trim());
 
-  if (sectionSuccessBanner) {
-    setHidden(sectionSuccessBanner, !hasText);
-  }
-  if (sectionErrorBanner) {
-    setHidden(sectionErrorBanner, hasText);
+  hideBanner(sectionSuccessBanner);
+  hideBanner(sectionErrorBanner);
+
+  if (hasText) {
+    showBanner(sectionSuccessBanner);
+  } else {
+    showBanner(sectionErrorBanner);
   }
 });
 

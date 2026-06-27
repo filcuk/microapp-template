@@ -46,6 +46,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initShell()` | Standard page boot (footer, theme toggle, page nav, tooltips, external-link icons) |
 | `initExternalLinks(root)` | Append arrow-outward icon to external links |
 | `initHeadingLinks(root)` | Copy-link button on `main h2[id]` headings |
+| `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `render-shell.js` |
 | `setHidden(el, hidden)` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |

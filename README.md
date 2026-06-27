@@ -30,7 +30,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “click to copy”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
-| **Banners** | `.banner.banner-important`, `.banner-info`, `.banner-success`, `.banner-note`, `.banner-warning`, `.banner-error` with left icon via `data-icon` (`important`, `info`, `success`, `note`, `warning`, `error`). |
+| **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js) (`light-mode`, `dark-mode`, `auto-mode`, `lines`, …); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
 | **Toolbar helper** | `.toolbar` flex row for button groups. |
 | **Demo page** | [`demo.html`](demo.html) showcases all components. |
@@ -63,6 +63,7 @@ app/
   jump-up.js         # Re-exports page-nav (deprecated alias)
   icons.js          # Inline SVG icon registry
   tooltip.js        # Instant tooltips
+  banner.js           # showBanner / hideBanner with optional expiry
   external-link.js  # Arrow icon on outgoing links
   heading-link.js     # Copy section link on heading hover
   main.js           # index.html entry
@@ -142,6 +143,28 @@ Close controls use `data-dialog-close` on backdrop, × button, or footer buttons
 ```javascript
 import { initTooltips } from "./tooltip.js";
 initTooltips(document);
+```
+
+### Banners
+
+Markup uses `.banner` plus a variant (`banner-success`, `banner-error`, …) and a `data-icon` for the left icon.
+
+Auto-hide after a delay — set `data-banner-expire` (milliseconds) and call `showBanner()`:
+
+```html
+<div id="saved-banner" class="banner banner-success hidden" role="status" hidden
+  data-banner-expire="1500">
+  <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
+  <span class="banner-body">Saved</span>
+</div>
+```
+
+```javascript
+import { showBanner, hideBanner } from "./banner.js";
+
+showBanner(document.getElementById("saved-banner"));
+// or override: showBanner(el, { expire: 3000 });
+hideBanner(el);
 ```
 
 ### External links
