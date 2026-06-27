@@ -301,8 +301,6 @@ main {
   background: transparent;
   color: var(--accent);
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
 }
 
 .btn-link:hover {
@@ -784,12 +782,11 @@ main {
 .page-nav-link:hover,
 .page-nav-link:focus-visible {
   color: var(--text);
-  outline: none;
 }
 
 .page-nav-link:focus-visible {
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .page-nav-jumps {
