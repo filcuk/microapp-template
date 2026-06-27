@@ -18,7 +18,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/components.css`](app/components.css). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. |
-| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon` (with `aria-pressed` for toggles), `.btn-link`, disabled state. |
+| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Inputs** | `.field` / `.field-label` with `.input` (single line) and `.textarea` (multi-line). |
 | **Section panel** | `.section-panel` three-column rows: row 1 input + toggle; row 2 submit (right) and full-width banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
@@ -187,7 +187,7 @@ Three-column rows for compact forms. Row 1: input spans columns 1–2, toggle in
       <span class="field-label">Label</span>
       <input type="text" id="name" class="input" />
     </label>
-    <button type="button" class="btn section-panel__toggle" aria-pressed="false">Toggle</button>
+    <button type="button" class="btn btn-toggle section-panel__toggle" aria-pressed="false">Toggle</button>
   </div>
   <div class="section-panel__row">
     <div class="section-panel__feedback">

@@ -271,8 +271,10 @@ main {
   color: var(--text);
 }
 
-.btn-icon[aria-pressed="false"] {
-  color: var(--muted);
+.btn-toggle[aria-pressed="true"] {
+  background: var(--code-bg);
+  border-color: var(--accent);
+  color: var(--text);
 }
 
 .btn-icon-svg {
@@ -420,11 +422,6 @@ main {
 
 .section-panel__toggle {
   justify-self: start;
-}
-
-.section-panel__toggle[aria-pressed="true"] {
-  background: var(--code-bg);
-  border-color: var(--accent);
 }
 
 @media (max-width: 640px) {
