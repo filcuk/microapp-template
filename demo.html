@@ -326,31 +326,85 @@
       <p class="demo-hint">
         Syntax highlighting via
         <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
-        Toggle line numbers or highlighting; hover the block to copy or maximise.
+        Set <code>data-code-mode</code> to <code>view</code>, <code>select</code>, or
+        <code>edit</code>. Hover blocks to copy or maximise (select and edit).
       </p>
-      <div class="code-block" id="demo-code-block" data-code-copy="true" data-expandable-surface
-        data-expandable-surface-label="Code sample">
-        <div class="code-block-toolbar" role="group" aria-label="Code block options">
-          <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
-            aria-pressed="true">
-            Line numbers
-          </button>
-          <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
-            aria-pressed="true">
-            Highlight
-          </button>
+      <div class="demo-code-modes">
+        <div class="field">
+          <span class="field-label">View only</span>
+          <div class="code-block" data-code-mode="view" data-code-copy="true">
+            <div class="code-block-toolbar" role="group" aria-label="Code block options">
+              <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+                aria-pressed="true">
+                Line numbers
+              </button>
+              <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+                aria-pressed="true">
+                Highlight
+              </button>
+            </div>
+            <div class="code-block-body">
+              <button type="button" class="code-block-copy btn" aria-label="Copy code">
+                Copy
+              </button>
+              <pre class="line-numbers language-python"><code class="language-python"># Display only — text cannot be selected
+print("Hello, world!")
+</code></pre>
+            </div>
+          </div>
         </div>
-        <div class="code-block-body" data-expandable-surface-trigger>
-          <button type="button" class="code-block-copy btn" aria-label="Copy code">
-            Copy
-          </button>
-          <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
+        <div class="field">
+          <span class="field-label">Select only</span>
+          <div class="code-block" id="demo-code-block" data-code-mode="select" data-code-copy="true"
+            data-expandable-surface data-expandable-surface-label="Code sample">
+            <div class="code-block-toolbar" role="group" aria-label="Code block options">
+              <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+                aria-pressed="true">
+                Line numbers
+              </button>
+              <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+                aria-pressed="true">
+                Highlight
+              </button>
+            </div>
+            <div class="code-block-body" data-expandable-surface-trigger>
+              <button type="button" class="code-block-copy btn" aria-label="Copy code">
+                Copy
+              </button>
+              <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
     """Return a greeting."""
     return f"Hello, {name}!"
 
 if __name__ == "__main__":
     print(greet("world"))
 </code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">Editable</span>
+          <div class="code-block" data-code-mode="edit" data-code-copy="true" data-expandable-surface
+            data-expandable-surface-label="Editable code">
+            <div class="code-block-toolbar" role="group" aria-label="Code block options">
+              <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+                aria-pressed="true">
+                Line numbers
+              </button>
+              <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+                aria-pressed="true">
+                Highlight
+              </button>
+            </div>
+            <div class="code-block-body" data-expandable-surface-trigger>
+              <button type="button" class="code-block-copy btn" aria-label="Copy code">
+                Copy
+              </button>
+              <pre class="line-numbers language-python"><code class="language-python"># Edit this code
+total = sum(range(5))
+print(total)
+</code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </section>

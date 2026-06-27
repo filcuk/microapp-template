@@ -178,6 +178,62 @@ main {
   border-radius: 0;
 }
 
+.code-block--view pre,
+.code-block--view pre > code {
+  user-select: none;
+}
+
+.code-block-editor-stack {
+  position: relative;
+}
+
+.code-block-editor {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
+  -webkit-text-fill-color: transparent;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  tab-size: 2;
+  resize: none;
+  overflow: auto;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+.code-block-editor:focus {
+  outline: none;
+}
+
+.code-block-editor::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.code-block--edit .code-block-editor {
+  display: block;
+}
+
+.code-block--edit .code-block-editor-stack pre {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.code-block--edit .code-block-editor-stack pre.line-numbers + .code-block-editor {
+  padding-left: 3.8em;
+}
+
 .code-block-copy {
   padding: 0.25rem 0.625rem;
   font-size: 0.75rem;
@@ -187,7 +243,7 @@ main {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -197,11 +253,19 @@ main {
   transition: opacity 0.15s;
 }
 
-.expandable-surface-trigger:hover .surface-actions,
+.code-block-body:hover .surface-actions,
 .surface-actions:focus-within,
 .expandable-surface.is-expanded .surface-actions {
   opacity: 1;
   pointer-events: auto;
+}
+
+.surface-actions:not(:has(.code-block-copy:not([hidden]))) {
+  gap: 0;
+}
+
+.surface-actions:has(> .code-block-copy[hidden]):not(:has(.expandable-surface__expand)) {
+  display: none;
 }
 
 .expandable-surface-trigger {
@@ -251,6 +315,16 @@ main {
 .code-block-toggle[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.demo-code-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.demo-code-modes .field {
+  gap: 0.5rem;
 }
 
 /* Expandable surface (code blocks, textareas, …) */
@@ -311,6 +385,18 @@ body.expandable-surface-open {
 }
 
 .expandable-surface.is-expanded.code-block .code-block-body pre {
+  flex: 1;
+  min-height: 0;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-editor-stack {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-editor-stack pre {
   flex: 1;
   min-height: 0;
 }

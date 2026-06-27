@@ -358,7 +358,7 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 ```
 
 ```html
-<div class="code-block" data-code-copy="true" data-expandable-surface data-expandable-surface-label="Code sample">
+<div class="code-block" data-code-mode="select" data-code-copy="true" data-expandable-surface data-expandable-surface-label="Code sample">
   <div class="code-block-toolbar" role="group" aria-label="Code block options">
     <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers" aria-pressed="true">Line numbers</button>
     <button type="button" class="btn code-block-toggle" data-code-toggle="highlight" aria-pressed="true">Highlight</button>
@@ -381,6 +381,16 @@ initExpandableSurfaces(document);
 ```
 
 Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line numbers require highlighting to be on.
+
+**Interaction modes** — set `data-code-mode` on `.code-block`:
+
+| Mode | Behaviour |
+| ---- | --------- |
+| `view` | Read-only display; text cannot be selected; copy button hidden |
+| `select` | Read-only; text selectable; copy and highlight toggles (default) |
+| `edit` | Editable overlay on highlighted `<pre>`; line numbers and highlight toggles apply |
+
+Switch modes at runtime via `initCodeBlock()` → `setMode("edit")`, `getMode()`, `getSource()`, `setSource(text)`.
 
 ### Expandable surface
 
