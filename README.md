@@ -34,7 +34,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Code blocks** | `.code-block` with Prism highlighting, line numbers, copy, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
 | **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js) (`light-mode`, `dark-mode`, `auto-mode`, `lines`, …); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
-| **Toolbar helper** | `.toolbar` flex row for button groups. |
+| **Toolbar helper** | `.toolbar` flex row for button groups. See [`demo.html`](demo.html). |
 | **Demo page** | [`demo.html`](demo.html) showcases all components. |
 | **Code highlighting** | Optional [Prism.js](https://prismjs.com/) via [`app/code-block.js`](app/code-block.js) and [`app/vendor/prism/`](app/vendor/prism/). See [`app/prism.js`](app/prism.js) for a minimal loader helper. |
 | **GitHub Pages** | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes `index.html`, `demo.html`, and `app/`. |
@@ -186,6 +186,20 @@ Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on h
 import { initHeadingLinks } from "./heading-link.js";
 
 initHeadingLinks(document, { selector: "main h3[id]" });
+```
+
+### Toolbar
+
+Flex row for grouping related buttons. Wraps on narrow viewports.
+
+```html
+<div class="toolbar" role="toolbar" aria-label="Document actions">
+  <button type="button" class="btn">Undo</button>
+  <button type="button" class="btn">Redo</button>
+  <button type="button" class="btn btn-primary">Save</button>
+  <button type="button" class="btn btn-icon" aria-label="More options" data-icon="lines"
+    data-icon-class="btn-icon-svg"></button>
+</div>
 ```
 
 ### Inputs
