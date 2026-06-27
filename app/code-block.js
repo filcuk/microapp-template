@@ -1,4 +1,5 @@
-import { setHidden } from "./dom.js"; optional line numbers, Prism highlight toggle, copy button.
+/**
+ * Interactive code blocks: optional line numbers, Prism highlight toggle, copy button.
  *
  * Markup:
  *   <div class="code-block" data-code-mode="select" data-code-copy="true">
