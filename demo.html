@@ -326,9 +326,10 @@
       <p class="demo-hint">
         Syntax highlighting via
         <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
-        Toggle line numbers or highlighting; hover the block to copy.
+        Toggle line numbers or highlighting; hover the block to copy or maximise.
       </p>
-      <div class="code-block" id="demo-code-block" data-code-copy="true">
+      <div class="code-block" id="demo-code-block" data-code-copy="true" data-expandable-surface
+        data-expandable-surface-label="Code sample">
         <div class="code-block-toolbar" role="group" aria-label="Code block options">
           <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
             aria-pressed="true">
@@ -339,7 +340,7 @@
             Highlight
           </button>
         </div>
-        <div class="code-block-body">
+        <div class="code-block-body" data-expandable-surface-trigger>
           <button type="button" class="code-block-copy btn" aria-label="Copy code">
             Copy
           </button>

@@ -4,9 +4,9 @@
 header,
 main,
 body > footer {
-  max-width: 1200px;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 1rem 1.5rem;
+  padding: var(--page-padding-y) var(--page-padding-x);
   width: 100%;
 }
 
@@ -179,19 +179,54 @@ main {
 }
 
 .code-block-copy {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+}
+
+.surface-actions {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
   z-index: 2;
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-direction: row-reverse;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s;
 }
 
-.code-block-body:hover .code-block-copy,
-.code-block-copy:focus-visible {
+.expandable-surface-trigger:hover .surface-actions,
+.surface-actions:focus-within,
+.expandable-surface.is-expanded .surface-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.expandable-surface-trigger {
+  position: relative;
+}
+
+.expandable-surface__expand {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.surface-actions .expandable-surface__expand {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.expandable-surface-trigger:hover > .expandable-surface__expand,
+.expandable-surface__expand:focus-visible,
+.expandable-surface.is-expanded > .expandable-surface__expand {
   opacity: 1;
   pointer-events: auto;
 }
@@ -201,7 +236,12 @@ main {
 }
 
 @media (hover: none) {
-  .code-block-copy {
+  .surface-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .expandable-surface__expand {
     opacity: 1;
     pointer-events: auto;
   }
@@ -211,6 +251,86 @@ main {
 .code-block-toggle[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Expandable surface (code blocks, textareas, …) */
+
+body.expandable-surface-open {
+  overflow: hidden;
+}
+
+.expandable-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: var(--page-padding-y) var(--page-padding-x);
+}
+
+.expandable-overlay.hidden {
+  display: none;
+}
+
+.expandable-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(27, 31, 35, 0.45);
+}
+
+:root[data-theme="dark"] .expandable-overlay__backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.expandable-overlay__stage {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  max-width: var(--page-width);
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+}
+
+.expandable-surface.is-expanded {
+  flex: 1;
+  min-height: 0;
+  max-width: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-body pre {
+  flex: 1;
+  min-height: 0;
+}
+
+.expandable-surface.is-expanded.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.expandable-surface.is-expanded.field [data-expandable-surface-trigger] {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.expandable-surface.is-expanded textarea {
+  flex: 1;
+  min-height: 0;
+  resize: none;
 }
 
 .toolbar {

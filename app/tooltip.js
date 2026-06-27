@@ -161,6 +161,11 @@ export function openTooltip(target) {
   showTooltip(target);
 }
 
+/** Hide the active tooltip, if any. */
+export function closeTooltip() {
+  hideTooltip();
+}
+
 export function initTooltips(root = document) {
   if (boundRoots.has(root)) return;
 

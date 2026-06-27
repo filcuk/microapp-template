@@ -71,6 +71,7 @@ app/
   prism.css            # Prism token colours + line numbers (optional)
   prism.js             # initPrism() helper
   code-block.js        # Code block toggles + copy button
+  expandable-surface.js # Hover maximise for code blocks, textareas, …
   vendor/prism/        # Vendored Prism core, languages, plugins
   res/app-light.svg    # App logo (light theme) — header, favicon
   res/app-dark.svg     # App logo (dark theme)
@@ -357,12 +358,12 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 ```
 
 ```html
-<div class="code-block" data-code-copy="true">
+<div class="code-block" data-code-copy="true" data-expandable-surface data-expandable-surface-label="Code sample">
   <div class="code-block-toolbar" role="group" aria-label="Code block options">
     <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers" aria-pressed="true">Line numbers</button>
     <button type="button" class="btn code-block-toggle" data-code-toggle="highlight" aria-pressed="true">Highlight</button>
   </div>
-  <div class="code-block-body">
+  <div class="code-block-body" data-expandable-surface-trigger>
     <button type="button" class="code-block-copy btn" aria-label="Copy code">Copy</button>
     <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
     return f"Hello, {name}!"
@@ -373,11 +374,32 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 
 ```javascript
 import { initCodeBlocks } from "./code-block.js";
+import { initExpandableSurfaces } from "./expandable-surface.js";
 
 initCodeBlocks(document);
+initExpandableSurfaces(document);
 ```
 
 Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line numbers require highlighting to be on.
+
+### Expandable surface
+
+Reusable expanded overlay for code blocks, multi-line inputs, or any block marked with `data-expandable-surface`. A maximise icon appears on hover (injected into the trigger element); click expands the surface to the page body width (`--page-width`), Escape or backdrop click closes it.
+
+```html
+<div class="field" data-expandable-surface data-expandable-surface-label="Notes">
+  <span class="field-label">Notes</span>
+  <div data-expandable-surface-trigger>
+    <textarea class="input" rows="4"></textarea>
+  </div>
+</div>
+```
+
+```javascript
+import { initExpandableSurfaces } from "./expandable-surface.js";
+
+initExpandableSurfaces(document);
+```
 
 Add other language components under `app/vendor/prism/` as needed from [Prism](https://prismjs.com/).
 

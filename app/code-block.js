@@ -14,6 +14,10 @@
  *   data-code-copy="false"     — omit copy button behaviour
  *   data-code-line-numbers="false" — start without line numbers
  *   data-code-highlight="false"    — start without highlighting
+ *
+ * Optional fullscreen: add `data-expandable-surface` on `.code-block` and
+ * `data-expandable-surface-trigger` on `.code-block-body`; wire with
+ * `initExpandableSurfaces()` from `app/expandable-surface.js`.
  */
 
 const LANGUAGE_RE = /language-([\w-]+)/;

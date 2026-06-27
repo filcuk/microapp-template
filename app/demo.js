@@ -5,6 +5,7 @@ import { initDropdown } from "./dropdown.js";
 import { initExpands } from "./expand.js";
 import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
+import { initExpandableSurfaces } from "./expandable-surface.js";
 import { setHidden } from "./dom.js";
 import { showBanner, hideBanner } from "./banner.js";
 
@@ -12,6 +13,7 @@ initShell();
 initExpands(document);
 initTabsBlocks(document);
 initCodeBlocks(document);
+initExpandableSurfaces(document);
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");
