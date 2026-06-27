@@ -1109,6 +1109,7 @@ body.expandable-surface-open {
 /* Banners */
 
 .banner {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.625rem;
@@ -1119,9 +1120,55 @@ body.expandable-surface-open {
   font-size: inherit;
   line-height: 1.5;
   border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.banner-expire {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.05);
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+:root[data-theme="dark"] .banner-expire {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.banner-is-expiring .banner-expire {
+  animation: banner-expire-shrink var(--banner-expire-ms, 1ms) linear forwards;
+}
+
+@keyframes banner-expire-shrink {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.banner-is-hiding {
+  animation: banner-fade-out var(--banner-fade-ms) ease forwards;
+  pointer-events: none;
+}
+
+@keyframes banner-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 .banner-icon {
+  position: relative;
+  z-index: 1;
   flex-shrink: 0;
   display: inline-flex;
   line-height: 0;
@@ -1133,6 +1180,8 @@ body.expandable-surface-open {
 }
 
 .banner-body {
+  position: relative;
+  z-index: 1;
   flex: 1;
   min-width: 0;
   line-height: 1.5;

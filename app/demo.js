@@ -123,6 +123,17 @@ const bannerToggles = [
   ["toggle-error-banner", "demo-error-banner"],
 ];
 
+const bannerTriggers = [
+  ["trigger-note-banner", "demo-note-banner"],
+  ["trigger-info-banner", "demo-info-banner"],
+  ["trigger-success-banner", "demo-success-banner"],
+  ["trigger-important-banner", "demo-important-banner"],
+  ["trigger-warning-banner", "demo-warning-banner"],
+  ["trigger-error-banner", "demo-error-banner"],
+];
+
+const BANNER_TRIGGER_EXPIRE_MS = 3000;
+
 function isBannerHidden(bannerEl) {
   return bannerEl.classList.contains("hidden") || bannerEl.hidden;
 }
@@ -138,6 +149,14 @@ for (const [buttonId, bannerId] of bannerToggles) {
     const bannerEl = document.getElementById(bannerId);
     if (!bannerEl) return;
     setHidden(bannerEl, !isBannerHidden(bannerEl));
+  });
+}
+
+for (const [buttonId, bannerId] of bannerTriggers) {
+  document.getElementById(buttonId)?.addEventListener("click", () => {
+    const bannerEl = document.getElementById(bannerId);
+    if (!bannerEl) return;
+    showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
   });
 }
 

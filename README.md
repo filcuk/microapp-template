@@ -150,7 +150,7 @@ initTooltips(document);
 
 Markup uses `.banner` plus a variant (`banner-success`, `banner-error`, …) and a `data-icon` for the left icon.
 
-Auto-hide after a delay — set `data-banner-expire` (milliseconds) and call `showBanner()`:
+Auto-hide after a delay — set `data-banner-expire` (milliseconds) and call `showBanner()`. A light overlay drains across the banner for the duration of the timeout, then the banner fades out quickly.
 
 ```html
 <div id="saved-banner" class="banner banner-success hidden" role="status" hidden
