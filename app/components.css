@@ -224,7 +224,12 @@ main {
 
 .btn {
   font: inherit;
-  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: var(--control-height);
+  padding: 0 1rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
@@ -260,7 +265,9 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
+  width: var(--control-height);
+  min-width: var(--control-height);
+  padding: 0;
   color: var(--text);
 }
 
@@ -317,12 +324,24 @@ main {
 .input,
 .textarea {
   font: inherit;
-  padding: 0.5rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
   color: var(--text);
   width: 100%;
+  box-sizing: border-box;
+}
+
+.input {
+  min-height: var(--control-height);
+  padding: 0 0.75rem;
+}
+
+.textarea {
+  min-height: 5rem;
+  padding: 0.5rem 0.75rem;
+  resize: vertical;
+  line-height: 1.5;
 }
 
 .input::placeholder,
@@ -342,12 +361,6 @@ main {
 .textarea:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.textarea {
-  min-height: 5rem;
-  resize: vertical;
-  line-height: 1.5;
 }
 
 .demo-fields {
@@ -854,11 +867,14 @@ main {
 
 .banner {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.625rem;
-  padding: 0.75rem 1rem;
+  box-sizing: border-box;
+  min-height: var(--control-height);
+  padding: 0 1rem;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: inherit;
+  line-height: 1.5;
   border: 1px solid var(--border);
 }
 
@@ -866,17 +882,17 @@ main {
   flex-shrink: 0;
   display: inline-flex;
   line-height: 0;
-  margin-top: 0.0625rem;
 }
 
 .banner-icon-svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .banner-body {
   flex: 1;
   min-width: 0;
+  line-height: 1.5;
 }
 
 .banner-warning {
@@ -1123,8 +1139,8 @@ body > footer a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: var(--control-height);
+  height: var(--control-height);
   padding: 0;
   border: none;
   background: transparent;
