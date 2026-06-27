@@ -779,12 +779,12 @@ main {
   text-decoration: none;
 }
 
-.page-nav-link:hover,
-.page-nav-link:focus-visible {
-  color: var(--text);
+.page-nav-link:hover {
+  color: var(--accent);
 }
 
 .page-nav-link:focus-visible {
+  color: var(--accent);
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
