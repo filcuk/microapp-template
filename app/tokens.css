@@ -115,6 +115,10 @@ a:hover {
     transition: none;
   }
 
+  .heading-link-btn {
+    transition: none;
+  }
+
   .expand-notch::after {
     transition: none;
   }

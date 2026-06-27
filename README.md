@@ -26,6 +26,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
+| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “click to copy”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
 | **Banners** | `.banner.banner-important`, `.banner-info`, `.banner-success`, `.banner-note`, `.banner-warning`, `.banner-error` with left icon via `data-icon` (`important`, `info`, `success`, `note`, `warning`, `error`). |
@@ -62,6 +63,7 @@ app/
   icons.js          # Inline SVG icon registry
   tooltip.js        # Instant tooltips
   external-link.js  # Arrow icon on outgoing links
+  heading-link.js     # Copy section link on heading hover
   main.js           # index.html entry
   demo.js           # demo.html entry
   prism.css            # Prism token colours + line numbers (optional)
@@ -147,6 +149,16 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ```html
 <a href="https://example.com" data-no-external-icon>Stay plain</a>
+```
+
+### Heading links
+
+Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “click to copy” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
+
+```javascript
+import { initHeadingLinks } from "./heading-link.js";
+
+initHeadingLinks(document, { selector: "main h3[id]" });
 ```
 
 ### Inputs

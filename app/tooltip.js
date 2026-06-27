@@ -156,6 +156,11 @@ function repositionActiveTooltip() {
   );
 }
 
+/** Show tooltip for `target` (reads `data-tooltip`). */
+export function openTooltip(target) {
+  showTooltip(target);
+}
+
 export function initTooltips(root = document) {
   if (boundRoots.has(root)) return;
 
