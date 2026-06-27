@@ -26,6 +26,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
+| **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
 | **Banners** | `.banner.banner-important`, `.banner-info`, `.banner-success`, `.banner-note`, `.banner-warning`, `.banner-error` with left icon via `data-icon` (`important`, `info`, `success`, `note`, `warning`, `error`). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js) (`light-mode`, `dark-mode`, `auto-mode`, `lines`, …); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
@@ -60,6 +61,7 @@ app/
   jump-up.js         # Re-exports page-nav (deprecated alias)
   icons.js          # Inline SVG icon registry
   tooltip.js        # Instant tooltips
+  external-link.js  # Arrow icon on outgoing links
   main.js           # index.html entry
   demo.js           # demo.html entry
   prism.css            # Prism token colours + line numbers (optional)
@@ -137,6 +139,14 @@ Close controls use `data-dialog-close` on backdrop, × button, or footer buttons
 ```javascript
 import { initTooltips } from "./tooltip.js";
 initTooltips(document);
+```
+
+### External links
+
+Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-outward icon appended automatically. Opt out on a specific link:
+
+```html
+<a href="https://example.com" data-no-external-icon>Stay plain</a>
 ```
 
 ### Inputs

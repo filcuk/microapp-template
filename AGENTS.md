@@ -43,7 +43,8 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | -------- | ------- |
 | `initX({ … })` | Single instance (dialog, combo, dropdown, expand) |
 | `initXBlocks(root)` | Scan a subtree for `.x` blocks (tabs, expand, tooltips) |
-| `initShell()` | Standard page boot (footer, theme toggle, page nav) |
+| `initShell()` | Standard page boot (footer, theme toggle, page nav, tooltips, external-link icons) |
+| `initExternalLinks(root)` | Append arrow-outward icon to external links |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `render-shell.js` |
 | `setHidden(el, hidden)` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |

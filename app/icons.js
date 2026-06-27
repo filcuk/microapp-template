@@ -20,7 +20,7 @@
  * To reuse an existing icon under another id, set `ref` to the target key:
  *   lines: { ref: "note" },
  *
- * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down
+ * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, arrow-outward
  */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -103,6 +103,12 @@ export const ICONS = {
     markup: `<path fill="currentColor" d="M15.88 9.29L12 13.17L8.12 9.29a.996.996 0 1 0-1.41 1.41l4.59 4.59c.39.39 1.02.39 1.41 0l4.59-4.59a.996.996 0 0 0 0-1.41c-.38-.38-1.03-.39-1.42 0"/>`,
     attribution: ICON_ATTRIBUTIONS.materialIcons,
     name: "round-keyboard-arrow-down",
+  },
+  "arrow-outward": {
+    viewBox: "0 0 24 24",
+    markup: `<path fill="currentColor" d="m16 8.4l-8.9 8.9q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7L14.6 7H7q-.425 0-.712-.288T6 6t.288-.712T7 5h10q.425 0 .713.288T18 6v10q0 .425-.288.713T17 17t-.712-.288T16 16z"/>`,
+    attribution: ICON_ATTRIBUTIONS.materialIcons,
+    name: "arrow-outward-rounded",
   },
 };
 
