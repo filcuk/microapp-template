@@ -119,13 +119,3 @@ export function showBanner(bannerEl, { expire } = {}) {
     setTimeout(() => fadeOutBanner(bannerEl), ms)
   );
 }
-
-/**
- * Wire banners with `data-banner-expire` inside `root` (optional helper for declarative markup).
- * Does not show them — use {@link showBanner} when ready to display.
- *
- * @param {ParentNode} [root=document]
- */
-export function initBanners(root = document) {
-  return [...root.querySelectorAll(".banner[data-banner-expire]")];
-}

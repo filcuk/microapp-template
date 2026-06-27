@@ -647,10 +647,6 @@ body.expandable-surface-open {
   flex-shrink: 0;
 }
 
-.section-panel__field--span-2 {
-  grid-column: span 2;
-}
-
 .section-panel__field {
   min-width: 0;
   max-width: none;
@@ -674,10 +670,6 @@ body.expandable-surface-open {
 @media (max-width: 640px) {
   .section-panel__grid {
     grid-template-columns: 1fr;
-  }
-
-  .section-panel__field--span-2 {
-    grid-column: span 1;
   }
 
   .section-panel__row {

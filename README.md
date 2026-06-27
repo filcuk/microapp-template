@@ -27,14 +27,16 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
-| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “click to copy”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
+| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
-| **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). |
+| **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
+| **Code blocks** | `.code-block` with Prism highlighting, line numbers, copy, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
+| **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js) (`light-mode`, `dark-mode`, `auto-mode`, `lines`, …); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
 | **Toolbar helper** | `.toolbar` flex row for button groups. |
 | **Demo page** | [`demo.html`](demo.html) showcases all components. |
-| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) example on the demo page with line numbers; see [`app/prism.js`](app/prism.js) and [`app/vendor/prism/`](app/vendor/prism/). |
+| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) via [`app/code-block.js`](app/code-block.js) and [`app/vendor/prism/`](app/vendor/prism/). See [`app/prism.js`](app/prism.js) for a minimal loader helper. |
 | **GitHub Pages** | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes `index.html`, `demo.html`, and `app/`. |
 
 ## Project structure
@@ -178,7 +180,7 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Heading links
 
-Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “click to copy” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
+Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
 
 ```javascript
 import { initHeadingLinks } from "./heading-link.js";
@@ -229,11 +231,25 @@ Three-column grid rows for compact forms. Stack fields across rows; use `.sectio
   <hr class="section-panel__divider" />
   <div class="section-panel__row">
     <div class="section-panel__feedback">
-      <div class="banner banner-success" role="status">…</div>
+      <div id="section-success" class="banner banner-success hidden" role="status" hidden
+        data-banner-expire="1500">
+        <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
+        <span class="banner-body">Submitted</span>
+      </div>
     </div>
     <button type="button" class="btn btn-primary section-panel__submit">Submit</button>
   </div>
 </div>
+```
+
+```javascript
+import { showBanner, hideBanner } from "./banner.js";
+
+submitBtn.addEventListener("click", () => {
+  hideBanner(successBanner);
+  hideBanner(errorBanner);
+  showBanner(hasText ? successBanner : errorBanner);
+});
 ```
 
 See the interactive example on [`demo.html`](demo.html).
@@ -400,7 +416,7 @@ Reusable expanded overlay for code blocks, multi-line inputs, or any block marke
 <div class="field" data-expandable-surface data-expandable-surface-label="Notes">
   <span class="field-label">Notes</span>
   <div data-expandable-surface-trigger>
-    <textarea class="input" rows="4"></textarea>
+    <textarea class="textarea" rows="4"></textarea>
   </div>
 </div>
 ```

@@ -1,5 +1,4 @@
-/**
- * Interactive code blocks: optional line numbers, Prism highlight toggle, copy button.
+import { setHidden } from "./dom.js"; optional line numbers, Prism highlight toggle, copy button.
  *
  * Markup:
  *   <div class="code-block" data-code-mode="select" data-code-copy="true">
@@ -24,6 +23,8 @@
  * `initExpandableSurfaces()` from `app/expandable-surface.js`.
  */
 
+import { setHidden } from "./dom.js";
+
 const LANGUAGE_RE = /language-([\w-]+)/;
 const CODE_MODES = ["view", "select", "edit"];
 
@@ -47,7 +48,7 @@ function removeLineNumberMarkup(codeEl) {
 function setCopyEnabled(container, enabled) {
   const copyBtn = container.querySelector(".code-block-copy");
   if (!copyBtn) return;
-  copyBtn.hidden = !enabled;
+  setHidden(copyBtn, !enabled);
   copyBtn.disabled = !enabled;
 }
 
@@ -84,6 +85,10 @@ function countDisplayLines(text) {
  * }} [options]
  */
 export function initCodeBlock(container, options = {}) {
+  if (!(container instanceof HTMLElement)) return null;
+  if (container.dataset.codeBlockInit !== undefined) return null;
+  container.dataset.codeBlockInit = "";
+
   const pre = container.querySelector("pre");
   const code = pre?.querySelector("code");
   if (!pre || !code) return null;
@@ -267,15 +272,15 @@ export function initCodeBlock(container, options = {}) {
     if (mode === "edit") {
       const { editor } = ensureEditorStack();
       editor.value = source;
-      editor.hidden = false;
-      pre.hidden = false;
+      setHidden(editor, false);
+      setHidden(pre, false);
       refreshDisplay();
       setCopyEnabled(container, copyButton);
     } else {
       if (editorEl) {
-        editorEl.hidden = true;
+        setHidden(editorEl, true);
       }
-      pre.hidden = false;
+      setHidden(pre, false);
       refreshDisplay();
       setCopyEnabled(container, copyButton && mode !== "view");
     }

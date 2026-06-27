@@ -6,7 +6,6 @@ import { initExpands } from "./expand.js";
 import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
 import { initExpandableSurfaces } from "./expandable-surface.js";
-import { setHidden } from "./dom.js";
 import { showBanner, hideBanner } from "./banner.js";
 
 initShell();
@@ -148,7 +147,11 @@ for (const [buttonId, bannerId] of bannerToggles) {
   document.getElementById(buttonId)?.addEventListener("click", () => {
     const bannerEl = document.getElementById(bannerId);
     if (!bannerEl) return;
-    setHidden(bannerEl, !isBannerHidden(bannerEl));
+    if (isBannerHidden(bannerEl)) {
+      showBanner(bannerEl);
+    } else {
+      hideBanner(bannerEl);
+    }
   });
 }
 
@@ -166,6 +169,10 @@ document.getElementById("toggle-all-banners")?.addEventListener("click", () => {
   const hideAll = anyVisible;
 
   for (const banner of banners) {
-    setHidden(banner, hideAll);
+    if (hideAll) {
+      hideBanner(banner);
+    } else {
+      showBanner(banner);
+    }
   }
 });
