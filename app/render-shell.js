@@ -1,3 +1,5 @@
+import { SIG_ICON_SRC } from "./brand-icon.js";
+
 const DEFAULTS = {
   repoUrl: "https://github.com/filcuk/microapp-template",
   brandUrl: "https://github.com/filcuk",
@@ -47,8 +49,9 @@ export function renderPageShell(options = {}) {
           <a href="${repoUrl}" target="_blank" rel="noopener noreferrer">GitHub</a>
           · microapp by
         </span>
-        <a class="footer-brand" href="${brandUrl}" target="_blank" rel="noopener noreferrer">
-          <img src="app/res/icon/fi.svg" alt="${brandName}" width="26" height="26" />
+        <a class="footer-brand" href="${brandUrl}" target="_blank" rel="noopener noreferrer" data-tooltip="that's me!" data-tooltip-position="top">
+          <img class="brand-icon--light" src="${SIG_ICON_SRC.light}" alt="${brandName}" width="26" height="26" />
+          <img class="brand-icon--dark" src="${SIG_ICON_SRC.dark}" alt="${brandName}" width="26" height="26" />
         </a>
       </p>
       <div id="theme-toggle" class="theme-toggle" role="group" aria-label="Theme">

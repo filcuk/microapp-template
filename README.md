@@ -15,23 +15,28 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/components.css`](app/components.css). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/components.css`](app/components.css). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. |
-| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon` (with `aria-pressed` for toggles), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input` (single line) and `.textarea` (multi-line). |
+| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, and `.checkbox` / `.checkbox-input`. |
+| **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
+| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
+| **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
-| **Banners** | `.banner.banner-important`, `.banner-info`, `.banner-success`, `.banner-note`, `.banner-warning`, `.banner-error` with left icon via `data-icon` (`important`, `info`, `success`, `note`, `warning`, `error`). |
+| **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
+| **Code blocks** | `.code-block` with Prism highlighting, line numbers, copy, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
+| **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js) (`light-mode`, `dark-mode`, `auto-mode`, `lines`, …); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
-| **Toolbar helper** | `.toolbar` flex row for button groups. |
+| **Toolbar helper** | `.toolbar` flex row for button groups. See [`demo.html`](demo.html). |
 | **Demo page** | [`demo.html`](demo.html) showcases all components. |
-| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) example on the demo page with line numbers; see [`app/prism.js`](app/prism.js) and [`app/vendor/prism/`](app/vendor/prism/). |
+| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) via [`app/code-block.js`](app/code-block.js) and [`app/vendor/prism/`](app/vendor/prism/). See [`app/prism.js`](app/prism.js) for a minimal loader helper. |
 | **GitHub Pages** | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes `index.html`, `demo.html`, and `app/`. |
 
 ## Project structure
@@ -60,13 +65,20 @@ app/
   jump-up.js         # Re-exports page-nav (deprecated alias)
   icons.js          # Inline SVG icon registry
   tooltip.js        # Instant tooltips
+  banner.js           # showBanner / hideBanner with optional expiry
+  external-link.js  # Arrow icon on outgoing links
+  heading-link.js     # Copy section link on heading hover
   main.js           # index.html entry
   demo.js           # demo.html entry
   prism.css            # Prism token colours + line numbers (optional)
   prism.js             # initPrism() helper
   code-block.js        # Code block toggles + copy button
+  expandable-surface.js # Hover maximise for code blocks, textareas, …
   vendor/prism/        # Vendored Prism core, languages, plugins
-  res/icon.svg         # Placeholder logo
+  res/app-light.svg    # App logo (light theme) — header, favicon
+  res/app-dark.svg     # App logo (dark theme)
+  res/sig-light.svg    # Signature mark (light theme) — footer brand
+  res/sig-dark.svg     # Signature mark (dark theme)
 ```
 
 ## Local preview
@@ -136,6 +148,60 @@ import { initTooltips } from "./tooltip.js";
 initTooltips(document);
 ```
 
+### Banners
+
+Markup uses `.banner` plus a variant (`banner-success`, `banner-error`, …) and a `data-icon` for the left icon.
+
+Auto-hide after a delay — set `data-banner-expire` (milliseconds) and call `showBanner()`. A light overlay drains across the banner for the duration of the timeout, then the banner fades out quickly.
+
+```html
+<div id="saved-banner" class="banner banner-success hidden" role="status" hidden
+  data-banner-expire="1500">
+  <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
+  <span class="banner-body">Saved</span>
+</div>
+```
+
+```javascript
+import { showBanner, hideBanner } from "./banner.js";
+
+showBanner(document.getElementById("saved-banner"));
+// or override: showBanner(el, { expire: 3000 });
+hideBanner(el);
+```
+
+### External links
+
+Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-outward icon appended automatically. Opt out on a specific link:
+
+```html
+<a href="https://example.com" data-no-external-icon>Stay plain</a>
+```
+
+### Heading links
+
+Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
+
+```javascript
+import { initHeadingLinks } from "./heading-link.js";
+
+initHeadingLinks(document, { selector: "main h3[id]" });
+```
+
+### Toolbar
+
+Flex row for grouping related buttons. Wraps on narrow viewports.
+
+```html
+<div class="toolbar" role="toolbar" aria-label="Document actions">
+  <button type="button" class="btn">Undo</button>
+  <button type="button" class="btn">Redo</button>
+  <button type="button" class="btn btn-primary">Save</button>
+  <button type="button" class="btn btn-icon" aria-label="More options" data-icon="lines"
+    data-icon-class="btn-icon-svg"></button>
+</div>
+```
+
 ### Inputs
 
 ```html
@@ -148,7 +214,59 @@ initTooltips(document);
   <span class="field-label">Notes</span>
   <textarea id="notes" class="textarea" rows="4"></textarea>
 </label>
+
+<label class="checkbox" for="agree">
+  <input type="checkbox" class="checkbox-input" id="agree" />
+  <span>I agree</span>
+</label>
 ```
+
+### Section panel
+
+Three-column grid rows for compact forms. Stack fields across rows; use `.section-panel__divider` before actions.
+
+```html
+<div class="section-panel">
+  <div class="section-panel__grid">
+    <label class="field section-panel__field" for="name">
+      <span class="field-label">Label</span>
+      <input type="text" id="name" class="input" />
+    </label>
+  </div>
+  <div class="section-panel__grid">
+    <button type="button" class="btn btn-toggle section-panel__toggle" aria-pressed="false">Toggle</button>
+  </div>
+  <div class="section-panel__grid">
+    <label class="checkbox section-panel__checkbox" for="remember">
+      <input type="checkbox" class="checkbox-input" id="remember" />
+      <span>Remember settings</span>
+    </label>
+  </div>
+  <hr class="section-panel__divider" />
+  <div class="section-panel__row">
+    <div class="section-panel__feedback">
+      <div id="section-success" class="banner banner-success hidden" role="status" hidden
+        data-banner-expire="1500">
+        <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
+        <span class="banner-body">Submitted</span>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary section-panel__submit">Submit</button>
+  </div>
+</div>
+```
+
+```javascript
+import { showBanner, hideBanner } from "./banner.js";
+
+submitBtn.addEventListener("click", () => {
+  hideBanner(successBanner);
+  hideBanner(errorBanner);
+  showBanner(hasText ? successBanner : errorBanner);
+});
+```
+
+See the interactive example on [`demo.html`](demo.html).
 
 ### Combo button
 
@@ -270,12 +388,12 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 ```
 
 ```html
-<div class="code-block" data-code-copy="true">
+<div class="code-block" data-code-mode="select" data-code-copy="true" data-expandable-surface data-expandable-surface-label="Code sample">
   <div class="code-block-toolbar" role="group" aria-label="Code block options">
     <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers" aria-pressed="true">Line numbers</button>
     <button type="button" class="btn code-block-toggle" data-code-toggle="highlight" aria-pressed="true">Highlight</button>
   </div>
-  <div class="code-block-body">
+  <div class="code-block-body" data-expandable-surface-trigger>
     <button type="button" class="code-block-copy btn" aria-label="Copy code">Copy</button>
     <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
     return f"Hello, {name}!"
@@ -286,11 +404,42 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 
 ```javascript
 import { initCodeBlocks } from "./code-block.js";
+import { initExpandableSurfaces } from "./expandable-surface.js";
 
 initCodeBlocks(document);
+initExpandableSurfaces(document);
 ```
 
 Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line numbers require highlighting to be on.
+
+**Interaction modes** — set `data-code-mode` on `.code-block`:
+
+| Mode | Behaviour |
+| ---- | --------- |
+| `view` | Read-only display; text cannot be selected; copy button hidden |
+| `select` | Read-only; text selectable; copy and highlight toggles (default) |
+| `edit` | Editable overlay on highlighted `<pre>`; line numbers and highlight toggles apply |
+
+Switch modes at runtime via `initCodeBlock()` → `setMode("edit")`, `getMode()`, `getSource()`, `setSource(text)`.
+
+### Expandable surface
+
+Reusable expanded overlay for code blocks, multi-line inputs, or any block marked with `data-expandable-surface`. A maximise icon appears on hover (injected into the trigger element); click expands the surface to the page body width (`--page-width`), Escape or backdrop click closes it.
+
+```html
+<div class="field" data-expandable-surface data-expandable-surface-label="Notes">
+  <span class="field-label">Notes</span>
+  <div data-expandable-surface-trigger>
+    <textarea class="textarea" rows="4"></textarea>
+  </div>
+</div>
+```
+
+```javascript
+import { initExpandableSurfaces } from "./expandable-surface.js";
+
+initExpandableSurfaces(document);
+```
 
 Add other language components under `app/vendor/prism/` as needed from [Prism](https://prismjs.com/).
 
@@ -317,7 +466,7 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. Favicon and brand images (`app/res/icon.svg`, `app/res/icon/fi.svg`) stay as files.
+Add new icons to the `ICONS` object in `app/icons.js`. App logo (`app/res/app-light.svg`, `app/res/app-dark.svg`) and signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swap by theme via CSS; favicon syncs in `app/brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 

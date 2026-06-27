@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Component demo · Microapp template</title>
-  <link rel="icon" href="app/res/icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="app/res/app-light.svg" type="image/svg+xml" data-brand-icon />
   <script src="app/theme-init.js"></script>
   <link rel="stylesheet" href="app/styles.css" />
   <link rel="stylesheet" href="app/prism.css" />
@@ -14,7 +14,8 @@
 <body>
   <header>
     <div class="site-brand">
-      <img class="site-logo" src="app/res/icon.svg" alt="" width="40" height="40" />
+      <img class="site-logo brand-icon--light" src="app/res/app-light.svg" alt="" width="40" height="40" />
+      <img class="site-logo brand-icon--dark" src="app/res/app-dark.svg" alt="" width="40" height="40" />
       <h1>Component demo</h1>
     </div>
     <p class="tagline">
@@ -31,9 +32,24 @@
         <button type="button" class="btn">Default</button>
         <button type="button" class="btn btn-primary">Primary</button>
         <button type="button" class="btn" disabled>Disabled</button>
-        <button type="button" id="icon-toggle-btn" class="btn btn-icon" aria-pressed="true" aria-label="Toggle feature"
-          data-tooltip="Icon button with toggle state" data-icon="lines" data-icon-class="btn-icon-svg"></button>
+        <button type="button" id="icon-toggle-btn" class="btn btn-icon btn-toggle" aria-pressed="false"
+          aria-label="Toggle feature" data-tooltip="Icon button with toggle state" data-icon="lines"
+          data-icon-class="btn-icon-svg"></button>
         <button type="button" class="btn-link">Link button</button>
+      </div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-toolbar">
+      <h2 id="demo-toolbar" class="section-heading">Toolbar</h2>
+      <p class="demo-hint">
+        Use <code>.toolbar</code> to group related actions in a flex row (wraps on narrow screens).
+      </p>
+      <div class="toolbar" role="toolbar" aria-label="Example actions">
+        <button type="button" class="btn">Undo</button>
+        <button type="button" class="btn">Redo</button>
+        <button type="button" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-icon" aria-label="More options" data-tooltip="More options"
+          data-icon="lines" data-icon-class="btn-icon-svg"></button>
       </div>
     </section>
 
@@ -48,6 +64,63 @@
           <span class="field-label">Multi-line</span>
           <textarea id="demo-input-multiline" class="textarea" rows="4" placeholder="Enter longer text…"></textarea>
         </label>
+        <div class="field">
+          <span class="field-label">Checkbox</span>
+          <div class="checkbox-group">
+            <label class="checkbox" for="demo-checkbox-default">
+              <input type="checkbox" class="checkbox-input" id="demo-checkbox-default" />
+              <span>Option one</span>
+            </label>
+            <label class="checkbox" for="demo-checkbox-checked">
+              <input type="checkbox" class="checkbox-input" id="demo-checkbox-checked" checked />
+              <span>Option two (checked)</span>
+            </label>
+            <label class="checkbox" for="demo-checkbox-disabled">
+              <input type="checkbox" class="checkbox-input" id="demo-checkbox-disabled" disabled />
+              <span>Disabled</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-section-panel">
+      <h2 id="demo-section-panel" class="section-heading">Section panel</h2>
+      <div class="section-panel" id="demo-section-panel-block">
+        <div class="section-panel__grid">
+          <label class="field section-panel__field" for="demo-section-input">
+            <span class="field-label">Label</span>
+            <input type="text" id="demo-section-input" class="input" placeholder="Enter text…" />
+          </label>
+        </div>
+        <div class="section-panel__grid">
+          <button type="button" id="demo-section-toggle" class="btn btn-toggle section-panel__toggle"
+            aria-pressed="false">Toggle</button>
+        </div>
+        <div class="section-panel__grid">
+          <label class="checkbox section-panel__checkbox" for="demo-section-checkbox">
+            <input type="checkbox" class="checkbox-input" id="demo-section-checkbox" />
+            <span>Remember settings</span>
+          </label>
+        </div>
+        <hr class="section-panel__divider" />
+        <div class="section-panel__row">
+          <div class="section-panel__feedback">
+            <div id="demo-section-success" class="banner banner-success hidden" role="status" hidden
+              data-banner-expire="1500">
+              <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
+              <span class="banner-body">Submitted</span>
+            </div>
+            <div id="demo-section-error" class="banner banner-error hidden" role="alert" hidden
+              data-banner-expire="1500">
+              <span class="banner-icon" data-icon="error" data-icon-class="banner-icon-svg"></span>
+              <span class="banner-body">Input text</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary section-panel__submit" id="demo-section-submit">
+            Submit
+          </button>
+        </div>
       </div>
     </section>
 
@@ -176,6 +249,26 @@
           Toggle all banners
         </button>
       </div>
+      <div class="demo-row">
+        <button type="button" class="btn" id="trigger-note-banner">
+          Trigger note
+        </button>
+        <button type="button" class="btn" id="trigger-info-banner">
+          Trigger info
+        </button>
+        <button type="button" class="btn" id="trigger-success-banner">
+          Trigger success
+        </button>
+        <button type="button" class="btn" id="trigger-important-banner">
+          Trigger important
+        </button>
+        <button type="button" class="btn" id="trigger-warning-banner">
+          Trigger warning
+        </button>
+        <button type="button" class="btn" id="trigger-error-banner">
+          Trigger error
+        </button>
+      </div>
       <div id="demo-note-banner" class="banner banner-note hidden" role="note" hidden>
         <span class="banner-icon" data-icon="note" data-icon-class="banner-icon-svg"></span>
         <span class="banner-body">This is a note banner for supplementary detail that is easy to skim past.</span>
@@ -267,30 +360,85 @@
       <p class="demo-hint">
         Syntax highlighting via
         <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
-        Toggle line numbers or highlighting; hover the block to copy.
+        Set <code>data-code-mode</code> to <code>view</code>, <code>select</code>, or
+        <code>edit</code>. Hover blocks to copy or maximise (select and edit).
       </p>
-      <div class="code-block" id="demo-code-block" data-code-copy="true">
-        <div class="code-block-toolbar" role="group" aria-label="Code block options">
-          <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
-            aria-pressed="true">
-            Line numbers
-          </button>
-          <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
-            aria-pressed="true">
-            Highlight
-          </button>
+      <div class="demo-code-modes">
+        <div class="field">
+          <span class="field-label">View only</span>
+          <div class="code-block" data-code-mode="view" data-code-copy="true">
+            <div class="code-block-toolbar" role="group" aria-label="Code block options">
+              <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+                aria-pressed="true">
+                Line numbers
+              </button>
+              <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+                aria-pressed="true">
+                Highlight
+              </button>
+            </div>
+            <div class="code-block-body">
+              <button type="button" class="code-block-copy btn" aria-label="Copy code">
+                Copy
+              </button>
+              <pre class="line-numbers language-python"><code class="language-python"># Display only — text cannot be selected
+print("Hello, world!")
+</code></pre>
+            </div>
+          </div>
         </div>
-        <div class="code-block-body">
-          <button type="button" class="code-block-copy btn" aria-label="Copy code">
-            Copy
-          </button>
-          <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
+        <div class="field">
+          <span class="field-label">Select only</span>
+          <div class="code-block" id="demo-code-block" data-code-mode="select" data-code-copy="true"
+            data-expandable-surface data-expandable-surface-label="Code sample">
+            <div class="code-block-toolbar" role="group" aria-label="Code block options">
+              <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+                aria-pressed="true">
+                Line numbers
+              </button>
+              <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+                aria-pressed="true">
+                Highlight
+              </button>
+            </div>
+            <div class="code-block-body" data-expandable-surface-trigger>
+              <button type="button" class="code-block-copy btn" aria-label="Copy code">
+                Copy
+              </button>
+              <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
     """Return a greeting."""
     return f"Hello, {name}!"
 
 if __name__ == "__main__":
     print(greet("world"))
 </code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">Editable</span>
+          <div class="code-block" data-code-mode="edit" data-code-copy="true" data-expandable-surface
+            data-expandable-surface-label="Editable code">
+            <div class="code-block-toolbar" role="group" aria-label="Code block options">
+              <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers"
+                aria-pressed="true">
+                Line numbers
+              </button>
+              <button type="button" class="btn code-block-toggle" data-code-toggle="highlight"
+                aria-pressed="true">
+                Highlight
+              </button>
+            </div>
+            <div class="code-block-body" data-expandable-surface-trigger>
+              <button type="button" class="code-block-copy btn" aria-label="Copy code">
+                Copy
+              </button>
+              <pre class="line-numbers language-python"><code class="language-python"># Edit this code
+total = sum(range(5))
+print(total)
+</code></pre>
+            </div>
+          </div>
         </div>
       </div>
     </section>

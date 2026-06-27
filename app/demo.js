@@ -1,18 +1,18 @@
 import { initShell } from "./shell.js";
 import { initDialog } from "./dialog.js";
-import { initTooltips } from "./tooltip.js";
 import { initCombo } from "./combo.js";
 import { initDropdown } from "./dropdown.js";
 import { initExpands } from "./expand.js";
 import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
-import { setHidden } from "./dom.js";
+import { initExpandableSurfaces } from "./expandable-surface.js";
+import { showBanner, hideBanner } from "./banner.js";
 
 initShell();
-initTooltips(document);
 initExpands(document);
 initTabsBlocks(document);
 initCodeBlocks(document);
+initExpandableSurfaces(document);
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");
@@ -65,6 +65,31 @@ if (iconToggleBtn) {
   });
 }
 
+const sectionToggleBtn = document.getElementById("demo-section-toggle");
+if (sectionToggleBtn) {
+  sectionToggleBtn.addEventListener("click", () => {
+    const pressed = sectionToggleBtn.getAttribute("aria-pressed") === "true";
+    sectionToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
+  });
+}
+
+const sectionInput = document.getElementById("demo-section-input");
+const sectionSuccessBanner = document.getElementById("demo-section-success");
+const sectionErrorBanner = document.getElementById("demo-section-error");
+
+document.getElementById("demo-section-submit")?.addEventListener("click", () => {
+  const hasText = Boolean(sectionInput?.value.trim());
+
+  hideBanner(sectionSuccessBanner);
+  hideBanner(sectionErrorBanner);
+
+  if (hasText) {
+    showBanner(sectionSuccessBanner);
+  } else {
+    showBanner(sectionErrorBanner);
+  }
+});
+
 const infoDialog = initDialog({
   dialogEl: document.getElementById("info-dialog"),
   openTriggers: "#open-info-dialog",
@@ -97,6 +122,17 @@ const bannerToggles = [
   ["toggle-error-banner", "demo-error-banner"],
 ];
 
+const bannerTriggers = [
+  ["trigger-note-banner", "demo-note-banner"],
+  ["trigger-info-banner", "demo-info-banner"],
+  ["trigger-success-banner", "demo-success-banner"],
+  ["trigger-important-banner", "demo-important-banner"],
+  ["trigger-warning-banner", "demo-warning-banner"],
+  ["trigger-error-banner", "demo-error-banner"],
+];
+
+const BANNER_TRIGGER_EXPIRE_MS = 3000;
+
 function isBannerHidden(bannerEl) {
   return bannerEl.classList.contains("hidden") || bannerEl.hidden;
 }
@@ -111,7 +147,19 @@ for (const [buttonId, bannerId] of bannerToggles) {
   document.getElementById(buttonId)?.addEventListener("click", () => {
     const bannerEl = document.getElementById(bannerId);
     if (!bannerEl) return;
-    setHidden(bannerEl, !isBannerHidden(bannerEl));
+    if (isBannerHidden(bannerEl)) {
+      showBanner(bannerEl);
+    } else {
+      hideBanner(bannerEl);
+    }
+  });
+}
+
+for (const [buttonId, bannerId] of bannerTriggers) {
+  document.getElementById(buttonId)?.addEventListener("click", () => {
+    const bannerEl = document.getElementById(bannerId);
+    if (!bannerEl) return;
+    showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
   });
 }
 
@@ -121,6 +169,10 @@ document.getElementById("toggle-all-banners")?.addEventListener("click", () => {
   const hideAll = anyVisible;
 
   for (const banner of banners) {
-    setHidden(banner, hideAll);
+    if (hideAll) {
+      hideBanner(banner);
+    } else {
+      showBanner(banner);
+    }
   }
 });

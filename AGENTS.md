@@ -21,7 +21,7 @@ Prefer the simplest approach that fits the existing template.
 ## Reuse the design system
 
 - Use CSS custom properties from `app/tokens.css` (`--bg`, `--accent`, etc.)
-- Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.theme-toggle`
+- Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.section-panel`, `.code-block`, `.theme-toggle`
 - Add or edit inline UI icons in `app/icons.js` only — do not duplicate SVG paths in HTML
 - Do not introduce parallel styling systems (Tailwind, CSS-in-JS, component libraries)
 
@@ -33,7 +33,7 @@ Every HTML entry point should:
 2. Link `app/styles.css` (imports `tokens.css` + `components.css`)
 3. Call `initShell()` from `app/shell.js` as the first step in the page module
 
-`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, theme toggle, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
+`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
 Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks.
 
@@ -43,7 +43,12 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | -------- | ------- |
 | `initX({ … })` | Single instance (dialog, combo, dropdown, expand) |
 | `initXBlocks(root)` | Scan a subtree for `.x` blocks (tabs, expand, tooltips) |
-| `initShell()` | Standard page boot (footer, theme toggle, page nav) |
+| `initShell()` | Standard page boot (footer, theme, page nav, tooltips, external links, heading links) |
+| `initExternalLinks(root)` | Append arrow-outward icon to external links |
+| `initHeadingLinks(root)` | Copy-link button on `main h2[id]` headings |
+| `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with copy, modes, toolbar toggles |
+| `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
+| `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `render-shell.js` |
 | `setHidden(el, hidden)` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
@@ -54,7 +59,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 `app/document-listeners.js` registers **one** click and one keydown handler on `document`. Modules register callbacks:
 
 - **Click outside:** all handlers run on every click (menus close when click is outside)
-- **Escape:** handlers sorted by priority (higher first). Return `true` when handled. Dialogs use priority `100`, menus use `50`.
+- **Escape:** handlers sorted by priority (higher first). Return `true` when handled. Dialogs use priority `100`, expandable surfaces `90`, menus use `50`.
 
 When a module registers listeners, store and call the returned unsubscribe in `destroy()` if provided.
 
