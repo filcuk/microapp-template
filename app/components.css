@@ -24,6 +24,18 @@ body > footer {
   color: var(--accent);
 }
 
+img.brand-icon--dark {
+  display: none;
+}
+
+:root[data-theme="dark"] img.brand-icon--light {
+  display: none;
+}
+
+:root[data-theme="dark"] img.brand-icon--dark {
+  display: block;
+}
+
 .site-brand h1 {
   margin: 0;
   font-size: 1.75rem;
@@ -963,7 +975,6 @@ body > footer {
 }
 
 .footer-brand img {
-  display: block;
   width: 1.625rem;
   height: 1.625rem;
 }

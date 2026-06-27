@@ -1,6 +1,5 @@
 import { initShell } from "./shell.js";
 import { initDialog } from "./dialog.js";
-import { initTooltips } from "./tooltip.js";
 import { initCombo } from "./combo.js";
 import { initDropdown } from "./dropdown.js";
 import { initExpands } from "./expand.js";
@@ -9,7 +8,6 @@ import { initCodeBlocks } from "./code-block.js";
 import { setHidden } from "./dom.js";
 
 initShell();
-initTooltips(document);
 initExpands(document);
 initTabsBlocks(document);
 initCodeBlocks(document);

@@ -1,3 +1,5 @@
+import { syncBrandIcons } from "./brand-icon.js";
+
 const STORAGE_KEY = "microapp-theme";
 const MODES = ["auto", "light", "dark"];
 
@@ -21,6 +23,7 @@ function applyTheme(preference = getStoredPreference()) {
   const resolved = resolveTheme(preference);
   document.documentElement.dataset.theme = resolved;
   document.documentElement.dataset.themePreference = preference;
+  syncBrandIcons(resolved);
   document.dispatchEvent(
     new CustomEvent("microapp-theme-change", {
       detail: { preference, resolved },

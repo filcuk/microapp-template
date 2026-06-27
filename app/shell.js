@@ -2,6 +2,7 @@ import { renderPageShell } from "./render-shell.js";
 import { initIcons } from "./icons.js";
 import { initTheme, initThemeToggle } from "./theme.js";
 import { initPageNavPanel } from "./page-nav.js";
+import { initTooltips } from "./tooltip.js";
 
 /**
  * Render shared chrome, then boot icons, theme, and page navigation.
@@ -19,5 +20,6 @@ export function initShell(options = {}) {
   initIcons();
   initTheme();
   initThemeToggle(document.getElementById("theme-toggle"));
+  initTooltips(document);
   initPageNavPanel("#page-nav", pageNav);
 }

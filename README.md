@@ -66,7 +66,10 @@ app/
   prism.js             # initPrism() helper
   code-block.js        # Code block toggles + copy button
   vendor/prism/        # Vendored Prism core, languages, plugins
-  res/icon.svg         # Placeholder logo
+  res/app-light.svg    # App logo (light theme) — header, favicon
+  res/app-dark.svg     # App logo (dark theme)
+  res/sig-light.svg    # Signature mark (light theme) — footer brand
+  res/sig-dark.svg     # Signature mark (dark theme)
 ```
 
 ## Local preview
@@ -317,7 +320,7 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. Favicon and brand images (`app/res/icon.svg`, `app/res/icon/fi.svg`) stay as files.
+Add new icons to the `ICONS` object in `app/icons.js`. App logo (`app/res/app-light.svg`, `app/res/app-dark.svg`) and signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swap by theme via CSS; favicon syncs in `app/brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 
