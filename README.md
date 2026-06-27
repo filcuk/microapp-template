@@ -19,8 +19,8 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input` (single line) and `.textarea` (multi-line). |
-| **Section panel** | `.section-panel` three-column rows: row 1 input + toggle; row 2 submit (right) and full-width banner. See [`demo.html`](demo.html). |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, and `.checkbox` / `.checkbox-input`. |
+| **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
@@ -197,21 +197,35 @@ initHeadingLinks(document, { selector: "main h3[id]" });
   <span class="field-label">Notes</span>
   <textarea id="notes" class="textarea" rows="4"></textarea>
 </label>
+
+<label class="checkbox" for="agree">
+  <input type="checkbox" class="checkbox-input" id="agree" />
+  <span>I agree</span>
+</label>
 ```
 
 ### Section panel
 
-Three-column rows for compact forms. Row 1: input spans columns 1–2, toggle in column 3. Row 2: feedback banner inline with submit on the right.
+Three-column grid rows for compact forms. Stack fields across rows; use `.section-panel__divider` before actions.
 
 ```html
 <div class="section-panel">
   <div class="section-panel__grid">
-    <label class="field section-panel__field section-panel__field--span-2" for="name">
+    <label class="field section-panel__field" for="name">
       <span class="field-label">Label</span>
       <input type="text" id="name" class="input" />
     </label>
+  </div>
+  <div class="section-panel__grid">
     <button type="button" class="btn btn-toggle section-panel__toggle" aria-pressed="false">Toggle</button>
   </div>
+  <div class="section-panel__grid">
+    <label class="checkbox section-panel__checkbox" for="remember">
+      <input type="checkbox" class="checkbox-input" id="remember" />
+      <span>Remember settings</span>
+    </label>
+  </div>
+  <hr class="section-panel__divider" />
   <div class="section-panel__row">
     <div class="section-panel__feedback">
       <div class="banner banner-success" role="status">…</div>

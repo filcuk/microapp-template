@@ -50,6 +50,23 @@
           <span class="field-label">Multi-line</span>
           <textarea id="demo-input-multiline" class="textarea" rows="4" placeholder="Enter longer text…"></textarea>
         </label>
+        <div class="field">
+          <span class="field-label">Checkbox</span>
+          <div class="checkbox-group">
+            <label class="checkbox" for="demo-checkbox-default">
+              <input type="checkbox" class="checkbox-input" id="demo-checkbox-default" />
+              <span>Option one</span>
+            </label>
+            <label class="checkbox" for="demo-checkbox-checked">
+              <input type="checkbox" class="checkbox-input" id="demo-checkbox-checked" checked />
+              <span>Option two (checked)</span>
+            </label>
+            <label class="checkbox" for="demo-checkbox-disabled">
+              <input type="checkbox" class="checkbox-input" id="demo-checkbox-disabled" disabled />
+              <span>Disabled</span>
+            </label>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -57,13 +74,22 @@
       <h2 id="demo-section-panel" class="section-heading">Section panel</h2>
       <div class="section-panel" id="demo-section-panel-block">
         <div class="section-panel__grid">
-          <label class="field section-panel__field section-panel__field--span-2" for="demo-section-input">
+          <label class="field section-panel__field" for="demo-section-input">
             <span class="field-label">Label</span>
             <input type="text" id="demo-section-input" class="input" placeholder="Enter text…" />
           </label>
+        </div>
+        <div class="section-panel__grid">
           <button type="button" id="demo-section-toggle" class="btn btn-toggle section-panel__toggle"
             aria-pressed="false">Toggle</button>
         </div>
+        <div class="section-panel__grid">
+          <label class="checkbox section-panel__checkbox" for="demo-section-checkbox">
+            <input type="checkbox" class="checkbox-input" id="demo-section-checkbox" />
+            <span>Remember settings</span>
+          </label>
+        </div>
+        <hr class="section-panel__divider" />
         <div class="section-panel__row">
           <div class="section-panel__feedback">
             <div id="demo-section-success" class="banner banner-success hidden" role="status" hidden
