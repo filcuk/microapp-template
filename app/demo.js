@@ -63,6 +63,29 @@ if (iconToggleBtn) {
   });
 }
 
+const sectionToggleBtn = document.getElementById("demo-section-toggle");
+if (sectionToggleBtn) {
+  sectionToggleBtn.addEventListener("click", () => {
+    const pressed = sectionToggleBtn.getAttribute("aria-pressed") === "true";
+    sectionToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
+  });
+}
+
+const sectionInput = document.getElementById("demo-section-input");
+const sectionSuccessBanner = document.getElementById("demo-section-success");
+const sectionErrorBanner = document.getElementById("demo-section-error");
+
+document.getElementById("demo-section-submit")?.addEventListener("click", () => {
+  const hasText = Boolean(sectionInput?.value.trim());
+
+  if (sectionSuccessBanner) {
+    setHidden(sectionSuccessBanner, !hasText);
+  }
+  if (sectionErrorBanner) {
+    setHidden(sectionErrorBanner, hasText);
+  }
+});
+
 const infoDialog = initDialog({
   dialogEl: document.getElementById("info-dialog"),
   openTriggers: "#open-info-dialog",
