@@ -81,6 +81,151 @@
             </label>
           </div>
         </div>
+        <div class="field">
+          <span class="field-label" id="demo-radio-label">Radio</span>
+          <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-labelledby="demo-radio-label">
+            <label class="radio" for="demo-radio-a">
+              <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-a" value="a" checked />
+              <span>Option A</span>
+            </label>
+            <label class="radio" for="demo-radio-b">
+              <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-b" value="b" />
+              <span>Option B</span>
+            </label>
+            <label class="radio" for="demo-radio-c">
+              <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-c" value="c" disabled />
+              <span>Option C (disabled)</span>
+            </label>
+          </div>
+          <p id="demo-radio-result" class="demo-hint" aria-live="polite">Selected: Option A</p>
+        </div>
+        <div class="field date-picker" id="demo-date-picker">
+          <label class="field-label" for="demo-date-picker-input">Date picker</label>
+          <div class="date-picker-control">
+            <input type="hidden" class="date-picker-value" />
+            <input type="text" id="demo-date-picker-input" class="input date-picker-input"
+              placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+            <button type="button" class="date-picker-trigger" aria-label="Open calendar"
+              data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
+          </div>
+          <div class="date-picker-popup hidden" role="dialog" aria-modal="true" aria-label="Choose date" hidden>
+            <div class="date-picker-header">
+              <button type="button" class="date-picker-nav btn btn-link" data-date-picker-prev
+                aria-label="Previous month">‹</button>
+              <div class="date-picker-caption" aria-live="polite"></div>
+              <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next
+                aria-label="Next month">›</button>
+            </div>
+            <div class="date-picker-weekdays" aria-hidden="true">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="date-picker-grid" role="grid"></div>
+            <div class="date-picker-actions">
+              <button type="button" class="btn date-picker-quick-btn" data-date-picker-today>Today</button>
+            </div>
+          </div>
+          <p id="demo-date-picker-result" class="demo-hint" aria-live="polite">No date selected.</p>
+        </div>
+        <div class="field date-picker" id="demo-date-picker-time" data-date-picker-time>
+          <label class="field-label" for="demo-date-picker-time-input">Date picker with time</label>
+          <div class="date-picker-row">
+            <div class="date-picker-control">
+              <input type="hidden" class="date-picker-value" />
+              <input type="text" id="demo-date-picker-time-input" class="input date-picker-input"
+                placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+              <button type="button" class="date-picker-trigger" aria-label="Open calendar"
+                data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
+            </div>
+            <input type="time" class="input date-picker-time hidden" hidden />
+            <div class="date-picker-popup hidden" role="dialog" aria-modal="true" aria-label="Choose date" hidden>
+              <div class="date-picker-header">
+                <button type="button" class="date-picker-nav btn btn-link" data-date-picker-prev
+                  aria-label="Previous month">‹</button>
+                <div class="date-picker-caption" aria-live="polite"></div>
+                <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next
+                  aria-label="Next month">›</button>
+              </div>
+              <div class="date-picker-weekdays" aria-hidden="true">
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="date-picker-grid" role="grid"></div>
+              <div class="date-picker-actions">
+                <button type="button" class="btn date-picker-quick-btn" data-date-picker-today>Today</button>
+                <button type="button" class="btn date-picker-quick-btn" data-date-picker-now>Now</button>
+              </div>
+            </div>
+          </div>
+          <p id="demo-date-picker-time-result" class="demo-hint" aria-live="polite">No date or time selected.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-file-dropzone-title">
+      <h2 id="demo-file-dropzone-title" class="section-heading">File dropzone</h2>
+      <div class="demo-fields">
+        <div class="field">
+          <span class="field-label">Single file</span>
+          <div class="file-dropzone" id="demo-file-dropzone-single">
+            <input type="file" class="file-dropzone-input" hidden />
+            <button type="button" class="file-dropzone-prompt">
+              <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+              <span class="file-dropzone-text">
+                <span class="file-dropzone-primary">Drop a file here</span>
+                <span class="file-dropzone-secondary">or browse</span>
+              </span>
+            </button>
+            <ul class="file-dropzone-list hidden" hidden></ul>
+          </div>
+          <p id="demo-file-dropzone-single-result" class="demo-hint" aria-live="polite">No file selected.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Multiple images</span>
+          <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
+            data-file-max="5">
+            <input type="file" class="file-dropzone-input" hidden />
+            <button type="button" class="file-dropzone-prompt">
+              <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+              <span class="file-dropzone-text">
+                <span class="file-dropzone-primary">Drop images here</span>
+                <span class="file-dropzone-secondary">or browse - up to 5 files</span>
+              </span>
+            </button>
+            <ul class="file-dropzone-list hidden" hidden></ul>
+          </div>
+          <p id="demo-file-dropzone-multi-result" class="demo-hint" aria-live="polite">No files selected.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-file-download-title">
+      <h2 id="demo-file-download-title" class="section-heading">File download</h2>
+      <div class="demo-fields">
+        <div class="field">
+          <span class="field-label">Generated files</span>
+          <div class="file-download" id="demo-file-download">
+            <ul class="file-download-list">
+              <li class="file-download-item" data-file-download-name="hello.txt">
+                <span class="file-download-item-name">hello.txt</span>
+                <span class="file-download-item-meta">Plain text</span>
+                <button type="button" class="file-download-action btn btn-icon" aria-label="Download hello.txt"
+                  data-icon="upload" data-icon-class="file-download-action-icon"></button>
+              </li>
+              <li class="file-download-item" data-file-download-name="notes.txt">
+                <span class="file-download-item-name">notes.txt</span>
+                <span class="file-download-item-meta">Plain text</span>
+                <button type="button" class="file-download-action btn btn-icon" aria-label="Download notes.txt"
+                  data-icon="upload" data-icon-class="file-download-action-icon"></button>
+              </li>
+              <li class="file-download-item" data-file-download-name="summary.txt">
+                <span class="file-download-item-name">summary.txt</span>
+                <span class="file-download-item-meta">Plain text</span>
+                <button type="button" class="file-download-action btn btn-icon" aria-label="Download summary.txt"
+                  data-icon="upload" data-icon-class="file-download-action-icon"></button>
+              </li>
+            </ul>
+          </div>
+          <p id="demo-file-download-result" class="demo-hint" aria-live="polite">Use the download buttons on each row.</p>
+        </div>
       </div>
     </section>
 
@@ -122,6 +267,52 @@
           </button>
         </div>
       </div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-combobox-title">
+      <h2 id="demo-combobox-title" class="section-heading">Combobox</h2>
+      <p class="demo-hint">Type to filter suggestions. Arrow keys navigate; Enter selects.</p>
+      <div class="combobox" id="demo-combobox">
+        <label class="field-label" for="demo-combobox-input">City</label>
+        <div class="combobox-control">
+          <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
+            aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
+            placeholder="Search cities…" />
+          <ul id="demo-combobox-list" class="combobox-list hidden" role="listbox" hidden>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p id="demo-combobox-result" class="demo-hint" aria-live="polite">No city selected.</p>
     </section>
 
     <section class="demo-section" aria-labelledby="demo-combo-title">
@@ -182,6 +373,41 @@
         </ul>
       </div>
       <p id="demo-dropdown-result" class="demo-hint" aria-live="polite"></p>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-toggle-dropdown-title">
+      <h2 id="demo-toggle-dropdown-title" class="section-heading">Toggle dropdown</h2>
+      <p class="demo-hint">
+        Same as a dropdown, but each item toggles on or off and the menu stays open.
+      </p>
+      <div class="dropdown" id="demo-toggle-dropdown">
+        <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
+          aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
+          <span class="dropdown-trigger-label">Toggle items</span>
+          <span class="combo-btn-chevron" aria-hidden="true"></span>
+        </button>
+        <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
+          <li role="none">
+            <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+              data-value="alpha">
+              Alpha
+            </button>
+          </li>
+          <li role="none">
+            <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+              data-value="beta">
+              Beta
+            </button>
+          </li>
+          <li role="none">
+            <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+              data-value="gamma">
+              Gamma
+            </button>
+          </li>
+        </ul>
+      </div>
+      <p id="demo-toggle-dropdown-result" class="demo-hint" aria-live="polite"></p>
     </section>
 
     <section class="demo-section" aria-labelledby="demo-tooltips">
@@ -342,8 +568,8 @@
         <div id="demo-expand-panel" class="expand-panel hidden" hidden>
           <div class="expand-body">
             <p>
-              Extra settings or detail live here. The notch stays on the trigger row;
-              the panel opens separately below.
+              Extra settings or detail live here. The trigger and panel share one bordered
+              container, like a single accordion section.
             </p>
             <p>
               Wire up with <code>initExpand()</code> from
@@ -353,6 +579,71 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="demo-section" aria-labelledby="demo-accordion-title">
+      <h2 id="demo-accordion-title" class="section-heading">Accordion</h2>
+      <p class="demo-hint">
+        A vertical stack of headings that toggle panels below. Only one section stays open at a time.
+        Arrow keys move between headers when focused.
+      </p>
+      <div class="accordion" id="demo-accordion" data-accordion-default-open="1">
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button type="button" class="accordion-trigger" id="demo-accordion-trigger-1" aria-expanded="false"
+              aria-controls="demo-accordion-panel-1">
+              <span class="accordion-notch" aria-hidden="true"></span>
+              <span class="accordion-label">What is this template?</span>
+            </button>
+          </h3>
+          <div id="demo-accordion-panel-1" class="accordion-panel hidden" role="region"
+            aria-labelledby="demo-accordion-trigger-1" hidden>
+            <div class="accordion-body">
+              <p>
+                A vanilla HTML, CSS, and JavaScript starter for small static apps deployed to GitHub Pages.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button type="button" class="accordion-trigger" id="demo-accordion-trigger-2" aria-expanded="false"
+              aria-controls="demo-accordion-panel-2">
+              <span class="accordion-notch" aria-hidden="true"></span>
+              <span class="accordion-label">How do I use components?</span>
+            </button>
+          </h3>
+          <div id="demo-accordion-panel-2" class="accordion-panel hidden" role="region"
+            aria-labelledby="demo-accordion-trigger-2" hidden>
+            <div class="accordion-body">
+              <p>
+                Copy markup from <code>demo.html</code>, import the matching module from
+                <code>app/</code>, and call its <code>init</code> helper. See
+                <code>USAGE.md</code> for the full catalogue.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <h3 class="accordion-heading">
+            <button type="button" class="accordion-trigger" id="demo-accordion-trigger-3" aria-expanded="false"
+              aria-controls="demo-accordion-panel-3">
+              <span class="accordion-notch" aria-hidden="true"></span>
+              <span class="accordion-label">Accordion vs expand?</span>
+            </button>
+          </h3>
+          <div id="demo-accordion-panel-3" class="accordion-panel hidden" role="region"
+            aria-labelledby="demo-accordion-trigger-3" hidden>
+            <div class="accordion-body">
+              <p>
+                Use <code>.expand</code> for a single disclosure. Use <code>.accordion</code> when you have
+                several related sections and want one open panel at a time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p id="demo-accordion-result" class="demo-hint" aria-live="polite">Open: How do I use components?</p>
     </section>
 
     <section class="demo-section" aria-labelledby="demo-code">

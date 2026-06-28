@@ -124,12 +124,14 @@ export function initPageNav(
     requestAnimationFrame(update);
   }
 
-  function onJumpUp() {
+  function onJumpUp(event) {
     scrollToY(0);
+    event.currentTarget?.blur();
   }
 
-  function onJumpDown() {
+  function onJumpDown(event) {
     scrollToY(getMaxScroll());
+    event.currentTarget?.blur();
   }
 
   function destroy() {

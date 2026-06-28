@@ -9,6 +9,7 @@ export function initPopupMenu({
   toggleEl,
   itemSelector,
   onSelect,
+  closeOnSelect = true,
 }) {
   if (!containerEl || !menuEl) return null;
 
@@ -40,7 +41,7 @@ export function initPopupMenu({
   function onMenuClick(e) {
     const item = e.target.closest(itemSelector);
     if (!item) return;
-    closeMenu();
+    if (closeOnSelect) closeMenu();
     onSelect?.({
       containerEl,
       item,
