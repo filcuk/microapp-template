@@ -206,6 +206,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, and `.radio` / `.radio-input`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
+| **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
@@ -403,6 +404,47 @@ initFileDropzones(document); // wire every `.file-dropzone`
 ```
 
 `data-file-accept` maps to the hidden input's `accept`. `data-file-multiple` enables multi-select. `data-file-max` caps how many files can be added (extra files are trimmed; `onError` is called).
+
+### File download
+
+File rows styled like `.file-dropzone-item`. Content is generated on demand when the user clicks download.
+
+```html
+<div class="file-download" id="my-download">
+  <ul class="file-download-list">
+    <li class="file-download-item" data-file-download-name="export.txt">
+      <span class="file-download-item-name">export.txt</span>
+      <span class="file-download-item-meta">Plain text</span>
+      <button type="button" class="file-download-action btn btn-icon" aria-label="Download export.txt"
+        data-icon="upload" data-icon-class="file-download-action-icon"></button>
+    </li>
+  </ul>
+</div>
+```
+
+```javascript
+import { downloadFile, initFileDownload, initFileDownloads } from "./file-download.js";
+
+initFileDownload(document.getElementById("my-download"), {
+  files: [
+    {
+      filename: "export.txt",
+      getContent: () => `Generated at ${new Date().toISOString()}\n`,
+    },
+  ],
+  onDownload: ({ filename, size }) => console.log(filename, size),
+});
+
+// Or trigger directly:
+await downloadFile({
+  filename: "notes.txt",
+  content: "Plain text body",
+});
+
+initFileDownloads(document); // wire every `.file-download`
+```
+
+Pass a `files` array with per-file `getContent` callbacks. File size is shown in `.file-download-item-meta` when content can be resolved at init time.
 
 ### Section panel
 

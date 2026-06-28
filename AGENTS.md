@@ -54,6 +54,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
 | `initDropdown()` / `initToggleDropdown()` | Single-select vs multi-select toggle dropdown menus |
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
+| `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
 
 ### Document listeners
@@ -73,7 +74,8 @@ Always use `setHidden()` from `app/dom.js` when showing/hiding elements programm
 
 - Declare icons with `data-icon="name"` and optional `data-icon-class="…"` in HTML
 - Call `initIcons()` (via `initShell()`) to inject SVGs
-- Add new icon paths only in `app/icons.js`
+- **Agents must not invent or generate SVG paths** — see [`.cursor/rules/icons.mdc`](.cursor/rules/icons.mdc). If an icon is missing, ask the user to add it to `app/icons.js` (a blank template is documented in that file’s header). Reuse existing ids or `{ ref: "other-icon" }` when appropriate.
+- Users add new icon paths in `app/icons.js` only — do not duplicate SVG paths in HTML
 - Source SVGs from [Icônes — Google Material Icons (Round variant)](https://icones.js.org/collection/ic?s=info&variant=Round); copy path markup into `ICONS` and set `attribution` when required
 - For sourced icons, set `name` to the original collection id (e.g. `round-info`) — metadata for traceability; omit for custom or in-house icons. The `ICONS` object key remains the app id used in `data-icon`
 - To alias one app id to another, use `{ ref: "other-icon" }` instead of duplicating markup (e.g. `lines: { ref: "note" }`)
@@ -87,7 +89,7 @@ Always use `setHidden()` from `app/dom.js` when showing/hiding elements programm
 | `app/tokens.css` | Reset, `:root` tokens, dark theme, base typography, `.hidden`, reduced-motion |
 | `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
 | `app/css/code-block.css` | Code blocks and expandable surfaces |
-| `app/css/controls.css` | Buttons, fields, menus, expand, tabs, file dropzone |
+| `app/css/controls.css` | Buttons, fields, menus, expand, tabs, file dropzone, file download |
 | `app/css/overlays.css` | Banners, tooltips, modals |
 
 Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.
