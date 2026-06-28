@@ -53,6 +53,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `setHidden(el, hidden)` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
 | `initDropdown()` / `initToggleDropdown()` | Single-select vs multi-select toggle dropdown menus |
+| `initCombobox()` / `initComboboxes()` | Text input with filterable autocomplete list |
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
@@ -90,7 +91,7 @@ Always use `setHidden()` from `app/dom.js` when showing/hiding elements programm
 | `app/tokens.css` | Reset, `:root` tokens, dark theme, base typography, `.hidden`, reduced-motion |
 | `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
 | `app/css/code-block.css` | Code blocks and expandable surfaces |
-| `app/css/controls.css` | Buttons, fields, menus, expand, accordion, tabs, date/time, file dropzone, file download |
+| `app/css/controls.css` | Buttons, fields, menus, combobox, expand, accordion, tabs, date/time, file dropzone, file download |
 | `app/css/overlays.css` | Banners, tooltips, modals |
 
 Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.

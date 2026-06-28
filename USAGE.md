@@ -161,6 +161,7 @@ app/
   menu.js               # Shared popup menu logic (combo, dropdown)
   dialog.js             # Modal controller
   combo.js              # Combo button controller
+  combobox.js           # Combobox with text autocomplete
   dropdown.js           # Dropdown menu controller
   dropdown-toggle.js    # Multi-select toggle dropdown
   expand.js             # Expand / disclosure controller
@@ -204,11 +205,12 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, and `.date-picker`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
+| **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
@@ -562,6 +564,50 @@ initCombo(document.getElementById("my-combo"), {
 ```
 
 Markup: `.combo-btn` > `.combo-btn-main` + `.combo-btn-toggle` + `ul.combo-menu` with `.combo-menu-item` buttons.
+
+### Combobox
+
+Text field with a filterable suggestion list. Options can live in markup or be supplied in JS. By default the value must match a list item; set `allowCustom: true` or `data-combobox-allow-custom` to accept free text.
+
+```html
+<div class="combobox" id="my-combobox">
+  <label class="field-label" for="my-combobox-input">City</label>
+  <div class="combobox-control">
+    <input type="text" id="my-combobox-input" class="input combobox-input" role="combobox"
+      aria-expanded="false" aria-autocomplete="list" aria-controls="my-combobox-list" autocomplete="off"
+      placeholder="Search…" />
+    <ul id="my-combobox-list" class="combobox-list hidden" role="listbox" hidden>
+      <li role="presentation">
+        <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
+      </li>
+    </ul>
+  </div>
+</div>
+```
+
+```javascript
+import { initCombobox, initComboboxes } from "./combobox.js";
+
+const combobox = initCombobox(document.getElementById("my-combobox"), {
+  onSelect: ({ value, label }) => { /* item chosen from list */ },
+  onChange: ({ value, label, input }) => { /* value committed or cleared */ },
+  onInput: ({ query, matches }) => { /* filter text changed */ },
+  // options: [{ value: "nyc", label: "New York" }, …],  // replace markup list
+  // filter: (query, option) => option.label.startsWith(query),
+  // allowCustom: true,
+  // defaultValue: "nyc",
+});
+
+combobox?.getValue();
+combobox?.setValue("nyc");
+combobox?.setOptions([{ value: "nyc", label: "New York" }]);
+
+initComboboxes(document); // all `.combobox` blocks
+```
+
+Keyboard: ArrowDown / ArrowUp navigate suggestions, Enter selects, Escape closes and restores the last committed value.
+
+See the interactive example on [`demo.html`](demo.html).
 
 ### Dropdown
 

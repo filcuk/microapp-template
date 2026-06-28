@@ -269,6 +269,52 @@
       </div>
     </section>
 
+    <section class="demo-section" aria-labelledby="demo-combobox-title">
+      <h2 id="demo-combobox-title" class="section-heading">Combobox</h2>
+      <p class="demo-hint">Type to filter suggestions. Arrow keys navigate; Enter selects.</p>
+      <div class="combobox" id="demo-combobox">
+        <label class="field-label" for="demo-combobox-input">City</label>
+        <div class="combobox-control">
+          <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
+            aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
+            placeholder="Search cities…" />
+          <ul id="demo-combobox-list" class="combobox-list hidden" role="listbox" hidden>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
+            </li>
+            <li role="presentation">
+              <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p id="demo-combobox-result" class="demo-hint" aria-live="polite">No city selected.</p>
+    </section>
+
     <section class="demo-section" aria-labelledby="demo-combo-title">
       <h2 id="demo-combo-title" class="section-heading">Combo button</h2>
       <div class="combo-btn" id="demo-combo">

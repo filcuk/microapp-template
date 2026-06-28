@@ -1,5 +1,6 @@
 import { initShell } from "./shell.js";
 import { initDialog } from "./dialog.js";
+import { initCombobox } from "./combobox.js";
 import { initCombo } from "./combo.js";
 import { initDropdown } from "./dropdown.js";
 import { initToggleDropdown } from "./dropdown-toggle.js";
@@ -140,6 +141,7 @@ demoRadioGroup?.addEventListener("change", (event) => {
 });
 
 const comboResultEl = document.getElementById("demo-combo-result");
+const comboboxResultEl = document.getElementById("demo-combobox-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");
 const toggleDropdownResultEl = document.getElementById("demo-toggle-dropdown-result");
 
@@ -158,6 +160,18 @@ function pickRandomOption(options, excludeValue) {
 }
 
 let lastComboValue = null;
+
+initCombobox(document.getElementById("demo-combobox"), {
+  onSelect: ({ value, label }) => {
+    if (comboboxResultEl) {
+      comboboxResultEl.textContent = `Selected: ${label} (${value})`;
+    }
+  },
+  onChange: ({ value, label }) => {
+    if (!comboboxResultEl) return;
+    comboboxResultEl.textContent = value ? `Selected: ${label} (${value})` : "No city selected.";
+  },
+});
 
 initCombo(document.getElementById("demo-combo"), {
   onMainClick: () => {
