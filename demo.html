@@ -19,8 +19,7 @@
       <h1>Component demo</h1>
     </div>
     <p class="tagline">
-      Scroll through basic, advanced, and specialised building blocks from the
-      <a href="index.html">microapp template</a>. Each section is interactive — try the controls and read the hints.
+      Examples of <a href="index.html">template</a> building blocks.
     </p>
   </header>
 
@@ -29,18 +28,17 @@
       <header class="demo-tier-header">
         <h2 id="demo-tier-basic-title" class="demo-tier-title">Basic</h2>
         <p class="demo-tier-lead">
-          Core markup and styles. Most of these work with CSS alone; tooltips and theme come from
-          <code>initShell()</code>.
+          Simple common blocks & controls.
         </p>
       </header>
 
       <div class="demo-tier-body">
         <section class="demo-section" aria-labelledby="demo-actions">
           <h2 id="demo-actions" class="section-heading">Actions</h2>
-          <p class="demo-hint">Button variants and a toolbar for grouping related controls.</p>
           <div class="demo-grid demo-grid-2">
             <div class="demo-card">
               <h3 class="demo-card-title">Buttons</h3>
+              <p class="demo-hint">Standard set of buttons.</p>
               <div class="demo-row">
                 <button type="button" class="btn">Default</button>
                 <button type="button" class="btn btn-primary">Primary</button>
@@ -53,7 +51,7 @@
             </div>
             <div class="demo-card">
               <h3 class="demo-card-title">Toolbar</h3>
-              <p class="demo-hint"><code>.toolbar</code> groups actions in a flex row that wraps on narrow screens.</p>
+              <p class="demo-hint">Group of actions in a flex row.</p>
               <div class="toolbar" role="toolbar" aria-label="Example actions">
                 <button type="button" class="btn">Undo</button>
                 <button type="button" class="btn">Redo</button>
@@ -67,7 +65,7 @@
 
         <section class="demo-section" aria-labelledby="demo-fields">
           <h2 id="demo-fields" class="section-heading">Form fields</h2>
-          <p class="demo-hint">Standard inputs — pair each field with a <code>.field-label</code>.</p>
+          <p class="demo-hint">Standard inputs.</p>
           <div class="demo-fields">
             <div class="demo-grid demo-grid-2">
               <label class="field" for="demo-input-single">
@@ -82,7 +80,7 @@
             <div class="demo-grid demo-grid-2">
               <div class="field">
                 <span class="field-label">Checkbox</span>
-                <div class="checkbox-group">
+                <div class="checkbox-group" id="demo-checkbox-group">
                   <label class="checkbox" for="demo-checkbox-default">
                     <input type="checkbox" class="checkbox-input" id="demo-checkbox-default" />
                     <span>Option one</span>
@@ -93,9 +91,10 @@
                   </label>
                   <label class="checkbox" for="demo-checkbox-disabled">
                     <input type="checkbox" class="checkbox-input" id="demo-checkbox-disabled" disabled />
-                    <span>Disabled</span>
+                    <span>Option three (disabled)</span>
                   </label>
                 </div>
+                <p id="demo-checkbox-result" class="demo-hint" aria-live="polite">Selected: Option two (checked)</p>
               </div>
               <div class="field">
                 <span class="field-label" id="demo-radio-label">Radio</span>
@@ -121,7 +120,7 @@
 
         <section class="demo-section" aria-labelledby="demo-tooltips">
           <h2 id="demo-tooltips" class="section-heading">Tooltips</h2>
-          <p class="demo-hint">Add <code>data-tooltip</code> to any element; optional <code>data-tooltip-position</code>.</p>
+          <p class="demo-hint">Add <code>data-tooltip</code> to any element; include optional <code>data-tooltip-position</code>.</p>
           <div class="demo-row">
             <button type="button" class="btn" data-tooltip="Save your changes">
               Hover me
@@ -208,7 +207,7 @@
 
         <section class="demo-section" aria-labelledby="demo-dialogs">
           <h2 id="demo-dialogs" class="section-heading">Dialogs</h2>
-          <p class="demo-hint">Modal overlays with focus trap, Escape to close, and backdrop click.</p>
+          <p class="demo-hint">Modal overlays with focus trap.</p>
           <div class="demo-row">
             <button type="button" class="btn" id="open-info-dialog">
               Open info dialog
@@ -225,19 +224,17 @@
       <header class="demo-tier-header">
         <h2 id="demo-tier-advanced-title" class="demo-tier-title">Advanced</h2>
         <p class="demo-tier-lead">
-          Interactive controls — copy markup from here, import the matching module from
-          <code>app/</code>, and call its <code>init</code> helper. See <code>USAGE.md</code> for options.
+          A set of more complex and interactive components.
         </p>
       </header>
 
       <div class="demo-tier-body">
         <section class="demo-section" aria-labelledby="demo-menus">
           <h2 id="demo-menus" class="section-heading">Menus &amp; pickers</h2>
-          <p class="demo-hint">Popup menus and type-ahead selection. Each card shows live feedback below the control.</p>
           <div class="demo-grid demo-grid-2">
             <div class="demo-card">
               <h3 class="demo-card-title">Combobox</h3>
-              <p class="demo-hint">Type to filter; arrow keys navigate, Enter selects.</p>
+              <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
               <div class="combobox" id="demo-combobox">
                 <label class="field-label" for="demo-combobox-input">City</label>
                 <div class="combobox-control">
@@ -446,7 +443,7 @@
 
             <div class="demo-grid demo-grid-2">
               <div class="field">
-                <span class="field-label">File dropzone — single</span>
+                <span class="field-label">File dropzone - single</span>
                 <div class="file-dropzone" id="demo-file-dropzone-single">
                   <input type="file" class="file-dropzone-input" hidden />
                   <button type="button" class="file-dropzone-prompt">
@@ -461,7 +458,7 @@
                 <p id="demo-file-dropzone-single-result" class="demo-hint" aria-live="polite">No file selected.</p>
               </div>
               <div class="field">
-                <span class="field-label">File dropzone — multiple images</span>
+                <span class="field-label">File dropzone - multiple, images</span>
                 <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
                   data-file-max="5">
                   <input type="file" class="file-dropzone-input" hidden />
@@ -469,7 +466,7 @@
                     <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
                     <span class="file-dropzone-text">
                       <span class="file-dropzone-primary">Drop images here</span>
-                      <span class="file-dropzone-secondary">or browse — up to 5 files</span>
+                      <span class="file-dropzone-secondary">or browse - up to 5 files</span>
                     </span>
                   </button>
                   <ul class="file-dropzone-list hidden" hidden></ul>
@@ -593,7 +590,7 @@
 
             <div class="demo-card">
               <h3 class="demo-card-title">Expand</h3>
-              <p class="demo-hint">Single disclosure — one trigger, one panel.</p>
+              <p class="demo-hint">Single disclosure - one trigger, one panel.</p>
               <div class="expand" id="demo-expand">
                 <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="demo-expand-panel">
                   <span class="expand-notch" aria-hidden="true"></span>
@@ -614,7 +611,7 @@
           <div class="demo-card">
             <h3 class="demo-card-title">Accordion</h3>
             <p class="demo-hint">
-              Stack of headings with panels below — only one section open at a time. Arrow keys move between headers.
+              Stack of headings with panels below - only one section open at a time. Arrow keys move between headers.
             </p>
             <div class="accordion" id="demo-accordion" data-accordion-default-open="1">
               <div class="accordion-item">
@@ -682,8 +679,7 @@
       <header class="demo-tier-header">
         <h2 id="demo-tier-specialised-title" class="demo-tier-title">Specialised</h2>
         <p class="demo-tier-lead">
-          Documentation-heavy patterns and site-wide chrome — useful when your app shows code samples or needs theme
-          switching.
+          Documentation-heavy patterns and site-wide chrome.
         </p>
       </header>
 
@@ -694,7 +690,7 @@
             Syntax highlighting via
             <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
             Set <code>data-code-mode</code> to <code>view</code>, <code>select</code>, or
-            <code>edit</code>. Hover blocks to copy or maximise (select and edit).
+            <code>edit</code>. Hover blocks to copy or maximise.
           </p>
           <div class="demo-code-modes">
             <div class="field">
