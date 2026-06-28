@@ -24,6 +24,8 @@ const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-sin
 const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");
 const demoRadioGroup = document.getElementById("demo-radio-group");
 const demoRadioResult = document.getElementById("demo-radio-result");
+const demoCheckboxGroup = document.getElementById("demo-checkbox-group");
+const demoCheckboxResult = document.getElementById("demo-checkbox-result");
 const fileDownloadResult = document.getElementById("demo-file-download-result");
 const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
@@ -139,6 +141,26 @@ demoRadioGroup?.addEventListener("change", (event) => {
     demoRadioResult.textContent = label ? `Selected: ${label}` : `Selected: ${input.value}`;
   }
 });
+
+function updateCheckboxResult() {
+  if (!demoCheckboxGroup || !demoCheckboxResult) return;
+
+  const selected = [...demoCheckboxGroup.querySelectorAll(".checkbox-input:checked:not(:disabled)")]
+    .map((input) => input.closest("label")?.querySelector("span")?.textContent?.trim() || input.value)
+    .filter(Boolean);
+
+  demoCheckboxResult.textContent = selected.length
+    ? `Selected: ${selected.join(", ")}`
+    : "Selected: none";
+}
+
+demoCheckboxGroup?.addEventListener("change", (event) => {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || input.type !== "checkbox") return;
+  updateCheckboxResult();
+});
+
+updateCheckboxResult();
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const comboboxResultEl = document.getElementById("demo-combobox-result");

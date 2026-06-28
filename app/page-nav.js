@@ -22,6 +22,10 @@ function headingLabel(heading) {
   return heading.textContent.replace(/\s+/g, " ").trim();
 }
 
+function isTierHeading(heading) {
+  return heading.hasAttribute("data-page-nav-tier");
+}
+
 /**
  * @typedef {Object} PageNavOptions
  * @property {string} [headingSelector="main h2[id]"] CSS selector for section headings (must have `id`)
@@ -66,30 +70,6 @@ export function initPageNav(
   /** @type {HTMLElement[]} */
   let headings = [];
 
-  function buildHeadingLinks() {
-    if (!listEl) return [];
-
-    listEl.replaceChildren();
-    headings = collectHeadings(headingRoot, headingSelector);
-
-    for (const heading of headings) {
-      const item = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = `#${heading.id}`;
-      link.className = "page-nav-link";
-      link.textContent = headingLabel(heading);
-      link.addEventListener("click", onLinkClick);
-      item.append(link);
-      listEl.append(item);
-    }
-
-    if (panelEl) {
-      panelEl.hidden = headings.length === 0;
-    }
-
-    return headings;
-  }
-
   /** @param {Event} event */
   function onLinkClick(event) {
     const link = event.currentTarget;
@@ -107,6 +87,71 @@ export function initPageNav(
       block: "start",
     });
     history.replaceState(null, "", `#${heading.id}`);
+  }
+
+  /** @param {HTMLElement} heading */
+  function createNavLink(heading) {
+    const link = document.createElement("a");
+    link.href = `#${heading.id}`;
+    link.className = "page-nav-link";
+    link.textContent = headingLabel(heading);
+    link.addEventListener("click", onLinkClick);
+    return link;
+  }
+
+  function buildHeadingLinks() {
+    if (!listEl) return [];
+
+    listEl.replaceChildren();
+    headings = collectHeadings(headingRoot, headingSelector);
+    /** @type {HTMLUListElement | null} */
+    let sublist = null;
+    /** @type {HTMLLIElement | null} */
+    let tierItem = null;
+
+    for (const heading of headings) {
+      if (isTierHeading(heading)) {
+        tierItem = document.createElement("li");
+        tierItem.className = "page-nav-item page-nav-item--tier";
+
+        const link = createNavLink(heading);
+        link.classList.add("page-nav-link--tier");
+        tierItem.append(link);
+
+        sublist = null;
+        listEl.append(tierItem);
+        continue;
+      }
+
+      if (tierItem) {
+        if (!sublist) {
+          sublist = document.createElement("ul");
+          sublist.className = "page-nav-sublist";
+          tierItem.append(sublist);
+        }
+
+        const item = document.createElement("li");
+        item.className = "page-nav-item page-nav-item--section";
+
+        const link = createNavLink(heading);
+        link.classList.add("page-nav-link--section");
+        item.append(link);
+
+        sublist.append(item);
+        continue;
+      }
+
+      const item = document.createElement("li");
+      item.className = "page-nav-item";
+      item.append(createNavLink(heading));
+      listEl.append(item);
+    }
+
+    if (panelEl) {
+      panelEl.hidden = headings.length === 0;
+    }
+
+    return headings;
   }
 
   function update() {

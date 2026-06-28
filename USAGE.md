@@ -216,7 +216,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
-| **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
+| **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
@@ -383,7 +383,7 @@ Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-pi
     <div class="date-picker-control">
       <input type="hidden" class="date-picker-value" />
       <input type="text" id="my-date-picker-input" class="input date-picker-input"
-        placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+        placeholder="Jun 20, 2026" autocomplete="off" />
       <button type="button" class="date-picker-trigger" aria-label="Open calendar"
         data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
     </div>
@@ -395,7 +395,7 @@ Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-pi
         <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next aria-label="Next month">›</button>
       </div>
       <div class="date-picker-weekdays" aria-hidden="true">
-        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
       </div>
       <div class="date-picker-grid" role="grid"></div>
       <div class="date-picker-actions">
@@ -425,6 +425,8 @@ initDatePickers(document);
 Click the **month** or **year** in the popup header to open quick-pick grids. Choosing a year returns to the month grid; choosing a month returns to days. Prev/next arrows change month, year, or 12-year window depending on the current view. Escape steps back through views before closing.
 
 The date field accepts typed or pasted values (for example `2026-06-20` or `Jun 20, 2026`). Values are validated on blur or Enter; invalid input reverts to the last valid date. Arrow Down opens the calendar while the field is focused.
+
+The calendar grid starts weeks on Monday. Weekday labels in markup are optional — `initDatePicker()` fills `.date-picker-weekdays` when missing or out of date.
 
 The day view includes quick actions below the calendar: **Today** (date-only pickers) or **Today** and **Now** when `data-date-picker-time` is set. Today selects the current date and sets time to `00:00`; Now selects the current date and time.
 
@@ -772,6 +774,8 @@ nav?.destroy(); // remove listeners when tearing down
 ```
 
 Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right; the section list appears when you hover the right-edge trigger strip (or focus a section link inside the panel). The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
+
+Mark a top-level nav group by adding `data-page-nav-tier` to its `h2`. The next headings in document order nest under it until another tier heading appears. Tier links use full weight; nested section links are slightly smaller and muted.
 
 ### Code highlighting (Prism)
 

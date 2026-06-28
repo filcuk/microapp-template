@@ -67,7 +67,7 @@ main {
 
 .section-heading {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 600;
   scroll-margin-top: 1rem;
 }
@@ -130,6 +130,101 @@ main {
   gap: 0.35rem;
   color: var(--muted);
   font-size: 0.875rem;
+}
+
+.demo-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.demo-tier + .demo-tier {
+  margin-top: 3.5rem;
+}
+
+.demo-tier-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  background: var(--section-bg);
+}
+
+.demo-tier-title {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  scroll-margin-top: 1.5rem;
+}
+
+.demo-tier-lead {
+  margin: 0;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.demo-tier-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.demo-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.demo-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr));
+}
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--section-bg);
+}
+
+.demo-card-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.demo-banner-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.demo-banner-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.demo-banner-group-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.demo-banner-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 /* Section panel — 3-column grid rows */
@@ -267,6 +362,27 @@ main {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  gap: 0.375rem;
+}
+
+.page-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 100%;
+}
+
+.page-nav-item--tier {
+  gap: 0.125rem;
+}
+
+.page-nav-sublist {
+  margin: 0;
+  padding: 0.125rem 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.125rem;
 }
 
@@ -279,6 +395,17 @@ main {
   line-height: 1.4;
   text-align: right;
   text-decoration: none;
+}
+
+.page-nav-link--tier {
+  color: var(--text);
+}
+
+.page-nav-link--section {
+  padding: 0.2rem 0;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .page-nav-link:hover {
