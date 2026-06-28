@@ -117,7 +117,8 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 
 ## When extending this template
 
-1. Read `README.md` for available components
+1. Read `USAGE.md` for available components and fork instructions
 2. Check `demo.html` for usage examples
 3. Keep changes focused — one concern per file when possible
-4. Update `README.md` if you add a new reusable component or workflow step
+4. Update `USAGE.md` when you add or change a reusable component, module API, or deploy workflow (see `.cursor/rules/usage-docs.mdc`)
+5. Update `AGENTS.md` if you add a new `initX` pattern to the module conventions table
