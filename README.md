@@ -16,6 +16,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | ----- | -------- |
 | **[USAGE.md](USAGE.md)** | Forking the template, project layout, local preview, GitHub Pages, component catalogue, and markup/JS examples |
 | **[AGENTS.md](AGENTS.md)** | Rules for AI assistants working in this repo |
+| **[DISCLAIMER.md](DISCLAIMER.md)** | LLM assistance notice |
 | **[demo.html](demo.html)** | Interactive showcase of all components |
 
 ## Stack
