@@ -395,7 +395,7 @@ Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-pi
         <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next aria-label="Next month">›</button>
       </div>
       <div class="date-picker-weekdays" aria-hidden="true">
-        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
       </div>
       <div class="date-picker-grid" role="grid"></div>
       <div class="date-picker-actions">

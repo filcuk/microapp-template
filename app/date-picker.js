@@ -137,9 +137,13 @@ function formatResult(date, timeValue, hasTime) {
   return `${dateLabel} at ${timeValue}`;
 }
 
+function getWeekStartOffset(date) {
+  return (date.getDay() + 6) % 7;
+}
+
 function buildMonthCells(year, month) {
   const firstOfMonth = new Date(year, month, 1);
-  const startOffset = firstOfMonth.getDay();
+  const startOffset = getWeekStartOffset(firstOfMonth);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const daysInPrevMonth = new Date(year, month, 0).getDate();
   const cells = [];
