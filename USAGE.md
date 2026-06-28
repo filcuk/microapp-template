@@ -773,6 +773,8 @@ nav?.destroy(); // remove listeners when tearing down
 
 Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right; the section list appears when you hover the right-edge trigger strip (or focus a section link inside the panel). The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
 
+Mark a heading as a top-level group with `data-page-nav-tier` on its `h2` (or place it inside a `.demo-tier-header` block). Following headings nest under it in the nav until the next tier.
+
 ### Code highlighting (Prism)
 
 Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for examples with line numbers, highlight toggle, copy, and maximise.

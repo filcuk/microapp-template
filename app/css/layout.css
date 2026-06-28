@@ -362,6 +362,27 @@ main {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  gap: 0.375rem;
+}
+
+.page-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 100%;
+}
+
+.page-nav-item--tier {
+  gap: 0.125rem;
+}
+
+.page-nav-sublist {
+  margin: 0;
+  padding: 0.125rem 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.125rem;
 }
 
@@ -374,6 +395,17 @@ main {
   line-height: 1.4;
   text-align: right;
   text-decoration: none;
+}
+
+.page-nav-link--tier {
+  color: var(--text);
+}
+
+.page-nav-link--section {
+  padding: 0.2rem 0;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .page-nav-link:hover {
