@@ -981,18 +981,10 @@ body.expandable-surface-open {
 }
 
 .page-nav-trigger:hover .page-nav-panel,
-.page-nav-trigger:focus-within .page-nav-panel {
+.page-nav-panel:focus-within {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-}
-
-@media (hover: none) {
-  .page-nav-trigger:focus-within .page-nav-panel {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
 }
 
 .page-nav-panel[hidden] {
