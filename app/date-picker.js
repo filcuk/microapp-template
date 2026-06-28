@@ -630,7 +630,7 @@ export function initDatePicker(
 
   displayInput.removeAttribute("readonly");
   if (!displayInput.placeholder) {
-    displayInput.placeholder = "Jun 20, 2026 or 2026-06-20";
+    displayInput.placeholder = "Jun 20, 2026";
   }
 
   displayInput.addEventListener("blur", (event) => {

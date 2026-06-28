@@ -383,7 +383,7 @@ Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-pi
     <div class="date-picker-control">
       <input type="hidden" class="date-picker-value" />
       <input type="text" id="my-date-picker-input" class="input date-picker-input"
-        placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+        placeholder="Jun 20, 2026" autocomplete="off" />
       <button type="button" class="date-picker-trigger" aria-label="Open calendar"
         data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
     </div>
