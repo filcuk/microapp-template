@@ -8,12 +8,53 @@ import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
 import { initExpandableSurfaces } from "./expandable-surface.js";
 import { showBanner, hideBanner } from "./banner.js";
+import { initFileDropzone } from "./file-dropzone.js";
 
 initShell();
 initExpands(document);
 initTabsBlocks(document);
 initCodeBlocks(document);
 initExpandableSurfaces(document);
+
+const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-single-result");
+const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");
+
+function formatFileDropzoneResult(files) {
+  if (!files.length) return "No files selected.";
+  return files.map((file) => file.name).join(", ");
+}
+
+initFileDropzone(document.getElementById("demo-file-dropzone-single"), {
+  onFiles: ({ files }) => {
+    if (!fileDropzoneSingleResult) return;
+    fileDropzoneSingleResult.textContent = files.length
+      ? `Selected: ${files[0].name}`
+      : "No file selected.";
+  },
+  onClear: () => {
+    if (fileDropzoneSingleResult) {
+      fileDropzoneSingleResult.textContent = "No file selected.";
+    }
+  },
+});
+
+initFileDropzone(document.getElementById("demo-file-dropzone-multi"), {
+  onFiles: ({ files }) => {
+    if (fileDropzoneMultiResult) {
+      fileDropzoneMultiResult.textContent = formatFileDropzoneResult(files);
+    }
+  },
+  onError: ({ message }) => {
+    if (fileDropzoneMultiResult) {
+      fileDropzoneMultiResult.textContent = message;
+    }
+  },
+  onClear: () => {
+    if (fileDropzoneMultiResult) {
+      fileDropzoneMultiResult.textContent = "No files selected.";
+    }
+  },
+});
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");

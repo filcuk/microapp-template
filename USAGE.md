@@ -205,6 +205,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, and `.checkbox` / `.checkbox-input`. |
+| **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
@@ -352,6 +353,42 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
   <span>I agree</span>
 </label>
 ```
+
+### File dropzone
+
+Drag-and-drop or click-to-browse file picker. Selected files appear in a list with remove buttons.
+
+```html
+<div class="file-dropzone" id="my-dropzone" data-file-accept="image/*" data-file-multiple data-file-max="5">
+  <input type="file" class="file-dropzone-input" hidden />
+  <button type="button" class="file-dropzone-prompt">
+    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+    <span class="file-dropzone-text">
+      <span class="file-dropzone-primary">Drop files here</span>
+      <span class="file-dropzone-secondary">or browse</span>
+    </span>
+  </button>
+  <ul class="file-dropzone-list hidden" hidden></ul>
+</div>
+```
+
+```javascript
+import { initFileDropzone, initFileDropzones } from "./file-dropzone.js";
+
+const dropzone = initFileDropzone(document.getElementById("my-dropzone"), {
+  onFiles: ({ files }) => console.log(files),
+  onError: ({ message }) => console.warn(message),
+  onClear: () => console.log("cleared"),
+});
+
+dropzone?.openPicker();
+dropzone?.getFiles();
+dropzone?.clear();
+
+initFileDropzones(document); // wire every `.file-dropzone`
+```
+
+`data-file-accept` maps to the hidden input's `accept`. `data-file-multiple` enables multi-select. `data-file-max` caps how many files can be added (extra files are trimmed; `onError` is called).
 
 ### Section panel
 
