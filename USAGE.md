@@ -144,9 +144,13 @@ index.html          # Your app homepage
 demo.html           # Component showcase (optional)
 .nojekyll           # Skip Jekyll on GitHub Pages
 app/
-  styles.css            # Imports tokens.css + components.css
+  styles.css            # Imports tokens.css + app/css/*.css partials
   tokens.css            # Design tokens, base typography, reduced motion
-  components.css        # Layout shell and UI components
+  css/
+    layout.css          # Page shell, sections, page nav, footer, theme toggle
+    code-block.css      # Code blocks and expandable surfaces
+    controls.css        # Buttons, fields, menus, expand, tabs
+    overlays.css        # Banners, tooltips, modals
   theme-init.js         # Theme before first paint
   theme.js              # Theme preference module
   render-shell.js       # Injects footer + page navigation markup
@@ -177,13 +181,26 @@ app/
   res/                  # App logo and signature SVGs
 ```
 
+### Module layers (JavaScript)
+
+JS modules stay flat under `app/` — the browser only loads files you `import`. When forking, use this map to find or delete code:
+
+| Layer | Files | When you need it |
+| ----- | ----- | ---------------- |
+| **Entry** | `main.js`, `demo.js`, `theme-init.js` | Always — wired from HTML |
+| **Shell** | `shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `external-link.js`, `heading-link.js` | Always — call `initShell()` on every page |
+| **Infrastructure** | `dom.js`, `document-listeners.js`, `icons.js`, `menu.js`, `version.js`, `brand-icon.js` | Keep if any popup menu, icons, or shared helpers remain |
+| **Components** | `dialog.js`, `combo.js`, `dropdown.js`, `tabs.js`, `code-block.js`, … | Import and init only the features your page uses; delete unused files |
+
+Component CSS lives under `app/css/` (imported via `styles.css`). Match a component to its partial: controls in `controls.css`, modals in `overlays.css`, and so on.
+
 ---
 
 ## Available features and components
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/components.css`](app/components.css). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |

@@ -30,7 +30,7 @@ Prefer the simplest approach that fits the existing template.
 Every HTML entry point should:
 
 1. Include blocking `app/theme-init.js` in `<head>` (prevents theme flash)
-2. Link `app/styles.css` (imports `tokens.css` + `components.css`)
+2. Link `app/styles.css` (imports `tokens.css` + `app/css/*.css` partials)
 3. Call `initShell()` from `app/shell.js` as the first step in the page module
 
 `initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
@@ -84,9 +84,23 @@ Always use `setHidden()` from `app/dom.js` when showing/hiding elements programm
 | ---- | -------- |
 | `app/styles.css` | Entry point — `@import` only |
 | `app/tokens.css` | Reset, `:root` tokens, dark theme, base typography, `.hidden`, reduced-motion |
-| `app/components.css` | Layout shell, buttons, inputs, components, footer, theme toggle |
+| `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
+| `app/css/code-block.css` | Code blocks and expandable surfaces |
+| `app/css/controls.css` | Buttons, fields, menus, expand, tabs |
+| `app/css/overlays.css` | Banners, tooltips, modals |
 
-Keep HTML linking only `styles.css`. Edit tokens or components directly; do not merge back into a monolith.
+Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.
+
+## JS module layers
+
+Modules stay flat under `app/` (no build step). Use this mental model when adding or trimming files:
+
+| Layer | Examples | Role |
+| ----- | -------- | ---- |
+| Entry | `main.js`, `demo.js`, `theme-init.js` | Loaded directly from HTML |
+| Shell | `shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `external-link.js`, `heading-link.js` | Shared page chrome via `initShell()` |
+| Infrastructure | `dom.js`, `document-listeners.js`, `icons.js`, `menu.js`, `version.js`, `brand-icon.js` | Shared helpers and registries |
+| Components | `dialog.js`, `dropdown.js`, `tabs.js`, `code-block.js`, … | One `initX` (or `initXBlocks`) per feature — import only what you need |
 
 Respect `prefers-reduced-motion: reduce` — transitions live in components; global overrides are in `tokens.css`. JS scroll behaviour should use `prefersReducedMotion()` from `app/dom.js`.
 

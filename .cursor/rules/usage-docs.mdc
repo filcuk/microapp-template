@@ -15,7 +15,7 @@ When you add or materially change a **reusable** feature, update USAGE.md in the
 | Change | USAGE.md section |
 | ------ | ---------------- |
 | New `app/*.js` module or public API (`initX`, `showX`) | **Available features** table + **Using components** (markup + import example) |
-| New CSS component pattern (`.foo`, BEM block) | **Available features** table + usage example if non-obvious |
+| New CSS component pattern (`.foo`, BEM block) | **Available features** table + usage example if non-obvious; styles go in the matching `app/css/` partial |
 | New `demo.html` section | Ensure **Using components** matches live demo; mention demo in feature row |
 | Fork/deploy workflow (`pages.yml`, entry HTML) | **Creating a new app**, **GitHub Pages**, or **Project structure** |
 | New optional asset path (`app/res/`, `vendor/`) | **Project structure** and/or fork checklist |
