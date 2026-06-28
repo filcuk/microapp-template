@@ -18,6 +18,8 @@ initExpandableSurfaces(document);
 
 const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-single-result");
 const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");
+const demoRadioGroup = document.getElementById("demo-radio-group");
+const demoRadioResult = document.getElementById("demo-radio-result");
 
 function formatFileDropzoneResult(files) {
   if (!files.length) return "No files selected.";
@@ -54,6 +56,16 @@ initFileDropzone(document.getElementById("demo-file-dropzone-multi"), {
       fileDropzoneMultiResult.textContent = "No files selected.";
     }
   },
+});
+
+demoRadioGroup?.addEventListener("change", (event) => {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || input.type !== "radio") return;
+
+  const label = input.closest("label")?.querySelector("span")?.textContent?.trim();
+  if (demoRadioResult) {
+    demoRadioResult.textContent = label ? `Selected: ${label}` : `Selected: ${input.value}`;
+  }
 });
 
 const comboResultEl = document.getElementById("demo-combo-result");

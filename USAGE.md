@@ -204,7 +204,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, and `.checkbox` / `.checkbox-input`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, and `.radio` / `.radio-input`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
@@ -352,6 +352,20 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
   <input type="checkbox" class="checkbox-input" id="agree" />
   <span>I agree</span>
 </label>
+
+<div class="field">
+  <span class="field-label" id="size-label">Size</span>
+  <div class="radio-group" role="radiogroup" aria-labelledby="size-label">
+    <label class="radio" for="size-small">
+      <input type="radio" class="radio-input" name="size" id="size-small" value="small" />
+      <span>Small</span>
+    </label>
+    <label class="radio" for="size-large">
+      <input type="radio" class="radio-input" name="size" id="size-large" value="large" />
+      <span>Large</span>
+    </label>
+  </div>
+</div>
 ```
 
 ### File dropzone
