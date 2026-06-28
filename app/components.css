@@ -1398,6 +1398,12 @@ body > footer {
   height: 1.625rem;
 }
 
+.footer-version {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  cursor: default;
+}
+
 body > footer a {
   color: var(--accent);
 }

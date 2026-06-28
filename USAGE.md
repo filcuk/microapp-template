@@ -45,6 +45,28 @@ initShell({
 });
 ```
 
+### App and template versions
+
+Versions use [Semantic Versioning 2.0.0](https://semver.org/) and live in [`app/version.js`](app/version.js):
+
+```javascript
+export const TEMPLATE_VERSION = "0.5.0"; // microapp-template release
+export const APP_VERSION = "0.0.0";      // your app — bump when you ship
+```
+
+| Constant | Who sets it | Shown in UI |
+| -------- | ----------- | ----------- |
+| `APP_VERSION` | You, on your fork | Footer label (`v0.0.0`) |
+| `TEMPLATE_VERSION` | Template maintainers | Footer tooltip on hover/focus (`Template v0.5.0`) |
+
+After forking, set `APP_VERSION` to your app’s release (e.g. `1.0.0`). Bump it when you publish a new version of **your** app. When you pull updates from the upstream template, the maintainer may have raised `TEMPLATE_VERSION` — hover the footer version to see which template release you are on.
+
+Optional runtime override (rare):
+
+```javascript
+initShell({ appVersion: "1.2.3", templateVersion: "0.5.0" });
+```
+
 ### 3. Remove or keep the demo
 
 The demo is for exploring components — not required for your app.
@@ -85,6 +107,7 @@ Theme-aware swapping is handled in CSS and [`app/brand-icon.js`](app/brand-icon.
 ### 6. Checklist before first deploy
 
 - [ ] `index.html` title, heading, and content updated
+- [ ] `APP_VERSION` set in `app/version.js` for your app
 - [ ] `app/main.js` implements your app (not just `initShell()`)
 - [ ] Demo removed or intentionally kept
 - [ ] `pages.yml` matches published HTML files
@@ -127,6 +150,7 @@ app/
   theme-init.js         # Theme before first paint
   theme.js              # Theme preference module
   render-shell.js       # Injects footer + page navigation markup
+  version.js            # APP_VERSION + TEMPLATE_VERSION (SemVer 2.0.0)
   shell.js              # Shared page boot (render, icons, theme, page nav)
   document-listeners.js # Single document click / Escape registry
   dom.js                # setHidden(), resolveElements(), prefersReducedMotion()
@@ -161,7 +185,7 @@ app/
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/components.css`](app/components.css). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, and `.checkbox` / `.checkbox-input`. |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |

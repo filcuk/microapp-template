@@ -1,9 +1,12 @@
 import { SIG_ICON_SRC } from "./brand-icon.js";
+import { APP_VERSION, TEMPLATE_VERSION } from "./version.js";
 
 const DEFAULTS = {
   repoUrl: "https://github.com/filcuk/microapp-template",
   brandUrl: "https://github.com/filcuk",
   brandName: "Filcuk",
+  appVersion: APP_VERSION,
+  templateVersion: TEMPLATE_VERSION,
 };
 
 /** Required markup for {@link initPageNav} — also injected by {@link renderPageShell}. */
@@ -35,7 +38,10 @@ export const PAGE_NAV_MARKUP = `<nav id="page-nav" class="page-nav" aria-label="
 export function renderPageShell(options = {}) {
   if (document.getElementById("app-page-footer")) return;
 
-  const { repoUrl, brandUrl, brandName } = { ...DEFAULTS, ...options };
+  const { repoUrl, brandUrl, brandName, appVersion, templateVersion } = {
+    ...DEFAULTS,
+    ...options,
+  };
   const issuesUrl = `${repoUrl}/issues`;
 
   document.body.insertAdjacentHTML(
@@ -43,8 +49,9 @@ export function renderPageShell(options = {}) {
     `<footer id="app-page-footer">
       <p class="footer-meta">
         <span>
-          report an
-          <a href="${issuesUrl}" target="_blank" rel="noopener noreferrer">issue</a>
+          <span class="footer-version" data-tooltip="based on template v${templateVersion}" data-tooltip-position="top" tabindex="0">v${appVersion}</span>
+          · <span data-tooltip="or suggest a feature" data-tooltip-position="top" tabindex="0">report an
+          <a href="${issuesUrl}" target="_blank" rel="noopener noreferrer">issue</a></span>
           · star on
           <a href="${repoUrl}" target="_blank" rel="noopener noreferrer">GitHub</a>
           · microapp by

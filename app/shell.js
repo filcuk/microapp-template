@@ -14,6 +14,8 @@ import { initHeadingLinks } from "./heading-link.js";
  * @param {string} [options.repoUrl]
  * @param {string} [options.brandUrl]
  * @param {string} [options.brandName]
+ * @param {string} [options.appVersion] Override app SemVer (default from `app/version.js`)
+ * @param {string} [options.templateVersion] Override template SemVer (default from `app/version.js`)
  * @param {import("./page-nav.js").PageNavOptions} [options.pageNav] Passed to `initPageNavPanel()`
  */
 export function initShell(options = {}) {
