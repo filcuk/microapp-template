@@ -19,6 +19,7 @@ import { onDocumentClickOutside, onDocumentEscape } from "./document-listeners.j
  *
  * Click the month or year in the header to browse months/years quickly.
  * Day view shows quick actions: Today (and Now when `data-date-picker-time` is set).
+ * Weeks start on Monday (Mo–Su).
  *
  * data-date-picker-time — show `.date-picker-time` on the same row inside `.date-picker-row`
  * data-date-min / data-date-max — ISO date strings (YYYY-MM-DD)
@@ -141,6 +142,26 @@ function getWeekStartOffset(date) {
   return (date.getDay() + 6) % 7;
 }
 
+const WEEKDAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
+/** @param {HTMLElement | null} weekdaysEl */
+function ensureWeekdayLabels(weekdaysEl) {
+  if (!weekdaysEl) return;
+
+  const labels = [...weekdaysEl.querySelectorAll("span")].map((span) => span.textContent.trim());
+  if (labels.length === WEEKDAY_LABELS.length && labels.every((label, index) => label === WEEKDAY_LABELS[index])) {
+    return;
+  }
+
+  weekdaysEl.replaceChildren(
+    ...WEEKDAY_LABELS.map((label) => {
+      const span = document.createElement("span");
+      span.textContent = label;
+      return span;
+    })
+  );
+}
+
 function buildMonthCells(year, month) {
   const firstOfMonth = new Date(year, month, 1);
   const startOffset = getWeekStartOffset(firstOfMonth);
@@ -204,6 +225,8 @@ export function initDatePicker(
   let timeInput = pickerEl.querySelector(".date-picker-time");
 
   if (!displayInput || !popup || !grid || !captionEl) return null;
+
+  ensureWeekdayLabels(weekdaysEl);
 
   const hasTime =
     pickerEl.hasAttribute("data-date-picker-time") ||

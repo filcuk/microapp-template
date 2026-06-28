@@ -132,7 +132,7 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 - Tooltips: `aria-describedby` linking trigger to `#tooltip` on show/hide; keyboard focus support
 - Prefer semantic HTML (`header`, `main`, `footer`, `button`)
 - Popup menus: `aria-expanded` on toggle buttons
-- Page nav: outer `<nav aria-label="Page navigation">`; jump buttons have `aria-label`; section links are plain anchors with hash `href`
+- Page nav: outer `<nav aria-label="Page navigation">`; jump buttons have `aria-label`; section links are plain anchors with hash `href`; use `data-page-nav-tier` on group headings for nested nav lists
 
 ## When extending this template
 

@@ -23,10 +23,7 @@ function headingLabel(heading) {
 }
 
 function isTierHeading(heading) {
-  return (
-    heading.hasAttribute("data-page-nav-tier") ||
-    Boolean(heading.closest(".demo-tier-header"))
-  );
+  return heading.hasAttribute("data-page-nav-tier");
 }
 
 /**
@@ -109,25 +106,30 @@ export function initPageNav(
     headings = collectHeadings(headingRoot, headingSelector);
     /** @type {HTMLUListElement | null} */
     let sublist = null;
+    /** @type {HTMLLIElement | null} */
+    let tierItem = null;
 
     for (const heading of headings) {
       if (isTierHeading(heading)) {
-        const item = document.createElement("li");
-        item.className = "page-nav-item page-nav-item--tier";
+        tierItem = document.createElement("li");
+        tierItem.className = "page-nav-item page-nav-item--tier";
 
         const link = createNavLink(heading);
         link.classList.add("page-nav-link--tier");
-        item.append(link);
+        tierItem.append(link);
 
-        sublist = document.createElement("ul");
-        sublist.className = "page-nav-sublist";
-        item.append(sublist);
-
-        listEl.append(item);
+        sublist = null;
+        listEl.append(tierItem);
         continue;
       }
 
-      if (sublist) {
+      if (tierItem) {
+        if (!sublist) {
+          sublist = document.createElement("ul");
+          sublist.className = "page-nav-sublist";
+          tierItem.append(sublist);
+        }
+
         const item = document.createElement("li");
         item.className = "page-nav-item page-nav-item--section";
 

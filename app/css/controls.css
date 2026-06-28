@@ -99,6 +99,7 @@
   flex-direction: column;
   gap: 0.35rem;
   max-width: 24rem;
+  min-width: 0;
 }
 
 .field-label {
