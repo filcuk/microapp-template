@@ -99,6 +99,64 @@
           </div>
           <p id="demo-radio-result" class="demo-hint" aria-live="polite">Selected: Option A</p>
         </div>
+        <div class="field date-picker" id="demo-date-picker">
+          <label class="field-label" for="demo-date-picker-input">Date picker</label>
+          <div class="date-picker-control">
+            <input type="hidden" class="date-picker-value" />
+            <input type="text" id="demo-date-picker-input" class="input date-picker-input"
+              placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+            <button type="button" class="date-picker-trigger" aria-label="Open calendar"
+              data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
+          </div>
+          <div class="date-picker-popup hidden" role="dialog" aria-modal="true" aria-label="Choose date" hidden>
+            <div class="date-picker-header">
+              <button type="button" class="date-picker-nav btn btn-link" data-date-picker-prev
+                aria-label="Previous month">‹</button>
+              <div class="date-picker-caption" aria-live="polite"></div>
+              <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next
+                aria-label="Next month">›</button>
+            </div>
+            <div class="date-picker-weekdays" aria-hidden="true">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="date-picker-grid" role="grid"></div>
+            <div class="date-picker-actions">
+              <button type="button" class="btn date-picker-quick-btn" data-date-picker-today>Today</button>
+            </div>
+          </div>
+          <p id="demo-date-picker-result" class="demo-hint" aria-live="polite">No date selected.</p>
+        </div>
+        <div class="field date-picker" id="demo-date-picker-time" data-date-picker-time>
+          <label class="field-label" for="demo-date-picker-time-input">Date picker with time</label>
+          <div class="date-picker-row">
+            <div class="date-picker-control">
+              <input type="hidden" class="date-picker-value" />
+              <input type="text" id="demo-date-picker-time-input" class="input date-picker-input"
+                placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+              <button type="button" class="date-picker-trigger" aria-label="Open calendar"
+                data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
+            </div>
+            <input type="time" class="input date-picker-time hidden" hidden />
+            <div class="date-picker-popup hidden" role="dialog" aria-modal="true" aria-label="Choose date" hidden>
+              <div class="date-picker-header">
+                <button type="button" class="date-picker-nav btn btn-link" data-date-picker-prev
+                  aria-label="Previous month">‹</button>
+                <div class="date-picker-caption" aria-live="polite"></div>
+                <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next
+                  aria-label="Next month">›</button>
+              </div>
+              <div class="date-picker-weekdays" aria-hidden="true">
+                <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div class="date-picker-grid" role="grid"></div>
+              <div class="date-picker-actions">
+                <button type="button" class="btn date-picker-quick-btn" data-date-picker-today>Today</button>
+                <button type="button" class="btn date-picker-quick-btn" data-date-picker-now>Now</button>
+              </div>
+            </div>
+          </div>
+          <p id="demo-date-picker-time-result" class="demo-hint" aria-live="polite">No date or time selected.</p>
+        </div>
       </div>
     </section>
 

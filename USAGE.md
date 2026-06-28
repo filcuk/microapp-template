@@ -204,7 +204,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, and `.radio` / `.radio-input`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, and `.date-picker`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -369,6 +369,62 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
   </div>
 </div>
 ```
+
+#### Date picker
+
+Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-picker-time` for an optional time field on the same row as the date control.
+
+```html
+<div class="date-picker" id="my-date-picker" data-date-picker-time>
+  <label class="field-label" for="my-date-picker-input">Appointment</label>
+  <div class="date-picker-row">
+    <div class="date-picker-control">
+      <input type="hidden" class="date-picker-value" />
+      <input type="text" id="my-date-picker-input" class="input date-picker-input"
+        placeholder="Jun 20, 2026 or 2026-06-20" autocomplete="off" />
+      <button type="button" class="date-picker-trigger" aria-label="Open calendar"
+        data-icon="calendar" data-icon-class="date-picker-icon" aria-expanded="false"></button>
+    </div>
+    <input type="time" class="input date-picker-time hidden" hidden />
+    <div class="date-picker-popup hidden" role="dialog" aria-modal="true" aria-label="Choose date" hidden>
+      <div class="date-picker-header">
+        <button type="button" class="date-picker-nav btn btn-link" data-date-picker-prev aria-label="Previous month">‹</button>
+        <div class="date-picker-caption" aria-live="polite"></div>
+        <button type="button" class="date-picker-nav btn btn-link" data-date-picker-next aria-label="Next month">›</button>
+      </div>
+      <div class="date-picker-weekdays" aria-hidden="true">
+        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+      </div>
+      <div class="date-picker-grid" role="grid"></div>
+      <div class="date-picker-actions">
+        <button type="button" class="btn date-picker-quick-btn" data-date-picker-today>Today</button>
+        <button type="button" class="btn date-picker-quick-btn" data-date-picker-now hidden>Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initDatePicker, initDatePickers } from "./date-picker.js";
+
+const picker = initDatePicker(document.getElementById("my-date-picker"), {
+  onChange: ({ isoDate, time, display }) => console.log(isoDate, time, display),
+});
+
+picker?.setValue({ isoDate: "2026-06-20", time: "14:30" });
+picker?.getValue();
+
+initDatePickers(document);
+```
+
+`data-date-min` and `data-date-max` accept ISO dates (`YYYY-MM-DD`). The hidden `.date-picker-value` field stores the selected date for forms.
+
+Click the **month** or **year** in the popup header to open quick-pick grids. Choosing a year returns to the month grid; choosing a month returns to days. Prev/next arrows change month, year, or 12-year window depending on the current view. Escape steps back through views before closing.
+
+The date field accepts typed or pasted values (for example `2026-06-20` or `Jun 20, 2026`). Values are validated on blur or Enter; invalid input reverts to the last valid date. Arrow Down opens the calendar while the field is focused.
+
+The day view includes quick actions below the calendar: **Today** (date-only pickers) or **Today** and **Now** when `data-date-picker-time` is set. Today selects the current date and sets time to `00:00`; Now selects the current date and time.
 
 ### File dropzone
 

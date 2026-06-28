@@ -20,7 +20,7 @@
  * To reuse an existing icon under another id, set `ref` to the target key:
  *   lines: { ref: "note" },
  *
- * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, arrow-outward, link, fullscreen, fullscreen-exit, upload
+ * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, arrow-outward, link, fullscreen, fullscreen-exit, upload, calendar
  */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -133,6 +133,12 @@ export const ICONS = {
     markup: `<path fill="currentColor" d="M12 15.575q-.2 0-.375-.062T11.3 15.3l-3.6-3.6q-.3-.3-.288-.7t.288-.7q.3-.3.713-.312t.712.287L11 12.15V5q0-.425.288-.712T12 4t.713.288T13 5v7.15l1.875-1.875q.3-.3.713-.288t.712.313q.275.3.288.7t-.288.7l-3.6 3.6q-.15.15-.325.213t-.375.062M6 20q-.825 0-1.412-.587T4 18v-2q0-.425.288-.712T5 15t.713.288T6 16v2h12v-2q0-.425.288-.712T19 15t.713.288T20 16v2q0 .825-.587 1.413T18 20z"/>`,
     attribution: ICON_ATTRIBUTIONS.materialIcons,
     name: "round-upload",
+  },
+  calendar: {
+    viewBox: "0 0 24 24",
+    markup: `<path fill="currentColor" d="M5 22q-.825 0-1.412-.587T3 20V6q0-.825.588-1.412T5 4h1V3q0-.425.288-.712T7 2t.713.288T8 3v1h8V3q0-.425.288-.712T17 2t.713.288T18 3v1h1q.825 0 1.413.588T21 6v14q0 .825-.587 1.413T19 22zm0-2h14V10H5z"/>`,
+    attribution: ICON_ATTRIBUTIONS.materialIcons,
+    name: "calendar-today-rounded",
   },
 };
 

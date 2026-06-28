@@ -11,6 +11,7 @@ import { initExpandableSurfaces } from "./expandable-surface.js";
 import { showBanner, hideBanner } from "./banner.js";
 import { initFileDropzone } from "./file-dropzone.js";
 import { initFileDownload } from "./file-download.js";
+import { initDatePicker } from "./date-picker.js";
 
 initShell();
 initExpands(document);
@@ -24,6 +25,8 @@ const demoRadioGroup = document.getElementById("demo-radio-group");
 const demoRadioResult = document.getElementById("demo-radio-result");
 const fileDownloadResult = document.getElementById("demo-file-download-result");
 const demoAccordionResult = document.getElementById("demo-accordion-result");
+const demoDatePickerResult = document.getElementById("demo-date-picker-result");
+const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 
 function buildDemoTextFile(title) {
   return [
@@ -92,6 +95,22 @@ initFileDownload(document.getElementById("demo-file-download"), {
   onDownload: ({ filename, size }) => {
     if (fileDownloadResult) {
       fileDownloadResult.textContent = `Downloaded ${filename} (${size} B).`;
+    }
+  },
+});
+
+initDatePicker(document.getElementById("demo-date-picker"), {
+  onChange: ({ display }) => {
+    if (demoDatePickerResult) {
+      demoDatePickerResult.textContent = display || "No date selected.";
+    }
+  },
+});
+
+initDatePicker(document.getElementById("demo-date-picker-time"), {
+  onChange: ({ display }) => {
+    if (demoDatePickerTimeResult) {
+      demoDatePickerTimeResult.textContent = display || "No date or time selected.";
     }
   },
 });
