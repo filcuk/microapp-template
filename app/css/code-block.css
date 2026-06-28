@@ -183,9 +183,18 @@
 }
 
 .demo-code-modes {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1.25rem;
+}
+
+@media (min-width: 52rem) {
+  .demo-code-modes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .demo-code-modes .field:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 .demo-code-modes .field {
