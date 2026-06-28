@@ -42,7 +42,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | Pattern | Use for |
 | -------- | ------- |
 | `initX({ … })` | Single instance (dialog, combo, dropdown, expand) |
-| `initXBlocks(root)` | Scan a subtree for `.x` blocks (tabs, expand, tooltips) |
+| `initXBlocks(root)` | Scan a subtree for `.x` blocks (tabs, expand, accordion, tooltips) |
 | `initShell()` | Standard page boot (footer, theme, page nav, tooltips, external links, heading links) |
 | `initExternalLinks(root)` | Append arrow-outward icon to external links |
 | `initHeadingLinks(root)` | Copy-link button on `main h2[id]` headings |
@@ -55,6 +55,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initDropdown()` / `initToggleDropdown()` | Single-select vs multi-select toggle dropdown menus |
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
+| `initAccordion()` / `initAccordions()` | Collapsible accordion sections |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
 
 ### Document listeners
@@ -89,7 +90,7 @@ Always use `setHidden()` from `app/dom.js` when showing/hiding elements programm
 | `app/tokens.css` | Reset, `:root` tokens, dark theme, base typography, `.hidden`, reduced-motion |
 | `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
 | `app/css/code-block.css` | Code blocks and expandable surfaces |
-| `app/css/controls.css` | Buttons, fields, menus, expand, tabs, file dropzone, file download |
+| `app/css/controls.css` | Buttons, fields, menus, expand, accordion, tabs, file dropzone, file download |
 | `app/css/overlays.css` | Banners, tooltips, modals |
 
 Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.

@@ -4,6 +4,7 @@ import { initCombo } from "./combo.js";
 import { initDropdown } from "./dropdown.js";
 import { initToggleDropdown } from "./dropdown-toggle.js";
 import { initExpands } from "./expand.js";
+import { initAccordion } from "./accordion.js";
 import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
 import { initExpandableSurfaces } from "./expandable-surface.js";
@@ -22,6 +23,7 @@ const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-mult
 const demoRadioGroup = document.getElementById("demo-radio-group");
 const demoRadioResult = document.getElementById("demo-radio-result");
 const fileDownloadResult = document.getElementById("demo-file-download-result");
+const demoAccordionResult = document.getElementById("demo-accordion-result");
 
 function buildDemoTextFile(title) {
   return [
@@ -91,6 +93,20 @@ initFileDownload(document.getElementById("demo-file-download"), {
     if (fileDownloadResult) {
       fileDownloadResult.textContent = `Downloaded ${filename} (${size} B).`;
     }
+  },
+});
+
+initAccordion(document.getElementById("demo-accordion"), {
+  onToggle: ({ trigger, isOpen }) => {
+    if (!demoAccordionResult) return;
+    const label = trigger.querySelector(".accordion-label")?.textContent?.trim();
+    if (isOpen && label) {
+      demoAccordionResult.textContent = `Open: ${label}`;
+      return;
+    }
+    const accordion = document.getElementById("demo-accordion");
+    const openLabel = accordion?.querySelector(".accordion-item.is-open .accordion-label")?.textContent?.trim();
+    demoAccordionResult.textContent = openLabel ? `Open: ${openLabel}` : "All sections collapsed.";
   },
 });
 

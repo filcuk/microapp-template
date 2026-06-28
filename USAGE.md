@@ -212,6 +212,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
+| **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
@@ -574,6 +575,42 @@ initExpands(document); // all .expand blocks
 const expand = initExpand(document.getElementById("my-expand"));
 // expand.open(), expand.close(), expand.toggle(), expand.isOpen()
 ```
+
+### Accordion
+
+Vertical stack of sections. Each `.accordion-item` has a heading button and a collapsible panel. By default only one panel is open at a time; add `data-accordion-multiple` to allow several.
+
+```html
+<div class="accordion" data-accordion-default-open="0">
+  <div class="accordion-item">
+    <h3 class="accordion-heading">
+      <button type="button" class="accordion-trigger" id="acc-trigger-1" aria-expanded="false"
+        aria-controls="acc-panel-1">
+        <span class="accordion-notch" aria-hidden="true"></span>
+        <span class="accordion-label">Section one</span>
+      </button>
+    </h3>
+    <div id="acc-panel-1" class="accordion-panel hidden" role="region" aria-labelledby="acc-trigger-1" hidden>
+      <div class="accordion-body">Content for section one.</div>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initAccordion, initAccordions } from "./accordion.js";
+
+initAccordions(document); // all .accordion blocks
+
+const accordion = initAccordion(document.getElementById("my-accordion"), {
+  allowMultiple: false,
+  defaultOpen: 0,
+  onToggle: ({ index, isOpen, trigger }) => {},
+});
+// accordion.open(0), accordion.close(0), accordion.toggle(0), accordion.closeAll(), accordion.getOpenIndices()
+```
+
+`data-accordion-default-open` sets the initially open panel index. `data-accordion-open` on an item opens it on load (use with `data-accordion-multiple` for several). Arrow Up/Down, Home, and End move focus between headers.
 
 ### Tabs
 
