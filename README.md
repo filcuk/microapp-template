@@ -23,6 +23,7 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
+| **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. [`app/page-nav.js`](app/page-nav.js). |
@@ -59,6 +60,7 @@ app/
   dialog.js         # Modal controller
   combo.js          # Combo button controller
   dropdown.js       # Dropdown menu controller
+  dropdown-toggle.js # Multi-select toggle dropdown
   expand.js         # Expand / disclosure controller
   tabs.js           # Tabbed section controller
   page-nav.js        # In-page heading nav + jump up/down
@@ -292,6 +294,39 @@ initDropdown(document.getElementById("my-dropdown"), {
 ```
 
 Markup: `.dropdown` > `.dropdown-trigger` + `ul.dropdown-menu` with `.dropdown-menu-item` buttons.
+
+### Toggle dropdown
+
+Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. The trigger shows the selection count when any items are active (e.g. `Toggle items (3)`).
+
+```javascript
+import { initToggleDropdown } from "./dropdown-toggle.js";
+
+const toggleDropdown = initToggleDropdown(document.getElementById("my-toggle-dropdown"), {
+  onToggle: ({ value, label, selected, values, labels }) => {
+    console.log(label, selected, values);
+  },
+});
+
+toggleDropdown?.getSelected(); // [{ value, label, item }, …]
+toggleDropdown?.setSelected(["alpha", "gamma"]);
+```
+
+```html
+<div class="dropdown" id="my-toggle-dropdown">
+  <button type="button" class="btn dropdown-trigger" aria-haspopup="menu" aria-expanded="false"
+    aria-controls="my-toggle-dropdown-menu">
+    <span class="dropdown-trigger-label">Toggle items</span>
+    <span class="combo-btn-chevron" aria-hidden="true"></span>
+  </button>
+  <ul id="my-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
+    <li role="none">
+      <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+        data-value="alpha">Alpha</button>
+    </li>
+  </ul>
+</div>
+```
 
 ### Expand
 

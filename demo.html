@@ -184,6 +184,41 @@
       <p id="demo-dropdown-result" class="demo-hint" aria-live="polite"></p>
     </section>
 
+    <section class="demo-section" aria-labelledby="demo-toggle-dropdown-title">
+      <h2 id="demo-toggle-dropdown-title" class="section-heading">Toggle dropdown</h2>
+      <p class="demo-hint">
+        Same as a dropdown, but each item toggles on or off and the menu stays open.
+      </p>
+      <div class="dropdown" id="demo-toggle-dropdown">
+        <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
+          aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
+          <span class="dropdown-trigger-label">Toggle items</span>
+          <span class="combo-btn-chevron" aria-hidden="true"></span>
+        </button>
+        <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
+          <li role="none">
+            <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+              data-value="alpha">
+              Alpha
+            </button>
+          </li>
+          <li role="none">
+            <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+              data-value="beta">
+              Beta
+            </button>
+          </li>
+          <li role="none">
+            <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+              data-value="gamma">
+              Gamma
+            </button>
+          </li>
+        </ul>
+      </div>
+      <p id="demo-toggle-dropdown-result" class="demo-hint" aria-live="polite"></p>
+    </section>
+
     <section class="demo-section" aria-labelledby="demo-tooltips">
       <h2 id="demo-tooltips" class="section-heading">Tooltips</h2>
       <div class="demo-row">

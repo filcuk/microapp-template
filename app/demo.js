@@ -2,6 +2,7 @@ import { initShell } from "./shell.js";
 import { initDialog } from "./dialog.js";
 import { initCombo } from "./combo.js";
 import { initDropdown } from "./dropdown.js";
+import { initToggleDropdown } from "./dropdown-toggle.js";
 import { initExpands } from "./expand.js";
 import { initTabsBlocks } from "./tabs.js";
 import { initCodeBlocks } from "./code-block.js";
@@ -16,6 +17,7 @@ initExpandableSurfaces(document);
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");
+const toggleDropdownResultEl = document.getElementById("demo-toggle-dropdown-result");
 
 const comboOptions = [
   { value: "example-1", label: "Example 1" },
@@ -54,6 +56,15 @@ initDropdown(document.getElementById("demo-dropdown"), {
     if (dropdownResultEl) {
       dropdownResultEl.textContent = `Selected: ${label}`;
     }
+  },
+});
+
+initToggleDropdown(document.getElementById("demo-toggle-dropdown"), {
+  onToggle: ({ label, selected, labels }) => {
+    if (!toggleDropdownResultEl) return;
+    const state = selected ? "on" : "off";
+    const summary = labels.length ? labels.join(", ") : "none";
+    toggleDropdownResultEl.textContent = `Toggled ${label} ${state}. Selected: ${summary}`;
   },
 });
 

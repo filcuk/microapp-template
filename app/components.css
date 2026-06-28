@@ -762,6 +762,19 @@ body.expandable-surface-open {
   outline: none;
 }
 
+.dropdown-menu-item.is-selected,
+.dropdown-menu-item[aria-checked="true"] {
+  background: var(--code-bg);
+  color: var(--accent);
+}
+
+.dropdown-menu-item.is-selected:hover,
+.dropdown-menu-item.is-selected:focus-visible,
+.dropdown-menu-item[aria-checked="true"]:hover,
+.dropdown-menu-item[aria-checked="true"]:focus-visible {
+  background: var(--code-bg);
+}
+
 /* Dropdown */
 
 .dropdown {
