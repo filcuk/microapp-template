@@ -15,6 +15,7 @@ import { initFileDownload } from "./file-download.js";
 import { initDatePicker } from "./date-picker.js";
 import { initSlider } from "./slider.js";
 import { initStepper } from "./stepper.js";
+import { initToggle } from "./toggle.js";
 import { initProgressIndicator } from "./progress-indicator.js";
 
 initShell();
@@ -35,6 +36,7 @@ const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
+const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 
@@ -235,6 +237,24 @@ demoCheckboxGroup?.addEventListener("change", (event) => {
 });
 
 updateCheckboxResult();
+
+function updateToggleResult() {
+  if (!demoToggleResult) return;
+  const off = document.getElementById("demo-toggle-off");
+  const on = document.getElementById("demo-toggle-on");
+  const parts = [
+    off ? `Notifications: ${off.querySelector(".toggle-value")?.value === "true" ? "on" : "off"}` : null,
+    on ? `Preview: ${on.querySelector(".toggle-value")?.value === "true" ? "on" : "off"}` : null,
+  ].filter(Boolean);
+  demoToggleResult.textContent = parts.join(" · ");
+}
+
+const toggleOnChange = () => updateToggleResult();
+
+initToggle(document.getElementById("demo-toggle-off"), { onChange: toggleOnChange });
+initToggle(document.getElementById("demo-toggle-on"), { onChange: toggleOnChange });
+initToggle(document.getElementById("demo-toggle-disabled"));
+updateToggleResult();
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const comboboxResultEl = document.getElementById("demo-combobox-result");

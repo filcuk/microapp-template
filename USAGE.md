@@ -164,6 +164,7 @@ app/
   combobox.js           # Combobox with text autocomplete
   slider.js             # Range slider with editable value
   stepper.js            # Numeric nudger (quantity counter)
+  toggle.js             # On/off switch
   progress-indicator.js # Multi-step progress indicator
   dropdown.js           # Dropdown menu controller
   dropdown-toggle.js    # Multi-select toggle dropdown
@@ -208,7 +209,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -216,6 +217,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
+| **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
@@ -707,6 +709,43 @@ initSteppers(document); // all `.stepper` blocks
 ```
 
 `data-stepper-min`, `data-stepper-max`, `data-stepper-step`, `data-stepper-default`, `data-stepper-format`, and `data-stepper-disabled` mirror the JS options. Decrement and increment buttons disable at the min and max bounds.
+
+### Toggle
+
+On/off switch for boolean settings. Uses `role="switch"` and `aria-checked` on the button; a hidden `.toggle-value` field stores `"true"` or `"false"` for forms.
+
+```html
+<div class="toggle" id="my-toggle" data-toggle-default="false">
+  <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+    <span class="toggle-track" aria-hidden="true">
+      <span class="toggle-thumb">
+        <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+      </span>
+    </span>
+    <span class="toggle-label">Enable notifications</span>
+  </button>
+  <input type="hidden" class="toggle-value" name="notifications" value="false" />
+</div>
+```
+
+```javascript
+import { initToggle, initToggles } from "./toggle.js";
+
+const toggle = initToggle(document.getElementById("my-toggle"), {
+  defaultChecked: false,
+  disabled: false,
+  onChange: ({ checked, source }) => console.log(checked, source),
+});
+
+toggle?.getChecked();
+toggle?.setChecked(true);
+toggle?.toggle();
+toggle?.setDisabled(true);
+
+initToggles(document); // all `.toggle` blocks
+```
+
+`data-toggle-default` and `data-toggle-disabled` mirror the JS options. For a group of switches, wrap items in `.toggle-group`.
 
 ### Progress indicator
 
