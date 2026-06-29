@@ -163,6 +163,7 @@ app/
   combo.js              # Combo button controller
   combobox.js           # Combobox with text autocomplete
   slider.js             # Range slider with editable value
+  stepper.js            # Numeric nudger (quantity counter)
   progress-indicator.js # Multi-step progress indicator
   dropdown.js           # Dropdown menu controller
   dropdown-toggle.js    # Multi-select toggle dropdown
@@ -207,13 +208,14 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, `.slider`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
+| **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
@@ -660,6 +662,51 @@ initSliders(document); // all `.slider` blocks
 ```
 
 `data-slider-min`, `data-slider-max`, `data-slider-step`, `data-slider-default`, `data-slider-format`, and `data-slider-disabled` mirror the JS options. The hidden `.slider-value` field stores the numeric value for forms.
+
+### Stepper
+
+Numeric quantity control with decrement (−) and increment (+) buttons flanking a compact value field. Type a value directly or use Arrow Up / Down while focused. Values are clamped to min/max and snapped to `step` on blur or Enter.
+
+```html
+<div class="stepper" id="my-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="1">
+  <label class="field-label" for="my-stepper-input">Quantity</label>
+  <div class="stepper-control">
+    <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+      aria-label="Decrease">−</button>
+    <input type="text" id="my-stepper-input" class="input stepper-input" inputmode="numeric"
+      aria-label="Quantity" />
+    <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+      aria-label="Increase">+</button>
+    <input type="hidden" class="stepper-value" name="quantity" />
+  </div>
+</div>
+```
+
+```javascript
+import { initStepper, initSteppers } from "./stepper.js";
+
+const stepper = initStepper(document.getElementById("my-stepper"), {
+  min: 0,
+  max: 10,
+  step: 1,
+  defaultValue: 1,
+  format: "integer", // "integer" | "decimal"
+  disabled: false,
+  onChange: ({ value, display, source }) => console.log(value, source),
+  onInput: ({ value }) => { /* live while typing */ },
+});
+
+stepper?.getValue();
+stepper?.setValue(5);
+stepper?.increment();
+stepper?.decrement();
+stepper?.setDisabled(true);
+stepper?.commitInput();
+
+initSteppers(document); // all `.stepper` blocks
+```
+
+`data-stepper-min`, `data-stepper-max`, `data-stepper-step`, `data-stepper-default`, `data-stepper-format`, and `data-stepper-disabled` mirror the JS options. Decrement and increment buttons disable at the min and max bounds.
 
 ### Progress indicator
 

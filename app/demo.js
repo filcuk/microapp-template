@@ -14,6 +14,7 @@ import { initFileDropzone } from "./file-dropzone.js";
 import { initFileDownload } from "./file-download.js";
 import { initDatePicker } from "./date-picker.js";
 import { initSlider } from "./slider.js";
+import { initStepper } from "./stepper.js";
 import { initProgressIndicator } from "./progress-indicator.js";
 
 initShell();
@@ -33,6 +34,7 @@ const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
+const demoStepperResult = document.getElementById("demo-stepper-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 
@@ -143,6 +145,23 @@ initSlider(document.getElementById("demo-slider-decimal"), { onChange: sliderOnC
 initSlider(document.getElementById("demo-slider-percentage"), { onChange: sliderOnChange });
 initSlider(document.getElementById("demo-slider-disabled"));
 updateSliderResult();
+
+function updateStepperResult() {
+  if (!demoStepperResult) return;
+  const integer = document.getElementById("demo-stepper");
+  const decimal = document.getElementById("demo-stepper-decimal");
+  const parts = [
+    integer ? `Integer: ${integer.querySelector(".stepper-value")?.value ?? "—"}` : null,
+    decimal ? `Decimal: ${decimal.querySelector(".stepper-value")?.value ?? "—"}` : null,
+  ].filter(Boolean);
+  demoStepperResult.textContent = parts.join(" · ");
+}
+
+const stepperOnChange = () => updateStepperResult();
+
+initStepper(document.getElementById("demo-stepper"), { onChange: stepperOnChange });
+initStepper(document.getElementById("demo-stepper-decimal"), { onChange: stepperOnChange });
+updateStepperResult();
 
 const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
 const demoProgressIndicatorVerticalLabels = ["Details", "Options", "Confirm"];

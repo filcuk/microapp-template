@@ -167,6 +167,34 @@
               <span class="field-label">Slider result</span>
               <p id="demo-slider-result" class="demo-hint" aria-live="polite">Integer: 4</p>
             </div>
+            <div class="demo-grid demo-grid-2">
+              <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
+                <label class="field-label" for="demo-stepper-input">Stepper (integer)</label>
+                <div class="stepper-control">
+                  <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+                    aria-label="Decrease">−</button>
+                  <input type="text" id="demo-stepper-input" class="input stepper-input" inputmode="numeric"
+                    aria-label="Integer quantity" />
+                  <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+                    aria-label="Increase">+</button>
+                  <input type="hidden" class="stepper-value" />
+                </div>
+              </div>
+              <div class="stepper" id="demo-stepper-decimal" data-stepper-min="0" data-stepper-max="5"
+                data-stepper-step="0.5" data-stepper-default="1.5" data-stepper-format="decimal">
+                <label class="field-label" for="demo-stepper-decimal-input">Stepper (decimal)</label>
+                <div class="stepper-control">
+                  <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+                    aria-label="Decrease">−</button>
+                  <input type="text" id="demo-stepper-decimal-input" class="input stepper-input" inputmode="decimal"
+                    aria-label="Decimal quantity" />
+                  <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+                    aria-label="Increase">+</button>
+                  <input type="hidden" class="stepper-value" />
+                </div>
+              </div>
+            </div>
+            <p id="demo-stepper-result" class="demo-hint" aria-live="polite">Integer: 2 · Decimal: 1.5</p>
           </div>
         </section>
 
