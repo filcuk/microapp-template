@@ -9,6 +9,7 @@
   <script src="app/theme-init.js"></script>
   <link rel="stylesheet" href="app/styles.css" />
   <link rel="stylesheet" href="app/prism.css" />
+  <link rel="stylesheet" href="app/toastui-editor.css" />
 </head>
 
 <body>
@@ -1194,6 +1195,28 @@ print(total)
           </div>
         </section>
 
+        <section class="demo-section" aria-labelledby="demo-rich-text-editor">
+          <h2 id="demo-rich-text-editor" class="section-heading">Rich text editor</h2>
+          <p class="demo-hint">
+            Markdown and WYSIWYG via
+            <a href="https://github.com/nhn/tui.editor" target="_blank" rel="noopener noreferrer">Toast UI Editor</a>.
+            Switch modes with the editor toolbar. Pasted images are stored as base64 data URLs.
+          </p>
+          <div class="field rich-text-editor rich-text-editor--wide" id="demo-rich-text-editor-block"
+            data-rich-text-editor-height="320px"
+            data-rich-text-editor-preview="vertical"
+            data-rich-text-editor-placeholder="Write something…"
+            data-rich-text-editor-value="## Hello&#10;&#10;Edit in **Markdown** or switch to WYSIWYG. Tables support merged cells.">
+            <span class="field-label">Body</span>
+            <div class="rich-text-editor-mount" aria-label="Rich text editor"></div>
+          </div>
+          <div class="demo-row">
+            <button type="button" class="btn" id="demo-rich-text-get-markdown">Get Markdown</button>
+            <button type="button" class="btn" id="demo-rich-text-get-html">Get HTML</button>
+          </div>
+          <p id="demo-rich-text-result" class="demo-hint" aria-live="polite">Use the buttons to read the current content.</p>
+        </section>
+
         <section class="demo-section" aria-labelledby="demo-theme">
           <h2 id="demo-theme" class="section-heading">Theme</h2>
           <p class="demo-hint">
@@ -1260,6 +1283,8 @@ print(total)
   <script defer src="app/vendor/prism/prism.min.js"></script>
   <script defer src="app/vendor/prism/prism-python.min.js"></script>
   <script defer src="app/vendor/prism/prism-line-numbers.min.js"></script>
+  <script defer src="app/vendor/toastui-editor/toastui-editor-all.min.js"></script>
+  <script defer src="app/vendor/toastui-editor-plugin-table-merged-cell/toastui-editor-plugin-table-merged-cell.min.js"></script>
   <script type="module" src="app/demo.js"></script>
 </body>
 
