@@ -1361,6 +1361,7 @@ The vendor bundle is large (~500KB+ minified). Omit `app/vendor/toastui-editor*`
 | `data-rich-text-editor-preview` | `previewStyle` (`vertical` \| `tab`) | `vertical` |
 | `data-rich-text-editor-placeholder` | `placeholder` | — |
 | `data-rich-text-editor-value` | `initialValue` | `""` |
+| `data-rich-text-editor-autofocus` | `autofocus` | `false` |
 
 ```javascript
 import { initRichTextEditor, initRichTextEditors } from "./rich-text-editor.js";

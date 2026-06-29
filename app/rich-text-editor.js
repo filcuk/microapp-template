@@ -18,6 +18,7 @@
  * data-rich-text-editor-preview — `vertical` | `tab` (default `vertical`)
  * data-rich-text-editor-placeholder — placeholder text
  * data-rich-text-editor-value — initial Markdown/HTML content
+ * data-rich-text-editor-autofocus — focus the editor on init (default off; Toast UI defaults on)
  */
 
 import {
@@ -59,6 +60,16 @@ function readDataOption(rootEl, key, fallback) {
   return fallback;
 }
 
+function parseBooleanAttr(value) {
+  if (value === undefined) return undefined;
+  return value === "" || value === "true";
+}
+
+function resolveAutofocus(rootEl, autofocusOption) {
+  if (typeof autofocusOption === "boolean") return autofocusOption;
+  return parseBooleanAttr(rootEl?.dataset.richTextEditorAutofocus) ?? false;
+}
+
 function resolvePlugins(pluginOption) {
   if (pluginOption === false || pluginOption?.length === 0) return [];
 
@@ -93,6 +104,7 @@ export function initRichTextEditor(
     placeholder,
     initialValue,
     plugins,
+    autofocus,
     onChange,
   } = {}
 ) {
@@ -115,6 +127,7 @@ export function initRichTextEditor(
     placeholder ?? readDataOption(rootEl, "richTextEditorPlaceholder", "");
   const resolvedInitialValue =
     initialValue ?? readDataOption(rootEl, "richTextEditorValue", "");
+  const resolvedAutofocus = resolveAutofocus(rootEl, autofocus);
 
   const editor = new Editor({
     el: mountEl,
@@ -123,6 +136,7 @@ export function initRichTextEditor(
     previewStyle: resolvedPreviewStyle,
     placeholder: resolvedPlaceholder || undefined,
     initialValue: resolvedInitialValue,
+    autofocus: resolvedAutofocus,
     theme: resolveTheme(),
     plugins: resolvePlugins(plugins),
     hooks: {
@@ -135,6 +149,10 @@ export function initRichTextEditor(
   });
 
   applyEditorTheme(mountEl, resolveTheme());
+
+  if (!resolvedAutofocus && typeof editor.blur === "function") {
+    editor.blur();
+  }
 
   function emitChange(source) {
     onChange?.({
