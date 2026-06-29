@@ -19,6 +19,7 @@ import { initToggle } from "./toggle.js";
 import { initSegmentedControl } from "./segmented-control.js";
 import { initPagination } from "./pagination.js";
 import { initProgressBar } from "./progress-bar.js";
+import { initSpinner } from "./spinner.js";
 import { initProgressIndicator } from "./progress-indicator.js";
 
 initShell();
@@ -44,6 +45,7 @@ const demoSegmentedViewResult = document.getElementById("demo-segmented-view-res
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
 const demoPaginationResult = document.getElementById("demo-pagination-result");
 const demoProgressBarResult = document.getElementById("demo-progress-bar-result");
+const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 
@@ -331,6 +333,31 @@ document.getElementById("demo-progress-bar-reset")?.addEventListener("click", ()
   demoProgressBar?.setValue(40);
   demoProgressBarPercent?.setValue(75);
   demoProgressBarFraction?.setValue(7);
+});
+
+let demoSpinnerInline;
+const demoSpinnerHost = initSpinner(document.getElementById("demo-spinner-host"), {
+  onChange: ({ visible }) => {
+    if (demoSpinnerResult) {
+      demoSpinnerResult.textContent = visible ? "Loading panel…" : "Panel ready.";
+    }
+  },
+});
+
+demoSpinnerInline = initSpinner(document.getElementById("demo-spinner-inline"), {
+  visible: false,
+});
+
+document.getElementById("demo-spinner-toggle")?.addEventListener("click", () => {
+  demoSpinnerInline?.toggle();
+});
+
+document.getElementById("demo-spinner-load")?.addEventListener("click", () => {
+  if (demoSpinnerHost?.isVisible()) return;
+  demoSpinnerHost?.show();
+  window.setTimeout(() => {
+    demoSpinnerHost?.hide();
+  }, 2000);
 });
 
 const comboResultEl = document.getElementById("demo-combo-result");

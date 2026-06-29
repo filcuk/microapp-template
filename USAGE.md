@@ -164,6 +164,7 @@ app/
   combobox.js           # Combobox with text autocomplete
   slider.js             # Range slider with editable value
   progress-bar.js       # Progress bar with optional label
+  spinner.js            # Loading spinner and overlay
   stepper.js            # Numeric nudger (quantity counter)
   toggle.js             # On/off switch
   progress-indicator.js # Multi-step progress indicator
@@ -210,7 +211,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -218,6 +219,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
 | **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label. [`app/progress-bar.js`](app/progress-bar.js). |
+| **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
@@ -717,6 +719,57 @@ initProgressBars(document); // all `.progress-bar` blocks
 ```
 
 `data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, and `data-progress-bar-indeterminate` mirror the JS options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers.
+
+### Spinner
+
+Loading indicator while a process runs in the background. Use inline for compact status, or wrap a region in `.spinner-host` with a `.spinner-overlay` to block interaction until ready. Sizes: default, `.spinner--sm`, `.spinner--lg`.
+
+```html
+<div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+  <span class="spinner-indicator" aria-hidden="true"></span>
+  <span class="spinner-label">Loading data…</span>
+</div>
+```
+
+Blocking overlay:
+
+```html
+<div class="spinner-host" id="my-panel">
+  <p>Panel content…</p>
+  <button type="button" class="btn">Edit</button>
+  <div class="spinner-overlay hidden" hidden>
+    <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
+      <span class="spinner-indicator" aria-hidden="true"></span>
+      <span class="spinner-label">Loading data…</span>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initSpinner, initSpinners } from "./spinner.js";
+
+const spinner = initSpinner(document.getElementById("my-spinner"), {
+  visible: false,
+  label: "Fetching results…",
+  onChange: ({ visible, label, source }) => console.log(visible, source),
+});
+
+spinner?.show();
+spinner?.hide();
+spinner?.toggle();
+spinner?.isVisible();
+spinner?.setLabel("Saving…");
+
+const panelSpinner = initSpinner(document.getElementById("my-panel"));
+panelSpinner?.show();
+// …await work…
+panelSpinner?.hide();
+
+initSpinners(document); // `.spinner-host` blocks and `[data-spinner-visible]` spinners
+```
+
+`data-spinner-visible` and `data-spinner-label` mirror the JS options. Pass a `.spinner` for inline use or a `.spinner-host` for overlay mode. While visible, the host gets `aria-busy="true"` and `pointer-events: none` on its content.
 
 ### Stepper
 

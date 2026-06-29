@@ -325,6 +325,49 @@
               <button type="button" class="btn" id="demo-progress-bar-reset">Reset</button>
             </div>
             <p id="demo-progress-bar-result" class="demo-hint" aria-live="polite">Bar: 40% · Percent: 75% · Fraction: 7/12</p>
+            <div class="field">
+              <span class="field-label">Spinner</span>
+              <div class="demo-row">
+                <div class="spinner spinner--sm" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                </div>
+                <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                </div>
+                <div class="spinner spinner--lg" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                </div>
+                <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                  <span class="spinner-label">Loading data…</span>
+                </div>
+                <div class="spinner hidden" id="demo-spinner-inline" data-spinner-visible="false"
+                  data-spinner-label="Fetching results…" role="status" aria-live="polite" aria-busy="false"
+                  aria-label="Fetching results…" hidden>
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                  <span class="spinner-label">Fetching results…</span>
+                </div>
+                <button type="button" class="btn" id="demo-spinner-toggle">Toggle spinner</button>
+              </div>
+            </div>
+            <div class="demo-card">
+              <h3 class="demo-card-title">Spinner overlay</h3>
+              <p class="demo-hint">Blocks interaction with the panel below until loading finishes.</p>
+              <div class="spinner-host spinner-demo-panel" id="demo-spinner-host">
+                <p>Account settings and preferences appear here once loaded.</p>
+                <button type="button" class="btn" disabled>Edit settings</button>
+                <div class="spinner-overlay hidden" hidden>
+                  <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
+                    <span class="spinner-indicator" aria-hidden="true"></span>
+                    <span class="spinner-label">Loading data…</span>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-row">
+                <button type="button" class="btn btn-primary" id="demo-spinner-load">Simulate load</button>
+              </div>
+              <p id="demo-spinner-result" class="demo-hint" aria-live="polite">Panel ready.</p>
+            </div>
           </div>
         </section>
 

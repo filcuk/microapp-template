@@ -59,6 +59,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
 | `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
 | `initProgressBar()` / `initProgressBars()` | Progress bar with optional percent or fraction label |
+| `initSpinner()` / `initSpinners()` | Loading spinner; optional blocking overlay on a host |
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
 | `initToggle()` / `initToggles()` | On/off switch control |
 | `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
