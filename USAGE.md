@@ -76,6 +76,7 @@ The demo is for exploring components — not required for your app.
 | [`demo.html`](demo.html) | Delete `demo.html` |
 | [`app/demo.js`](app/demo.js) | Delete `app/demo.js` |
 | Prism vendor + `app/prism.css` (only if you do not use code blocks) | `app/vendor/prism/`, `app/prism.css`, `app/prism.js` |
+| Toast UI vendor + `app/toastui-editor.css` (only if you do not use the rich text editor) | `app/rich-text-editor.js`, `app/toastui-editor.js`, `app/toastui-editor.css`, `app/css/rich-text-editor.css`, `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/` |
 
 If you **remove** `demo.html`, update [`.github/workflows/pages.yml`](.github/workflows/pages.yml) — drop `demo.html` from the `cp` line:
 
@@ -90,6 +91,7 @@ If you **keep** the demo, leave the workflow as-is and optionally link to it fro
 All modules under `app/` are small and tree-shaken by the browser (only imported files load). You can delete files you will never use, for example:
 
 - `app/code-block.js`, `app/expandable-surface.js`, `app/prism.js`, `app/vendor/prism/` — no syntax-highlighted code
+- `app/rich-text-editor.js`, `app/toastui-editor.js`, `app/toastui-editor.css`, `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/` — no rich text editor
 - `app/combo.js`, `app/dropdown.js`, `app/dropdown-toggle.js` — no menus
 - `app/dialog.js` — no modals
 
@@ -151,6 +153,7 @@ app/
     code-block.css      # Code blocks and expandable surfaces
     controls.css        # Buttons, fields, menus, expand, tabs
     overlays.css        # Banners, tooltips, modals
+    rich-text-editor.css # Rich text editor layout + Toast UI token overrides
   theme-init.js         # Theme before first paint
   theme.js              # Theme preference module
   render-shell.js       # Injects footer + page navigation markup
@@ -184,7 +187,12 @@ app/
   prism.js              # initPrism() helper (optional)
   code-block.js         # Code block toggles + copy button
   expandable-surface.js # Hover maximise for code blocks, textareas, …
+  rich-text-editor.js   # Toast UI rich text editor wrapper
+  toastui-editor.js     # Toast UI vendor readiness helpers
+  toastui-editor.css    # Vendored Toast UI base CSS (optional page link)
   vendor/prism/         # Vendored Prism core, languages, plugins (optional)
+  vendor/toastui-editor/ # Vendored Toast UI Editor (optional)
+  vendor/toastui-editor-plugin-table-merged-cell/ # Table merged-cell plugin (optional)
   res/                  # App logo and signature SVGs
 ```
 
@@ -241,6 +249,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
 | **Toolbar helper** | `.toolbar` flex row for button groups. See [`demo.html`](demo.html). |
 | **Code highlighting** | Optional [Prism.js](https://prismjs.com/) via [`app/code-block.js`](app/code-block.js) and [`app/vendor/prism/`](app/vendor/prism/). See [`app/prism.js`](app/prism.js) for a minimal loader helper. |
+| **Rich text editor** | Markdown + WYSIWYG via [Toast UI Editor](https://github.com/nhn/tui.editor); table merged-cell plugin; base64 image paste. [`app/rich-text-editor.js`](app/rich-text-editor.js). Large vendor bundle (~500KB+). |
 
 For live examples of each component, open [`demo.html`](demo.html) on a local server or your deployed site.
 
@@ -1205,6 +1214,72 @@ nav?.destroy(); // remove listeners when tearing down
 Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right; the section list appears when you hover the right-edge trigger strip (or focus a section link inside the panel). The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
 
 Mark a top-level nav group by adding `data-page-nav-tier` to its `h2`. The next headings in document order nest under it until another tier heading appears. Tier links use full weight; nested section links are slightly smaller and muted.
+
+### Rich text editor (Toast UI)
+
+Markdown and WYSIWYG editing with live preview. Includes the [table merged-cell](https://github.com/nhn/tui.editor/tree/master/plugins/table-merged-cell) plugin. Pasted or dropped images are inlined as base64 data URLs (no upload server).
+
+The vendor bundle is large (~500KB+ minified). Omit `app/vendor/toastui-editor*` and related modules if you do not need rich text.
+
+**Page setup** — link Toast UI CSS in `<head>` and load vendor scripts before your ES module entry (see [`demo.html`](demo.html)):
+
+```html
+<link rel="stylesheet" href="app/toastui-editor.css" />
+```
+
+`app/toastui-editor.css` imports the base editor CSS, dark theme (`app/vendor/toastui-editor/theme/toastui-editor-dark.min.css`), and the table merged-cell plugin styles.
+
+```html
+<script defer src="app/vendor/toastui-editor/toastui-editor-all.min.js"></script>
+<script defer src="app/vendor/toastui-editor-plugin-table-merged-cell/toastui-editor-plugin-table-merged-cell.min.js"></script>
+```
+
+**Markup:**
+
+```html
+<div class="field rich-text-editor" id="my-editor"
+  data-rich-text-editor-height="320px"
+  data-rich-text-editor-edit-type="wysiwyg"
+  data-rich-text-editor-preview="vertical"
+  data-rich-text-editor-placeholder="Write something…">
+  <span class="field-label">Body</span>
+  <div class="rich-text-editor-mount" aria-label="Rich text editor"></div>
+</div>
+```
+
+| `data-*` attribute | Option | Default |
+| ---------------- | ------ | ------- |
+| `data-rich-text-editor-height` | `height` | `300px` |
+| `data-rich-text-editor-edit-type` | `initialEditType` (`markdown` \| `wysiwyg`) | `wysiwyg` |
+| `data-rich-text-editor-preview` | `previewStyle` (`vertical` \| `tab`) | `vertical` |
+| `data-rich-text-editor-placeholder` | `placeholder` | — |
+| `data-rich-text-editor-value` | `initialValue` | `""` |
+
+```javascript
+import { initRichTextEditor, initRichTextEditors } from "./rich-text-editor.js";
+
+const editor = initRichTextEditor(document.getElementById("my-editor"), {
+  height: "320px",
+  initialEditType: "wysiwyg",
+  previewStyle: "vertical",
+  initialValue: "## Hello\n\nStart writing…",
+  placeholder: "Write something…",
+  plugins: ["tableMergedCell"], // default; pass [] or plugins: false to disable
+  onChange: ({ markdown, html, source }) => console.log(source, markdown.length),
+});
+
+editor?.getMarkdown();
+editor?.getHTML();
+editor?.setMarkdown("…");
+editor?.setHTML("…"); // may not round-trip cleanly to Markdown
+editor?.destroy();
+
+initRichTextEditors(document); // every `.rich-text-editor` with a mount node
+```
+
+Theme (light/dark) follows the page `data-theme` attribute and updates on `microapp-theme-change` from [`app/theme.js`](app/theme.js).
+
+Switch between Markdown and WYSIWYG using Toast UI’s built-in mode control in the toolbar. Converting between Markdown and HTML is lossy for complex formatting (tables, nested lists, etc.) — treat one format as canonical when persisting content.
 
 ### Code highlighting (Prism)
 

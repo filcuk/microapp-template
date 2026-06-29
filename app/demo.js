@@ -21,6 +21,7 @@ import { initPagination } from "./pagination.js";
 import { initProgressBar } from "./progress-bar.js";
 import { initSpinner } from "./spinner.js";
 import { initProgressIndicator } from "./progress-indicator.js";
+import { initRichTextEditor } from "./rich-text-editor.js";
 
 initShell();
 initExpands(document);
@@ -48,6 +49,27 @@ const demoProgressBarResult = document.getElementById("demo-progress-bar-result"
 const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
+const demoRichTextResult = document.getElementById("demo-rich-text-result");
+
+const demoRichTextEditor = initRichTextEditor(
+  document.getElementById("demo-rich-text-editor-block")
+);
+
+document.getElementById("demo-rich-text-get-markdown")?.addEventListener("click", () => {
+  if (!demoRichTextResult || !demoRichTextEditor) return;
+  const markdown = demoRichTextEditor.getMarkdown();
+  demoRichTextResult.textContent = markdown
+    ? `Markdown (${markdown.length} chars): ${markdown.slice(0, 120)}${markdown.length > 120 ? "…" : ""}`
+    : "Markdown is empty.";
+});
+
+document.getElementById("demo-rich-text-get-html")?.addEventListener("click", () => {
+  if (!demoRichTextResult || !demoRichTextEditor) return;
+  const html = demoRichTextEditor.getHTML();
+  demoRichTextResult.textContent = html
+    ? `HTML (${html.length} chars): ${html.slice(0, 120)}${html.length > 120 ? "…" : ""}`
+    : "HTML is empty.";
+});
 
 function buildDemoTextFile(title) {
   return [
