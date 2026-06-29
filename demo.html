@@ -115,6 +115,86 @@
                 <p id="demo-radio-result" class="demo-hint" aria-live="polite">Selected: Option A</p>
               </div>
             </div>
+            <div class="demo-grid demo-grid-2">
+              <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
+                <label class="field-label" for="demo-slider-integer-range">Slider (integer)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-integer-range" class="slider-range" />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="numeric" aria-label="Integer value" />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+              <div class="slider" id="demo-slider-decimal" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-default="0.5" data-slider-format="decimal">
+                <label class="field-label" for="demo-slider-decimal-range">Slider (decimal)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-decimal-range" class="slider-range" />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="decimal" aria-label="Decimal value" />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+            </div>
+            <div class="demo-grid demo-grid-2">
+              <div class="slider" id="demo-slider-percentage" data-slider-min="0" data-slider-max="100" data-slider-default="75" data-slider-format="percentage">
+                <label class="field-label" for="demo-slider-percentage-range">Slider (percentage)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-percentage-range" class="slider-range" />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="decimal" aria-label="Percentage value" />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+              <div class="slider" id="demo-slider-disabled" data-slider-min="0" data-slider-max="10" data-slider-default="6" data-slider-format="integer" data-slider-disabled>
+                <label class="field-label" for="demo-slider-disabled-range">Slider (disabled)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-disabled-range" class="slider-range" disabled />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="numeric" aria-label="Disabled value" disabled />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field-label">Slider result</span>
+              <p id="demo-slider-result" class="demo-hint" aria-live="polite">Integer: 4</p>
+            </div>
+            <div class="demo-grid demo-grid-2">
+              <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
+                <label class="field-label" for="demo-stepper-input">Stepper (integer)</label>
+                <div class="stepper-control">
+                  <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+                    aria-label="Decrease">−</button>
+                  <input type="text" id="demo-stepper-input" class="input stepper-input" inputmode="numeric"
+                    aria-label="Integer quantity" />
+                  <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+                    aria-label="Increase">+</button>
+                  <input type="hidden" class="stepper-value" />
+                </div>
+              </div>
+              <div class="stepper" id="demo-stepper-decimal" data-stepper-min="0" data-stepper-max="5"
+                data-stepper-step="0.5" data-stepper-default="1.5" data-stepper-format="decimal">
+                <label class="field-label" for="demo-stepper-decimal-input">Stepper (decimal)</label>
+                <div class="stepper-control">
+                  <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+                    aria-label="Decrease">−</button>
+                  <input type="text" id="demo-stepper-decimal-input" class="input stepper-input" inputmode="decimal"
+                    aria-label="Decimal quantity" />
+                  <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+                    aria-label="Increase">+</button>
+                  <input type="hidden" class="stepper-value" />
+                </div>
+              </div>
+            </div>
+            <p id="demo-stepper-result" class="demo-hint" aria-live="polite">Integer: 2 · Decimal: 1.5</p>
           </div>
         </section>
 
@@ -670,6 +750,119 @@
               </div>
             </div>
             <p id="demo-accordion-result" class="demo-hint" aria-live="polite">Open: How do I use components?</p>
+          </div>
+
+          <div class="demo-card">
+            <h3 class="demo-card-title">Progress indicator</h3>
+            <p class="demo-hint">Linear wizard flow — horizontal (default) or vertical step list.</p>
+            <div class="demo-grid demo-grid-2">
+              <div>
+                <p class="demo-hint">Horizontal</p>
+                <div class="progress-indicator" id="demo-progress-indicator" data-progress-indicator-linear
+                  data-progress-indicator-default="0">
+                  <ol class="progress-indicator-list">
+                    <li class="progress-indicator-item">
+                      <button type="button" class="progress-indicator-step" id="demo-progress-indicator-step-1"
+                        aria-current="step">
+                        <span class="progress-indicator-marker" aria-hidden="true">1</span>
+                        <span class="progress-indicator-label">Account</span>
+                      </button>
+                    </li>
+                    <li class="progress-indicator-item">
+                      <button type="button" class="progress-indicator-step" id="demo-progress-indicator-step-2" disabled>
+                        <span class="progress-indicator-marker" aria-hidden="true">2</span>
+                        <span class="progress-indicator-label">Settings</span>
+                      </button>
+                    </li>
+                    <li class="progress-indicator-item">
+                      <button type="button" class="progress-indicator-step" id="demo-progress-indicator-step-3" disabled>
+                        <span class="progress-indicator-marker" aria-hidden="true">3</span>
+                        <span class="progress-indicator-label">Review</span>
+                      </button>
+                    </li>
+                  </ol>
+                  <div class="progress-indicator-panels">
+                    <div class="progress-indicator-panel" id="demo-progress-indicator-panel-1" role="region"
+                      aria-labelledby="demo-progress-indicator-step-1">
+                      <div class="progress-indicator-body">
+                        <p>Enter account details. Completed steps stay clickable when linear mode is on.</p>
+                      </div>
+                    </div>
+                    <div class="progress-indicator-panel hidden" id="demo-progress-indicator-panel-2" role="region"
+                      aria-labelledby="demo-progress-indicator-step-2" hidden>
+                      <div class="progress-indicator-body">
+                        <p>Adjust settings for this step. Use Back to return to a previous step.</p>
+                      </div>
+                    </div>
+                    <div class="progress-indicator-panel hidden" id="demo-progress-indicator-panel-3" role="region"
+                      aria-labelledby="demo-progress-indicator-step-3" hidden>
+                      <div class="progress-indicator-body">
+                        <p>Review your choices, then click Finish.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="progress-indicator-actions">
+                    <button type="button" class="btn" data-progress-indicator-back hidden>Back</button>
+                    <button type="button" class="btn btn-primary" data-progress-indicator-next>Next</button>
+                  </div>
+                </div>
+                <p id="demo-progress-indicator-result" class="demo-hint" aria-live="polite">Step 1 of 3: Account</p>
+              </div>
+              <div>
+                <p class="demo-hint">Vertical</p>
+                <div class="progress-indicator" id="demo-progress-indicator-vertical" data-progress-indicator-vertical
+                  data-progress-indicator-linear data-progress-indicator-default="0">
+                  <ol class="progress-indicator-list">
+                    <li class="progress-indicator-item">
+                      <button type="button" class="progress-indicator-step" id="demo-progress-indicator-vertical-step-1"
+                        aria-current="step">
+                        <span class="progress-indicator-marker" aria-hidden="true">1</span>
+                        <span class="progress-indicator-label">Details</span>
+                      </button>
+                    </li>
+                    <li class="progress-indicator-item">
+                      <button type="button" class="progress-indicator-step" id="demo-progress-indicator-vertical-step-2"
+                        disabled>
+                        <span class="progress-indicator-marker" aria-hidden="true">2</span>
+                        <span class="progress-indicator-label">Options</span>
+                      </button>
+                    </li>
+                    <li class="progress-indicator-item">
+                      <button type="button" class="progress-indicator-step" id="demo-progress-indicator-vertical-step-3"
+                        disabled>
+                        <span class="progress-indicator-marker" aria-hidden="true">3</span>
+                        <span class="progress-indicator-label">Confirm</span>
+                      </button>
+                    </li>
+                  </ol>
+                  <div class="progress-indicator-panels">
+                    <div class="progress-indicator-panel" id="demo-progress-indicator-vertical-panel-1" role="region"
+                      aria-labelledby="demo-progress-indicator-vertical-step-1">
+                      <div class="progress-indicator-body">
+                        <p>Fill in the details for this step.</p>
+                      </div>
+                    </div>
+                    <div class="progress-indicator-panel hidden" id="demo-progress-indicator-vertical-panel-2"
+                      role="region" aria-labelledby="demo-progress-indicator-vertical-step-2" hidden>
+                      <div class="progress-indicator-body">
+                        <p>Choose your options.</p>
+                      </div>
+                    </div>
+                    <div class="progress-indicator-panel hidden" id="demo-progress-indicator-vertical-panel-3"
+                      role="region" aria-labelledby="demo-progress-indicator-vertical-step-3" hidden>
+                      <div class="progress-indicator-body">
+                        <p>Confirm and finish.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="progress-indicator-actions">
+                    <button type="button" class="btn" data-progress-indicator-back hidden>Back</button>
+                    <button type="button" class="btn btn-primary" data-progress-indicator-next>Next</button>
+                  </div>
+                </div>
+                <p id="demo-progress-indicator-vertical-result" class="demo-hint" aria-live="polite">Step 1 of 3: Details</p>
+              </div>
+            </div>
           </div>
         </section>
       </div>

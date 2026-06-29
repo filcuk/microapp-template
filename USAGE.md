@@ -162,6 +162,9 @@ app/
   dialog.js             # Modal controller
   combo.js              # Combo button controller
   combobox.js           # Combobox with text autocomplete
+  slider.js             # Range slider with editable value
+  stepper.js            # Numeric nudger (quantity counter)
+  progress-indicator.js # Multi-step progress indicator
   dropdown.js           # Dropdown menu controller
   dropdown-toggle.js    # Multi-select toggle dropdown
   expand.js             # Expand / disclosure controller
@@ -205,12 +208,15 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
+| **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
+| **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
+| **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
@@ -610,6 +616,168 @@ initComboboxes(document); // all `.combobox` blocks
 Keyboard: ArrowDown / ArrowUp navigate suggestions, Enter selects, Escape closes and restores the last committed value.
 
 See the interactive example on [`demo.html`](demo.html).
+
+### Slider
+
+Range input with a compact value field beside the track. Drag the thumb or type a value directly; typed values are clamped to min/max and snapped to `step` on blur or Enter. Escape restores the last committed value while editing.
+
+Formats: `integer` (default), `decimal`, or `percentage` (shows a `%` suffix; values are still stored as plain numbers, e.g. `75` for 75%).
+
+```html
+<div class="slider" id="my-slider" data-slider-min="0" data-slider-max="100"
+  data-slider-default="50" data-slider-format="percentage">
+  <label class="field-label" for="my-slider-range">Opacity</label>
+  <div class="slider-row">
+    <input type="range" id="my-slider-range" class="slider-range" />
+    <div class="slider-input-wrap">
+      <input type="text" class="input slider-input" inputmode="decimal" aria-label="Value" />
+      <span class="slider-suffix hidden" aria-hidden="true">%</span>
+    </div>
+    <input type="hidden" class="slider-value" name="opacity" />
+  </div>
+</div>
+```
+
+```javascript
+import { initSlider, initSliders } from "./slider.js";
+
+const slider = initSlider(document.getElementById("my-slider"), {
+  min: 0,
+  max: 100,
+  step: 1,
+  defaultValue: 50,
+  format: "percentage", // "integer" | "decimal" | "percentage"
+  disabled: false,
+  onChange: ({ value, display, source }) => console.log(value, display, source),
+  onInput: ({ value }) => { /* live while dragging or typing */ },
+});
+
+slider?.getValue();
+slider?.setValue(25);
+slider?.setDisabled(true);
+slider?.isDisabled();
+slider?.commitInput(); // commit typed text without blur
+
+initSliders(document); // all `.slider` blocks
+```
+
+`data-slider-min`, `data-slider-max`, `data-slider-step`, `data-slider-default`, `data-slider-format`, and `data-slider-disabled` mirror the JS options. The hidden `.slider-value` field stores the numeric value for forms.
+
+### Stepper
+
+Numeric quantity control with decrement (−) and increment (+) buttons flanking a compact value field. Type a value directly or use Arrow Up / Down while focused. Values are clamped to min/max and snapped to `step` on blur or Enter.
+
+```html
+<div class="stepper" id="my-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="1">
+  <label class="field-label" for="my-stepper-input">Quantity</label>
+  <div class="stepper-control">
+    <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+      aria-label="Decrease">−</button>
+    <input type="text" id="my-stepper-input" class="input stepper-input" inputmode="numeric"
+      aria-label="Quantity" />
+    <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+      aria-label="Increase">+</button>
+    <input type="hidden" class="stepper-value" name="quantity" />
+  </div>
+</div>
+```
+
+```javascript
+import { initStepper, initSteppers } from "./stepper.js";
+
+const stepper = initStepper(document.getElementById("my-stepper"), {
+  min: 0,
+  max: 10,
+  step: 1,
+  defaultValue: 1,
+  format: "integer", // "integer" | "decimal"
+  disabled: false,
+  onChange: ({ value, display, source }) => console.log(value, source),
+  onInput: ({ value }) => { /* live while typing */ },
+});
+
+stepper?.getValue();
+stepper?.setValue(5);
+stepper?.increment();
+stepper?.decrement();
+stepper?.setDisabled(true);
+stepper?.commitInput();
+
+initSteppers(document); // all `.stepper` blocks
+```
+
+`data-stepper-min`, `data-stepper-max`, `data-stepper-step`, `data-stepper-default`, `data-stepper-format`, and `data-stepper-disabled` mirror the JS options. Decrement and increment buttons disable at the min and max bounds.
+
+### Progress indicator
+
+Multi-step wizard with a step list, one visible panel at a time, and back/next actions. In linear mode (default), users can only jump to steps they have already visited; set `data-progress-indicator-linear="false"` to allow jumping to any step from the header.
+
+**Horizontal** (default) — step list across the top. **Vertical** — add `data-progress-indicator-vertical` (or `vertical: true`) for a left-hand step column with panels and actions on the right. Markup is the same; `initProgressIndicator()` adds `.progress-indicator--vertical` when enabled.
+
+```html
+<div class="progress-indicator" id="my-progress-indicator" data-progress-indicator-linear
+  data-progress-indicator-default="0">
+  <ol class="progress-indicator-list">
+    <li class="progress-indicator-item">
+      <button type="button" class="progress-indicator-step" id="my-step-1" aria-current="step">
+        <span class="progress-indicator-marker" aria-hidden="true">1</span>
+        <span class="progress-indicator-label">Account</span>
+      </button>
+    </li>
+    <li class="progress-indicator-item">
+      <button type="button" class="progress-indicator-step" id="my-step-2" disabled>
+        <span class="progress-indicator-marker" aria-hidden="true">2</span>
+        <span class="progress-indicator-label">Review</span>
+      </button>
+    </li>
+  </ol>
+  <div class="progress-indicator-panels">
+    <div class="progress-indicator-panel" id="my-panel-1" role="region" aria-labelledby="my-step-1">
+      <div class="progress-indicator-body">Step one content.</div>
+    </div>
+    <div class="progress-indicator-panel hidden" id="my-panel-2" role="region" aria-labelledby="my-step-2" hidden>
+      <div class="progress-indicator-body">Step two content.</div>
+    </div>
+  </div>
+  <div class="progress-indicator-actions">
+    <button type="button" class="btn" data-progress-indicator-back hidden>Back</button>
+    <button type="button" class="btn btn-primary" data-progress-indicator-next>Next</button>
+  </div>
+</div>
+```
+
+Vertical layout — same structure, add `data-progress-indicator-vertical`:
+
+```html
+<div class="progress-indicator" data-progress-indicator-vertical data-progress-indicator-linear
+  data-progress-indicator-default="0">
+  <!-- same .progress-indicator-list, .progress-indicator-panels, .progress-indicator-actions -->
+</div>
+```
+
+```javascript
+import { initProgressIndicator, initProgressIndicators } from "./progress-indicator.js";
+
+const progressIndicator = initProgressIndicator(document.getElementById("my-progress-indicator"), {
+  defaultStep: 0,
+  linear: true,
+  vertical: false,
+  finishLabel: "Finish",
+  onChange: ({ index, step, panel, isLastStep }) => {},
+  onFinish: ({ index, panel }) => {},
+});
+
+progressIndicator?.goToStep(1);
+progressIndicator?.nextStep();
+progressIndicator?.prevStep();
+progressIndicator?.getActiveIndex();
+progressIndicator?.getMaxVisitedIndex();
+progressIndicator?.isVertical();
+
+initProgressIndicators(document); // all `.progress-indicator` blocks
+```
+
+`data-progress-indicator-default` sets the initial step index. `data-progress-indicator-finish-label` overrides the next-button label on the last step (default `Finish`). `data-progress-indicator-vertical` enables the vertical layout. Step and panel counts must match; they are paired by order.
 
 ### Dropdown
 
