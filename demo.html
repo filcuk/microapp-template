@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Component demo · Microapp template</title>
   <link rel="icon" href="app/res/app-light.svg" type="image/svg+xml" data-brand-icon />
+  <script>window.__MICROAPP__={themeStorageKey:"microapp-theme"};</script>
   <script src="app/theme-init.js"></script>
   <link rel="stylesheet" href="app/styles.css" />
   <link rel="stylesheet" href="app/prism.css" />
@@ -15,8 +16,8 @@
 <body>
   <header>
     <div class="site-brand">
-      <img class="site-logo brand-icon--light" src="app/res/app-light.svg" alt="" width="40" height="40" />
-      <img class="site-logo brand-icon--dark" src="app/res/app-dark.svg" alt="" width="40" height="40" />
+      <img class="site-logo brand-icon--light" src="app/res/app-light.svg" alt="Component demo" width="40" height="40" />
+      <img class="site-logo brand-icon--dark" src="app/res/app-dark.svg" alt="" width="40" height="40" aria-hidden="true" />
       <h1>Component demo</h1>
     </div>
     <p class="tagline">
@@ -24,7 +25,7 @@
     </p>
   </header>
 
-  <main>
+  <main id="main">
     <section class="demo-tier" id="demo-tier-basic" aria-labelledby="demo-tier-basic-title">
       <header class="demo-tier-header">
         <h2 id="demo-tier-basic-title" class="demo-tier-title" data-page-nav-tier>Basic</h2>
@@ -651,8 +652,8 @@
         </section>
 
         <section class="demo-section" aria-labelledby="demo-dates-files">
-          <h2 id="demo-dates-files" class="section-heading">Dates &amp; files</h2>
-          <p class="demo-hint">Calendar popups, drag-and-drop uploads, and generated downloads.</p>
+          <h2 id="demo-dates-files" class="section-heading">Dates</h2>
+          <p class="demo-hint">Calendar popups with optional time input.</p>
           <div class="demo-fields">
             <div class="demo-grid demo-grid-2">
               <div class="field date-picker" id="demo-date-picker">
@@ -714,67 +715,6 @@
                 </div>
                 <p id="demo-date-picker-time-result" class="demo-hint" aria-live="polite">No date or time selected.</p>
               </div>
-            </div>
-
-            <div class="demo-grid demo-grid-2">
-              <div class="field">
-                <span class="field-label">File dropzone - single</span>
-                <div class="file-dropzone" id="demo-file-dropzone-single">
-                  <input type="file" class="file-dropzone-input" hidden />
-                  <button type="button" class="file-dropzone-prompt">
-                    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
-                    <span class="file-dropzone-text">
-                      <span class="file-dropzone-primary">Drop a file here</span>
-                      <span class="file-dropzone-secondary">or browse</span>
-                    </span>
-                  </button>
-                  <ul class="file-dropzone-list hidden" hidden></ul>
-                </div>
-                <p id="demo-file-dropzone-single-result" class="demo-hint" aria-live="polite">No file selected.</p>
-              </div>
-              <div class="field">
-                <span class="field-label">File dropzone - multiple, images</span>
-                <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
-                  data-file-max="5">
-                  <input type="file" class="file-dropzone-input" hidden />
-                  <button type="button" class="file-dropzone-prompt">
-                    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
-                    <span class="file-dropzone-text">
-                      <span class="file-dropzone-primary">Drop images here</span>
-                      <span class="file-dropzone-secondary">or browse - up to 5 files</span>
-                    </span>
-                  </button>
-                  <ul class="file-dropzone-list hidden" hidden></ul>
-                </div>
-                <p id="demo-file-dropzone-multi-result" class="demo-hint" aria-live="polite">No files selected.</p>
-              </div>
-            </div>
-
-            <div class="field">
-              <span class="field-label">File download</span>
-              <div class="file-download" id="demo-file-download">
-                <ul class="file-download-list">
-                  <li class="file-download-item" data-file-download-name="hello.txt">
-                    <span class="file-download-item-name">hello.txt</span>
-                    <span class="file-download-item-meta">Plain text</span>
-                    <button type="button" class="file-download-action btn btn-icon" aria-label="Download hello.txt"
-                      data-icon="upload" data-icon-class="file-download-action-icon"></button>
-                  </li>
-                  <li class="file-download-item" data-file-download-name="notes.txt">
-                    <span class="file-download-item-name">notes.txt</span>
-                    <span class="file-download-item-meta">Plain text</span>
-                    <button type="button" class="file-download-action btn btn-icon" aria-label="Download notes.txt"
-                      data-icon="upload" data-icon-class="file-download-action-icon"></button>
-                  </li>
-                  <li class="file-download-item" data-file-download-name="summary.txt">
-                    <span class="file-download-item-name">summary.txt</span>
-                    <span class="file-download-item-meta">Plain text</span>
-                    <button type="button" class="file-download-action btn btn-icon" aria-label="Download summary.txt"
-                      data-icon="upload" data-icon-class="file-download-action-icon"></button>
-                  </li>
-                </ul>
-              </div>
-              <p id="demo-file-download-result" class="demo-hint" aria-live="polite">Use the download buttons on each row.</p>
             </div>
           </div>
         </section>
@@ -1085,6 +1025,22 @@
             </div>
             <p id="demo-accordion-result" class="demo-hint" aria-live="polite">Open: How do I use components?</p>
           </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="demo-tier" id="demo-tier-specialised" aria-labelledby="demo-tier-specialised-title">
+      <header class="demo-tier-header">
+        <h2 id="demo-tier-specialised-title" class="demo-tier-title" data-page-nav-tier>Specialised</h2>
+        <p class="demo-tier-lead">
+          Documentation-heavy patterns and site-wide chrome.
+        </p>
+      </header>
+
+      <div class="demo-tier-body">
+        <section class="demo-section" aria-labelledby="demo-specialised-components">
+          <h2 id="demo-specialised-components" class="section-heading">Specialised components</h2>
+          <p class="demo-hint">Multi-step flows, drag-and-drop uploads, and client-side file downloads.</p>
 
           <div class="demo-card">
             <h3 class="demo-card-title">Progress indicator</h3>
@@ -1198,19 +1154,75 @@
               </div>
             </div>
           </div>
+
+          <div class="demo-card">
+            <h3 class="demo-card-title">File dropzone</h3>
+            <div class="demo-grid demo-grid-2">
+              <div class="field">
+                <span class="field-label">Single file</span>
+                <div class="file-dropzone" id="demo-file-dropzone-single">
+                  <input type="file" class="file-dropzone-input" hidden />
+                  <button type="button" class="file-dropzone-prompt">
+                    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+                    <span class="file-dropzone-text">
+                      <span class="file-dropzone-primary">Drop a file here</span>
+                      <span class="file-dropzone-secondary">or browse</span>
+                    </span>
+                  </button>
+                  <ul class="file-dropzone-list hidden" hidden></ul>
+                </div>
+                <p id="demo-file-dropzone-single-result" class="demo-hint" aria-live="polite">No file selected.</p>
+              </div>
+              <div class="field">
+                <span class="field-label">Multiple images (up to 5)</span>
+                <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
+                  data-file-max="5">
+                  <input type="file" class="file-dropzone-input" hidden />
+                  <button type="button" class="file-dropzone-prompt">
+                    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+                    <span class="file-dropzone-text">
+                      <span class="file-dropzone-primary">Drop images here</span>
+                      <span class="file-dropzone-secondary">or browse</span>
+                    </span>
+                  </button>
+                  <ul class="file-dropzone-list hidden" hidden></ul>
+                </div>
+                <p id="demo-file-dropzone-multi-result" class="demo-hint" aria-live="polite">No files selected.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-card">
+            <h3 class="demo-card-title">File download</h3>
+            <p class="demo-hint">Click a row to download generated file content in the browser.</p>
+            <div class="field">
+              <div class="file-download" id="demo-file-download">
+                <ul class="file-download-list">
+                  <li class="file-download-item" data-file-download-name="hello.txt">
+                    <span class="file-download-item-name">hello.txt</span>
+                    <span class="file-download-item-meta">Plain text</span>
+                    <button type="button" class="file-download-action btn btn-icon" aria-label="Download hello.txt"
+                      data-icon="upload" data-icon-class="file-download-action-icon"></button>
+                  </li>
+                  <li class="file-download-item" data-file-download-name="notes.txt">
+                    <span class="file-download-item-name">notes.txt</span>
+                    <span class="file-download-item-meta">Plain text</span>
+                    <button type="button" class="file-download-action btn btn-icon" aria-label="Download notes.txt"
+                      data-icon="upload" data-icon-class="file-download-action-icon"></button>
+                  </li>
+                  <li class="file-download-item" data-file-download-name="summary.txt">
+                    <span class="file-download-item-name">summary.txt</span>
+                    <span class="file-download-item-meta">Plain text</span>
+                    <button type="button" class="file-download-action btn btn-icon" aria-label="Download summary.txt"
+                      data-icon="upload" data-icon-class="file-download-action-icon"></button>
+                  </li>
+                </ul>
+              </div>
+              <p id="demo-file-download-result" class="demo-hint" aria-live="polite">Use the download buttons on each row.</p>
+            </div>
+          </div>
         </section>
-      </div>
-    </section>
 
-    <section class="demo-tier" id="demo-tier-specialised" aria-labelledby="demo-tier-specialised-title">
-      <header class="demo-tier-header">
-        <h2 id="demo-tier-specialised-title" class="demo-tier-title" data-page-nav-tier>Specialised</h2>
-        <p class="demo-tier-lead">
-          Documentation-heavy patterns and site-wide chrome.
-        </p>
-      </header>
-
-      <div class="demo-tier-body">
         <section class="demo-section" aria-labelledby="demo-code">
           <h2 id="demo-code" class="section-heading">Code highlighting</h2>
           <p class="demo-hint">

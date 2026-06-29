@@ -1,5 +1,7 @@
 (function () {
-  var preference = localStorage.getItem("microapp-theme");
+  var storageKey =
+    (window.__MICROAPP__ && window.__MICROAPP__.themeStorageKey) || "microapp-theme";
+  var preference = localStorage.getItem(storageKey);
   if (preference !== "light" && preference !== "dark" && preference !== "auto") {
     preference = "auto";
   }

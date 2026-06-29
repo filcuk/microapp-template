@@ -85,17 +85,16 @@
 }
 
 .table-select-col .checkbox {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   margin: 0;
-  line-height: 1;
-  vertical-align: middle;
+  line-height: 0;
 }
 
 .table-select-col .checkbox-input {
-  display: block;
-  transform: translateY(0.0625rem);
+  flex-shrink: 0;
 }
 
 .table-sort-button {
