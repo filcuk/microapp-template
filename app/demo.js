@@ -1,33 +1,33 @@
-import { initShell } from "./shell.js";
-import { initDialog } from "./dialog.js";
-import { initCombobox } from "./combobox.js";
-import { initCombo } from "./combo.js";
-import { initDropdown } from "./dropdown.js";
-import { initToggleDropdown } from "./dropdown-toggle.js";
-import { initExpands } from "./expand.js";
-import { initAccordion } from "./accordion.js";
-import { initTabsBlocks } from "./tabs.js";
-import { initCodeBlocks } from "./code-block.js";
-import { initExpandableSurfaces } from "./expandable-surface.js";
-import { showBanner, hideBanner } from "./banner.js";
-import { initFileDropzone } from "./file-dropzone.js";
-import { initFileDownload } from "./file-download.js";
-import { initDatePicker } from "./date-picker.js";
-import { initSlider } from "./slider.js";
-import { initStepper } from "./stepper.js";
-import { initColorPicker } from "./color-picker.js";
-import { initToggle } from "./toggle.js";
-import { initSegmentedControl } from "./segmented-control.js";
-import { initPagination } from "./pagination.js";
-import { initProgressBar } from "./progress-bar.js";
-import { initSpinner } from "./spinner.js";
-import { initProgressIndicator } from "./progress-indicator.js";
-import { initRichTextEditor } from "./rich-text-editor.js";
-import { initTable } from "./table.js";
+import { initShell } from "./shell/shell.js";
+import { initDialog } from "./components/dialog.js";
+import { initCombobox } from "./components/combobox.js";
+import { initCombo } from "./components/combo.js";
+import { initDropdown } from "./components/dropdown.js";
+import { initToggleDropdown } from "./components/dropdown-toggle.js";
+import { initExpands } from "./components/expand.js";
+import { initAccordion } from "./components/accordion.js";
+import { initTabs } from "./components/tabs.js";
+import { initCodeBlocks } from "./components/code-block.js";
+import { initExpandableSurfaces } from "./components/expandable-surface.js";
+import { showBanner, hideBanner } from "./components/banner.js";
+import { initFileDropzone } from "./components/file-dropzone.js";
+import { initFileDownload } from "./components/file-download.js";
+import { initDatePicker } from "./components/date-picker/index.js";
+import { initSlider } from "./components/slider.js";
+import { initStepper } from "./components/stepper.js";
+import { initColorPicker } from "./components/color-picker.js";
+import { initToggle } from "./components/toggle.js";
+import { initSegmentedControl } from "./components/segmented-control.js";
+import { initPagination } from "./components/pagination.js";
+import { initProgressBar } from "./components/progress-bar.js";
+import { initSpinner } from "./components/spinner.js";
+import { initProgressIndicator } from "./components/progress-indicator.js";
+import { initRichTextEditor } from "./components/rich-text-editor.js";
+import { initTable } from "./components/table.js";
 
 initShell();
 initExpands(document);
-initTabsBlocks(document);
+initTabs(document);
 initCodeBlocks(document);
 initExpandableSurfaces(document);
 
@@ -516,7 +516,7 @@ document.getElementById("demo-section-submit")?.addEventListener("click", () => 
   }
 });
 
-const infoDialog = initDialog({
+initDialog({
   dialogEl: document.getElementById("info-dialog"),
   openTriggers: "#open-info-dialog",
 });

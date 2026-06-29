@@ -28,7 +28,7 @@ Wire your page logic in [`app/main.js`](app/main.js). Every HTML entry point sho
 ```
 
 ```javascript
-import { initShell } from "./shell.js";
+import { initShell } from "./shell/shell.js";
 
 initShell(); // footer, theme toggle, page nav, tooltips, icons, links
 // …your app-specific inits…
@@ -50,22 +50,51 @@ initShell({
 Versions use [Semantic Versioning 2.0.0](https://semver.org/) and live in [`app/version.js`](app/version.js):
 
 ```javascript
-export const TEMPLATE_VERSION = "0.5.0"; // microapp-template release
+export const TEMPLATE_VERSION = "0.6.0"; // microapp-template release — sync with app/version.js
 export const APP_VERSION = "0.0.0";      // your app — bump when you ship
 ```
 
 | Constant | Who sets it | Shown in UI |
 | -------- | ----------- | ----------- |
 | `APP_VERSION` | You, on your fork | Footer label (`v0.0.0`) |
-| `TEMPLATE_VERSION` | Template maintainers | Footer tooltip on hover/focus (`Template v0.5.0`) |
+| `TEMPLATE_VERSION` | Template maintainers | Footer tooltip on hover/focus (`Template v0.6.0`) |
 
 After forking, set `APP_VERSION` to your app’s release (e.g. `1.0.0`). Bump it when you publish a new version of **your** app. When you pull updates from the upstream template, the maintainer may have raised `TEMPLATE_VERSION` — hover the footer version to see which template release you are on.
 
 Optional runtime override (rare):
 
 ```javascript
-initShell({ appVersion: "1.2.3", templateVersion: "0.5.0" });
+initShell({ appVersion: "1.2.3", templateVersion: "0.6.0" });
 ```
+
+### Configuration
+
+Fork-sensitive defaults live in [`app/config.js`](app/config.js):
+
+```javascript
+export const APP_CONFIG = {
+  repoUrl: "https://github.com/you/your-app",
+  brandUrl: "https://yoursite.example",
+  brandName: "Your name",
+  themeStorageKey: "microapp-theme",
+  themeChangeEvent: "microapp-theme-change",
+};
+```
+
+| Field | Used by |
+| ----- | ------- |
+| `repoUrl`, `brandUrl`, `brandName` | Footer links and brand tooltip via `renderPageShell()` |
+| `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
+| `themeChangeEvent` | Theme changes; rich text editor syncs to dark mode |
+
+If you rename `themeStorageKey`, update the inline bridge in every HTML entry point **before** `theme-init.js`:
+
+```html
+<script>window.__MICROAPP__={themeStorageKey:"your-app-theme"};</script>
+<script src="app/theme-init.js"></script>
+```
+
+Also set `APP_VERSION` in [`app/version.js`](app/version.js) when you ship your app.
 
 ### 3. Remove or keep the demo
 
@@ -75,7 +104,7 @@ The demo is for exploring components — not required for your app.
 | ----------------- | -------------------- |
 | [`demo.html`](demo.html) | Delete `demo.html` |
 | [`app/demo.js`](app/demo.js) | Delete `app/demo.js` |
-| Prism vendor + `app/prism.css` (only if you do not use code blocks) | `app/vendor/prism/`, `app/prism.css`, `app/prism.js` |
+| Prism vendor + `app/prism.css` (only if you do not use code blocks) | `app/vendor/prism/`, `app/prism.css` |
 | Toast UI vendor + `app/toastui-editor.css` (only if you do not use the rich text editor) | `app/rich-text-editor.js`, `app/toastui-editor.js`, `app/toastui-editor.css`, `app/css/rich-text-editor.css`, `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/` |
 
 If you **remove** `demo.html`, update [`.github/workflows/pages.yml`](.github/workflows/pages.yml) — drop `demo.html` from the `cp` line:
@@ -90,7 +119,7 @@ If you **keep** the demo, leave the workflow as-is and optionally link to it fro
 
 All modules under `app/` are small and tree-shaken by the browser (only imported files load). You can delete files you will never use, for example:
 
-- `app/code-block.js`, `app/expandable-surface.js`, `app/prism.js`, `app/vendor/prism/` — no syntax-highlighted code
+- `app/code-block.js`, `app/expandable-surface.js`, `app/vendor/prism/` — no syntax-highlighted code
 - `app/rich-text-editor.js`, `app/toastui-editor.js`, `app/toastui-editor.css`, `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/` — no rich text editor
 - `app/combo.js`, `app/dropdown.js`, `app/dropdown-toggle.js` — no menus
 - `app/dialog.js` — no modals
@@ -104,7 +133,9 @@ Do **not** delete shared infrastructure you still need: `shell.js`, `render-shel
 | `app/res/app-light.svg` / `app-dark.svg` | Header logo, favicon |
 | `app/res/sig-light.svg` / `sig-dark.svg` | Footer signature icon |
 
-Theme-aware swapping is handled in CSS and [`app/brand-icon.js`](app/brand-icon.js). Replace the SVG files or edit [`app/render-shell.js`](app/render-shell.js) defaults.
+Theme-aware swapping is handled in CSS and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Replace the SVG files or edit [`app/config.js`](app/config.js) and [`app/shell/render-shell.js`](app/shell/render-shell.js).
+
+For header logos, set a meaningful `alt` on the visible theme variant and `aria-hidden="true"` on the duplicate variant so screen readers are not announced twice.
 
 ### 6. Checklist before first deploy
 
@@ -123,6 +154,13 @@ ES modules require a local server (opening `index.html` directly may block impor
 
 ```bash
 npx serve .
+```
+
+Optional quality checks (requires `npm ci` once):
+
+```bash
+npm run lint
+npm test
 ```
 
 Then open `http://localhost:3000` and, if kept, `http://localhost:3000/demo.html`.
@@ -151,65 +189,54 @@ app/
   css/
     layout.css          # Page shell, sections, page nav, footer, theme toggle
     code-block.css      # Code blocks and expandable surfaces
-    controls.css        # Buttons, fields, menus, expand, tabs
+    controls-buttons.css  # Toolbar, buttons
+    controls-fields.css   # Fields, combobox, date/time, color picker
+    controls-widgets.css  # Toggle, segmented control, pagination, progress bar, spinner, slider, stepper
+    controls-section-panel.css # Section panel grid
+    controls-menus.css    # Combo, dropdown
+    controls-disclosure.css # Expand, accordion, tabs, progress indicator
+    controls-file.css     # File dropzone, file download
     overlays.css        # Banners, tooltips, modals
     rich-text-editor.css # Rich text editor layout + Toast UI token overrides
     table.css            # Data tables
-  theme-init.js         # Theme before first paint
-  theme.js              # Theme preference module
-  render-shell.js       # Injects footer + page navigation markup
+  config.js             # Fork defaults (repo URL, brand, theme key)
   version.js            # APP_VERSION + TEMPLATE_VERSION (SemVer 2.0.0)
-  shell.js              # Shared page boot (render, icons, theme, page nav)
-  document-listeners.js # Single document click / Escape registry
-  dom.js                # setHidden(), resolveElements(), prefersReducedMotion()
-  menu.js               # Shared popup menu logic (combo, dropdown)
-  dialog.js             # Modal controller
-  combo.js              # Combo button controller
-  combobox.js           # Combobox with text autocomplete
-  slider.js             # Range slider with editable value
-  progress-bar.js       # Progress bar with optional label
-  spinner.js            # Loading spinner and overlay
-  stepper.js            # Numeric nudger (quantity counter)
-  toggle.js             # On/off switch
-  progress-indicator.js # Multi-step progress indicator
-  dropdown.js           # Dropdown menu controller
-  dropdown-toggle.js    # Multi-select toggle dropdown
-  expand.js             # Expand / disclosure controller
-  tabs.js               # Tabbed section controller
-  table.js              # Data table sort and row selection
-  page-nav.js           # In-page heading nav + jump up/down
-  icons.js              # Inline SVG icon registry
-  tooltip.js            # Instant tooltips
-  banner.js             # showBanner / hideBanner with optional expiry
-  external-link.js      # Arrow icon on outgoing links
-  heading-link.js       # Copy section link on heading hover
   main.js               # index.html entry
   demo.js               # demo.html entry (optional)
-  prism.css             # Prism token colours + line numbers (optional)
-  prism.js              # initPrism() helper (optional)
-  code-block.js         # Code block toggles + copy button
-  expandable-surface.js # Hover maximise for code blocks, textareas, …
-  rich-text-editor.js   # Toast UI rich text editor wrapper
-  toastui-editor.js     # Toast UI vendor readiness helpers
-  toastui-editor.css    # Vendored Toast UI base CSS (optional page link)
-  vendor/prism/         # Vendored Prism core, languages, plugins (optional)
-  vendor/toastui-editor/ # Vendored Toast UI Editor (optional)
-  vendor/toastui-editor-plugin-table-merged-cell/ # Table merged-cell plugin (optional)
+  shell/
+    shell.js            # initShell() — shared page boot
+    render-shell.js     # Footer, page nav, skip link
+    theme.js            # Theme preference module
+    page-nav.js         # In-page heading nav + jump up/down
+    external-link.js    # Arrow icon on outgoing links
+    heading-link.js     # Copy section link on heading hover
+  utils/
+    dom.js              # setHidden(), parseBooleanAttr(), focus helpers
+    document-listeners.js
+    menu.js             # Shared popup menu logic
+    icons.js            # Inline SVG icon registry
+    brand-icon.js       # Theme-aware logo paths
+  components/
+    dialog.js, combo.js, dropdown.js, tabs.js, …
+    date-picker/        # parse.js, calendar.js, index.js
+  prism.css             # Prism token colours (optional)
+  toastui-editor.css    # Vendored Toast UI base CSS (optional)
+  vendor/               # Prism, Toast UI (optional)
   res/                  # App logo and signature SVGs
 ```
 
 ### Module layers (JavaScript)
 
-JS modules stay flat under `app/` — the browser only loads files you `import`. When forking, use this map to find or delete code:
+JS modules live under `app/shell/`, `app/utils/`, and `app/components/` — the browser only loads files you `import`. When forking, use this map:
 
-| Layer | Files | When you need it |
-| ----- | ----- | ---------------- |
-| **Entry** | `main.js`, `demo.js`, `theme-init.js` | Always — wired from HTML |
-| **Shell** | `shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `external-link.js`, `heading-link.js` | Always — call `initShell()` on every page |
-| **Infrastructure** | `dom.js`, `document-listeners.js`, `icons.js`, `menu.js`, `version.js`, `brand-icon.js` | Keep if any popup menu, icons, or shared helpers remain |
-| **Components** | `dialog.js`, `combo.js`, `dropdown.js`, `tabs.js`, `code-block.js`, … | Import and init only the features your page uses; delete unused files |
+| Layer | Path | When you need it |
+| ----- | ---- | ---------------- |
+| **Entry** | `main.js`, `demo.js`, `theme-init.js`, `config.js`, `version.js` | Always — wired from HTML |
+| **Shell** | `app/shell/` | Always — call `initShell()` from `app/shell/shell.js` |
+| **Infrastructure** | `app/utils/` | Keep if any popup menu, icons, or shared helpers remain |
+| **Components** | `app/components/` | Import and init only the features your page uses; delete unused files |
 
-Component CSS lives under `app/css/` (imported via `styles.css`). Match a component to its partial: controls in `controls.css`, modals in `overlays.css`, and so on.
+Component CSS lives under `app/css/` (imported via `styles.css`). Match a component to its partial: form controls in `controls-fields.css`, menus in `controls-menus.css`, modals in `overlays.css`, and so on.
 
 ---
 
@@ -252,7 +279,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
 | **Toolbar helper** | `.toolbar` flex row for button groups. See [`demo.html`](demo.html). |
-| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) via [`app/code-block.js`](app/code-block.js) and [`app/vendor/prism/`](app/vendor/prism/). See [`app/prism.js`](app/prism.js) for a minimal loader helper. |
+| **Code highlighting** | Optional [Prism.js](https://prismjs.com/) via [`app/code-block.js`](app/code-block.js) and [`app/vendor/prism/`](app/vendor/prism/). Load vendor scripts on the page (see Code blocks in **Using components**). |
 | **Rich text editor** | Markdown + WYSIWYG via [Toast UI Editor](https://github.com/nhn/tui.editor); table merged-cell plugin; base64 image paste. [`app/rich-text-editor.js`](app/rich-text-editor.js). Large vendor bundle (~500KB+). |
 
 For live examples of each component, open [`demo.html`](demo.html) on a local server or your deployed site.
@@ -270,7 +297,7 @@ For live examples of each component, open [`demo.html`](demo.html) on a local se
 ```
 
 ```javascript
-import { initShell } from "./shell.js";
+import { initShell } from "./shell/shell.js";
 
 initShell(); // footer + page nav + icons + theme in one call
 ```
@@ -278,7 +305,7 @@ initShell(); // footer + page nav + icons + theme in one call
 Or wire individually:
 
 ```javascript
-import { initTheme, initThemeToggle } from "./theme.js";
+import { initTheme, initThemeToggle } from "./shell/theme.js";
 initTheme();
 initThemeToggle(document.getElementById("theme-toggle"));
 ```
@@ -286,7 +313,7 @@ initThemeToggle(document.getElementById("theme-toggle"));
 ### Dialog
 
 ```javascript
-import { initDialog } from "./dialog.js";
+import { initDialog } from "./components/dialog.js";
 
 const dialog = initDialog({
   dialogEl: document.getElementById("my-dialog"),
@@ -304,7 +331,7 @@ Close controls use `data-dialog-close` on backdrop, × button, or footer buttons
 ```
 
 ```javascript
-import { initTooltips } from "./tooltip.js";
+import { initTooltips } from "./components/tooltip.js";
 initTooltips(document);
 ```
 
@@ -325,7 +352,7 @@ Auto-hide after a delay — set `data-banner-expire` (milliseconds) and call `sh
 ```
 
 ```javascript
-import { showBanner, hideBanner } from "./banner.js";
+import { showBanner, hideBanner } from "./components/banner.js";
 
 showBanner(document.getElementById("saved-banner"));
 // or override: showBanner(el, { expire: 3000 });
@@ -347,7 +374,7 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
 
 ```javascript
-import { initHeadingLinks } from "./heading-link.js";
+import { initHeadingLinks } from "./shell/heading-link.js";
 
 initHeadingLinks(document, { selector: "main h3[id]" });
 ```
@@ -401,7 +428,7 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
 
 #### Date picker
 
-Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-picker-time` for an optional time field on the same row as the date control.
+Calendar popup via [`app/components/date-picker/index.js`](app/components/date-picker/index.js). Add `data-date-picker-time` for an optional time field on the same row as the date control.
 
 ```html
 <div class="date-picker" id="my-date-picker" data-date-picker-time>
@@ -435,7 +462,7 @@ Calendar popup via [`app/date-picker.js`](app/date-picker.js). Add `data-date-pi
 ```
 
 ```javascript
-import { initDatePicker, initDatePickers } from "./date-picker.js";
+import { initDatePicker, initDatePickers } from "./components/date-picker/index.js";
 
 const picker = initDatePicker(document.getElementById("my-date-picker"), {
   onChange: ({ isoDate, time, display }) => console.log(isoDate, time, display),
@@ -476,7 +503,7 @@ Drag-and-drop or click-to-browse file picker. Selected files appear in a list wi
 ```
 
 ```javascript
-import { initFileDropzone, initFileDropzones } from "./file-dropzone.js";
+import { initFileDropzone, initFileDropzones } from "./components/file-dropzone.js";
 
 const dropzone = initFileDropzone(document.getElementById("my-dropzone"), {
   onFiles: ({ files }) => console.log(files),
@@ -511,7 +538,7 @@ File rows styled like `.file-dropzone-item`. Content is generated on demand when
 ```
 
 ```javascript
-import { downloadFile, initFileDownload, initFileDownloads } from "./file-download.js";
+import { downloadFile, initFileDownload, initFileDownloads } from "./components/file-download.js";
 
 initFileDownload(document.getElementById("my-download"), {
   files: [
@@ -570,7 +597,7 @@ Three-column grid rows for compact forms. Stack fields across rows; use `.sectio
 ```
 
 ```javascript
-import { showBanner, hideBanner } from "./banner.js";
+import { showBanner, hideBanner } from "./components/banner.js";
 
 submitBtn.addEventListener("click", () => {
   hideBanner(successBanner);
@@ -584,7 +611,7 @@ See the interactive example on [`demo.html`](demo.html).
 ### Combo button
 
 ```javascript
-import { initCombo } from "./combo.js";
+import { initCombo } from "./components/combo.js";
 
 initCombo(document.getElementById("my-combo"), {
   onMainClick: () => { /* primary action */ },
@@ -615,7 +642,7 @@ Text field with a filterable suggestion list. Options can live in markup or be s
 ```
 
 ```javascript
-import { initCombobox, initComboboxes } from "./combobox.js";
+import { initCombobox, initComboboxes } from "./components/combobox.js";
 
 const combobox = initCombobox(document.getElementById("my-combobox"), {
   onSelect: ({ value, label }) => { /* item chosen from list */ },
@@ -660,7 +687,7 @@ Formats: `integer` (default), `decimal`, or `percentage` (shows a `%` suffix; va
 ```
 
 ```javascript
-import { initSlider, initSliders } from "./slider.js";
+import { initSlider, initSliders } from "./components/slider.js";
 
 const slider = initSlider(document.getElementById("my-slider"), {
   min: 0,
@@ -712,7 +739,7 @@ Fraction label (`7/12`) — set `data-progress-bar-label="fraction"` and match `
 ```
 
 ```javascript
-import { initProgressBar, initProgressBars } from "./progress-bar.js";
+import { initProgressBar, initProgressBars } from "./components/progress-bar.js";
 
 const progressBar = initProgressBar(document.getElementById("my-progress-bar"), {
   value: 65,
@@ -760,7 +787,7 @@ Blocking overlay:
 ```
 
 ```javascript
-import { initSpinner, initSpinners } from "./spinner.js";
+import { initSpinner, initSpinners } from "./components/spinner.js";
 
 const spinner = initSpinner(document.getElementById("my-spinner"), {
   visible: false,
@@ -804,7 +831,7 @@ Numeric quantity control with decrement (−) and increment (+) buttons flanking
 ```
 
 ```javascript
-import { initStepper, initSteppers } from "./stepper.js";
+import { initStepper, initSteppers } from "./components/stepper.js";
 
 const stepper = initStepper(document.getElementById("my-stepper"), {
   min: 0,
@@ -846,7 +873,7 @@ Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `
 ```
 
 ```javascript
-import { initColorPicker, initColorPickers } from "./color-picker.js";
+import { initColorPicker, initColorPickers } from "./components/color-picker.js";
 
 const colorPicker = initColorPicker(document.getElementById("my-color-picker"), {
   defaultValue: "#0969da",
@@ -885,7 +912,7 @@ On/off switch for boolean settings. Uses `role="switch"` and `aria-checked` on t
 ```
 
 ```javascript
-import { initToggle, initToggles } from "./toggle.js";
+import { initToggle, initToggles } from "./components/toggle.js";
 
 const toggle = initToggle(document.getElementById("my-toggle"), {
   defaultChecked: false,
@@ -946,7 +973,7 @@ With panels:
 ```
 
 ```javascript
-import { initSegmentedControl, initSegmentedControls } from "./segmented-control.js";
+import { initSegmentedControl, initSegmentedControls } from "./components/segmented-control.js";
 
 const segmented = initSegmentedControl(document.getElementById("my-segmented"), {
   defaultValue: "list",
@@ -1013,7 +1040,7 @@ Vertical layout — same structure, add `data-progress-indicator-vertical`:
 ```
 
 ```javascript
-import { initProgressIndicator, initProgressIndicators } from "./progress-indicator.js";
+import { initProgressIndicator, initProgressIndicators } from "./components/progress-indicator.js";
 
 const progressIndicator = initProgressIndicator(document.getElementById("my-progress-indicator"), {
   defaultStep: 0,
@@ -1039,7 +1066,7 @@ initProgressIndicators(document); // all `.progress-indicator` blocks
 ### Dropdown
 
 ```javascript
-import { initDropdown } from "./dropdown.js";
+import { initDropdown } from "./components/dropdown.js";
 
 initDropdown(document.getElementById("my-dropdown"), {
   onSelect: ({ value, label }) => { /* item chosen */ },
@@ -1053,7 +1080,7 @@ Markup: `.dropdown` > `.dropdown-trigger` + `ul.dropdown-menu` with `.dropdown-m
 Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. The trigger shows the selection count when any items are active (e.g. `Toggle items (3)`).
 
 ```javascript
-import { initToggleDropdown } from "./dropdown-toggle.js";
+import { initToggleDropdown } from "./components/dropdown-toggle.js";
 
 const toggleDropdown = initToggleDropdown(document.getElementById("my-toggle-dropdown"), {
   onToggle: ({ value, label, selected, values, labels }) => {
@@ -1096,7 +1123,7 @@ toggleDropdown?.setSelected(["alpha", "gamma"]);
 ```
 
 ```javascript
-import { initExpand, initExpands } from "./expand.js";
+import { initExpand, initExpands } from "./components/expand.js";
 
 initExpands(document); // all .expand blocks
 
@@ -1127,7 +1154,7 @@ Vertical stack of sections. Each `.accordion-item` has a heading button and a co
 ```
 
 ```javascript
-import { initAccordion, initAccordions } from "./accordion.js";
+import { initAccordion, initAccordions } from "./components/accordion.js";
 
 initAccordions(document); // all .accordion blocks
 
@@ -1159,12 +1186,12 @@ const accordion = initAccordion(document.getElementById("my-accordion"), {
 ```
 
 ```javascript
-import { initTabs, initTabsBlocks } from "./tabs.js";
+import { initTab, initTabs } from "./components/tabs.js";
 
-initTabsBlocks(document); // all .tabs blocks
+initTabs(document); // all .tabs blocks
 
 // or one instance:
-const tabs = initTabs(document.getElementById("my-tabs"));
+const tabs = initTab(document.getElementById("my-tabs"));
 // tabs.selectTab(1), tabs.getActiveIndex()
 ```
 
@@ -1204,7 +1231,7 @@ Split content across numbered pages and navigate in place — no full reload and
 ```
 
 ```javascript
-import { initPagination, initPaginations } from "./pagination.js";
+import { initPagination, initPaginations } from "./components/pagination.js";
 
 const pagination = initPagination(document.getElementById("my-pagination"), {
   defaultPage: 1,
@@ -1271,7 +1298,7 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
 ```
 
 ```javascript
-import { initTable, initTables } from "./table.js";
+import { initTable, initTables } from "./components/table.js";
 
 const table = initTable(document.getElementById("issues-table"), {
   sortable: true,
@@ -1292,10 +1319,10 @@ initTables(document);
 
 ### Page navigation
 
-Injected by `initShell()` via [`app/render-shell.js`](app/render-shell.js). Collects `main h2[id]` headings automatically and shows plain section-title links (same weight and colour as `.section-heading`). Give each section heading a unique `id` and optional `.section-heading` class (`scroll-margin-top` is included).
+Injected by `initShell()` via [`app/shell/render-shell.js`](app/shell/render-shell.js). Collects `main h2[id]` headings automatically and shows plain section-title links (same weight and colour as `.section-heading`). Give each section heading a unique `id` and optional `.section-heading` class (`scroll-margin-top` is included).
 
 ```javascript
-import { initShell } from "./shell.js";
+import { initShell } from "./shell/shell.js";
 
 initShell(); // default: main h2[id]
 
@@ -1311,7 +1338,7 @@ initShell({
 Standalone use without the full shell — insert markup from `PAGE_NAV_MARKUP` in `render-shell.js`, then:
 
 ```javascript
-import { initPageNavPanel } from "./page-nav.js";
+import { initPageNavPanel } from "./shell/page-nav.js";
 
 const nav = initPageNavPanel(); // defaults to #page-nav
 nav?.rebuild(); // call after adding/removing headings dynamically
@@ -1364,7 +1391,7 @@ The vendor bundle is large (~500KB+ minified). Omit `app/vendor/toastui-editor*`
 | `data-rich-text-editor-autofocus` | `autofocus` | `false` |
 
 ```javascript
-import { initRichTextEditor, initRichTextEditors } from "./rich-text-editor.js";
+import { initRichTextEditor, initRichTextEditors } from "./components/rich-text-editor.js";
 
 const editor = initRichTextEditor(document.getElementById("my-editor"), {
   height: "320px",
@@ -1416,8 +1443,8 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 ```
 
 ```javascript
-import { initCodeBlocks } from "./code-block.js";
-import { initExpandableSurfaces } from "./expandable-surface.js";
+import { initCodeBlocks } from "./components/code-block.js";
+import { initExpandableSurfaces } from "./components/expandable-surface.js";
 
 initCodeBlocks(document);
 initExpandableSurfaces(document);
@@ -1449,7 +1476,7 @@ Reusable expanded overlay for code blocks, multi-line inputs, or any block marke
 ```
 
 ```javascript
-import { initExpandableSurfaces } from "./expandable-surface.js";
+import { initExpandableSurfaces } from "./components/expandable-surface.js";
 
 initExpandableSurfaces(document);
 ```
@@ -1471,7 +1498,7 @@ HTML:
 JavaScript:
 
 ```javascript
-import { createIcon, initIcons } from "./icons.js";
+import { createIcon, initIcons } from "./utils/icons.js";
 
 initIcons(document); // mounts every [data-icon] in the page
 
@@ -1479,12 +1506,12 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. App logo (`app/res/app-light.svg`, `app/res/app-dark.svg`) and signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swap by theme via CSS; favicon syncs in `app/brand-icon.js`.
+Add new icons to the `ICONS` object in `app/icons.js`. App logo (`app/res/app-light.svg`, `app/res/app-dark.svg`) and signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swap by theme via CSS; favicon syncs in `app/utils/brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 
 ```javascript
-import { ICON_ATTRIBUTIONS } from "./icons.js";
+import { ICON_ATTRIBUTIONS } from "./utils/icons.js";
 
 export const ICONS = {
   info: {

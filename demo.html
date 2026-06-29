@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Component demo · Microapp template</title>
   <link rel="icon" href="app/res/app-light.svg" type="image/svg+xml" data-brand-icon />
+  <script>window.__MICROAPP__={themeStorageKey:"microapp-theme"};</script>
   <script src="app/theme-init.js"></script>
   <link rel="stylesheet" href="app/styles.css" />
   <link rel="stylesheet" href="app/prism.css" />
@@ -15,8 +16,8 @@
 <body>
   <header>
     <div class="site-brand">
-      <img class="site-logo brand-icon--light" src="app/res/app-light.svg" alt="" width="40" height="40" />
-      <img class="site-logo brand-icon--dark" src="app/res/app-dark.svg" alt="" width="40" height="40" />
+      <img class="site-logo brand-icon--light" src="app/res/app-light.svg" alt="Component demo" width="40" height="40" />
+      <img class="site-logo brand-icon--dark" src="app/res/app-dark.svg" alt="" width="40" height="40" aria-hidden="true" />
       <h1>Component demo</h1>
     </div>
     <p class="tagline">
@@ -24,7 +25,7 @@
     </p>
   </header>
 
-  <main>
+  <main id="main">
     <section class="demo-tier" id="demo-tier-basic" aria-labelledby="demo-tier-basic-title">
       <header class="demo-tier-header">
         <h2 id="demo-tier-basic-title" class="demo-tier-title" data-page-nav-tier>Basic</h2>

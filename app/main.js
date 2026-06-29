@@ -1,3 +1,3 @@
-import { initShell } from "./shell.js";
+import { initShell } from "./shell/shell.js";
 
 initShell();

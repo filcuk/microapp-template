@@ -26,6 +26,17 @@ A reusable starter for small static microapps: vanilla HTML/CSS/JS, GitHub Pages
 - Shared page chrome (footer, theme toggle, page nav) via `initShell()`
 - Deployed with GitHub Actions to GitHub Pages
 
+## Development
+
+```bash
+npm ci
+npm run lint
+npm test
+npx serve .
+```
+
+Then open `http://localhost:3000`. CI (`.github/workflows/ci.yml`) runs lint and tests on push and pull requests.
+
 ## License
 
 MIT - see [LICENSE](LICENSE).
