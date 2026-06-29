@@ -777,6 +777,62 @@
           </div>
 
           <div class="demo-card">
+            <h3 class="demo-card-title">Pagination</h3>
+            <p class="demo-hint">Split content across pages and navigate in place.</p>
+            <div class="pagination" id="demo-pagination" data-pagination-default="1">
+              <div class="pagination-panels">
+                <div class="pagination-panel" data-pagination-panel="1" role="region" aria-label="Page 1">
+                  <ul class="pagination-demo-list">
+                    <li>Alpha</li>
+                    <li>Bravo</li>
+                    <li>Charlie</li>
+                    <li>Delta</li>
+                    <li>Echo</li>
+                  </ul>
+                </div>
+                <div class="pagination-panel hidden" data-pagination-panel="2" role="region" aria-label="Page 2" hidden>
+                  <ul class="pagination-demo-list">
+                    <li>Foxtrot</li>
+                    <li>Golf</li>
+                    <li>Hotel</li>
+                    <li>India</li>
+                    <li>Juliet</li>
+                  </ul>
+                </div>
+                <div class="pagination-panel hidden" data-pagination-panel="3" role="region" aria-label="Page 3" hidden>
+                  <ul class="pagination-demo-list">
+                    <li>Kilo</li>
+                    <li>Lima</li>
+                    <li>Mike</li>
+                    <li>November</li>
+                    <li>Oscar</li>
+                  </ul>
+                </div>
+              </div>
+              <nav class="pagination-nav" aria-label="Demo results pages">
+                <button type="button" class="btn btn-icon pagination-prev" data-pagination-prev
+                  aria-label="Previous page" disabled>‹</button>
+                <ul class="pagination-list">
+                  <li class="pagination-item">
+                    <button type="button" class="pagination-page is-active" data-pagination-page="1"
+                      aria-current="page">1</button>
+                  </li>
+                  <li class="pagination-item">
+                    <button type="button" class="pagination-page" data-pagination-page="2" tabindex="-1">2</button>
+                  </li>
+                  <li class="pagination-item">
+                    <button type="button" class="pagination-page" data-pagination-page="3" tabindex="-1">3</button>
+                  </li>
+                </ul>
+                <button type="button" class="btn btn-icon pagination-next" data-pagination-next
+                  aria-label="Next page">›</button>
+              </nav>
+              <input type="hidden" class="pagination-value" value="1" />
+            </div>
+            <p id="demo-pagination-result" class="demo-hint" aria-live="polite">Page 1 of 3</p>
+          </div>
+
+          <div class="demo-card">
             <h3 class="demo-card-title">Accordion</h3>
             <p class="demo-hint">
               Stack of headings with panels below - only one section open at a time. Arrow keys move between headers.

@@ -17,6 +17,7 @@ import { initSlider } from "./slider.js";
 import { initStepper } from "./stepper.js";
 import { initToggle } from "./toggle.js";
 import { initSegmentedControl } from "./segmented-control.js";
+import { initPagination } from "./pagination.js";
 import { initProgressIndicator } from "./progress-indicator.js";
 
 initShell();
@@ -40,6 +41,7 @@ const demoStepperResult = document.getElementById("demo-stepper-result");
 const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
+const demoPaginationResult = document.getElementById("demo-pagination-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 
@@ -271,6 +273,14 @@ initSegmentedControl(document.getElementById("demo-segmented-panels"), {
   onChange: ({ value }) => {
     if (demoSegmentedPanelsResult) {
       demoSegmentedPanelsResult.textContent = `Range: ${value}`;
+    }
+  },
+});
+
+initPagination(document.getElementById("demo-pagination"), {
+  onChange: ({ page, pageCount }) => {
+    if (demoPaginationResult) {
+      demoPaginationResult.textContent = `Page ${page} of ${pageCount}`;
     }
   },
 });

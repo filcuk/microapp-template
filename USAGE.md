@@ -225,6 +225,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
+| **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -1014,6 +1015,60 @@ const tabs = initTabs(document.getElementById("my-tabs"));
 ```
 
 Arrow keys move between tabs when the tab list is focused.
+
+### Pagination
+
+Split content across numbered pages and navigate in place — no full reload and no URL change. Pair `.pagination-panel` blocks with `.pagination-page` buttons via matching `data-pagination-panel` / `data-pagination-page` (1-based). Use `onChange` when you render content yourself instead of static panels.
+
+```html
+<div class="pagination" id="my-pagination" data-pagination-default="1">
+  <div class="pagination-panels">
+    <div class="pagination-panel" data-pagination-panel="1" role="region" aria-label="Page 1">
+      Page one content.
+    </div>
+    <div class="pagination-panel hidden" data-pagination-panel="2" role="region" aria-label="Page 2" hidden>
+      Page two content.
+    </div>
+  </div>
+  <nav class="pagination-nav" aria-label="Results pages">
+    <button type="button" class="btn btn-icon pagination-prev" data-pagination-prev
+      aria-label="Previous page" disabled>‹</button>
+    <ul class="pagination-list">
+      <li class="pagination-item">
+        <button type="button" class="pagination-page is-active" data-pagination-page="1"
+          aria-current="page">1</button>
+      </li>
+      <li class="pagination-item">
+        <button type="button" class="pagination-page" data-pagination-page="2" tabindex="-1">2</button>
+      </li>
+    </ul>
+    <button type="button" class="btn btn-icon pagination-next" data-pagination-next
+      aria-label="Next page">›</button>
+  </nav>
+  <input type="hidden" class="pagination-value" name="page" value="1" />
+</div>
+```
+
+```javascript
+import { initPagination, initPaginations } from "./pagination.js";
+
+const pagination = initPagination(document.getElementById("my-pagination"), {
+  defaultPage: 1,
+  disabled: false,
+  onChange: ({ page, pageCount, panel, source }) => console.log(page, source),
+});
+
+pagination?.getPage();
+pagination?.goToPage(2);
+pagination?.nextPage();
+pagination?.prevPage();
+pagination?.getPageCount();
+pagination?.setDisabled(true);
+
+initPaginations(document); // all `.pagination` blocks
+```
+
+`data-pagination-default` and `data-pagination-disabled` mirror the JS options. Previous and next disable on the first and last page. Arrow keys move between pages when the nav is focused.
 
 ### Page navigation
 
