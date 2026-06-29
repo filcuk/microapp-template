@@ -115,6 +115,58 @@
                 <p id="demo-radio-result" class="demo-hint" aria-live="polite">Selected: Option A</p>
               </div>
             </div>
+            <div class="demo-grid demo-grid-2">
+              <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
+                <label class="field-label" for="demo-slider-integer-range">Slider (integer)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-integer-range" class="slider-range" />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="numeric" aria-label="Integer value" />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+              <div class="slider" id="demo-slider-decimal" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-default="0.5" data-slider-format="decimal">
+                <label class="field-label" for="demo-slider-decimal-range">Slider (decimal)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-decimal-range" class="slider-range" />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="decimal" aria-label="Decimal value" />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+            </div>
+            <div class="demo-grid demo-grid-2">
+              <div class="slider" id="demo-slider-percentage" data-slider-min="0" data-slider-max="100" data-slider-default="75" data-slider-format="percentage">
+                <label class="field-label" for="demo-slider-percentage-range">Slider (percentage)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-percentage-range" class="slider-range" />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="decimal" aria-label="Percentage value" />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+              <div class="slider" id="demo-slider-disabled" data-slider-min="0" data-slider-max="10" data-slider-default="6" data-slider-format="integer" data-slider-disabled>
+                <label class="field-label" for="demo-slider-disabled-range">Slider (disabled)</label>
+                <div class="slider-row">
+                  <input type="range" id="demo-slider-disabled-range" class="slider-range" disabled />
+                  <div class="slider-input-wrap">
+                    <input type="text" class="input slider-input" inputmode="numeric" aria-label="Disabled value" disabled />
+                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                  </div>
+                  <input type="hidden" class="slider-value" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field-label">Slider result</span>
+              <p id="demo-slider-result" class="demo-hint" aria-live="polite">Integer: 4</p>
+            </div>
           </div>
         </section>
 

@@ -13,6 +13,7 @@ import { showBanner, hideBanner } from "./banner.js";
 import { initFileDropzone } from "./file-dropzone.js";
 import { initFileDownload } from "./file-download.js";
 import { initDatePicker } from "./date-picker.js";
+import { initSlider } from "./slider.js";
 
 initShell();
 initExpands(document);
@@ -30,6 +31,7 @@ const fileDownloadResult = document.getElementById("demo-file-download-result");
 const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
+const demoSliderResult = document.getElementById("demo-slider-result");
 
 function buildDemoTextFile(title) {
   return [
@@ -117,6 +119,27 @@ initDatePicker(document.getElementById("demo-date-picker-time"), {
     }
   },
 });
+
+function updateSliderResult() {
+  if (!demoSliderResult) return;
+  const integer = document.getElementById("demo-slider-integer");
+  const decimal = document.getElementById("demo-slider-decimal");
+  const percentage = document.getElementById("demo-slider-percentage");
+  const parts = [
+    integer ? `Integer: ${integer.querySelector(".slider-value")?.value ?? "—"}` : null,
+    decimal ? `Decimal: ${decimal.querySelector(".slider-value")?.value ?? "—"}` : null,
+    percentage ? `Percentage: ${percentage.querySelector(".slider-value")?.value ?? "—"}%` : null,
+  ].filter(Boolean);
+  demoSliderResult.textContent = parts.join(" · ");
+}
+
+const sliderOnChange = () => updateSliderResult();
+
+initSlider(document.getElementById("demo-slider-integer"), { onChange: sliderOnChange });
+initSlider(document.getElementById("demo-slider-decimal"), { onChange: sliderOnChange });
+initSlider(document.getElementById("demo-slider-percentage"), { onChange: sliderOnChange });
+initSlider(document.getElementById("demo-slider-disabled"));
+updateSliderResult();
 
 initAccordion(document.getElementById("demo-accordion"), {
   onToggle: ({ trigger, isOpen }) => {

@@ -57,6 +57,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
+| `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
 
 ### Document listeners
