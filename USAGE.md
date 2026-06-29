@@ -163,6 +163,7 @@ app/
   combo.js              # Combo button controller
   combobox.js           # Combobox with text autocomplete
   slider.js             # Range slider with editable value
+  progress-bar.js       # Progress bar with optional label
   stepper.js            # Numeric nudger (quantity counter)
   toggle.js             # On/off switch
   progress-indicator.js # Multi-step progress indicator
@@ -209,13 +210,14 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
+| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
@@ -666,6 +668,55 @@ initSliders(document); // all `.slider` blocks
 ```
 
 `data-slider-min`, `data-slider-max`, `data-slider-step`, `data-slider-default`, `data-slider-format`, and `data-slider-disabled` mirror the JS options. The hidden `.slider-value` field stores the numeric value for forms.
+
+### Progress bar
+
+Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track.
+
+```html
+<div class="progress-bar" id="my-progress-bar" data-progress-bar-value="65" data-progress-bar-max="100"
+  data-progress-bar-label="percent">
+  <label class="field-label" id="my-progress-bar-label">Upload progress</label>
+  <div class="progress-bar-row">
+    <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+      aria-valuenow="65" aria-labelledby="my-progress-bar-label">
+      <span class="progress-bar-fill"></span>
+    </div>
+    <span class="progress-bar-label" aria-hidden="true">65%</span>
+  </div>
+  <input type="hidden" class="progress-bar-value" name="upload-progress" value="65" />
+</div>
+```
+
+Fraction label (`7/12`) — set `data-progress-bar-label="fraction"` and match `data-progress-bar-max` to the denominator:
+
+```html
+<div class="progress-bar" data-progress-bar-value="7" data-progress-bar-max="12" data-progress-bar-label="fraction">
+  <!-- same .progress-bar-row structure -->
+</div>
+```
+
+```javascript
+import { initProgressBar, initProgressBars } from "./progress-bar.js";
+
+const progressBar = initProgressBar(document.getElementById("my-progress-bar"), {
+  value: 65,
+  min: 0,
+  max: 100,
+  labelFormat: "percent", // "percent" | "fraction"
+  indeterminate: false,
+  onChange: ({ value, percent, source }) => console.log(value, percent, source),
+});
+
+progressBar?.getValue();
+progressBar?.setValue(80);
+progressBar?.getPercent();
+progressBar?.setIndeterminate(true);
+
+initProgressBars(document); // all `.progress-bar` blocks
+```
+
+`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, and `data-progress-bar-indeterminate` mirror the JS options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers.
 
 ### Stepper
 
