@@ -221,7 +221,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -231,6 +231,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
+| **Colour picker** | Hex text input with inline swatch preview. [`app/color-picker.js`](app/color-picker.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
@@ -827,6 +828,43 @@ initSteppers(document); // all `.stepper` blocks
 ```
 
 `data-stepper-min`, `data-stepper-max`, `data-stepper-step`, `data-stepper-default`, `data-stepper-format`, and `data-stepper-disabled` mirror the JS options. Decrement and increment buttons disable at the min and max bounds.
+
+### Colour picker
+
+Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. The swatch shows a checkerboard when empty or while the typed value is incomplete.
+
+```html
+<div class="color-picker" id="my-color-picker" data-color-picker-default="#0969da">
+  <label class="field-label" for="my-color-input">Colour</label>
+  <div class="color-picker-control">
+    <input type="text" id="my-color-input" class="input color-picker-input"
+      placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+    <span class="color-picker-swatch" aria-hidden="true"></span>
+    <input type="hidden" class="color-picker-value" name="colour" />
+  </div>
+</div>
+```
+
+```javascript
+import { initColorPicker, initColorPickers } from "./color-picker.js";
+
+const colorPicker = initColorPicker(document.getElementById("my-color-picker"), {
+  defaultValue: "#0969da",
+  disabled: false,
+  onChange: ({ value, display, source }) => console.log(value, source),
+  onInput: ({ value, display }) => { /* live while typing */ },
+});
+
+colorPicker?.getValue(); // "#0969DA" or null
+colorPicker?.setValue("#ff5500");
+colorPicker?.setValue(""); // clear
+colorPicker?.commitInput();
+colorPicker?.setDisabled(true);
+
+initColorPickers(document); // all `.color-picker` blocks
+```
+
+`data-color-picker-default` and `data-color-picker-disabled` mirror the JS options. `parseHexColor()` is exported for reuse.
 
 ### Toggle
 

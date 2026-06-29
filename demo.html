@@ -285,6 +285,27 @@
             </div>
             <p id="demo-stepper-result" class="demo-hint" aria-live="polite">Integer: 2 · Decimal: 1.5</p>
             <div class="demo-grid demo-grid-2">
+              <div class="color-picker" id="demo-color-picker" data-color-picker-default="#0969da">
+                <label class="field-label" for="demo-color-picker-input">Colour picker</label>
+                <div class="color-picker-control">
+                  <input type="text" id="demo-color-picker-input" class="input color-picker-input"
+                    placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+                  <span class="color-picker-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-picker-value" />
+                </div>
+              </div>
+              <div class="color-picker" id="demo-color-picker-empty">
+                <label class="field-label" for="demo-color-picker-empty-input">Colour picker (empty)</label>
+                <div class="color-picker-control">
+                  <input type="text" id="demo-color-picker-empty-input" class="input color-picker-input"
+                    placeholder="#RRGGBB" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+                  <span class="color-picker-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-picker-value" />
+                </div>
+              </div>
+            </div>
+            <p id="demo-color-picker-result" class="demo-hint" aria-live="polite">Colour: #0969DA · Empty: —</p>
+            <div class="demo-grid demo-grid-2">
               <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
                 aria-labelledby="demo-progress-bar-label">
                 <span class="field-label" id="demo-progress-bar-label">Progress bar</span>
