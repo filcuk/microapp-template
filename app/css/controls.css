@@ -1837,6 +1837,7 @@
 .progress-indicator--vertical {
   display: grid;
   grid-template-columns: minmax(8rem, auto) 1fr;
+  grid-template-rows: 1fr auto;
   grid-template-areas:
     "list panels"
     "list actions";
@@ -1887,10 +1888,12 @@
 .progress-indicator--vertical .progress-indicator-panels {
   grid-area: panels;
   min-width: 0;
+  min-height: 0;
 }
 
 .progress-indicator--vertical .progress-indicator-actions {
   grid-area: actions;
+  align-items: center;
 }
 
 .file-dropzone {
