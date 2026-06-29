@@ -164,6 +164,7 @@ app/
   combobox.js           # Combobox with text autocomplete
   slider.js             # Range slider with editable value
   stepper.js            # Numeric nudger (quantity counter)
+  toggle.js             # On/off switch
   progress-indicator.js # Multi-step progress indicator
   dropdown.js           # Dropdown menu controller
   dropdown-toggle.js    # Multi-select toggle dropdown
@@ -208,7 +209,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox` / `.checkbox-input`, `.radio` / `.radio-input`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -216,12 +217,15 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
+| **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
+| **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
+| **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -708,6 +712,105 @@ initSteppers(document); // all `.stepper` blocks
 
 `data-stepper-min`, `data-stepper-max`, `data-stepper-step`, `data-stepper-default`, `data-stepper-format`, and `data-stepper-disabled` mirror the JS options. Decrement and increment buttons disable at the min and max bounds.
 
+### Toggle
+
+On/off switch for boolean settings. Uses `role="switch"` and `aria-checked` on the button; a hidden `.toggle-value` field stores `"true"` or `"false"` for forms.
+
+```html
+<div class="toggle" id="my-toggle" data-toggle-default="false">
+  <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+    <span class="toggle-track" aria-hidden="true">
+      <span class="toggle-thumb">
+        <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+      </span>
+    </span>
+    <span class="toggle-label">Enable notifications</span>
+  </button>
+  <input type="hidden" class="toggle-value" name="notifications" value="false" />
+</div>
+```
+
+```javascript
+import { initToggle, initToggles } from "./toggle.js";
+
+const toggle = initToggle(document.getElementById("my-toggle"), {
+  defaultChecked: false,
+  disabled: false,
+  onChange: ({ checked, source }) => console.log(checked, source),
+});
+
+toggle?.getChecked();
+toggle?.setChecked(true);
+toggle?.toggle();
+toggle?.setDisabled(true);
+
+initToggles(document); // all `.toggle` blocks
+```
+
+`data-toggle-default` and `data-toggle-disabled` mirror the JS options. For a group of switches, wrap items in `.toggle-group`.
+
+### Segmented control
+
+Toggle button group for switching between a small set of options or views — like radio buttons in a joined control. Items use `role="radio"` and `aria-checked`; a hidden `.segmented-control-value` stores the selected value for forms.
+
+Add `.segmented-control--full` on the root to stretch the track to the field width. Optionally pair items with panels via `aria-controls` (same pattern as tabs).
+
+```html
+<div class="segmented-control segmented-control--full" id="my-segmented" data-segmented-control-default="list">
+  <div class="segmented-control-list" role="radiogroup" aria-label="View mode">
+    <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
+      data-segmented-control-value="list">List</button>
+    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+      data-segmented-control-value="grid">Grid</button>
+    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+      data-segmented-control-value="map">Map</button>
+  </div>
+  <input type="hidden" class="segmented-control-value" name="view" value="list" />
+</div>
+```
+
+With panels:
+
+```html
+<div class="segmented-control" id="my-segmented-panels" data-segmented-control-default="week">
+  <div class="segmented-control-list" role="radiogroup" aria-label="Time range">
+    <button type="button" class="segmented-control-item" role="radio" id="seg-day" aria-checked="false"
+      aria-controls="seg-panel-day" data-segmented-control-value="day">Day</button>
+    <button type="button" class="segmented-control-item" role="radio" id="seg-week" aria-checked="true"
+      aria-controls="seg-panel-week" data-segmented-control-value="week">Week</button>
+  </div>
+  <input type="hidden" class="segmented-control-value" value="week" />
+  <div class="segmented-control-panels">
+    <div class="segmented-control-panel hidden" id="seg-panel-day" role="region" aria-labelledby="seg-day" hidden>
+      Day view.
+    </div>
+    <div class="segmented-control-panel" id="seg-panel-week" role="region" aria-labelledby="seg-week">
+      Week view.
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initSegmentedControl, initSegmentedControls } from "./segmented-control.js";
+
+const segmented = initSegmentedControl(document.getElementById("my-segmented"), {
+  defaultValue: "list",
+  disabled: false,
+  onChange: ({ value, index, item, panel, source }) => console.log(value, source),
+});
+
+segmented?.getValue();
+segmented?.selectValue("grid");
+segmented?.selectIndex(1);
+segmented?.getActiveIndex();
+segmented?.setDisabled(true);
+
+initSegmentedControls(document); // all `.segmented-control` blocks
+```
+
+`data-segmented-control-default` and `data-segmented-control-disabled` mirror the JS options. Individual items can be disabled with the `disabled` attribute. Arrow keys move selection when the radiogroup is focused; Home and End jump to the first and last enabled item.
+
 ### Progress indicator
 
 Multi-step wizard with a step list, one visible panel at a time, and back/next actions. In linear mode (default), users can only jump to steps they have already visited; set `data-progress-indicator-linear="false"` to allow jumping to any step from the header.
@@ -912,6 +1015,60 @@ const tabs = initTabs(document.getElementById("my-tabs"));
 ```
 
 Arrow keys move between tabs when the tab list is focused.
+
+### Pagination
+
+Split content across numbered pages and navigate in place — no full reload and no URL change. Pair `.pagination-panel` blocks with `.pagination-page` buttons via matching `data-pagination-panel` / `data-pagination-page` (1-based). Use `onChange` when you render content yourself instead of static panels.
+
+```html
+<div class="pagination" id="my-pagination" data-pagination-default="1">
+  <div class="pagination-panels">
+    <div class="pagination-panel" data-pagination-panel="1" role="region" aria-label="Page 1">
+      Page one content.
+    </div>
+    <div class="pagination-panel hidden" data-pagination-panel="2" role="region" aria-label="Page 2" hidden>
+      Page two content.
+    </div>
+  </div>
+  <nav class="pagination-nav" aria-label="Results pages">
+    <button type="button" class="btn btn-icon pagination-prev" data-pagination-prev
+      aria-label="Previous page" disabled>‹</button>
+    <ul class="pagination-list">
+      <li class="pagination-item">
+        <button type="button" class="pagination-page is-active" data-pagination-page="1"
+          aria-current="page">1</button>
+      </li>
+      <li class="pagination-item">
+        <button type="button" class="pagination-page" data-pagination-page="2" tabindex="-1">2</button>
+      </li>
+    </ul>
+    <button type="button" class="btn btn-icon pagination-next" data-pagination-next
+      aria-label="Next page">›</button>
+  </nav>
+  <input type="hidden" class="pagination-value" name="page" value="1" />
+</div>
+```
+
+```javascript
+import { initPagination, initPaginations } from "./pagination.js";
+
+const pagination = initPagination(document.getElementById("my-pagination"), {
+  defaultPage: 1,
+  disabled: false,
+  onChange: ({ page, pageCount, panel, source }) => console.log(page, source),
+});
+
+pagination?.getPage();
+pagination?.goToPage(2);
+pagination?.nextPage();
+pagination?.prevPage();
+pagination?.getPageCount();
+pagination?.setDisabled(true);
+
+initPaginations(document); // all `.pagination` blocks
+```
+
+`data-pagination-default` and `data-pagination-disabled` mirror the JS options. Previous and next disable on the first and last page. Arrow keys move between pages when the nav is focused.
 
 ### Page navigation
 

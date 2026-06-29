@@ -59,6 +59,9 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
 | `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
+| `initToggle()` / `initToggles()` | On/off switch control |
+| `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
+| `initPagination()` / `initPaginations()` | Client-side pagination (numbered pages, no URL change) |
 | `initProgressIndicator()` / `initProgressIndicators()` | Multi-step wizard with indicators, panels, and back/next |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
 
