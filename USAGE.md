@@ -209,7 +209,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.date-picker`, `.slider`, `.stepper`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -218,6 +218,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
+| **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
@@ -746,6 +747,68 @@ initToggles(document); // all `.toggle` blocks
 ```
 
 `data-toggle-default` and `data-toggle-disabled` mirror the JS options. For a group of switches, wrap items in `.toggle-group`.
+
+### Segmented control
+
+Toggle button group for switching between a small set of options or views — like radio buttons in a joined control. Items use `role="radio"` and `aria-checked`; a hidden `.segmented-control-value` stores the selected value for forms.
+
+Add `.segmented-control--full` on the root to stretch the track to the field width. Optionally pair items with panels via `aria-controls` (same pattern as tabs).
+
+```html
+<div class="segmented-control segmented-control--full" id="my-segmented" data-segmented-control-default="list">
+  <div class="segmented-control-list" role="radiogroup" aria-label="View mode">
+    <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
+      data-segmented-control-value="list">List</button>
+    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+      data-segmented-control-value="grid">Grid</button>
+    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+      data-segmented-control-value="map">Map</button>
+  </div>
+  <input type="hidden" class="segmented-control-value" name="view" value="list" />
+</div>
+```
+
+With panels:
+
+```html
+<div class="segmented-control" id="my-segmented-panels" data-segmented-control-default="week">
+  <div class="segmented-control-list" role="radiogroup" aria-label="Time range">
+    <button type="button" class="segmented-control-item" role="radio" id="seg-day" aria-checked="false"
+      aria-controls="seg-panel-day" data-segmented-control-value="day">Day</button>
+    <button type="button" class="segmented-control-item" role="radio" id="seg-week" aria-checked="true"
+      aria-controls="seg-panel-week" data-segmented-control-value="week">Week</button>
+  </div>
+  <input type="hidden" class="segmented-control-value" value="week" />
+  <div class="segmented-control-panels">
+    <div class="segmented-control-panel hidden" id="seg-panel-day" role="region" aria-labelledby="seg-day" hidden>
+      Day view.
+    </div>
+    <div class="segmented-control-panel" id="seg-panel-week" role="region" aria-labelledby="seg-week">
+      Week view.
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initSegmentedControl, initSegmentedControls } from "./segmented-control.js";
+
+const segmented = initSegmentedControl(document.getElementById("my-segmented"), {
+  defaultValue: "list",
+  disabled: false,
+  onChange: ({ value, index, item, panel, source }) => console.log(value, source),
+});
+
+segmented?.getValue();
+segmented?.selectValue("grid");
+segmented?.selectIndex(1);
+segmented?.getActiveIndex();
+segmented?.setDisabled(true);
+
+initSegmentedControls(document); // all `.segmented-control` blocks
+```
+
+`data-segmented-control-default` and `data-segmented-control-disabled` mirror the JS options. Individual items can be disabled with the `disabled` attribute. Arrow keys move selection when the radiogroup is focused; Home and End jump to the first and last enabled item.
 
 ### Progress indicator
 

@@ -16,6 +16,7 @@ import { initDatePicker } from "./date-picker.js";
 import { initSlider } from "./slider.js";
 import { initStepper } from "./stepper.js";
 import { initToggle } from "./toggle.js";
+import { initSegmentedControl } from "./segmented-control.js";
 import { initProgressIndicator } from "./progress-indicator.js";
 
 initShell();
@@ -37,6 +38,8 @@ const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
 const demoToggleResult = document.getElementById("demo-toggle-result");
+const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
+const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 
@@ -255,6 +258,22 @@ initToggle(document.getElementById("demo-toggle-off"), { onChange: toggleOnChang
 initToggle(document.getElementById("demo-toggle-on"), { onChange: toggleOnChange });
 initToggle(document.getElementById("demo-toggle-disabled"));
 updateToggleResult();
+
+initSegmentedControl(document.getElementById("demo-segmented-view"), {
+  onChange: ({ value }) => {
+    if (demoSegmentedViewResult) {
+      demoSegmentedViewResult.textContent = `View: ${value}`;
+    }
+  },
+});
+
+initSegmentedControl(document.getElementById("demo-segmented-panels"), {
+  onChange: ({ value }) => {
+    if (demoSegmentedPanelsResult) {
+      demoSegmentedPanelsResult.textContent = `Range: ${value}`;
+    }
+  },
+});
 
 const comboResultEl = document.getElementById("demo-combo-result");
 const comboboxResultEl = document.getElementById("demo-combobox-result");

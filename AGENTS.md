@@ -60,6 +60,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
 | `initToggle()` / `initToggles()` | On/off switch control |
+| `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
 | `initProgressIndicator()` / `initProgressIndicators()` | Multi-step wizard with indicators, panels, and back/next |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
 

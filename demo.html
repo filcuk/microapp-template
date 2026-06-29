@@ -155,6 +155,55 @@
               <p id="demo-toggle-result" class="demo-hint" aria-live="polite">Notifications: off · Preview: on</p>
             </div>
             <div class="demo-grid demo-grid-2">
+              <div class="field">
+                <span class="field-label" id="demo-segmented-view-label">Segmented control</span>
+                <div class="segmented-control segmented-control--full" id="demo-segmented-view"
+                  data-segmented-control-default="list" aria-labelledby="demo-segmented-view-label">
+                  <div class="segmented-control-list" role="radiogroup" aria-label="View mode">
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
+                      data-segmented-control-value="list">List</button>
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                      data-segmented-control-value="grid">Grid</button>
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                      data-segmented-control-value="map">Map</button>
+                  </div>
+                  <input type="hidden" class="segmented-control-value" name="demo-view" value="list" />
+                </div>
+                <p id="demo-segmented-view-result" class="demo-hint" aria-live="polite">View: list</p>
+              </div>
+              <div class="field">
+                <span class="field-label" id="demo-segmented-panels-label">Segmented control (with panels)</span>
+                <div class="segmented-control segmented-control--full" id="demo-segmented-panels" data-segmented-control-default="week"
+                  aria-labelledby="demo-segmented-panels-label">
+                  <div class="segmented-control-list" role="radiogroup" aria-label="Time range">
+                    <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-day"
+                      aria-checked="false" aria-controls="demo-segmented-panel-day" data-segmented-control-value="day">Day</button>
+                    <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-week"
+                      aria-checked="true" aria-controls="demo-segmented-panel-week" data-segmented-control-value="week">Week</button>
+                    <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-month"
+                      aria-checked="false" aria-controls="demo-segmented-panel-month" data-segmented-control-value="month"
+                      disabled>Month</button>
+                  </div>
+                  <input type="hidden" class="segmented-control-value" value="week" />
+                  <div class="segmented-control-panels">
+                    <div class="segmented-control-panel" id="demo-segmented-panel-day" role="region"
+                      aria-labelledby="demo-segmented-day" hidden>
+                      <p>Daily breakdown — hourly totals and trends.</p>
+                    </div>
+                    <div class="segmented-control-panel" id="demo-segmented-panel-week" role="region"
+                      aria-labelledby="demo-segmented-week">
+                      <p>Weekly overview — seven-day summary with comparisons.</p>
+                    </div>
+                    <div class="segmented-control-panel" id="demo-segmented-panel-month" role="region"
+                      aria-labelledby="demo-segmented-month" hidden>
+                      <p>Monthly rollup — calendar grid and month-over-month change.</p>
+                    </div>
+                  </div>
+                </div>
+                <p id="demo-segmented-panels-result" class="demo-hint" aria-live="polite">Range: week</p>
+              </div>
+            </div>
+            <div class="demo-grid demo-grid-2">
               <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
                 <label class="field-label" for="demo-slider-integer-range">Slider (integer)</label>
                 <div class="slider-row">
