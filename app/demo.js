@@ -14,6 +14,7 @@ import { initFileDropzone } from "./file-dropzone.js";
 import { initFileDownload } from "./file-download.js";
 import { initDatePicker } from "./date-picker.js";
 import { initSlider } from "./slider.js";
+import { initProgressIndicator } from "./progress-indicator.js";
 
 initShell();
 initExpands(document);
@@ -32,6 +33,8 @@ const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
+const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
+const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 
 function buildDemoTextFile(title) {
   return [
@@ -140,6 +143,35 @@ initSlider(document.getElementById("demo-slider-decimal"), { onChange: sliderOnC
 initSlider(document.getElementById("demo-slider-percentage"), { onChange: sliderOnChange });
 initSlider(document.getElementById("demo-slider-disabled"));
 updateSliderResult();
+
+const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
+const demoProgressIndicatorVerticalLabels = ["Details", "Options", "Confirm"];
+
+function wireProgressIndicatorDemo(el, resultEl, labels, finishMessage) {
+  initProgressIndicator(el, {
+    onChange: ({ index }) => {
+      if (!resultEl) return;
+      const label = labels[index] ?? `Step ${index + 1}`;
+      resultEl.textContent = `Step ${index + 1} of ${labels.length}: ${label}`;
+    },
+    onFinish: () => {
+      if (resultEl) resultEl.textContent = finishMessage;
+    },
+  });
+}
+
+wireProgressIndicatorDemo(
+  document.getElementById("demo-progress-indicator"),
+  demoProgressIndicatorResult,
+  demoProgressIndicatorLabels,
+  "Finished on Review."
+);
+wireProgressIndicatorDemo(
+  document.getElementById("demo-progress-indicator-vertical"),
+  demoProgressIndicatorVerticalResult,
+  demoProgressIndicatorVerticalLabels,
+  "Finished on Confirm."
+);
 
 initAccordion(document.getElementById("demo-accordion"), {
   onToggle: ({ trigger, isOpen }) => {

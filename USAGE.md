@@ -163,6 +163,7 @@ app/
   combo.js              # Combo button controller
   combobox.js           # Combobox with text autocomplete
   slider.js             # Range slider with editable value
+  progress-indicator.js # Multi-step progress indicator
   dropdown.js           # Dropdown menu controller
   dropdown-toggle.js    # Multi-select toggle dropdown
   expand.js             # Expand / disclosure controller
@@ -213,6 +214,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
+| **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
@@ -658,6 +660,77 @@ initSliders(document); // all `.slider` blocks
 ```
 
 `data-slider-min`, `data-slider-max`, `data-slider-step`, `data-slider-default`, `data-slider-format`, and `data-slider-disabled` mirror the JS options. The hidden `.slider-value` field stores the numeric value for forms.
+
+### Progress indicator
+
+Multi-step wizard with a step list, one visible panel at a time, and back/next actions. In linear mode (default), users can only jump to steps they have already visited; set `data-progress-indicator-linear="false"` to allow jumping to any step from the header.
+
+**Horizontal** (default) — step list across the top. **Vertical** — add `data-progress-indicator-vertical` (or `vertical: true`) for a left-hand step column with panels and actions on the right. Markup is the same; `initProgressIndicator()` adds `.progress-indicator--vertical` when enabled.
+
+```html
+<div class="progress-indicator" id="my-progress-indicator" data-progress-indicator-linear
+  data-progress-indicator-default="0">
+  <ol class="progress-indicator-list">
+    <li class="progress-indicator-item">
+      <button type="button" class="progress-indicator-step" id="my-step-1" aria-current="step">
+        <span class="progress-indicator-marker" aria-hidden="true">1</span>
+        <span class="progress-indicator-label">Account</span>
+      </button>
+    </li>
+    <li class="progress-indicator-item">
+      <button type="button" class="progress-indicator-step" id="my-step-2" disabled>
+        <span class="progress-indicator-marker" aria-hidden="true">2</span>
+        <span class="progress-indicator-label">Review</span>
+      </button>
+    </li>
+  </ol>
+  <div class="progress-indicator-panels">
+    <div class="progress-indicator-panel" id="my-panel-1" role="region" aria-labelledby="my-step-1">
+      <div class="progress-indicator-body">Step one content.</div>
+    </div>
+    <div class="progress-indicator-panel hidden" id="my-panel-2" role="region" aria-labelledby="my-step-2" hidden>
+      <div class="progress-indicator-body">Step two content.</div>
+    </div>
+  </div>
+  <div class="progress-indicator-actions">
+    <button type="button" class="btn" data-progress-indicator-back hidden>Back</button>
+    <button type="button" class="btn btn-primary" data-progress-indicator-next>Next</button>
+  </div>
+</div>
+```
+
+Vertical layout — same structure, add `data-progress-indicator-vertical`:
+
+```html
+<div class="progress-indicator" data-progress-indicator-vertical data-progress-indicator-linear
+  data-progress-indicator-default="0">
+  <!-- same .progress-indicator-list, .progress-indicator-panels, .progress-indicator-actions -->
+</div>
+```
+
+```javascript
+import { initProgressIndicator, initProgressIndicators } from "./progress-indicator.js";
+
+const progressIndicator = initProgressIndicator(document.getElementById("my-progress-indicator"), {
+  defaultStep: 0,
+  linear: true,
+  vertical: false,
+  finishLabel: "Finish",
+  onChange: ({ index, step, panel, isLastStep }) => {},
+  onFinish: ({ index, panel }) => {},
+});
+
+progressIndicator?.goToStep(1);
+progressIndicator?.nextStep();
+progressIndicator?.prevStep();
+progressIndicator?.getActiveIndex();
+progressIndicator?.getMaxVisitedIndex();
+progressIndicator?.isVertical();
+
+initProgressIndicators(document); // all `.progress-indicator` blocks
+```
+
+`data-progress-indicator-default` sets the initial step index. `data-progress-indicator-finish-label` overrides the next-button label on the last step (default `Finish`). `data-progress-indicator-vertical` enables the vertical layout. Step and panel counts must match; they are paired by order.
 
 ### Dropdown
 

@@ -58,6 +58,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
 | `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
+| `initProgressIndicator()` / `initProgressIndicators()` | Multi-step wizard with indicators, panels, and back/next |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
 
 ### Document listeners
