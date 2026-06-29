@@ -22,6 +22,7 @@ import { initProgressBar } from "./progress-bar.js";
 import { initSpinner } from "./spinner.js";
 import { initProgressIndicator } from "./progress-indicator.js";
 import { initRichTextEditor } from "./rich-text-editor.js";
+import { initTable } from "./table.js";
 
 initShell();
 initExpands(document);
@@ -45,6 +46,7 @@ const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
 const demoPaginationResult = document.getElementById("demo-pagination-result");
+const demoTableResult = document.getElementById("demo-table-result");
 const demoProgressBarResult = document.getElementById("demo-progress-bar-result");
 const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
@@ -308,6 +310,19 @@ initPagination(document.getElementById("demo-pagination"), {
     if (demoPaginationResult) {
       demoPaginationResult.textContent = `Page ${page} of ${pageCount}`;
     }
+  },
+});
+
+initTable(document.getElementById("demo-table"), {
+  onSort: ({ columnIndex, direction, sortType }) => {
+    if (!demoTableResult) return;
+    demoTableResult.textContent = `Sorted column ${columnIndex + 1} (${sortType}, ${direction}).`;
+  },
+  onSelectionChange: ({ selectedIds }) => {
+    if (!demoTableResult) return;
+    demoTableResult.textContent = selectedIds.length
+      ? `Selected: ${selectedIds.join(", ")}`
+      : "No rows selected.";
   },
 });
 

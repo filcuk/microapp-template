@@ -64,6 +64,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initToggle()` / `initToggles()` | On/off switch control |
 | `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
 | `initPagination()` / `initPaginations()` | Client-side pagination (numbered pages, no URL change) |
+| `initTable()` / `initTables()` | Data table with optional sortable columns and row selection |
 | `initProgressIndicator()` / `initProgressIndicators()` | Multi-step wizard with indicators, panels, and back/next |
 | `initRichTextEditor()` / `initRichTextEditors()` | Toast UI rich text editor (Markdown + WYSIWYG); requires vendor scripts |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |
@@ -103,6 +104,7 @@ Always use `setHidden()` from `app/dom.js` when showing/hiding elements programm
 | `app/css/controls.css` | Buttons, fields, menus, combobox, expand, accordion, tabs, date/time, file dropzone, file download |
 | `app/css/overlays.css` | Banners, tooltips, modals |
 | `app/css/rich-text-editor.css` | Rich text editor field layout and Toast UI token overrides |
+| `app/css/table.css` | Data table layout, sort controls, and selection column |
 
 Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.
 
