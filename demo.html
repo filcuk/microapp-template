@@ -919,6 +919,89 @@
           </div>
 
           <div class="demo-card">
+            <h3 class="demo-card-title">Data table</h3>
+            <p class="demo-hint">Sortable columns and row selection. Numeric columns use <code>.table-num</code>.</p>
+            <div class="table-block table-block--wide" id="demo-table" data-table-sortable data-table-selectable>
+              <div class="table-wrap">
+                <table class="table table--striped">
+                  <caption class="table-caption">Open issues</caption>
+                  <thead>
+                    <tr>
+                      <th class="table-select-col" scope="col">
+                        <label class="checkbox">
+                          <input type="checkbox" class="checkbox-input" data-table-select-all
+                            aria-label="Select all rows" />
+                        </label>
+                      </th>
+                      <th scope="col" data-table-sort data-sort-type="text">
+                        <button type="button" class="table-sort-button">Title</button>
+                      </th>
+                      <th scope="col" data-table-sort data-sort-type="text">Status</th>
+                      <th scope="col" data-table-sort data-sort-type="date" class="table-num">
+                        <button type="button" class="table-sort-button">Updated</button>
+                      </th>
+                      <th scope="col" data-table-sort data-sort-type="number" class="table-num">
+                        <button type="button" class="table-sort-button">Comments</button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-table-row-id="42">
+                      <td class="table-select-col">
+                        <label class="checkbox">
+                          <input type="checkbox" class="checkbox-input" data-table-row-select
+                            aria-label="Select Fix nav overlap on mobile" />
+                        </label>
+                      </td>
+                      <td>Fix nav overlap on mobile</td>
+                      <td>Open</td>
+                      <td class="table-num">2026-03-01</td>
+                      <td class="table-num">3</td>
+                    </tr>
+                    <tr data-table-row-id="38">
+                      <td class="table-select-col">
+                        <label class="checkbox">
+                          <input type="checkbox" class="checkbox-input" data-table-row-select
+                            aria-label="Select Add export to CSV" />
+                        </label>
+                      </td>
+                      <td>Add export to CSV</td>
+                      <td>In review</td>
+                      <td class="table-num">2026-02-18</td>
+                      <td class="table-num">12</td>
+                    </tr>
+                    <tr data-table-row-id="31">
+                      <td class="table-select-col">
+                        <label class="checkbox">
+                          <input type="checkbox" class="checkbox-input" data-table-row-select
+                            aria-label="Select Document table component" />
+                        </label>
+                      </td>
+                      <td>Document table component</td>
+                      <td>Closed</td>
+                      <td class="table-num">2026-01-09</td>
+                      <td class="table-num">1</td>
+                    </tr>
+                    <tr data-table-row-id="27">
+                      <td class="table-select-col">
+                        <label class="checkbox">
+                          <input type="checkbox" class="checkbox-input" data-table-row-select
+                            aria-label="Select Theme flash on slow networks" />
+                        </label>
+                      </td>
+                      <td>Theme flash on slow networks</td>
+                      <td>Open</td>
+                      <td class="table-num">2026-03-12</td>
+                      <td class="table-num">7</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p id="demo-table-result" class="demo-hint" aria-live="polite">No rows selected.</p>
+          </div>
+
+          <div class="demo-card">
             <h3 class="demo-card-title">Accordion</h3>
             <p class="demo-hint">
               Stack of headings with panels below - only one section open at a time. Arrow keys move between headers.

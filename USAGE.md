@@ -154,6 +154,7 @@ app/
     controls.css        # Buttons, fields, menus, expand, tabs
     overlays.css        # Banners, tooltips, modals
     rich-text-editor.css # Rich text editor layout + Toast UI token overrides
+    table.css            # Data tables
   theme-init.js         # Theme before first paint
   theme.js              # Theme preference module
   render-shell.js       # Injects footer + page navigation markup
@@ -175,6 +176,7 @@ app/
   dropdown-toggle.js    # Multi-select toggle dropdown
   expand.js             # Expand / disclosure controller
   tabs.js               # Tabbed section controller
+  table.js              # Data table sort and row selection
   page-nav.js           # In-page heading nav + jump up/down
   icons.js              # Inline SVG icon registry
   tooltip.js            # Instant tooltips
@@ -238,6 +240,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
+| **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -1182,6 +1185,72 @@ initPaginations(document); // all `.pagination` blocks
 ```
 
 `data-pagination-default` and `data-pagination-disabled` mirror the JS options. Previous and next disable on the first and last page. Arrow keys move between pages when the nav is focused.
+
+### Table
+
+Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-block` and `.table-wrap`. Use `.table--striped` for alternating rows, `.table--compact` for tighter padding, and `.table-num` to right-align numeric columns.
+
+Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text.
+
+Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks.
+
+```html
+<div class="table-block" id="issues-table" data-table-sortable data-table-selectable>
+  <div class="table-wrap">
+    <table class="table table--striped">
+      <caption class="table-caption">Open issues</caption>
+      <thead>
+        <tr>
+          <th class="table-select-col" scope="col">
+            <label class="checkbox">
+              <input type="checkbox" class="checkbox-input" data-table-select-all
+                aria-label="Select all rows" />
+            </label>
+          </th>
+          <th scope="col" data-table-sort data-sort-type="text">
+            <button type="button" class="table-sort-button">Title</button>
+          </th>
+          <th scope="col" data-table-sort data-sort-type="number" class="table-num">
+            <button type="button" class="table-sort-button">Comments</button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-table-row-id="42">
+          <td class="table-select-col">
+            <label class="checkbox">
+              <input type="checkbox" class="checkbox-input" data-table-row-select
+                aria-label="Select row" />
+            </label>
+          </td>
+          <td>Fix nav overlap on mobile</td>
+          <td class="table-num">3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+```
+
+```javascript
+import { initTable, initTables } from "./table.js";
+
+const table = initTable(document.getElementById("issues-table"), {
+  sortable: true,
+  selectable: true,
+  onSort: ({ columnIndex, direction, sortType }) => console.log(columnIndex, direction, sortType),
+  onSelectionChange: ({ selectedIds, selectedRows }) => console.log(selectedIds),
+});
+
+table?.getSelectedIds();
+table?.clearSelection();
+table?.setDisabled(true);
+table?.destroy();
+
+initTables(document);
+```
+
+`data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. Add `.table-block--wide` to remove the default `40rem` max width.
 
 ### Page navigation
 
