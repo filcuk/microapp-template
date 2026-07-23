@@ -39,7 +39,7 @@ function isSmallBadge(badgeEl) {
 
 function formatBadgeText(value, max) {
   if (typeof value === "number" && Number.isFinite(value)) {
-    if (max != null && value > max) return `${max}+`;
+    if (Number.isFinite(max) && value > max) return `${max}+`;
     return String(Math.trunc(value));
   }
   if (typeof value === "boolean") return value ? "1" : "";
