@@ -1276,7 +1276,7 @@ Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-bl
 
 Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text.
 
-Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks.
+Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks. Body rows highlight lightly on hover; when selectable, clicking anywhere on a row toggles that row (interactive controls inside the row are left alone).
 
 ```html
 <div class="table-block" id="issues-table" data-table-sortable data-table-selectable>
