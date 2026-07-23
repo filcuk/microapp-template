@@ -588,7 +588,8 @@
 
             <div class="demo-card">
               <h3 class="demo-card-title">Dropdown</h3>
-              <p class="demo-hint">Single-select menu; closes after a choice.</p>
+              <p class="demo-hint">Single-select menu; closes after a choice. Optional
+                <code>.dropdown-menu-group</code> headers group items.</p>
               <div class="dropdown" id="demo-dropdown">
                 <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
                   aria-expanded="false" aria-controls="demo-dropdown-menu">
@@ -596,6 +597,9 @@
                   <span class="combo-btn-chevron" aria-hidden="true"></span>
                 </button>
                 <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
+                  <li role="presentation">
+                    <div class="dropdown-menu-group">Group A</div>
+                  </li>
                   <li role="none">
                     <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
                       Example 1
@@ -606,9 +610,17 @@
                       Example 2
                     </button>
                   </li>
+                  <li role="presentation">
+                    <div class="dropdown-menu-group">Group B</div>
+                  </li>
                   <li role="none">
                     <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
                       Example 3
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-4">
+                      Example 4
                     </button>
                   </li>
                 </ul>

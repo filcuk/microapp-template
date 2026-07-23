@@ -262,7 +262,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
-| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
+| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` section headers. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
@@ -1074,6 +1074,25 @@ initDropdown(document.getElementById("my-dropdown"), {
 ```
 
 Markup: `.dropdown` > `.dropdown-trigger` + `ul.dropdown-menu` with `.dropdown-menu-item` buttons.
+
+Optional **group headers** — non-interactive labels between items. Insert a `<li role="presentation">` with a `.dropdown-menu-group` div before each group’s items. Headers are skipped by keyboard navigation (`itemSelector` is `.dropdown-menu-item` only). Later groups get a top border automatically.
+
+```html
+<ul class="dropdown-menu hidden" role="menu">
+  <li role="presentation">
+    <div class="dropdown-menu-group">True colour</div>
+  </li>
+  <li role="none">
+    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="argb32">ARGB32</button>
+  </li>
+  <li role="presentation">
+    <div class="dropdown-menu-group">16-bit colour</div>
+  </li>
+  <li role="none">
+    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="rgb565">RGB565</button>
+  </li>
+</ul>
+```
 
 ### Toggle dropdown
 
