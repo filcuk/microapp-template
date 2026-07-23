@@ -519,6 +519,47 @@
       </header>
 
       <div class="demo-tier-body">
+        <section class="demo-section" aria-labelledby="demo-chips">
+          <h2 id="demo-chips" class="section-heading">Chips</h2>
+          <p class="demo-hint">Tags for filtering and multi-value input.</p>
+          <div class="demo-grid demo-grid-2">
+            <div class="demo-card">
+              <h3 class="demo-card-title">Filter categories</h3>
+              <p class="demo-hint">Static chips — select to filter the list. They cannot be removed.</p>
+              <div class="chip-group" id="demo-chip-filters" role="group" aria-label="Categories">
+                <button type="button" class="chip" aria-pressed="true" data-chip-value="docs">Docs</button>
+                <button type="button" class="chip" aria-pressed="false" data-chip-value="api">API</button>
+                <button type="button" class="chip" aria-pressed="false" data-chip-value="design">Design</button>
+                <button type="button" class="chip" aria-pressed="false" data-chip-value="release">Release</button>
+              </div>
+              <ul class="chip-filter-results" id="demo-chip-filter-results" aria-live="polite">
+                <li data-chip-category="docs">Getting started guide</li>
+                <li data-chip-category="docs">Installation notes</li>
+                <li data-chip-category="api">REST reference</li>
+                <li data-chip-category="api">Webhook events</li>
+                <li data-chip-category="design">Colour tokens</li>
+                <li data-chip-category="design">Spacing scale</li>
+                <li data-chip-category="release">v1.2 changelog</li>
+              </ul>
+              <p id="demo-chip-filters-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+            <div class="demo-card">
+              <h3 class="demo-card-title">Input filters</h3>
+              <p class="demo-hint">Type a filter and press Enter or comma. Remove with × or Backspace.</p>
+              <div class="chip-input" id="demo-chip-input">
+                <label class="field-label" for="demo-chip-input-field">Filters</label>
+                <div class="chip-input-control">
+                  <div class="chip-input-list"></div>
+                  <input type="text" id="demo-chip-input-field" class="input chip-input-field"
+                    placeholder="Add filter…" autocomplete="off" />
+                </div>
+                <input type="hidden" class="chip-input-value" value="urgent,mine" />
+              </div>
+              <p id="demo-chip-input-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+          </div>
+        </section>
+
         <section class="demo-section" aria-labelledby="demo-menus">
           <h2 id="demo-menus" class="section-heading">Menus &amp; pickers</h2>
           <div class="demo-grid demo-grid-2">

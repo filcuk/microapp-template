@@ -191,6 +191,7 @@ app/
     code-block.css      # Code blocks and expandable surfaces
     controls-buttons.css  # Toolbar, buttons
     controls-badges.css   # Corner badges on controls/labels
+    controls-chips.css    # Selectable / removable chips
     controls-fields.css   # Fields, combobox, date/time, color picker
     controls-widgets.css  # Toggle, segmented control, pagination, progress bar, spinner, slider, stepper
     controls-section-panel.css # Section panel grid
@@ -250,6 +251,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
+| **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
@@ -440,6 +442,65 @@ initBadges(document); // all `.badge-host` blocks with a `.badge`
 ```
 
 `data-badge-label` keeps the control’s `aria-label` in sync (`{label}, {value}` for normal; `{label}, {detail}` for small). Optional `data-badge-max` (or `max` option) caps normal readouts (e.g. `99` → `99+`). Mark the control with `data-badge-control` when it is not the obvious button/link sibling. On tinted surfaces (`.section-panel`, `.demo-card`), `--badge-ring` matches the panel; override it where the host background differs.
+
+### Chips
+
+Selectable tags (filters) and removable input chips.
+
+**Filter group** — static chips that toggle on/off (`aria-pressed`); they cannot be removed.
+
+```html
+<div class="chip-group" role="group" aria-label="Categories">
+  <button type="button" class="chip" aria-pressed="true" data-chip-value="docs">Docs</button>
+  <button type="button" class="chip" aria-pressed="false" data-chip-value="api">API</button>
+</div>
+```
+
+```javascript
+import { initChipGroup, initChipGroups } from "./components/chip.js";
+
+const filters = initChipGroup(document.getElementById("category-filters"), {
+  onChange: ({ values, labels }) => console.log(values, labels),
+});
+
+filters?.getValues();
+filters?.setSelected(["docs", "api"]);
+filters?.clear();
+
+initChipGroups(document);
+```
+
+**Input chips** — type a value and press Enter or comma to add; remove with × or Backspace on an empty field.
+
+```html
+<div class="chip-input" id="tag-input">
+  <label class="field-label" for="tag-input-field">Tags</label>
+  <div class="chip-input-control">
+    <div class="chip-input-list"></div>
+    <input type="text" id="tag-input-field" class="input chip-input-field"
+      placeholder="Add tag…" autocomplete="off" />
+  </div>
+  <input type="hidden" class="chip-input-value" />
+</div>
+```
+
+```javascript
+import { initChipInput, initChipInputs } from "./components/chip.js";
+
+const tags = initChipInput(document.getElementById("tag-input"), {
+  values: ["urgent"],
+  onChange: ({ values }) => console.log(values),
+});
+
+tags?.getValues();
+tags?.add("mine");
+tags?.remove("urgent");
+tags?.clear();
+
+initChipInputs(document);
+```
+
+`data-chip-value` on selectable chips sets the value (defaults to label text). `data-chip-input-disabled` disables the input field. Remove buttons reuse the existing `error` (cancel) icon.
 
 ### Inputs
 
