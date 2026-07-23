@@ -43,6 +43,15 @@
   width: 100%;
 }
 
+.section-panel__controls {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  justify-self: start;
+  min-width: 0;
+}
+
 .section-panel__toggle {
   justify-self: start;
 }

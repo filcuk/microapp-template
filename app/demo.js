@@ -499,6 +499,8 @@ if (sectionToggleBtn) {
   });
 }
 
+initToggle(document.getElementById("demo-section-switch"));
+
 const sectionInput = document.getElementById("demo-section-input");
 const sectionSuccessBanner = document.getElementById("demo-section-success");
 const sectionErrorBanner = document.getElementById("demo-section-error");

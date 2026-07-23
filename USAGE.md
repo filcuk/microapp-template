@@ -574,7 +574,20 @@ Three-column grid rows for compact forms. Stack fields across rows; use `.sectio
     </label>
   </div>
   <div class="section-panel__grid">
-    <button type="button" class="btn btn-toggle section-panel__toggle" aria-pressed="false">Toggle</button>
+    <div class="section-panel__controls">
+      <button type="button" class="btn btn-toggle" aria-pressed="false">Toggle</button>
+      <div class="toggle" data-toggle-default="false">
+        <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+          <span class="toggle-track" aria-hidden="true">
+            <span class="toggle-thumb">
+              <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+            </span>
+          </span>
+          <span class="toggle-label">Enable option</span>
+        </button>
+        <input type="hidden" class="toggle-value" value="false" />
+      </div>
+    </div>
   </div>
   <div class="section-panel__grid">
     <label class="checkbox section-panel__checkbox" for="remember">
