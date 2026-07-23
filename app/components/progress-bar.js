@@ -19,6 +19,7 @@
  * data-progress-bar-min / data-progress-bar-max — bounds (default 0 and 100)
  * data-progress-bar-label — "percent" or "fraction" when `.progress-bar-label` is present; omit label element for bar only
  * data-progress-bar-indeterminate — animated indeterminate state (ignores value)
+ * data-progress-bar-shine — soft highlight sweeping left→right across the filled segment
  */
 
 import { parseBooleanAttr, setHidden } from "../utils/dom.js";

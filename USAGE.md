@@ -255,7 +255,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
-| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label. [`app/progress-bar.js`](app/progress-bar.js). |
+| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine on the filled segment. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Colour picker** | Hex text input with inline swatch preview. [`app/color-picker.js`](app/color-picker.js). |
@@ -713,11 +713,11 @@ initSliders(document); // all `.slider` blocks
 
 ### Progress bar
 
-Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track.
+Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track. Set `data-progress-bar-shine` for a soft highlight that sweeps left→right across the filled segment (disabled while indeterminate and when `prefers-reduced-motion` is set).
 
 ```html
 <div class="progress-bar" id="my-progress-bar" data-progress-bar-value="65" data-progress-bar-max="100"
-  data-progress-bar-label="percent">
+  data-progress-bar-label="percent" data-progress-bar-shine>
   <label class="field-label" id="my-progress-bar-label">Upload progress</label>
   <div class="progress-bar-row">
     <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
@@ -758,7 +758,7 @@ progressBar?.setIndeterminate(true);
 initProgressBars(document); // all `.progress-bar` blocks
 ```
 
-`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, and `data-progress-bar-indeterminate` mirror the JS options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers.
+`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, `data-progress-bar-indeterminate`, and `data-progress-bar-shine` mirror the markup options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers.
 
 ### Spinner
 

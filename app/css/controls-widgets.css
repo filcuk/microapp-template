@@ -346,9 +346,11 @@
 }
 
 .progress-bar-fill {
+  position: relative;
   display: block;
   height: 100%;
   width: 0%;
+  overflow: hidden;
   border-radius: inherit;
   background: var(--accent);
   transition: width 0.15s ease;
@@ -370,6 +372,21 @@
   animation: progress-bar-indeterminate 1.2s ease-in-out infinite;
 }
 
+/* Soft highlight sweeping the filled segment (opt-in via data-progress-bar-shine) */
+.progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate) .progress-bar-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 25%,
+    color-mix(in srgb, #fff 42%, transparent) 50%,
+    transparent 75%
+  );
+  transform: translateX(-100%);
+  animation: progress-bar-shine 1.75s ease-in-out infinite;
+}
+
 @keyframes progress-bar-indeterminate {
   0% {
     transform: translateX(-120%);
@@ -377,6 +394,16 @@
 
   100% {
     transform: translateX(320%);
+  }
+}
+
+@keyframes progress-bar-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
   }
 }
 
@@ -388,6 +415,11 @@
   .progress-bar--indeterminate .progress-bar-fill {
     animation: none;
     width: 50%;
+  }
+
+  .progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate) .progress-bar-fill::after {
+    content: none;
+    animation: none;
   }
 }
 
