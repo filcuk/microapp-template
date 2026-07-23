@@ -24,6 +24,7 @@ import { initSpinner } from "./components/spinner.js";
 import { initProgressIndicator } from "./components/progress-indicator.js";
 import { initRichTextEditor } from "./components/rich-text-editor.js";
 import { initTable } from "./components/table.js";
+import { initBadge } from "./components/badge.js";
 
 initShell();
 initExpands(document);
@@ -490,6 +491,19 @@ if (iconToggleBtn) {
     iconToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
   });
 }
+
+const demoBadge = initBadge(document.getElementById("demo-badge-host"));
+document.getElementById("demo-badge-btn")?.addEventListener("click", () => {
+  demoBadge?.increment();
+});
+
+const demoBadgeDot = initBadge(document.getElementById("demo-badge-dot-host"), {
+  value: true,
+});
+document.getElementById("demo-badge-dot-btn")?.addEventListener("click", () => {
+  const on = demoBadgeDot?.getValue();
+  demoBadgeDot?.setValue(!on);
+});
 
 const sectionToggleBtn = document.getElementById("demo-section-toggle");
 if (sectionToggleBtn) {

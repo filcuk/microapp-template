@@ -8,6 +8,7 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--section-bg);
+  --badge-ring: var(--section-bg);
 }
 
 .section-panel__grid {

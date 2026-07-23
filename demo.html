@@ -40,7 +40,7 @@
           <div class="demo-grid demo-grid-2">
             <div class="demo-card">
               <h3 class="demo-card-title">Buttons</h3>
-              <p class="demo-hint">Standard set of buttons.</p>
+              <p class="demo-hint">Standard set of buttons. Normal badge counts up; small badge is a dot.</p>
               <div class="demo-row">
                 <button type="button" class="btn">Default</button>
                 <button type="button" class="btn btn-primary">Primary</button>
@@ -48,6 +48,18 @@
                 <button type="button" id="icon-toggle-btn" class="btn btn-icon btn-toggle" aria-pressed="false"
                   aria-label="Toggle feature" data-tooltip="Icon button with toggle state" data-icon="lines"
                   data-icon-class="btn-icon-svg"></button>
+                <span class="badge-host" id="demo-badge-host" data-badge-label="Notifications">
+                  <button type="button" class="btn" id="demo-badge-btn" aria-label="Notifications, 3">
+                    Notifications
+                  </button>
+                  <span class="badge" aria-hidden="true">3</span>
+                </span>
+                <span class="badge-host" id="demo-badge-dot-host" data-badge-label="Updates">
+                  <button type="button" class="btn" id="demo-badge-dot-btn" aria-label="Updates, updated">
+                    Updates
+                  </button>
+                  <span class="badge badge--sm" aria-hidden="true"></span>
+                </span>
                 <button type="button" class="btn-link">Link button</button>
               </div>
             </div>

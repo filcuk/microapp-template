@@ -190,6 +190,7 @@ app/
     layout.css          # Page shell, sections, page nav, footer, theme toggle
     code-block.css      # Code blocks and expandable surfaces
     controls-buttons.css  # Toolbar, buttons
+    controls-badges.css   # Corner badges on controls/labels
     controls-fields.css   # Fields, combobox, date/time, color picker
     controls-widgets.css  # Toggle, segmented control, pagination, progress bar, spinner, slider, stepper
     controls-section-panel.css # Section panel grid
@@ -248,6 +249,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
+| **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
@@ -392,6 +394,52 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
     data-icon-class="btn-icon-svg"></button>
 </div>
 ```
+
+### Badge
+
+Corner indicator on a control or text. Wrap the host in `.badge-host` and add a `.badge` sibling (top-right, slightly overlapping).
+
+**Variants** (class on `.badge`):
+
+| Class | Role |
+| ----- | ---- |
+| `.badge` (default) | **Normal** — shows a number or text readout; empty or `0` hides it |
+| `.badge.badge--sm` | **Small** — round dot only; show/hide with a truthy value (`true` / count) or `clear()` |
+
+```html
+<!-- Normal (readout) -->
+<span class="badge-host" data-badge-label="Notifications">
+  <button type="button" class="btn" aria-label="Notifications, 3">Notifications</button>
+  <span class="badge" aria-hidden="true">3</span>
+</span>
+
+<!-- Small (dot) -->
+<span class="badge-host" data-badge-label="Updates">
+  <button type="button" class="btn" aria-label="Updates, updated">Updates</button>
+  <span class="badge badge--sm" aria-hidden="true"></span>
+</span>
+```
+
+```javascript
+import { initBadge, initBadges } from "./components/badge.js";
+
+const badge = initBadge(document.getElementById("notifications-badge"), {
+  onChange: ({ value, display, variant }) => console.log(value, display, variant),
+});
+
+badge?.getValue();
+badge?.setValue(12);
+badge?.increment(); // +1
+badge?.clear();     // hide (value 0)
+
+const dot = initBadge(document.getElementById("updates-badge"), { value: true });
+dot?.setValue(false); // hide
+dot?.setValue(true);  // show
+
+initBadges(document); // all `.badge-host` blocks with a `.badge`
+```
+
+`data-badge-label` keeps the control’s `aria-label` in sync (`{label}, {value}` for normal; `{label}, {detail}` for small). Optional `data-badge-max` (or `max` option) caps normal readouts (e.g. `99` → `99+`). Mark the control with `data-badge-control` when it is not the obvious button/link sibling. On tinted surfaces (`.section-panel`, `.demo-card`), `--badge-ring` matches the panel; override it where the host background differs.
 
 ### Inputs
 
