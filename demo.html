@@ -688,11 +688,24 @@
               </div>
               <input type="hidden" class="progress-bar-value" value="55" />
             </div>
+            <div class="progress-bar" id="demo-progress-bar-disabled" data-progress-bar-value="30"
+              data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-disabled
+              aria-labelledby="demo-progress-bar-disabled-label">
+              <span class="field-label" id="demo-progress-bar-disabled-label">Progress bar (disabled)</span>
+              <div class="progress-bar-row">
+                <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                  aria-valuenow="30" aria-disabled="true" aria-labelledby="demo-progress-bar-disabled-label">
+                  <span class="progress-bar-fill"></span>
+                </div>
+                <span class="progress-bar-label" aria-hidden="true">30%</span>
+              </div>
+              <input type="hidden" class="progress-bar-value" value="30" disabled />
+            </div>
             <div class="demo-row">
               <button type="button" class="btn" id="demo-progress-bar-advance">Advance progress</button>
               <button type="button" class="btn" id="demo-progress-bar-reset">Reset</button>
             </div>
-            <p id="demo-progress-bar-result" class="demo-hint" aria-live="polite">Bar: 40% · Percent: 75% · Fraction: 7/12 · Error: 55%</p>
+            <p id="demo-progress-bar-result" class="demo-hint" aria-live="polite">Bar: 40% · Percent: 75% · Fraction: 7/12 · Error: 55% · Disabled: 30%</p>
             <div class="field">
               <span class="field-label">Spinner</span>
               <div class="demo-row">

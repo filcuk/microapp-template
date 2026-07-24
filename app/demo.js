@@ -400,6 +400,7 @@ let demoProgressBar;
 let demoProgressBarPercent;
 let demoProgressBarFraction;
 let demoProgressBarError;
+let demoProgressBarDisabled;
 
 function updateProgressBarResult() {
   if (!demoProgressBarResult) return;
@@ -409,6 +410,7 @@ function updateProgressBarResult() {
   const fractionMax = demoProgressBarFraction?.getMax();
   const errorPercent = demoProgressBarError?.getPercent();
   const errorStuck = demoProgressBarError?.isError();
+  const disabledPercent = demoProgressBarDisabled?.getPercent();
   demoProgressBarResult.textContent = [
     bar !== undefined ? `Bar: ${Math.round(bar)}%` : null,
     percent !== undefined ? `Percent: ${Math.round(percent)}%` : null,
@@ -418,6 +420,7 @@ function updateProgressBarResult() {
     errorPercent !== undefined
       ? `Error: ${Math.round(errorPercent)}%${errorStuck ? " (stuck)" : ""}`
       : null,
+    disabledPercent !== undefined ? `Disabled: ${Math.round(disabledPercent)}%` : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -437,6 +440,9 @@ demoProgressBarFraction = initProgressBar(document.getElementById("demo-progress
 demoProgressBarError = initProgressBar(document.getElementById("demo-progress-bar-error"), {
   onChange: progressBarOnChange,
 });
+demoProgressBarDisabled = initProgressBar(document.getElementById("demo-progress-bar-disabled"), {
+  onChange: progressBarOnChange,
+});
 updateProgressBarResult();
 
 document.getElementById("demo-progress-bar-advance")?.addEventListener("click", () => {
@@ -451,6 +457,8 @@ document.getElementById("demo-progress-bar-reset")?.addEventListener("click", ()
   demoProgressBarFraction?.setValue(7);
   demoProgressBarError?.setValue(55);
   demoProgressBarError?.setError(true);
+  demoProgressBarDisabled?.setValue(30);
+  demoProgressBarDisabled?.setDisabled(true);
 });
 
 let demoSpinnerInline;

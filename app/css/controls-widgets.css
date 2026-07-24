@@ -377,8 +377,20 @@
   animation: progress-bar-error-pulse 1.4s ease-in-out infinite;
 }
 
+.progress-bar--disabled .progress-bar-fill {
+  background: var(--muted);
+  animation: none;
+}
+
+.progress-bar--disabled[data-progress-bar-shine] .progress-bar-fill::after {
+  content: none;
+  animation: none;
+}
+
 /* Soft highlight sweeping the filled segment (opt-in via data-progress-bar-shine) */
-.progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate):not(.progress-bar--error)
+.progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate):not(.progress-bar--error):not(
+    .progress-bar--disabled
+  )
   .progress-bar-fill::after {
   content: "";
   position: absolute;
@@ -438,7 +450,9 @@
     animation: none;
   }
 
-  .progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate):not(.progress-bar--error)
+  .progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate):not(.progress-bar--error):not(
+      .progress-bar--disabled
+    )
     .progress-bar-fill::after {
     content: none;
     animation: none;

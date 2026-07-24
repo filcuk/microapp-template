@@ -20,6 +20,7 @@
  * data-progress-bar-label — "percent" or "fraction" when `.progress-bar-label` is present; omit label element for bar only
  * data-progress-bar-indeterminate — animated indeterminate state (ignores value)
  * data-progress-bar-error — stuck/failed state (keeps value; red fill; mutually exclusive with indeterminate)
+ * data-progress-bar-disabled — muted, non-animated display (hidden input disabled for forms)
  * data-progress-bar-shine — soft highlight sweeping left→right across the filled segment
  */
 
@@ -66,7 +67,7 @@ function formatValueText(value, min, max, format, { isIndeterminate, isError }) 
 
 export function initProgressBar(
   progressBarEl,
-  { value, min, max, labelFormat, indeterminate, error, onChange } = {}
+  { value, min, max, labelFormat, indeterminate, error, disabled, onChange } = {}
 ) {
   if (!progressBarEl) return null;
 
@@ -94,6 +95,10 @@ export function initProgressBar(
     typeof error === "boolean"
       ? error
       : parseBooleanAttr(progressBarEl?.dataset.progressBarError) ?? false;
+  let isDisabled =
+    typeof disabled === "boolean"
+      ? disabled
+      : parseBooleanAttr(progressBarEl?.dataset.progressBarDisabled) ?? false;
 
   if (isError) isIndeterminate = false;
   else if (isIndeterminate) isError = false;
@@ -103,6 +108,8 @@ export function initProgressBar(
 
     progressBarEl.classList.toggle("progress-bar--indeterminate", isIndeterminate);
     progressBarEl.classList.toggle("progress-bar--error", isError);
+    progressBarEl.classList.toggle("progress-bar--disabled", isDisabled);
+    trackEl.setAttribute("aria-disabled", isDisabled ? "true" : "false");
 
     if (isIndeterminate) {
       trackEl.removeAttribute("aria-valuenow");
@@ -142,6 +149,7 @@ export function initProgressBar(
 
     if (hiddenInput) {
       hiddenInput.value = isIndeterminate ? "" : String(currentValue);
+      hiddenInput.disabled = isDisabled;
     }
 
     if (emit) {
@@ -153,6 +161,7 @@ export function initProgressBar(
         percent,
         indeterminate: isIndeterminate,
         error: isError,
+        disabled: isDisabled,
         source,
       });
     }
@@ -174,6 +183,11 @@ export function initProgressBar(
   function setError(nextError, { emit = true, source = "api" } = {}) {
     isError = Boolean(nextError);
     if (isError) isIndeterminate = false;
+    syncDom({ emit, source });
+  }
+
+  function setDisabled(nextDisabled, { emit = true, source = "api" } = {}) {
+    isDisabled = Boolean(nextDisabled);
     syncDom({ emit, source });
   }
 
@@ -206,6 +220,12 @@ export function initProgressBar(
     },
     isError() {
       return isError;
+    },
+    setDisabled(nextDisabled) {
+      setDisabled(nextDisabled);
+    },
+    isDisabled() {
+      return isDisabled;
     },
   };
 }
