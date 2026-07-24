@@ -40,7 +40,7 @@
           <div class="demo-grid demo-grid-2">
             <div class="demo-card">
               <h3 class="demo-card-title">Buttons</h3>
-              <p class="demo-hint">Standard set of buttons.</p>
+              <p class="demo-hint">Standard set of buttons. Normal badge counts up; small badge is a dot.</p>
               <div class="demo-row">
                 <button type="button" class="btn">Default</button>
                 <button type="button" class="btn btn-primary">Primary</button>
@@ -48,6 +48,18 @@
                 <button type="button" id="icon-toggle-btn" class="btn btn-icon btn-toggle" aria-pressed="false"
                   aria-label="Toggle feature" data-tooltip="Icon button with toggle state" data-icon="lines"
                   data-icon-class="btn-icon-svg"></button>
+                <span class="badge-host" id="demo-badge-host" data-badge-label="Notifications">
+                  <button type="button" class="btn" id="demo-badge-btn" aria-label="Notifications, 3">
+                    Notifications
+                  </button>
+                  <span class="badge" aria-hidden="true">3</span>
+                </span>
+                <span class="badge-host" id="demo-badge-dot-host" data-badge-label="Updates">
+                  <button type="button" class="btn" id="demo-badge-dot-btn" aria-label="Updates, updated">
+                    Updates
+                  </button>
+                  <span class="badge badge--sm" aria-hidden="true"></span>
+                </span>
                 <button type="button" class="btn-link">Link button</button>
               </div>
             </div>
@@ -285,111 +297,163 @@
               </div>
             </div>
             <p id="demo-stepper-result" class="demo-hint" aria-live="polite">Integer: 2 · Decimal: 1.5</p>
-            <div class="demo-grid demo-grid-2">
-              <div class="color-picker" id="demo-color-picker" data-color-picker-default="#0969da">
-                <label class="field-label" for="demo-color-picker-input">Colour picker</label>
-                <div class="color-picker-control">
-                  <input type="text" id="demo-color-picker-input" class="input color-picker-input"
-                    placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-                  <span class="color-picker-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-picker-value" />
-                </div>
-              </div>
-              <div class="color-picker" id="demo-color-picker-empty">
-                <label class="field-label" for="demo-color-picker-empty-input">Colour picker (empty)</label>
-                <div class="color-picker-control">
-                  <input type="text" id="demo-color-picker-empty-input" class="input color-picker-input"
-                    placeholder="#RRGGBB" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-                  <span class="color-picker-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-picker-value" />
-                </div>
-              </div>
-            </div>
-            <p id="demo-color-picker-result" class="demo-hint" aria-live="polite">Colour: #0969DA · Empty: —</p>
-            <div class="demo-grid demo-grid-2">
-              <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
-                aria-labelledby="demo-progress-bar-label">
-                <span class="field-label" id="demo-progress-bar-label">Progress bar</span>
-                <div class="progress-bar-row">
-                  <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                    aria-valuenow="40" aria-labelledby="demo-progress-bar-label">
-                    <span class="progress-bar-fill"></span>
-                  </div>
-                </div>
-                <input type="hidden" class="progress-bar-value" value="40" />
-              </div>
-              <div class="progress-bar" id="demo-progress-bar-percent" data-progress-bar-value="75"
-                data-progress-bar-max="100" data-progress-bar-label="percent" aria-labelledby="demo-progress-bar-percent-label">
-                <span class="field-label" id="demo-progress-bar-percent-label">Progress bar (%)</span>
-                <div class="progress-bar-row">
-                  <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                    aria-valuenow="75" aria-labelledby="demo-progress-bar-percent-label">
-                    <span class="progress-bar-fill"></span>
-                  </div>
-                  <span class="progress-bar-label" aria-hidden="true">75%</span>
-                </div>
-                <input type="hidden" class="progress-bar-value" value="75" />
-              </div>
-            </div>
-            <div class="progress-bar" id="demo-progress-bar-fraction" data-progress-bar-value="7" data-progress-bar-max="12"
-              data-progress-bar-label="fraction" aria-labelledby="demo-progress-bar-fraction-label">
-              <span class="field-label" id="demo-progress-bar-fraction-label">Progress bar (fraction)</span>
-              <div class="progress-bar-row">
-                <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="12"
-                  aria-valuenow="7" aria-labelledby="demo-progress-bar-fraction-label">
-                  <span class="progress-bar-fill"></span>
-                </div>
-                <span class="progress-bar-label" aria-hidden="true">7/12</span>
-              </div>
-              <input type="hidden" class="progress-bar-value" value="7" />
-            </div>
-            <div class="demo-row">
-              <button type="button" class="btn" id="demo-progress-bar-advance">Advance progress</button>
-              <button type="button" class="btn" id="demo-progress-bar-reset">Reset</button>
-            </div>
-            <p id="demo-progress-bar-result" class="demo-hint" aria-live="polite">Bar: 40% · Percent: 75% · Fraction: 7/12</p>
-            <div class="field">
-              <span class="field-label">Spinner</span>
-              <div class="demo-row">
-                <div class="spinner spinner--sm" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-                  <span class="spinner-indicator" aria-hidden="true"></span>
-                </div>
-                <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-                  <span class="spinner-indicator" aria-hidden="true"></span>
-                </div>
-                <div class="spinner spinner--lg" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-                  <span class="spinner-indicator" aria-hidden="true"></span>
-                </div>
-                <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
-                  <span class="spinner-indicator" aria-hidden="true"></span>
-                  <span class="spinner-label">Loading data…</span>
-                </div>
-                <div class="spinner hidden" id="demo-spinner-inline" data-spinner-visible="false"
-                  data-spinner-label="Fetching results…" role="status" aria-live="polite" aria-busy="false"
-                  aria-label="Fetching results…" hidden>
-                  <span class="spinner-indicator" aria-hidden="true"></span>
-                  <span class="spinner-label">Fetching results…</span>
-                </div>
-                <button type="button" class="btn" id="demo-spinner-toggle">Toggle spinner</button>
-              </div>
-            </div>
+          </div>
+        </section>
+
+        <section class="demo-section" aria-labelledby="demo-menus">
+          <h2 id="demo-menus" class="section-heading">Menus &amp; pickers</h2>
+          <div class="demo-grid demo-grid-2">
             <div class="demo-card">
-              <h3 class="demo-card-title">Spinner overlay</h3>
-              <p class="demo-hint">Blocks interaction with the panel below until loading finishes.</p>
-              <div class="spinner-host spinner-demo-panel" id="demo-spinner-host">
-                <p>Account settings and preferences appear here once loaded.</p>
-                <button type="button" class="btn" disabled>Edit settings</button>
-                <div class="spinner-overlay hidden" hidden>
-                  <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
-                    <span class="spinner-indicator" aria-hidden="true"></span>
-                    <span class="spinner-label">Loading data…</span>
-                  </div>
+              <h3 class="demo-card-title">Combobox</h3>
+              <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
+              <div class="combobox" id="demo-combobox">
+                <label class="field-label" for="demo-combobox-input">City</label>
+                <div class="combobox-control">
+                  <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
+                    aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
+                    placeholder="Search cities…" />
+                  <ul id="demo-combobox-list" class="combobox-list hidden" role="listbox" hidden>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
+                    </li>
+                    <li role="presentation">
+                      <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
+                    </li>
+                  </ul>
                 </div>
               </div>
-              <div class="demo-row">
-                <button type="button" class="btn btn-primary" id="demo-spinner-load">Simulate load</button>
+              <p id="demo-combobox-result" class="demo-hint" aria-live="polite">No city selected.</p>
+            </div>
+
+            <div class="demo-card">
+              <h3 class="demo-card-title">Combo button</h3>
+              <p class="demo-hint">Primary action plus a chevron menu.</p>
+              <div class="combo-btn" id="demo-combo">
+                <button type="button" class="btn combo-btn-main" id="demo-combo-main">
+                  Pick random
+                </button>
+                <button type="button" class="btn combo-btn-toggle" id="demo-combo-toggle" aria-haspopup="menu"
+                  aria-expanded="false" aria-controls="demo-combo-menu" aria-label="Choose option">
+                  <span class="combo-btn-chevron" aria-hidden="true"></span>
+                </button>
+                <ul id="demo-combo-menu" class="combo-menu hidden" role="menu">
+                  <li role="none">
+                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-1">
+                      Example 1
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-2">
+                      Example 2
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-3">
+                      Example 3
+                    </button>
+                  </li>
+                </ul>
               </div>
-              <p id="demo-spinner-result" class="demo-hint" aria-live="polite">Panel ready.</p>
+              <p id="demo-combo-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+
+            <div class="demo-card">
+              <h3 class="demo-card-title">Dropdown</h3>
+              <p class="demo-hint">Single-select menu; closes after a choice. Optional
+                <code>.dropdown-menu-group</code> headers group items.</p>
+              <div class="dropdown" id="demo-dropdown">
+                <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
+                  aria-expanded="false" aria-controls="demo-dropdown-menu">
+                  Choose item
+                  <span class="combo-btn-chevron" aria-hidden="true"></span>
+                </button>
+                <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
+                  <li role="presentation">
+                    <div class="dropdown-menu-group">Group A</div>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
+                      Example 1
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
+                      Example 2
+                    </button>
+                  </li>
+                  <li role="presentation">
+                    <div class="dropdown-menu-group">Group B</div>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
+                      Example 3
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-4">
+                      Example 4
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <p id="demo-dropdown-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+
+            <div class="demo-card">
+              <h3 class="demo-card-title">Toggle dropdown</h3>
+              <p class="demo-hint">Multi-select; menu stays open while toggling items.</p>
+              <div class="dropdown" id="demo-toggle-dropdown">
+                <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
+                  aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
+                  <span class="dropdown-trigger-label">Toggle items</span>
+                  <span class="combo-btn-chevron" aria-hidden="true"></span>
+                </button>
+                <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+                      data-value="alpha">
+                      Alpha
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+                      data-value="beta">
+                      Beta
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+                      data-value="gamma">
+                      Gamma
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <p id="demo-toggle-dropdown-result" class="demo-hint" aria-live="polite"></p>
             </div>
           </div>
         </section>
@@ -505,148 +569,185 @@
       </header>
 
       <div class="demo-tier-body">
-        <section class="demo-section" aria-labelledby="demo-menus">
-          <h2 id="demo-menus" class="section-heading">Menus &amp; pickers</h2>
+        <section class="demo-section" aria-labelledby="demo-chips">
+          <h2 id="demo-chips" class="section-heading">Chips</h2>
+          <p class="demo-hint">Tags for filtering and multi-value input.</p>
           <div class="demo-grid demo-grid-2">
             <div class="demo-card">
-              <h3 class="demo-card-title">Combobox</h3>
-              <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
-              <div class="combobox" id="demo-combobox">
-                <label class="field-label" for="demo-combobox-input">City</label>
-                <div class="combobox-control">
-                  <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
-                    aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
-                    placeholder="Search cities…" />
-                  <ul id="demo-combobox-list" class="combobox-list hidden" role="listbox" hidden>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
-                    </li>
-                  </ul>
+              <h3 class="demo-card-title">Filter categories</h3>
+              <p class="demo-hint">Static chips — select to filter the list. They cannot be removed.</p>
+              <div class="chip-group" id="demo-chip-filters" role="group" aria-label="Categories">
+                <button type="button" class="chip" aria-pressed="true" data-chip-value="docs">Docs</button>
+                <button type="button" class="chip" aria-pressed="false" data-chip-value="api">API</button>
+                <button type="button" class="chip" aria-pressed="false" data-chip-value="design">Design</button>
+                <button type="button" class="chip" aria-pressed="false" data-chip-value="release">Release</button>
+              </div>
+              <ul class="chip-filter-results" id="demo-chip-filter-results" aria-live="polite">
+                <li data-chip-category="docs">Getting started guide</li>
+                <li data-chip-category="docs">Installation notes</li>
+                <li data-chip-category="api">REST reference</li>
+                <li data-chip-category="api">Webhook events</li>
+                <li data-chip-category="design">Colour tokens</li>
+                <li data-chip-category="design">Spacing scale</li>
+                <li data-chip-category="release">v1.2 changelog</li>
+              </ul>
+              <p id="demo-chip-filters-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+            <div class="demo-card">
+              <h3 class="demo-card-title">Input filters</h3>
+              <p class="demo-hint">Type a filter and press Enter or comma. Remove with × or Backspace.</p>
+              <div class="chip-input" id="demo-chip-input">
+                <label class="field-label" for="demo-chip-input-field">Filters</label>
+                <div class="chip-input-control">
+                  <div class="chip-input-list"></div>
+                  <input type="text" id="demo-chip-input-field" class="input chip-input-field"
+                    placeholder="Add filter…" autocomplete="off" />
+                </div>
+                <input type="hidden" class="chip-input-value" value="urgent,mine" />
+              </div>
+              <p id="demo-chip-input-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+          </div>
+        </section>
+
+
+        <section class="demo-section" aria-labelledby="demo-feedback">
+          <h2 id="demo-feedback" class="section-heading">Colour, progress &amp; spinner</h2>
+          <p class="demo-hint">Status and loading indicators.</p>
+          <div class="demo-fields">
+            <div class="demo-grid demo-grid-2">
+              <div class="color-picker" id="demo-color-picker" data-color-picker-default="#0969da">
+                <label class="field-label" for="demo-color-picker-input">Colour picker</label>
+                <div class="color-picker-control">
+                  <input type="text" id="demo-color-picker-input" class="input color-picker-input"
+                    placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+                  <span class="color-picker-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-picker-value" />
                 </div>
               </div>
-              <p id="demo-combobox-result" class="demo-hint" aria-live="polite">No city selected.</p>
-            </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Combo button</h3>
-              <p class="demo-hint">Primary action plus a chevron menu.</p>
-              <div class="combo-btn" id="demo-combo">
-                <button type="button" class="btn combo-btn-main" id="demo-combo-main">
-                  Pick random
-                </button>
-                <button type="button" class="btn combo-btn-toggle" id="demo-combo-toggle" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-combo-menu" aria-label="Choose option">
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-combo-menu" class="combo-menu hidden" role="menu">
-                  <li role="none">
-                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-1">
-                      Example 1
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-2">
-                      Example 2
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-3">
-                      Example 3
-                    </button>
-                  </li>
-                </ul>
+              <div class="color-picker" id="demo-color-picker-empty">
+                <label class="field-label" for="demo-color-picker-empty-input">Colour picker (empty)</label>
+                <div class="color-picker-control">
+                  <input type="text" id="demo-color-picker-empty-input" class="input color-picker-input"
+                    placeholder="#RRGGBB" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+                  <span class="color-picker-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-picker-value" />
+                </div>
               </div>
-              <p id="demo-combo-result" class="demo-hint" aria-live="polite"></p>
             </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Dropdown</h3>
-              <p class="demo-hint">Single-select menu; closes after a choice.</p>
-              <div class="dropdown" id="demo-dropdown">
-                <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-dropdown-menu">
-                  Choose item
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
-                      Example 1
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
-                      Example 2
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
-                      Example 3
-                    </button>
-                  </li>
-                </ul>
+            <p id="demo-color-picker-result" class="demo-hint" aria-live="polite">Colour: #0969DA · Empty: —</p>
+            <div class="demo-grid demo-grid-2">
+              <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
+                data-progress-bar-shine aria-labelledby="demo-progress-bar-label">
+                <span class="field-label" id="demo-progress-bar-label">Progress bar</span>
+                <div class="progress-bar-row">
+                  <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                    aria-valuenow="40" aria-labelledby="demo-progress-bar-label">
+                    <span class="progress-bar-fill"></span>
+                  </div>
+                </div>
+                <input type="hidden" class="progress-bar-value" value="40" />
               </div>
-              <p id="demo-dropdown-result" class="demo-hint" aria-live="polite"></p>
+              <div class="progress-bar" id="demo-progress-bar-percent" data-progress-bar-value="75"
+                data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-shine
+                aria-labelledby="demo-progress-bar-percent-label">
+                <span class="field-label" id="demo-progress-bar-percent-label">Progress bar (%)</span>
+                <div class="progress-bar-row">
+                  <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                    aria-valuenow="75" aria-labelledby="demo-progress-bar-percent-label">
+                    <span class="progress-bar-fill"></span>
+                  </div>
+                  <span class="progress-bar-label" aria-hidden="true">75%</span>
+                </div>
+                <input type="hidden" class="progress-bar-value" value="75" />
+              </div>
             </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Toggle dropdown</h3>
-              <p class="demo-hint">Multi-select; menu stays open while toggling items.</p>
-              <div class="dropdown" id="demo-toggle-dropdown">
-                <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
-                  <span class="dropdown-trigger-label">Toggle items</span>
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
-                      data-value="alpha">
-                      Alpha
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
-                      data-value="beta">
-                      Beta
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
-                      data-value="gamma">
-                      Gamma
-                    </button>
-                  </li>
-                </ul>
+            <div class="progress-bar" id="demo-progress-bar-fraction" data-progress-bar-value="7" data-progress-bar-max="12"
+              data-progress-bar-label="fraction" data-progress-bar-shine
+              aria-labelledby="demo-progress-bar-fraction-label">
+              <span class="field-label" id="demo-progress-bar-fraction-label">Progress bar (fraction)</span>
+              <div class="progress-bar-row">
+                <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="12"
+                  aria-valuenow="7" aria-labelledby="demo-progress-bar-fraction-label">
+                  <span class="progress-bar-fill"></span>
+                </div>
+                <span class="progress-bar-label" aria-hidden="true">7/12</span>
               </div>
-              <p id="demo-toggle-dropdown-result" class="demo-hint" aria-live="polite"></p>
+              <input type="hidden" class="progress-bar-value" value="7" />
+            </div>
+            <div class="progress-bar" id="demo-progress-bar-error" data-progress-bar-value="55"
+              data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-error
+              aria-labelledby="demo-progress-bar-error-label">
+              <span class="field-label" id="demo-progress-bar-error-label">Progress bar (error)</span>
+              <div class="progress-bar-row">
+                <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                  aria-valuenow="55" aria-labelledby="demo-progress-bar-error-label">
+                  <span class="progress-bar-fill"></span>
+                </div>
+                <span class="progress-bar-label" aria-hidden="true">55%</span>
+              </div>
+              <input type="hidden" class="progress-bar-value" value="55" />
+            </div>
+            <div class="progress-bar" id="demo-progress-bar-disabled" data-progress-bar-value="30"
+              data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-disabled
+              aria-labelledby="demo-progress-bar-disabled-label">
+              <span class="field-label" id="demo-progress-bar-disabled-label">Progress bar (disabled)</span>
+              <div class="progress-bar-row">
+                <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                  aria-valuenow="30" aria-disabled="true" aria-labelledby="demo-progress-bar-disabled-label">
+                  <span class="progress-bar-fill"></span>
+                </div>
+                <span class="progress-bar-label" aria-hidden="true">30%</span>
+              </div>
+              <input type="hidden" class="progress-bar-value" value="30" disabled />
+            </div>
+            <div class="demo-row">
+              <button type="button" class="btn" id="demo-progress-bar-advance">Advance progress</button>
+              <button type="button" class="btn" id="demo-progress-bar-reset">Reset</button>
+            </div>
+            <p id="demo-progress-bar-result" class="demo-hint" aria-live="polite">Bar: 40% · Percent: 75% · Fraction: 7/12 · Error: 55% · Disabled: 30%</p>
+            <div class="field">
+              <span class="field-label">Spinner</span>
+              <div class="demo-row">
+                <div class="spinner spinner--sm" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                </div>
+                <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                </div>
+                <div class="spinner spinner--lg" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                </div>
+                <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                  <span class="spinner-label">Loading data…</span>
+                </div>
+                <div class="spinner hidden" id="demo-spinner-inline" data-spinner-visible="false"
+                  data-spinner-label="Fetching results…" role="status" aria-live="polite" aria-busy="false"
+                  aria-label="Fetching results…" hidden>
+                  <span class="spinner-indicator" aria-hidden="true"></span>
+                  <span class="spinner-label">Fetching results…</span>
+                </div>
+                <button type="button" class="btn" id="demo-spinner-toggle">Toggle spinner</button>
+              </div>
+            </div>
+            <div class="demo-card">
+              <h3 class="demo-card-title">Spinner overlay</h3>
+              <p class="demo-hint">Blocks interaction with the panel below until loading finishes.</p>
+              <div class="spinner-host spinner-demo-panel" id="demo-spinner-host">
+                <p>Account settings and preferences appear here once loaded.</p>
+                <button type="button" class="btn" disabled>Edit settings</button>
+                <div class="spinner-overlay hidden" hidden>
+                  <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
+                    <span class="spinner-indicator" aria-hidden="true"></span>
+                    <span class="spinner-label">Loading data…</span>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-row">
+                <button type="button" class="btn btn-primary" id="demo-spinner-load">Simulate load</button>
+              </div>
+              <p id="demo-spinner-result" class="demo-hint" aria-live="polite">Panel ready.</p>
             </div>
           </div>
         </section>
@@ -734,8 +835,21 @@
                 </label>
               </div>
               <div class="section-panel__grid">
-                <button type="button" id="demo-section-toggle" class="btn btn-toggle section-panel__toggle"
-                  aria-pressed="false">Toggle</button>
+                <div class="section-panel__controls">
+                  <button type="button" id="demo-section-toggle" class="btn btn-toggle"
+                    aria-pressed="false">Toggle</button>
+                  <div class="toggle" id="demo-section-switch" data-toggle-default="false">
+                    <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+                      <span class="toggle-track" aria-hidden="true">
+                        <span class="toggle-thumb">
+                          <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+                        </span>
+                      </span>
+                      <span class="toggle-label">Enable option</span>
+                    </button>
+                    <input type="hidden" class="toggle-value" value="false" />
+                  </div>
+                </div>
               </div>
               <div class="section-panel__grid">
                 <label class="checkbox section-panel__checkbox" for="demo-section-checkbox">
@@ -881,7 +995,7 @@
 
           <div class="demo-card">
             <h3 class="demo-card-title">Data table</h3>
-            <p class="demo-hint">Sortable columns and row selection. Numeric columns use <code>.table-num</code>.</p>
+            <p class="demo-hint">Sortable columns and row selection — click a row (or its checkbox) to select. Numeric columns use <code>.table-num</code>.</p>
             <div class="table-block table-block--wide" id="demo-table" data-table-sortable data-table-selectable>
               <div class="table-wrap">
                 <table class="table table--striped">

@@ -60,6 +60,18 @@
   background: color-mix(in srgb, var(--code-bg) 55%, transparent);
 }
 
+.table tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.table--striped tbody tr:nth-child(even):hover {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.table-block--selectable .table tbody tr {
+  cursor: pointer;
+}
+
 .table--compact th,
 .table--compact td {
   padding: 0.4rem 0.75rem;

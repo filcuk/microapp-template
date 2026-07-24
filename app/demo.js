@@ -24,6 +24,8 @@ import { initSpinner } from "./components/spinner.js";
 import { initProgressIndicator } from "./components/progress-indicator.js";
 import { initRichTextEditor } from "./components/rich-text-editor.js";
 import { initTable } from "./components/table.js";
+import { initBadge } from "./components/badge.js";
+import { initChipGroup, initChipInput } from "./components/chip.js";
 
 initShell();
 initExpands(document);
@@ -317,6 +319,54 @@ initSegmentedControl(document.getElementById("demo-segmented-view"), {
   },
 });
 
+const demoChipFiltersResult = document.getElementById("demo-chip-filters-result");
+const demoChipFilterResults = document.getElementById("demo-chip-filter-results");
+const demoChipInputResult = document.getElementById("demo-chip-input-result");
+
+function syncChipFilterList(values) {
+  if (!demoChipFilterResults) return;
+  const selected = new Set(values);
+  const items = [...demoChipFilterResults.querySelectorAll("[data-chip-category]")];
+  let visible = 0;
+  for (const item of items) {
+    const show = selected.size === 0 || selected.has(item.dataset.chipCategory);
+    item.hidden = !show;
+    if (show) visible += 1;
+  }
+  if (demoChipFiltersResult) {
+    demoChipFiltersResult.textContent =
+      selected.size === 0
+        ? `Showing all ${items.length} items`
+        : `Showing ${visible} of ${items.length} · Filters: ${[...selected].join(", ")}`;
+  }
+}
+
+initChipGroup(document.getElementById("demo-chip-filters"), {
+  onChange: ({ values }) => syncChipFilterList(values),
+});
+syncChipFilterList(
+  [...document.querySelectorAll("#demo-chip-filters .chip[aria-pressed='true']")].map(
+    (chip) => chip.dataset.chipValue
+  )
+);
+
+function updateChipInputResult(values) {
+  if (!demoChipInputResult) return;
+  demoChipInputResult.textContent = values.length
+    ? `Active filters: ${values.join(", ")}`
+    : "Active filters: none";
+}
+
+initChipInput(document.getElementById("demo-chip-input"), {
+  onChange: ({ values }) => updateChipInputResult(values),
+});
+updateChipInputResult(
+  (document.querySelector("#demo-chip-input .chip-input-value")?.value || "")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+);
+
 initSegmentedControl(document.getElementById("demo-segmented-panels"), {
   onChange: ({ value }) => {
     if (demoSegmentedPanelsResult) {
@@ -349,6 +399,8 @@ initTable(document.getElementById("demo-table"), {
 let demoProgressBar;
 let demoProgressBarPercent;
 let demoProgressBarFraction;
+let demoProgressBarError;
+let demoProgressBarDisabled;
 
 function updateProgressBarResult() {
   if (!demoProgressBarResult) return;
@@ -356,12 +408,19 @@ function updateProgressBarResult() {
   const percent = demoProgressBarPercent?.getPercent();
   const fractionValue = demoProgressBarFraction?.getValue();
   const fractionMax = demoProgressBarFraction?.getMax();
+  const errorPercent = demoProgressBarError?.getPercent();
+  const errorStuck = demoProgressBarError?.isError();
+  const disabledPercent = demoProgressBarDisabled?.getPercent();
   demoProgressBarResult.textContent = [
     bar !== undefined ? `Bar: ${Math.round(bar)}%` : null,
     percent !== undefined ? `Percent: ${Math.round(percent)}%` : null,
     fractionValue !== undefined && fractionMax !== undefined
       ? `Fraction: ${Math.round(fractionValue)}/${Math.round(fractionMax)}`
       : null,
+    errorPercent !== undefined
+      ? `Error: ${Math.round(errorPercent)}%${errorStuck ? " (stuck)" : ""}`
+      : null,
+    disabledPercent !== undefined ? `Disabled: ${Math.round(disabledPercent)}%` : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -378,6 +437,12 @@ demoProgressBarPercent = initProgressBar(document.getElementById("demo-progress-
 demoProgressBarFraction = initProgressBar(document.getElementById("demo-progress-bar-fraction"), {
   onChange: progressBarOnChange,
 });
+demoProgressBarError = initProgressBar(document.getElementById("demo-progress-bar-error"), {
+  onChange: progressBarOnChange,
+});
+demoProgressBarDisabled = initProgressBar(document.getElementById("demo-progress-bar-disabled"), {
+  onChange: progressBarOnChange,
+});
 updateProgressBarResult();
 
 document.getElementById("demo-progress-bar-advance")?.addEventListener("click", () => {
@@ -390,6 +455,10 @@ document.getElementById("demo-progress-bar-reset")?.addEventListener("click", ()
   demoProgressBar?.setValue(40);
   demoProgressBarPercent?.setValue(75);
   demoProgressBarFraction?.setValue(7);
+  demoProgressBarError?.setValue(55);
+  demoProgressBarError?.setError(true);
+  demoProgressBarDisabled?.setValue(30);
+  demoProgressBarDisabled?.setDisabled(true);
 });
 
 let demoSpinnerInline;
@@ -491,6 +560,19 @@ if (iconToggleBtn) {
   });
 }
 
+const demoBadge = initBadge(document.getElementById("demo-badge-host"));
+document.getElementById("demo-badge-btn")?.addEventListener("click", () => {
+  demoBadge?.increment();
+});
+
+const demoBadgeDot = initBadge(document.getElementById("demo-badge-dot-host"), {
+  value: true,
+});
+document.getElementById("demo-badge-dot-btn")?.addEventListener("click", () => {
+  const on = demoBadgeDot?.getValue();
+  demoBadgeDot?.setValue(!on);
+});
+
 const sectionToggleBtn = document.getElementById("demo-section-toggle");
 if (sectionToggleBtn) {
   sectionToggleBtn.addEventListener("click", () => {
@@ -498,6 +580,8 @@ if (sectionToggleBtn) {
     sectionToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
   });
 }
+
+initToggle(document.getElementById("demo-section-switch"));
 
 const sectionInput = document.getElementById("demo-section-input");
 const sectionSuccessBanner = document.getElementById("demo-section-success");

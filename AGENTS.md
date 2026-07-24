@@ -64,6 +64,9 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
 | `initColorPicker()` / `initColorPickers()` | Hex colour input with inline swatch preview |
 | `initToggle()` / `initToggles()` | On/off switch control |
+| `initBadge()` / `initBadges()` | Corner badge on a `.badge-host` (normal readout or `.badge--sm` dot) |
+| `initChipGroup()` / `initChipGroups()` | Selectable filter chips (toggle pressed; not removable) |
+| `initChipInput()` / `initChipInputs()` | Text field that adds removable chips |
 | `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
 | `initPagination()` / `initPaginations()` | Client-side pagination (numbered pages, no URL change) |
 | `initTable()` / `initTables()` | Data table with optional sortable columns and row selection |
@@ -104,6 +107,8 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
 | `app/css/code-block.css` | Code blocks and expandable surfaces |
 | `app/css/controls-buttons.css` | Toolbar, buttons |
+| `app/css/controls-badges.css` | Corner badges on controls and labels |
+| `app/css/controls-chips.css` | Selectable filter chips and removable input chips |
 | `app/css/controls-fields.css` | Fields, combobox, date/time, color picker |
 | `app/css/controls-widgets.css` | Toggle, segmented control, pagination, progress bar, spinner, slider, stepper |
 | `app/css/controls-section-panel.css` | Section panel grid rows |

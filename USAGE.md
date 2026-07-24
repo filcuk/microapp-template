@@ -190,6 +190,8 @@ app/
     layout.css          # Page shell, sections, page nav, footer, theme toggle
     code-block.css      # Code blocks and expandable surfaces
     controls-buttons.css  # Toolbar, buttons
+    controls-badges.css   # Corner badges on controls/labels
+    controls-chips.css    # Selectable / removable chips
     controls-fields.css   # Fields, combobox, date/time, color picker
     controls-widgets.css  # Toggle, segmented control, pagination, progress bar, spinner, slider, stepper
     controls-section-panel.css # Section panel grid
@@ -248,6 +250,8 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
+| **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
+| **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
@@ -255,14 +259,14 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
-| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label. [`app/progress-bar.js`](app/progress-bar.js). |
+| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine; error (stuck) and disabled states. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Colour picker** | Hex text input with inline swatch preview. [`app/color-picker.js`](app/color-picker.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
-| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; behaviour from [`app/dropdown.js`](app/dropdown.js). |
+| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` section headers. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
@@ -392,6 +396,111 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
     data-icon-class="btn-icon-svg"></button>
 </div>
 ```
+
+### Badge
+
+Corner indicator on a control or text. Wrap the host in `.badge-host` and add a `.badge` sibling (top-right, slightly overlapping).
+
+**Variants** (class on `.badge`):
+
+| Class | Role |
+| ----- | ---- |
+| `.badge` (default) | **Normal** — shows a number or text readout; empty or `0` hides it |
+| `.badge.badge--sm` | **Small** — round dot only; show/hide with a truthy value (`true` / count) or `clear()` |
+
+```html
+<!-- Normal (readout) -->
+<span class="badge-host" data-badge-label="Notifications">
+  <button type="button" class="btn" aria-label="Notifications, 3">Notifications</button>
+  <span class="badge" aria-hidden="true">3</span>
+</span>
+
+<!-- Small (dot) -->
+<span class="badge-host" data-badge-label="Updates">
+  <button type="button" class="btn" aria-label="Updates, updated">Updates</button>
+  <span class="badge badge--sm" aria-hidden="true"></span>
+</span>
+```
+
+```javascript
+import { initBadge, initBadges } from "./components/badge.js";
+
+const badge = initBadge(document.getElementById("notifications-badge"), {
+  onChange: ({ value, display, variant }) => console.log(value, display, variant),
+});
+
+badge?.getValue();
+badge?.setValue(12);
+badge?.increment(); // +1
+badge?.clear();     // hide (value 0)
+
+const dot = initBadge(document.getElementById("updates-badge"), { value: true });
+dot?.setValue(false); // hide
+dot?.setValue(true);  // show
+
+initBadges(document); // all `.badge-host` blocks with a `.badge`
+```
+
+`data-badge-label` keeps the control’s `aria-label` in sync (`{label}, {value}` for normal; `{label}, {detail}` for small). Optional `data-badge-max` (or `max` option) caps normal readouts (e.g. `99` → `99+`). Mark the control with `data-badge-control` when it is not the obvious button/link sibling. On tinted surfaces (`.section-panel`, `.demo-card`), `--badge-ring` matches the panel; override it where the host background differs.
+
+### Chips
+
+Selectable tags (filters) and removable input chips.
+
+**Filter group** — static chips that toggle on/off (`aria-pressed`); they cannot be removed.
+
+```html
+<div class="chip-group" role="group" aria-label="Categories">
+  <button type="button" class="chip" aria-pressed="true" data-chip-value="docs">Docs</button>
+  <button type="button" class="chip" aria-pressed="false" data-chip-value="api">API</button>
+</div>
+```
+
+```javascript
+import { initChipGroup, initChipGroups } from "./components/chip.js";
+
+const filters = initChipGroup(document.getElementById("category-filters"), {
+  onChange: ({ values, labels }) => console.log(values, labels),
+});
+
+filters?.getValues();
+filters?.setSelected(["docs", "api"]);
+filters?.clear();
+
+initChipGroups(document);
+```
+
+**Input chips** — type a value and press Enter or comma to add; remove with × or Backspace on an empty field.
+
+```html
+<div class="chip-input" id="tag-input">
+  <label class="field-label" for="tag-input-field">Tags</label>
+  <div class="chip-input-control">
+    <div class="chip-input-list"></div>
+    <input type="text" id="tag-input-field" class="input chip-input-field"
+      placeholder="Add tag…" autocomplete="off" />
+  </div>
+  <input type="hidden" class="chip-input-value" />
+</div>
+```
+
+```javascript
+import { initChipInput, initChipInputs } from "./components/chip.js";
+
+const tags = initChipInput(document.getElementById("tag-input"), {
+  values: ["urgent"],
+  onChange: ({ values }) => console.log(values),
+});
+
+tags?.getValues();
+tags?.add("mine");
+tags?.remove("urgent");
+tags?.clear();
+
+initChipInputs(document);
+```
+
+`data-chip-value` on selectable chips sets the value (defaults to label text). `data-chip-input-disabled` disables the input field. Remove buttons reuse the existing `error` (cancel) icon.
 
 ### Inputs
 
@@ -574,7 +683,20 @@ Three-column grid rows for compact forms. Stack fields across rows; use `.sectio
     </label>
   </div>
   <div class="section-panel__grid">
-    <button type="button" class="btn btn-toggle section-panel__toggle" aria-pressed="false">Toggle</button>
+    <div class="section-panel__controls">
+      <button type="button" class="btn btn-toggle" aria-pressed="false">Toggle</button>
+      <div class="toggle" data-toggle-default="false">
+        <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+          <span class="toggle-track" aria-hidden="true">
+            <span class="toggle-thumb">
+              <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+            </span>
+          </span>
+          <span class="toggle-label">Enable option</span>
+        </button>
+        <input type="hidden" class="toggle-value" value="false" />
+      </div>
+    </div>
   </div>
   <div class="section-panel__grid">
     <label class="checkbox section-panel__checkbox" for="remember">
@@ -713,11 +835,11 @@ initSliders(document); // all `.slider` blocks
 
 ### Progress bar
 
-Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track.
+Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track. Set `data-progress-bar-shine` for a soft highlight that sweeps left→right across the filled segment (disabled while indeterminate, in error, or disabled, and when `prefers-reduced-motion` is set). Set `data-progress-bar-error` for a stuck/failed state: the fill stays at the current value, turns red, and pulses as a whole (mutually exclusive with indeterminate; pulse respects `prefers-reduced-motion`). Set `data-progress-bar-disabled` for a muted, non-animated display (form hidden input is disabled).
 
 ```html
 <div class="progress-bar" id="my-progress-bar" data-progress-bar-value="65" data-progress-bar-max="100"
-  data-progress-bar-label="percent">
+  data-progress-bar-label="percent" data-progress-bar-shine>
   <label class="field-label" id="my-progress-bar-label">Upload progress</label>
   <div class="progress-bar-row">
     <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
@@ -738,6 +860,24 @@ Fraction label (`7/12`) — set `data-progress-bar-label="fraction"` and match `
 </div>
 ```
 
+Error (stuck) state — keep the value and set `data-progress-bar-error`:
+
+```html
+<div class="progress-bar" data-progress-bar-value="55" data-progress-bar-max="100"
+  data-progress-bar-label="percent" data-progress-bar-error>
+  <!-- same .progress-bar-row structure -->
+</div>
+```
+
+Disabled — muted and frozen (no shine / pulse / indeterminate motion):
+
+```html
+<div class="progress-bar" data-progress-bar-value="30" data-progress-bar-max="100"
+  data-progress-bar-label="percent" data-progress-bar-disabled>
+  <!-- same .progress-bar-row structure -->
+</div>
+```
+
 ```javascript
 import { initProgressBar, initProgressBars } from "./components/progress-bar.js";
 
@@ -747,6 +887,8 @@ const progressBar = initProgressBar(document.getElementById("my-progress-bar"), 
   max: 100,
   labelFormat: "percent", // "percent" | "fraction"
   indeterminate: false,
+  error: false,
+  disabled: false,
   onChange: ({ value, percent, source }) => console.log(value, percent, source),
 });
 
@@ -754,11 +896,15 @@ progressBar?.getValue();
 progressBar?.setValue(80);
 progressBar?.getPercent();
 progressBar?.setIndeterminate(true);
+progressBar?.setError(true);
+progressBar?.isError();
+progressBar?.setDisabled(true);
+progressBar?.isDisabled();
 
 initProgressBars(document); // all `.progress-bar` blocks
 ```
 
-`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, and `data-progress-bar-indeterminate` mirror the JS options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers.
+`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, `data-progress-bar-indeterminate`, `data-progress-bar-error`, `data-progress-bar-disabled`, and `data-progress-bar-shine` mirror the markup options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers. `setValue()` clears both indeterminate and error.
 
 ### Spinner
 
@@ -1075,6 +1221,25 @@ initDropdown(document.getElementById("my-dropdown"), {
 
 Markup: `.dropdown` > `.dropdown-trigger` + `ul.dropdown-menu` with `.dropdown-menu-item` buttons.
 
+Optional **group headers** — non-interactive labels between items. Insert a `<li role="presentation">` with a `.dropdown-menu-group` div before each group’s items. Headers are skipped by keyboard navigation (`itemSelector` is `.dropdown-menu-item` only). Later groups get a top border automatically.
+
+```html
+<ul class="dropdown-menu hidden" role="menu">
+  <li role="presentation">
+    <div class="dropdown-menu-group">True colour</div>
+  </li>
+  <li role="none">
+    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="argb32">ARGB32</button>
+  </li>
+  <li role="presentation">
+    <div class="dropdown-menu-group">16-bit colour</div>
+  </li>
+  <li role="none">
+    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="rgb565">RGB565</button>
+  </li>
+</ul>
+```
+
 ### Toggle dropdown
 
 Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. The trigger shows the selection count when any items are active (e.g. `Toggle items (3)`).
@@ -1257,7 +1422,7 @@ Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-bl
 
 Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text.
 
-Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks.
+Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks. Body rows highlight lightly on hover; when selectable, clicking anywhere on a row toggles that row (interactive controls inside the row are left alone).
 
 ```html
 <div class="table-block" id="issues-table" data-table-sortable data-table-selectable>
