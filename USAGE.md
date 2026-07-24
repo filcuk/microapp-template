@@ -201,6 +201,7 @@ app/
     overlays.css        # Banners, tooltips, modals
     rich-text-editor.css # Rich text editor layout + Toast UI token overrides
     table.css            # Data tables
+    controls-tabular-input.css # Editable typed grid
   config.js             # Fork defaults (repo URL, brand, theme key)
   version.js            # APP_VERSION + TEMPLATE_VERSION (SemVer 2.0.0)
   main.js               # index.html entry
@@ -273,6 +274,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
+| **Tabular input** | Editable grid with typed columns (text / number / logical), add/delete rows and columns, and inline rename. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -1481,6 +1483,47 @@ initTables(document);
 ```
 
 `data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. Add `.table-block--wide` to remove the default `40rem` max width.
+
+### Tabular input
+
+Editable data grid for collecting rows of typed values. Mount an empty `.tabular-input` root; `initTabularInput()` renders the table and controls. Column types are **`text`**, **`number`**, and **`logical`** (checkbox). Other kinds of values (dates, enums, etc.) use **text**.
+
+Users can rename columns inline (Enter to commit, Escape to cancel), change type from the chevron menu on the right of the column name (styled like other dropdowns; values are coerced), and add or delete rows and columns. Row delete sits in a leading action column; column delete is inline to the right of the column label. **Add column** is in the header after the last column; **Add row** is a footer row under the data. There is no drag-and-drop reorder in this version.
+
+```html
+<div class="tabular-input" id="inventory-grid" aria-label="Inventory"></div>
+```
+
+```javascript
+import { initTabularInput, initTabularInputs } from "./components/tabular-input.js";
+
+const grid = initTabularInput(document.getElementById("inventory-grid"), {
+  columns: [
+    { id: "name", label: "Name", type: "text" },
+    { id: "qty", label: "Qty", type: "number" },
+    { id: "active", label: "Active", type: "logical" },
+  ],
+  rows: [
+    { id: "r1", cells: { name: "Widget", qty: 12, active: true } },
+  ],
+  onChange: ({ columns, rows, source }) => console.log(source, columns, rows),
+});
+
+grid?.getData();
+grid?.addRow();
+grid?.addColumn({ label: "Notes", type: "text" });
+grid?.removeRow("r1");
+grid?.removeColumn("qty");
+grid?.renameColumn("name", "Item");
+grid?.setColumnType("active", "text");
+grid?.setData({ columns: [...], rows: [...] });
+grid?.setDisabled(true);
+grid?.destroy();
+
+initTabularInputs(document); // all `.tabular-input` roots
+```
+
+`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, and `"api"`.
 
 ### Page navigation
 
