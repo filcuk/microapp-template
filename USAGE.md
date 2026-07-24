@@ -259,7 +259,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
-| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine on the filled segment. [`app/progress-bar.js`](app/progress-bar.js). |
+| **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine; error (stuck) state. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Colour picker** | Hex text input with inline swatch preview. [`app/color-picker.js`](app/color-picker.js). |
@@ -835,7 +835,7 @@ initSliders(document); // all `.slider` blocks
 
 ### Progress bar
 
-Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track. Set `data-progress-bar-shine` for a soft highlight that sweeps left→right across the filled segment (disabled while indeterminate and when `prefers-reduced-motion` is set).
+Horizontal fill for a value between min and max. Omit `.progress-bar-label` for a bar only; add it with `data-progress-bar-label="percent"` or `"fraction"` to show `75%` or `7/12` beside the track. Set `data-progress-bar-shine` for a soft highlight that sweeps left→right across the filled segment (disabled while indeterminate or in error, and when `prefers-reduced-motion` is set). Set `data-progress-bar-error` for a stuck/failed state: the fill stays at the current value, turns red, and pulses as a whole (mutually exclusive with indeterminate; pulse respects `prefers-reduced-motion`).
 
 ```html
 <div class="progress-bar" id="my-progress-bar" data-progress-bar-value="65" data-progress-bar-max="100"
@@ -860,6 +860,15 @@ Fraction label (`7/12`) — set `data-progress-bar-label="fraction"` and match `
 </div>
 ```
 
+Error (stuck) state — keep the value and set `data-progress-bar-error`:
+
+```html
+<div class="progress-bar" data-progress-bar-value="55" data-progress-bar-max="100"
+  data-progress-bar-label="percent" data-progress-bar-error>
+  <!-- same .progress-bar-row structure -->
+</div>
+```
+
 ```javascript
 import { initProgressBar, initProgressBars } from "./components/progress-bar.js";
 
@@ -869,6 +878,7 @@ const progressBar = initProgressBar(document.getElementById("my-progress-bar"), 
   max: 100,
   labelFormat: "percent", // "percent" | "fraction"
   indeterminate: false,
+  error: false,
   onChange: ({ value, percent, source }) => console.log(value, percent, source),
 });
 
@@ -876,11 +886,13 @@ progressBar?.getValue();
 progressBar?.setValue(80);
 progressBar?.getPercent();
 progressBar?.setIndeterminate(true);
+progressBar?.setError(true);
+progressBar?.isError();
 
 initProgressBars(document); // all `.progress-bar` blocks
 ```
 
-`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, `data-progress-bar-indeterminate`, and `data-progress-bar-shine` mirror the markup options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers.
+`data-progress-bar-value`, `data-progress-bar-min`, `data-progress-bar-max`, `data-progress-bar-label`, `data-progress-bar-indeterminate`, `data-progress-bar-error`, and `data-progress-bar-shine` mirror the markup options. The track uses `role="progressbar"` with `aria-valuenow` / `aria-valuetext` for screen readers. `setValue()` clears both indeterminate and error.
 
 ### Spinner
 

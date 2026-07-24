@@ -372,8 +372,14 @@
   animation: progress-bar-indeterminate 1.2s ease-in-out infinite;
 }
 
+.progress-bar--error .progress-bar-fill {
+  background: var(--banner-error-border);
+  animation: progress-bar-error-pulse 1.4s ease-in-out infinite;
+}
+
 /* Soft highlight sweeping the filled segment (opt-in via data-progress-bar-shine) */
-.progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate) .progress-bar-fill::after {
+.progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate):not(.progress-bar--error)
+  .progress-bar-fill::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -407,6 +413,17 @@
   }
 }
 
+@keyframes progress-bar-error-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .progress-bar-fill {
     transition: none;
@@ -417,7 +434,12 @@
     width: 50%;
   }
 
-  .progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate) .progress-bar-fill::after {
+  .progress-bar--error .progress-bar-fill {
+    animation: none;
+  }
+
+  .progress-bar[data-progress-bar-shine]:not(.progress-bar--indeterminate):not(.progress-bar--error)
+    .progress-bar-fill::after {
     content: none;
     animation: none;
   }
