@@ -434,6 +434,58 @@
             </div>
 
             <div class="demo-card">
+              <h3 class="demo-card-title">Dropdown with icons</h3>
+              <p class="demo-hint">Items can include a leading icon (light/dark pair) plus a
+                <code>.dropdown-menu-item-subtitle</code>.</p>
+              <div class="dropdown" id="demo-dropdown-icons">
+                <button type="button" class="btn dropdown-trigger" id="demo-dropdown-icons-trigger" aria-haspopup="menu"
+                  aria-expanded="false" aria-controls="demo-dropdown-icons-menu">
+                  Choose app
+                  <span class="combo-btn-chevron" aria-hidden="true"></span>
+                </button>
+                <ul id="demo-dropdown-icons-menu" class="dropdown-menu hidden" role="menu">
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-a">
+                      <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+                        <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+                        <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+                      </span>
+                      <span class="dropdown-menu-item-text">
+                        <span class="dropdown-menu-item-label">Example App A</span>
+                        <span class="dropdown-menu-item-subtitle">Sample related microapp</span>
+                      </span>
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-b">
+                      <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+                        <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+                        <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+                      </span>
+                      <span class="dropdown-menu-item-text">
+                        <span class="dropdown-menu-item-label">Example App B</span>
+                        <span class="dropdown-menu-item-subtitle">Another demo destination</span>
+                      </span>
+                    </button>
+                  </li>
+                  <li role="none">
+                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-c">
+                      <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+                        <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+                        <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+                      </span>
+                      <span class="dropdown-menu-item-text">
+                        <span class="dropdown-menu-item-label">Example App C</span>
+                        <span class="dropdown-menu-item-subtitle">Third related project</span>
+                      </span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <p id="demo-dropdown-icons-result" class="demo-hint" aria-live="polite"></p>
+            </div>
+
+            <div class="demo-card">
               <h3 class="demo-card-title">Toggle dropdown</h3>
               <p class="demo-hint">Multi-select; menu stays open while toggling items.</p>
               <div class="dropdown" id="demo-toggle-dropdown">

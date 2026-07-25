@@ -99,9 +99,9 @@ function renderAlsoSeeMarkup(links) {
   const items = links
     .map((link, index) => {
       const iconMarkup = link.iconLight
-        ? `<span class="footer-also-see-icon-wrap" aria-hidden="true">
-              <img class="footer-also-see-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="20" height="20" />
-              <img class="footer-also-see-icon brand-icon--dark" src="${escapeAttr(link.iconDark)}" alt="" width="20" height="20" />
+        ? `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+              <img class="dropdown-menu-item-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="20" height="20" />
+              <img class="dropdown-menu-item-icon brand-icon--dark" src="${escapeAttr(link.iconDark)}" alt="" width="20" height="20" />
             </span>`
         : "";
       const subtitleMarkup = link.subtitle
@@ -109,7 +109,7 @@ function renderAlsoSeeMarkup(links) {
         : "";
 
       return `<li role="none">
-          <button type="button" class="dropdown-menu-item footer-also-see-item" role="menuitem" data-url="${escapeAttr(link.url)}" data-value="${index}">
+          <button type="button" class="dropdown-menu-item" role="menuitem" data-url="${escapeAttr(link.url)}" data-value="${index}">
             ${iconMarkup}
             <span class="dropdown-menu-item-text">
               <span class="dropdown-menu-item-label">${escapeText(link.label)}</span>

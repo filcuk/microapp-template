@@ -280,7 +280,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
-| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` section headers and `.dropdown-menu-item-subtitle` context lines. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
+| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
@@ -1269,6 +1269,21 @@ Optional **subtitles** — secondary muted text under the primary label. Wrap la
   <span class="dropdown-menu-item-text">
     <span class="dropdown-menu-item-label">ARGB32</span>
     <span class="dropdown-menu-item-subtitle">Full colour with alpha</span>
+  </span>
+</button>
+```
+
+Optional **icons** — leading light/dark image pair via `.dropdown-menu-item-icon-wrap` (see Menus & pickers → Dropdown with icons on `demo.html`):
+
+```html
+<button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-a">
+  <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+    <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+    <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+  </span>
+  <span class="dropdown-menu-item-text">
+    <span class="dropdown-menu-item-label">Example App A</span>
+    <span class="dropdown-menu-item-subtitle">Sample related microapp</span>
   </span>
 </button>
 ```
