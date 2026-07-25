@@ -7,7 +7,8 @@
  *
  * Or call setStickyHeader() / setStickySectionHeadings().
  * syncStickyOffsets() keeps --sticky-header-offset in sync so section
- * headings clear a stuck site header (remeasured on scroll).
+ * headings clear a stuck site header (remeasured on scroll), and toggles
+ * data-sticky-header-stuck for cover strips under the pinned site header.
  *
  * `.demo-tier-header` and `.section-heading` share one sticky slot. Subheadings
  * in sibling `.demo-section`s push each other out natively. Tier headers are
@@ -28,6 +29,22 @@ function stickyGapPx(root) {
     return (parseFloat(raw) || 0) * fontSize;
   }
   return parseFloat(raw) || 0;
+}
+
+/**
+ * Site header is at the document top, so `top: sticky-gap` would engage at
+ * scroll 0. Stick flush (`top: 0`); toggle `data-sticky-header-stuck` so cover
+ * strips only paint once the header is actually pinned.
+ */
+function syncStickyHeaderStuck(root) {
+  const header =
+    root.hasAttribute("data-sticky-header") &&
+    document.querySelector("body > header");
+  const stuck =
+    Boolean(header) &&
+    window.scrollY > 0 &&
+    header.getBoundingClientRect().top <= 0.5;
+  root.toggleAttribute("data-sticky-header-stuck", stuck);
 }
 
 /**
@@ -61,6 +78,7 @@ function clearTierHeaderPush() {
  */
 export function syncStickyOffsets() {
   const root = rootEl();
+  syncStickyHeaderStuck(root);
   const headerOffset = measureStickyHeaderOffset(root);
   const next = `${Math.round(headerOffset)}px`;
   if (root.style.getPropertyValue("--sticky-header-offset") !== next) {
