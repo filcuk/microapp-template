@@ -34,13 +34,14 @@ initShell(); // footer, theme toggle, page nav, tooltips, icons, links
 // …your app-specific inits…
 ```
 
-Optional shell overrides (repo link, brand URL, page nav scan):
+Optional shell overrides (repo link, brand URL, related apps, page nav scan):
 
 ```javascript
 initShell({
   repoUrl: "https://github.com/you/your-app",
   brandUrl: "https://yoursite.example",
   brandName: "Your name",
+  alsoSee: false, // or [] — hide the footer “also see” menu
   pageNav: { headingSelector: "main h2[id]" },
 });
 ```
@@ -78,12 +79,23 @@ export const APP_CONFIG = {
   brandName: "Your name",
   themeStorageKey: "microapp-theme",
   themeChangeEvent: "microapp-theme-change",
+  // Related apps in the footer “also see” menu — set to [] or false to hide
+  alsoSee: [
+    {
+      label: "Example App A",
+      subtitle: "Sample related microapp",
+      url: "https://example.com/app-a",
+      iconLight: "app/res/app-light.svg",
+      iconDark: "app/res/app-dark.svg",
+    },
+  ],
 };
 ```
 
 | Field | Used by |
 | ----- | ------- |
 | `repoUrl`, `brandUrl`, `brandName` | Footer links and brand tooltip via `renderPageShell()` |
+| `alsoSee` | Footer “also see” dropdown (`[]` / `false` disables) |
 | `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
 | `themeChangeEvent` | Theme changes; rich text editor syncs to dark mode |
 
@@ -209,6 +221,7 @@ app/
   shell/
     shell.js            # initShell() — shared page boot
     render-shell.js     # Footer, page nav, skip link
+    also-see.js         # Footer “also see” related-apps menu
     theme.js            # Theme preference module
     page-nav.js         # In-page heading nav + jump up/down
     external-link.js    # Arrow icon on outgoing links
@@ -249,7 +262,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` or `initShell({ alsoSee })`; `[]` / `false` disables). |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -267,7 +280,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
-| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` section headers. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
+| **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
@@ -374,6 +387,29 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 ```html
 <a href="https://example.com" data-no-external-icon>Stay plain</a>
 ```
+
+### Also see (related apps)
+
+Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` to `initShell()` / `renderPageShell()`):
+
+```javascript
+alsoSee: [
+  {
+    label: "Example App A",
+    subtitle: "Sample related microapp", // optional
+    url: "https://example.com/app-a",
+    iconLight: "app/res/app-light.svg", // optional; falls back to `icon`
+    iconDark: "app/res/app-dark.svg",
+  },
+]
+```
+
+| Value | Behaviour |
+| ----- | --------- |
+| Array of links | Renders “also see” with a dropdown of those links |
+| `[]` or `false` | Hides the control |
+
+Each item opens in a new tab. Optional `subtitle` shows muted context under the label (same `.dropdown-menu-item-subtitle` pattern as dropdowns). Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`.
 
 ### Heading links
 
@@ -1225,6 +1261,34 @@ initDropdown(document.getElementById("my-dropdown"), {
 Markup: `.dropdown` > `.dropdown-trigger` + `ul.dropdown-menu` with `.dropdown-menu-item` buttons.
 
 Optional **group headers** — non-interactive labels between items. Insert a `<li role="presentation">` with a `.dropdown-menu-group` div before each group’s items. Headers are skipped by keyboard navigation (`itemSelector` is `.dropdown-menu-item` only). Later groups get a top border automatically.
+
+Optional **subtitles** — secondary muted text under the primary label. Wrap label + subtitle in `.dropdown-menu-item-text`:
+
+```html
+<button type="button" class="dropdown-menu-item" role="menuitem" data-value="argb32">
+  <span class="dropdown-menu-item-text">
+    <span class="dropdown-menu-item-label">ARGB32</span>
+    <span class="dropdown-menu-item-subtitle">Full colour with alpha</span>
+  </span>
+</button>
+```
+
+Optional **icons** — leading light/dark image pair via `.dropdown-menu-item-icon-wrap` (see Menus & pickers → Dropdown with icons on `demo.html`):
+
+```html
+<button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-a">
+  <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+    <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+    <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+  </span>
+  <span class="dropdown-menu-item-text">
+    <span class="dropdown-menu-item-label">Example App A</span>
+    <span class="dropdown-menu-item-subtitle">Sample related microapp</span>
+  </span>
+</button>
+```
+
+`onSelect` / toggle APIs use `.dropdown-menu-item-label` when present (subtitle is not included in `label`).
 
 ```html
 <ul class="dropdown-menu hidden" role="menu">

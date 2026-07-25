@@ -1,6 +1,15 @@
 import { setHidden } from "./dom.js";
 import { onDocumentClickOutside, onDocumentEscape } from "./document-listeners.js";
 
+/** Primary label for a menu item (ignores `.dropdown-menu-item-subtitle`). */
+export function menuItemLabel(item) {
+  if (!item) return "";
+  return (
+    item.querySelector(".dropdown-menu-item-label")?.textContent.trim() ??
+    item.textContent.trim()
+  );
+}
+
 /**
  * Shared open/close behaviour for anchored popup menus (combo chevron, dropdown).
  *
@@ -128,7 +137,7 @@ export function initPopupMenu({
       containerEl,
       item,
       value: item.dataset.value,
-      label: item.textContent.trim(),
+      label: menuItemLabel(item),
     });
   }
 

@@ -515,6 +515,7 @@ document.getElementById("demo-spinner-load")?.addEventListener("click", () => {
 const comboResultEl = document.getElementById("demo-combo-result");
 const comboboxResultEl = document.getElementById("demo-combobox-result");
 const dropdownResultEl = document.getElementById("demo-dropdown-result");
+const dropdownIconsResultEl = document.getElementById("demo-dropdown-icons-result");
 const toggleDropdownResultEl = document.getElementById("demo-toggle-dropdown-result");
 
 const comboOptions = [
@@ -565,6 +566,14 @@ initDropdown(document.getElementById("demo-dropdown"), {
   onSelect: ({ label }) => {
     if (dropdownResultEl) {
       dropdownResultEl.textContent = `Selected: ${label}`;
+    }
+  },
+});
+
+initDropdown(document.getElementById("demo-dropdown-icons"), {
+  onSelect: ({ label }) => {
+    if (dropdownIconsResultEl) {
+      dropdownIconsResultEl.textContent = `Selected: ${label}`;
     }
   },
 });
