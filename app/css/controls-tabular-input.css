@@ -277,6 +277,10 @@
   border-bottom: none;
 }
 
+.tabular-input .table thead th {
+  border-bottom: 1px solid var(--border);
+}
+
 /* Full gap below the header band (band keeps its own bottom padding above that). */
 .tabular-input .table tbody tr:first-child > * {
   padding-top: var(--tabular-input-cell-gap);
