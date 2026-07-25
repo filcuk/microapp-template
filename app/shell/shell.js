@@ -6,6 +6,7 @@ import { initPageNavPanel } from "./page-nav.js";
 import { initTooltips } from "../components/tooltip.js";
 import { initExternalLinks } from "./external-link.js";
 import { initHeadingLinks } from "./heading-link.js";
+import { initStickyChrome } from "./sticky.js";
 import { showBanner } from "../components/banner.js";
 
 let errorHandlersBound = false;
@@ -52,6 +53,7 @@ export function initShell(options = {}) {
   initAlsoSee(document);
   initTheme();
   initThemeToggle(document.getElementById("theme-toggle"));
+  initStickyChrome();
   initTooltips(document);
   initPageNavPanel("#page-nav", pageNav);
 

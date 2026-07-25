@@ -226,6 +226,7 @@ app/
     page-nav.js         # In-page heading nav + jump up/down
     external-link.js    # Arrow icon on outgoing links
     heading-link.js     # Copy section link on heading hover
+    sticky.js           # Optional sticky header / section headings
   utils/
     dom.js              # setHidden(), parseBooleanAttr(), focus helpers
     document-listeners.js
@@ -262,7 +263,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` or `initShell({ alsoSee })`; `[]` / `false` disables). |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` or `initShell({ alsoSee })`; `[]` / `false` disables). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -328,6 +329,34 @@ import { initTheme, initThemeToggle } from "./shell/theme.js";
 initTheme();
 initThemeToggle(document.getElementById("theme-toggle"));
 ```
+
+### Sticky chrome
+
+Optional stickiness for the site `<header>` and section titles. Off by default. Opt in with attributes on `<html>` (or the JS helpers). `initShell()` syncs scroll offsets on load and resize.
+
+| Opt-in | Effect |
+| ------ | ------ |
+| `data-sticky-header` | Sticky `body > header` |
+| `data-sticky-section-headings` | Sticky `.section-heading` and `.demo-tier-header` (so `.demo-tier-title` stays visible for the tier) |
+
+```html
+<html lang="en" data-sticky-header data-sticky-section-headings>
+```
+
+```javascript
+import {
+  setStickyHeader,
+  setStickySectionHeadings,
+  syncStickyOffsets,
+} from "./shell/sticky.js";
+
+setStickyHeader(true);
+setStickySectionHeadings(true);
+// After layout changes that alter header/tier-band height:
+syncStickyOffsets();
+```
+
+When both are on, section headings sit below the site header via `--sticky-header-offset`. Stuck chrome leaves a `--sticky-gap` inset above and below each band (background extends into those gaps so content does not show through). Tier headers stick until a `.section-heading` reaches them and pushes them out the top; subheadings push each other the same way as you move between sections.
 
 ### Dialog
 
