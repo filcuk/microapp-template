@@ -4,6 +4,11 @@ import {
   parseColumnType,
   coerceCellValue,
   defaultValueForType,
+  parseClipboardTable,
+  isTabularClipboardText,
+  detectColumnType,
+  isNumericCellValue,
+  isLogicalCellValue,
 } from "../app/components/tabular-input.js";
 
 test("parseColumnType accepts known types and defaults unknown to text", () => {
@@ -44,4 +49,39 @@ test("coerceCellValue to logical", () => {
   assert.equal(coerceCellValue("off", "logical"), false);
   assert.equal(coerceCellValue("", "logical"), false);
   assert.equal(coerceCellValue("maybe", "logical"), true);
+});
+
+test("parseClipboardTable splits TSV and pads short rows", () => {
+  assert.deepEqual(parseClipboardTable("a\tb\nc"), [
+    ["a", "b"],
+    ["c", ""],
+  ]);
+  assert.deepEqual(parseClipboardTable("a\tb\r\nc\td\n"), [
+    ["a", "b"],
+    ["c", "d"],
+  ]);
+});
+
+test("isTabularClipboardText detects tabs and multi-line", () => {
+  assert.equal(isTabularClipboardText("a\tb"), true);
+  assert.equal(isTabularClipboardText("a\nb"), true);
+  assert.equal(isTabularClipboardText("single"), false);
+  assert.equal(isTabularClipboardText(""), false);
+});
+
+test("detectColumnType prefers number, then logical, else text", () => {
+  assert.equal(detectColumnType(["1", "2.5", ""]), "number");
+  assert.equal(detectColumnType(["1,000", "2"]), "number");
+  assert.equal(detectColumnType(["yes", "no", ""]), "logical");
+  assert.equal(detectColumnType(["true", "false"]), "logical");
+  assert.equal(detectColumnType(["1", "2", "x"]), "text");
+  assert.equal(detectColumnType(["", "", ""]), "text");
+  assert.equal(detectColumnType([]), "text");
+});
+
+test("isNumericCellValue and isLogicalCellValue helpers", () => {
+  assert.equal(isNumericCellValue("12"), true);
+  assert.equal(isNumericCellValue("x"), false);
+  assert.equal(isLogicalCellValue("yes"), true);
+  assert.equal(isLogicalCellValue("maybe"), false);
 });

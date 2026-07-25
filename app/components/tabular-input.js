@@ -18,6 +18,9 @@
  * Layout: row delete on the left; column delete inline to the right of the
  * column label; Add column in the header after the last column; Add row in a
  * footer row under the data.
+ *
+ * Paste: Excel/TSV clipboard paste expands from the focused body cell
+ * (fallback top-left), overwrites that rectangle, auto-detects column types.
  */
 
 import { parseBooleanAttr, setHidden } from "../utils/dom.js";
@@ -85,6 +88,81 @@ export function coerceCellValue(value, type) {
   if (["true", "1", "yes", "y", "on"].includes(text)) return true;
   if (["false", "0", "no", "n", "off"].includes(text)) return false;
   return Boolean(text);
+}
+
+const LOGICAL_TRUE = new Set(["true", "1", "yes", "y", "on"]);
+const LOGICAL_FALSE = new Set(["false", "0", "no", "n", "off"]);
+
+/**
+ * Whether a raw clipboard/cell string parses as a finite number.
+ * @param {unknown} value
+ */
+export function isNumericCellValue(value) {
+  if (value === null || value === undefined) return false;
+  if (typeof value === "number") return Number.isFinite(value);
+  const text = String(value).trim();
+  if (!text) return false;
+  return Number.isFinite(Number(text.replace(/,/g, "")));
+}
+
+/**
+ * Whether a raw value is a clear logical token (non-empty).
+ * @param {unknown} value
+ */
+export function isLogicalCellValue(value) {
+  if (typeof value === "boolean") return true;
+  if (value === null || value === undefined) return false;
+  const text = String(value).trim().toLowerCase();
+  if (!text) return false;
+  return LOGICAL_TRUE.has(text) || LOGICAL_FALSE.has(text);
+}
+
+/**
+ * Infer column type from a list of cell values (empties ignored).
+ * @param {unknown[]} values
+ * @returns {ColumnType}
+ */
+export function detectColumnType(values) {
+  const nonEmpty = (values ?? []).filter((value) => {
+    if (value === null || value === undefined) return false;
+    return String(value).trim() !== "";
+  });
+  if (!nonEmpty.length) return "text";
+  if (nonEmpty.every(isNumericCellValue)) return "number";
+  if (nonEmpty.every(isLogicalCellValue)) return "logical";
+  return "text";
+}
+
+/**
+ * Parse Excel-style TSV clipboard text into a rectangular string matrix.
+ * @param {string} text
+ * @returns {string[][]}
+ */
+export function parseClipboardTable(text) {
+  let normalized = String(text ?? "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  if (normalized.endsWith("\n")) {
+    normalized = normalized.slice(0, -1);
+  }
+  if (!normalized) return [[""]];
+
+  const rows = normalized.split("\n").map((line) => line.split("\t"));
+  const width = rows.reduce((max, row) => Math.max(max, row.length), 0);
+  return rows.map((row) => {
+    const next = row.slice();
+    while (next.length < width) next.push("");
+    return next;
+  });
+}
+
+/**
+ * True when clipboard text looks like a multi-cell table (TSV / multi-line).
+ * @param {string} text
+ */
+export function isTabularClipboardText(text) {
+  const value = String(text ?? "");
+  if (!value) return false;
+  if (value.includes("\t")) return true;
+  return /[\r\n]/.test(value);
 }
 
 function resolveDisabled(rootEl, disabledOption) {
@@ -703,8 +781,99 @@ export function initTabularInput(
     addColumn();
   }
 
+  /**
+   * Resolve paste origin from the focused body cell, else (0, 0).
+   * @returns {{ rowIndex: number, columnIndex: number }}
+   */
+  function resolvePasteOrigin(event) {
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : document.activeElement instanceof Element
+          ? document.activeElement
+          : null;
+    const cell = target?.closest?.("[data-tabular-input-cell]");
+    if (!cell || !rootEl.contains(cell)) {
+      return { rowIndex: 0, columnIndex: 0 };
+    }
+    const rowId = cell.dataset.rowId;
+    const columnId = cell.dataset.columnId;
+    const rowIndex = rows.findIndex((row) => row.id === rowId);
+    const columnIndex = columns.findIndex((col) => col.id === columnId);
+    return {
+      rowIndex: rowIndex >= 0 ? rowIndex : 0,
+      columnIndex: columnIndex >= 0 ? columnIndex : 0,
+    };
+  }
+
+  /**
+   * Grow the grid and overwrite cells from an origin with a string matrix.
+   * @param {string[][]} matrix
+   * @param {{ rowIndex: number, columnIndex: number }} origin
+   */
+  function applyPasteMatrix(matrix, origin) {
+    const pasteRows = matrix.length;
+    const pasteCols = matrix[0]?.length ?? 0;
+    if (!pasteRows || !pasteCols) return;
+
+    const needCols = origin.columnIndex + pasteCols;
+    const needRows = origin.rowIndex + pasteRows;
+
+    while (columns.length < needCols) {
+      const column = {
+        id: nextId("col"),
+        label: `Column ${columns.length + 1}`,
+        type: /** @type {ColumnType} */ ("text"),
+      };
+      columns.push(column);
+      for (const row of rows) {
+        row.cells[column.id] = defaultValueForType("text");
+      }
+    }
+
+    while (rows.length < needRows) {
+      rows.push({
+        id: nextId("row"),
+        cells: Object.fromEntries(
+          columns.map((col) => [col.id, defaultValueForType(col.type)])
+        ),
+      });
+    }
+
+    for (let r = 0; r < pasteRows; r += 1) {
+      const row = rows[origin.rowIndex + r];
+      for (let c = 0; c < pasteCols; c += 1) {
+        const column = columns[origin.columnIndex + c];
+        row.cells[column.id] = matrix[r][c] ?? "";
+      }
+    }
+
+    for (const column of columns) {
+      const values = rows.map((row) => row.cells[column.id]);
+      const nextType = detectColumnType(values);
+      column.type = nextType;
+      for (const row of rows) {
+        row.cells[column.id] = coerceCellValue(row.cells[column.id], nextType);
+      }
+    }
+  }
+
+  function onPaste(event) {
+    if (isDisabled) return;
+    const text = event.clipboardData?.getData("text/plain") ?? "";
+    if (!isTabularClipboardText(text)) return;
+    event.preventDefault();
+    const matrix = parseClipboardTable(text);
+    const origin = resolvePasteOrigin(event);
+    applyPasteMatrix(matrix, origin);
+    render();
+    emit("paste");
+    announce("Pasted table data");
+  }
+
   addRowBtn.addEventListener("click", onAddRowClick);
   addColBtn.addEventListener("click", onAddColClick);
+  rootEl.addEventListener("paste", onPaste);
 
   render();
 
@@ -759,6 +928,7 @@ export function initTabularInput(
       typeMenus = [];
       addRowBtn.removeEventListener("click", onAddRowClick);
       addColBtn.removeEventListener("click", onAddColClick);
+      rootEl.removeEventListener("paste", onPaste);
       rootEl.replaceChildren();
       rootEl.classList.remove("tabular-input", "tabular-input--disabled");
     },
