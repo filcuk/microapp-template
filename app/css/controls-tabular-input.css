@@ -282,6 +282,11 @@
   padding-top: var(--tabular-input-cell-gap);
 }
 
+/* Match outer left/right inset below the add-row footer. */
+.tabular-input .table tbody tr:last-child > * {
+  padding-bottom: var(--tabular-input-cell-gap);
+}
+
 .tabular-input .table tr > :first-child {
   padding-left: var(--tabular-input-cell-gap);
 }
