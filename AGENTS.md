@@ -33,7 +33,7 @@ Every HTML entry point should:
 2. Link `app/styles.css` (imports `tokens.css` + `app/css/*.css` partials)
 3. Call `initShell()` from `app/shell/shell.js` as the first step in the page module
 
-`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
+`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, sticky chrome offsets, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
 Optional `renderPageShell({ repoUrl, brandUrl, brandName, alsoSee })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to hide the footer related-apps menu.
 
@@ -51,6 +51,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName, alsoSee })` overrides 
 | `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
 | `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `app/shell/render-shell.js` |
+| `initStickyChrome()` / `setStickyHeader()` / `setStickySectionHeadings()` | Optional sticky site header and section headings (`data-sticky-header`, `data-sticky-section-headings`) |
 | `initTab()` / `initTabs()` | Single tabbed section vs every `.tabs` block |
 | `setHidden()` / `parseBooleanAttr()` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute; parse HTML boolean `data-*` values |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
@@ -131,7 +132,7 @@ Modules live under `app/shell/`, `app/utils/`, and `app/components/` (no build s
 | Layer | Examples | Role |
 | ----- | -------- | ---- |
 | Entry | `main.js`, `demo.js`, `theme-init.js`, `config.js`, `version.js` | Loaded directly from HTML |
-| Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, … | Shared page chrome via `initShell()` |
+| Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, … | Shared page chrome via `initShell()` |
 | Infrastructure | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `menu.js`, `brand-icon.js` | Shared helpers and registries |
 | Components | `app/components/dialog.js`, `dropdown.js`, `tabs.js`, `code-block.js`, … | One `initX` (or `initXs`) per feature — import only what you need |
 

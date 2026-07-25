@@ -71,6 +71,30 @@ img.brand-icon--dark {
   color: var(--accent);
 }
 
+/* Optional sticky chrome — opt in via data-sticky-* on :root */
+
+:root[data-sticky-header] body > header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+:root[data-sticky-section-headings] .demo-tier-header {
+  position: sticky;
+  top: var(--sticky-header-offset);
+  z-index: 35;
+}
+
+:root[data-sticky-section-headings] .section-heading {
+  position: sticky;
+  top: calc(var(--sticky-header-offset) + var(--sticky-local-tier-offset));
+  z-index: 30;
+  background: var(--bg);
+  box-shadow: 0 1px 0 var(--border);
+}
+
 main {
   flex: 1;
   display: flex;
@@ -90,7 +114,7 @@ main {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  scroll-margin-top: 1rem;
+  scroll-margin-top: calc(var(--sticky-header-offset) + var(--sticky-local-tier-offset) + 1rem);
 }
 
 .heading-anchor {
@@ -179,7 +203,7 @@ main {
   font-size: 1.625rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  scroll-margin-top: 1.5rem;
+  scroll-margin-top: calc(var(--sticky-header-offset) + 1.5rem);
 }
 
 .demo-tier-lead {

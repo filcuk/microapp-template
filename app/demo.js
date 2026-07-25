@@ -1,4 +1,5 @@
 import { initShell } from "./shell/shell.js";
+import { setStickyHeader, setStickySectionHeadings } from "./shell/sticky.js";
 import { initDialog } from "./components/dialog.js";
 import { initCombobox } from "./components/combobox.js";
 import { initCombo } from "./components/combo.js";
@@ -617,6 +618,31 @@ if (sectionToggleBtn) {
 }
 
 initToggle(document.getElementById("demo-section-switch"));
+
+const demoStickyChromeResult = document.getElementById("demo-sticky-chrome-result");
+
+function updateStickyChromeResult() {
+  if (!demoStickyChromeResult) return;
+  const headerOn = document.documentElement.hasAttribute("data-sticky-header");
+  const sectionsOn = document.documentElement.hasAttribute("data-sticky-section-headings");
+  demoStickyChromeResult.textContent = `Header: ${headerOn ? "on" : "off"} · Section headings: ${
+    sectionsOn ? "on" : "off"
+  }`;
+}
+
+initToggle(document.getElementById("demo-sticky-header"), {
+  onChange: ({ checked }) => {
+    setStickyHeader(checked);
+    updateStickyChromeResult();
+  },
+});
+
+initToggle(document.getElementById("demo-sticky-section-headings"), {
+  onChange: ({ checked }) => {
+    setStickySectionHeadings(checked);
+    updateStickyChromeResult();
+  },
+});
 
 const sectionInput = document.getElementById("demo-section-input");
 const sectionSuccessBanner = document.getElementById("demo-section-success");
