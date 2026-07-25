@@ -21,6 +21,7 @@
  *
  * Paste: Excel/TSV clipboard paste expands from the focused body cell
  * (fallback top-left), overwrites that rectangle, auto-detects column types.
+ * Reset (header): blank 3 text columns × 2 rows.
  */
 
 import { parseBooleanAttr, setHidden } from "../utils/dom.js";
@@ -32,6 +33,17 @@ import { initPopupMenu } from "../utils/menu.js";
 /** @typedef {{ id: string, cells: Record<string, string | number | boolean | null> }} Row */
 
 const COLUMN_TYPES = new Set(["text", "number", "logical"]);
+
+const TYPE_OPTIONS = [
+  ["text", "Text"],
+  ["number", "Number"],
+  ["logical", "Logical"],
+];
+
+/** @param {ColumnType | string} type */
+function typeIconId(type) {
+  return `type-${parseColumnType(type)}`;
+}
 
 /**
  * Normalize a column type string. Unknown values become `"text"`.
@@ -260,12 +272,6 @@ export function initTabularInput(
   /** @type {{ destroy: () => void }[]} */
   let typeMenus = [];
 
-  const TYPE_OPTIONS = [
-    ["text", "Text"],
-    ["number", "Number"],
-    ["logical", "Logical"],
-  ];
-
   const wrapEl = document.createElement("div");
   wrapEl.className = "table-wrap tabular-input-wrap";
 
@@ -279,13 +285,21 @@ export function initTabularInput(
 
   const addRowBtn = document.createElement("button");
   addRowBtn.type = "button";
-  addRowBtn.className = "btn tabular-input-add-row";
-  addRowBtn.textContent = "+ Add row";
+  addRowBtn.className = "btn btn-icon tabular-input-add-row";
+  addRowBtn.setAttribute("aria-label", "Add row");
+  addRowBtn.append(createIcon("plus", { className: "btn-icon-svg" }));
 
   const addColBtn = document.createElement("button");
   addColBtn.type = "button";
-  addColBtn.className = "btn tabular-input-add-column";
-  addColBtn.textContent = "+ Add column";
+  addColBtn.className = "btn btn-icon tabular-input-add-column";
+  addColBtn.setAttribute("aria-label", "Add column");
+  addColBtn.append(createIcon("plus", { className: "btn-icon-svg" }));
+
+  const resetBtn = document.createElement("button");
+  resetBtn.type = "button";
+  resetBtn.className = "btn btn-icon tabular-input-reset";
+  resetBtn.setAttribute("aria-label", "Reset table");
+  resetBtn.append(createIcon("delete", { className: "btn-icon-svg" }));
 
   const liveEl = document.createElement("div");
   liveEl.className = "tabular-input-live";
@@ -326,6 +340,7 @@ export function initTabularInput(
     rootEl.classList.toggle("tabular-input--disabled", isDisabled);
     addRowBtn.disabled = isDisabled;
     addColBtn.disabled = isDisabled;
+    resetBtn.disabled = isDisabled;
   }
 
   /**
@@ -496,6 +511,9 @@ export function initTabularInput(
     typeTrigger.setAttribute("aria-controls", menuId);
     typeTrigger.dataset.columnId = column.id;
     typeTrigger.append(
+      createIcon(typeIconId(column.type), {
+        className: "tabular-input-type-current-icon",
+      }),
       createIcon("chevron-down", { className: "tabular-input-type-icon" })
     );
 
@@ -510,10 +528,18 @@ export function initTabularInput(
       li.setAttribute("role", "none");
       const item = document.createElement("button");
       item.type = "button";
-      item.className = "dropdown-menu-item";
+      item.className = "dropdown-menu-item tabular-input-type-item";
       item.setAttribute("role", "menuitem");
       item.dataset.value = value;
-      item.textContent = text;
+      item.append(
+        createIcon(typeIconId(value), {
+          className: "tabular-input-type-item-icon",
+        })
+      );
+      const label = document.createElement("span");
+      label.className = "tabular-input-type-item-label";
+      label.textContent = text;
+      item.append(label);
       if (value === column.type) item.classList.add("is-selected");
       li.append(item);
       typeMenu.append(li);
@@ -556,7 +582,7 @@ export function initTabularInput(
     removeBtn.dataset.tabularInputRemoveColumn = "";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete column ${column.label}`);
-    removeBtn.append(createIcon("error", { className: "btn-icon-svg" }));
+    removeBtn.append(createIcon("remove", { className: "btn-icon-svg" }));
     removeBtn.addEventListener("click", () => {
       removeColumn(column.id, { source: "remove-column" });
     });
@@ -570,10 +596,7 @@ export function initTabularInput(
     const actionsTh = document.createElement("th");
     actionsTh.scope = "col";
     actionsTh.className = "tabular-input-row-actions-col";
-    const actionsLabel = document.createElement("span");
-    actionsLabel.className = "tabular-input-live";
-    actionsLabel.textContent = "Row actions";
-    actionsTh.append(actionsLabel);
+    actionsTh.append(resetBtn);
     return actionsTh;
   }
 
@@ -594,7 +617,7 @@ export function initTabularInput(
     removeBtn.className = "btn btn-icon tabular-input-remove-row";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete row ${rowIndex + 1}`);
-    removeBtn.append(createIcon("error", { className: "btn-icon-svg" }));
+    removeBtn.append(createIcon("remove", { className: "btn-icon-svg" }));
     removeBtn.addEventListener("click", () => {
       removeRow(row.id, { source: "remove-row" });
     });
@@ -773,12 +796,36 @@ export function initTabularInput(
     if (emitEvent) emit(source);
   }
 
+  function resetToBlank({ emitEvent = true, source = "reset" } = {}) {
+    if (isDisabled) return;
+    columns = [
+      { id: nextId("col"), label: "Column 1", type: "text" },
+      { id: nextId("col"), label: "Column 2", type: "text" },
+      { id: nextId("col"), label: "Column 3", type: "text" },
+    ];
+    rows = [0, 1].map(() => ({
+      id: nextId("row"),
+      cells: Object.fromEntries(
+        columns.map((col) => [col.id, defaultValueForType(col.type)])
+      ),
+    }));
+    render();
+    if (emitEvent) {
+      emit(source);
+      announce("Table reset");
+    }
+  }
+
   function onAddRowClick() {
     addRow();
   }
 
   function onAddColClick() {
     addColumn();
+  }
+
+  function onResetClick() {
+    resetToBlank();
   }
 
   /**
@@ -873,6 +920,7 @@ export function initTabularInput(
 
   addRowBtn.addEventListener("click", onAddRowClick);
   addColBtn.addEventListener("click", onAddColClick);
+  resetBtn.addEventListener("click", onResetClick);
   rootEl.addEventListener("paste", onPaste);
 
   render();
@@ -919,6 +967,9 @@ export function initTabularInput(
         source: options?.source ?? "api",
       });
     },
+    reset(options) {
+      resetToBlank({ ...options, source: options?.source ?? "api" });
+    },
     setDisabled(next) {
       isDisabled = Boolean(next);
       render();
@@ -928,6 +979,7 @@ export function initTabularInput(
       typeMenus = [];
       addRowBtn.removeEventListener("click", onAddRowClick);
       addColBtn.removeEventListener("click", onAddColClick);
+      resetBtn.removeEventListener("click", onResetClick);
       rootEl.removeEventListener("paste", onPaste);
       rootEl.replaceChildren();
       rootEl.classList.remove("tabular-input", "tabular-input--disabled");
