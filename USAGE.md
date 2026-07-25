@@ -356,7 +356,7 @@ setStickySectionHeadings(true);
 syncStickyOffsets();
 ```
 
-When both are on, section headings sit below the site header via `--sticky-header-offset`. Stuck chrome leaves a `--sticky-gap` inset above and below each band (background extends into those gaps so content does not show through). Tier headers stick until a `.section-heading` reaches them and pushes them out the top; subheadings push each other the same way as you move between sections.
+When both are on, section headings sit below the site header via `--sticky-header-offset`. The site header sticks flush to the top of the viewport; section and tier bands keep a `--sticky-gap` inset above and below (background extends into those gaps so content does not show through). Tier headers stick until a `.section-heading` reaches them and pushes them out the top; subheadings push each other the same way as you move between sections.
 
 ### Dialog
 

@@ -75,15 +75,16 @@ img.brand-icon--dark {
 
 :root[data-sticky-header] body > header {
   position: sticky;
-  top: var(--sticky-gap);
+  /* Flush at rest — top: sticky-gap would offset the header immediately at scroll 0 */
+  top: 0;
   z-index: 40;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
-/* Cover the inset above / below the stuck header so content doesn’t show through */
-:root[data-sticky-header] body > header::before,
-:root[data-sticky-header] body > header::after {
+/* Cover strips only while stuck so they don’t hide in-flow content at rest */
+:root[data-sticky-header-stuck] body > header::before,
+:root[data-sticky-header-stuck] body > header::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -94,11 +95,11 @@ img.brand-icon--dark {
   pointer-events: none;
 }
 
-:root[data-sticky-header] body > header::before {
+:root[data-sticky-header-stuck] body > header::before {
   bottom: 100%;
 }
 
-:root[data-sticky-header] body > header::after {
+:root[data-sticky-header-stuck] body > header::after {
   top: 100%;
 }
 
