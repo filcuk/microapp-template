@@ -18,6 +18,7 @@ import { initSlider } from "./components/slider.js";
 import { initStepper } from "./components/stepper.js";
 import { initColorPicker } from "./components/color-picker.js";
 import { initToggle } from "./components/toggle.js";
+import { initTriStateCheckbox } from "./components/checkbox.js";
 import { initSegmentedControl } from "./components/segmented-control.js";
 import { initPagination } from "./components/pagination.js";
 import { initProgressBar } from "./components/progress-bar.js";
@@ -276,11 +277,21 @@ demoRadioGroup?.addEventListener("change", (event) => {
   }
 });
 
+function checkboxStateLabel(input) {
+  const label =
+    input.closest("label")?.querySelector("span")?.textContent?.trim() || input.value;
+  if (input.indeterminate || input.getAttribute("aria-checked") === "mixed") {
+    return `${label} (mixed)`;
+  }
+  if (input.checked) return label;
+  return null;
+}
+
 function updateCheckboxResult() {
   if (!demoCheckboxGroup || !demoCheckboxResult) return;
 
-  const selected = [...demoCheckboxGroup.querySelectorAll(".checkbox-input:checked:not(:disabled)")]
-    .map((input) => input.closest("label")?.querySelector("span")?.textContent?.trim() || input.value)
+  const selected = [...demoCheckboxGroup.querySelectorAll(".checkbox-input:not(:disabled)")]
+    .map(checkboxStateLabel)
     .filter(Boolean);
 
   demoCheckboxResult.textContent = selected.length
@@ -294,15 +305,26 @@ demoCheckboxGroup?.addEventListener("change", (event) => {
   updateCheckboxResult();
 });
 
+initTriStateCheckbox(document.getElementById("demo-checkbox-tristate"), {
+  onChange: () => updateCheckboxResult(),
+});
 updateCheckboxResult();
+
+function toggleValueLabel(value) {
+  if (value === "true") return "on";
+  if (value === "mixed") return "mixed";
+  return "off";
+}
 
 function updateToggleResult() {
   if (!demoToggleResult) return;
   const off = document.getElementById("demo-toggle-off");
   const on = document.getElementById("demo-toggle-on");
+  const tri = document.getElementById("demo-toggle-tristate");
   const parts = [
-    off ? `Notifications: ${off.querySelector(".toggle-value")?.value === "true" ? "on" : "off"}` : null,
-    on ? `Preview: ${on.querySelector(".toggle-value")?.value === "true" ? "on" : "off"}` : null,
+    off ? `Notifications: ${toggleValueLabel(off.querySelector(".toggle-value")?.value)}` : null,
+    on ? `Preview: ${toggleValueLabel(on.querySelector(".toggle-value")?.value)}` : null,
+    tri ? `Tri-state: ${toggleValueLabel(tri.querySelector(".toggle-value")?.value)}` : null,
   ].filter(Boolean);
   demoToggleResult.textContent = parts.join(" · ");
 }
@@ -311,6 +333,7 @@ const toggleOnChange = () => updateToggleResult();
 
 initToggle(document.getElementById("demo-toggle-off"), { onChange: toggleOnChange });
 initToggle(document.getElementById("demo-toggle-on"), { onChange: toggleOnChange });
+initToggle(document.getElementById("demo-toggle-tristate"), { onChange: toggleOnChange });
 initToggle(document.getElementById("demo-toggle-disabled"));
 updateToggleResult();
 

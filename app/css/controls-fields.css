@@ -413,6 +413,10 @@
   opacity: 0.5;
 }
 
+.checkbox-input[aria-checked="mixed"] {
+  accent-color: var(--accent);
+}
+
 .radio-group {
   display: flex;
   flex-direction: column;

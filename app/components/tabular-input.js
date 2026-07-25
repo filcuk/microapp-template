@@ -28,6 +28,7 @@ import { parseBooleanAttr, setHidden, getFocusableElements, FOCUSABLE_SELECTOR }
 import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
 import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-listeners.js";
+import { closeTooltip } from "./tooltip.js";
 
 /** @typedef {"text" | "number" | "logical"} ColumnType */
 /** @typedef {{ id: string, label: string, type: ColumnType }} Column */
@@ -665,11 +666,21 @@ export function initTabularInput(
     labelInput.className = "tabular-input-col-label";
     labelInput.value = column.label;
     labelInput.disabled = isDisabled;
+    labelInput.size = 1;
     labelInput.setAttribute("aria-label", "Column name");
     labelInput.dataset.tabularInputRename = "";
     labelInput.dataset.columnId = column.id;
+    if (!isDisabled) {
+      labelInput.dataset.tooltip = "Click to edit";
+    }
+
+    const field = document.createElement("div");
+    field.className = "tabular-input-col-field";
 
     labelInput.addEventListener("focus", () => {
+      field.classList.add("is-editing");
+      delete labelInput.dataset.tooltip;
+      closeTooltip();
       renameDrafts.set(column.id, column.label);
     });
 
@@ -688,6 +699,10 @@ export function initTabularInput(
     });
 
     labelInput.addEventListener("blur", () => {
+      field.classList.remove("is-editing");
+      if (!isDisabled) {
+        labelInput.dataset.tooltip = "Click to edit";
+      }
       if (isDisabled) return;
       const previous = renameDrafts.get(column.id) ?? column.label;
       const next = labelInput.value.trim() || previous;
@@ -704,10 +719,10 @@ export function initTabularInput(
             el.setAttribute("aria-label", `${column.label}, row ${index + 1}`);
           }
         });
-      const typeTrigger = th.querySelector(".tabular-input-type-trigger");
-      if (typeTrigger) {
-        typeTrigger.setAttribute("aria-label", `Options for ${column.label}`);
-        typeTrigger.dataset.tooltip = `${typeLabel(column.type)} type`;
+      const typeTriggerEl = th.querySelector(".tabular-input-type-trigger");
+      if (typeTriggerEl) {
+        typeTriggerEl.setAttribute("aria-label", `Options for ${column.label}`);
+        typeTriggerEl.dataset.tooltip = `${typeLabel(column.type)} type`;
       }
       const removeBtn = th.querySelector("[data-tabular-input-remove-column]");
       if (removeBtn) {
@@ -861,8 +876,6 @@ export function initTabularInput(
       );
     }
 
-    const field = document.createElement("div");
-    field.className = "tabular-input-col-field";
     field.append(labelInput, typeSlot);
     th.append(field);
     return th;

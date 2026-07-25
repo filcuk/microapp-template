@@ -29,13 +29,18 @@
   width: 100%;
   min-width: 0;
   min-height: calc(var(--control-height) - 0.25rem);
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   border-radius: 6px;
-  background: var(--input-bg);
+  background: transparent;
   box-sizing: border-box;
 }
 
-.tabular-input-col-field:focus-within {
+.tabular-input-col-field.is-editing {
+  border-color: var(--border);
+  background: var(--input-bg);
+}
+
+.tabular-input-col-field.is-editing:focus-within {
   outline: 2px solid var(--accent);
   outline-offset: -1px;
   border-color: var(--accent);
@@ -59,7 +64,13 @@
   background: transparent;
   color: var(--text);
   font: inherit;
+  font-weight: 600;
   box-sizing: border-box;
+  cursor: pointer;
+}
+
+.tabular-input-col-field.is-editing .tabular-input-col-label {
+  cursor: text;
 }
 
 .tabular-input-col-label:focus {
@@ -69,6 +80,15 @@
 .tabular-input-col-label:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.tabular-input-col-field:not(.is-editing) .tabular-input-type-trigger {
+  opacity: 0.72;
+}
+
+.tabular-input-col-field:not(.is-editing):hover .tabular-input-type-trigger,
+.tabular-input-col-field:not(.is-editing):focus-within .tabular-input-type-trigger {
+  opacity: 1;
 }
 
 .tabular-input-type-slot {

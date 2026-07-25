@@ -278,7 +278,8 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Colour picker** | Hex text input with inline swatch preview. [`app/color-picker.js`](app/color-picker.js). |
-| **Toggle** | On/off switch with track and thumb; `role="switch"`. [`app/toggle.js`](app/toggle.js). |
+| **Toggle** | On/off switch with track and thumb; `role="switch"`. Optional tri-state (`data-toggle-tristate`) cycles off → on → mixed. [`app/components/toggle.js`](app/components/toggle.js). |
+| **Tri-state checkbox** | Checkbox that cycles unchecked → checked → mixed (`indeterminate`). [`app/components/checkbox.js`](app/components/checkbox.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
@@ -588,6 +589,12 @@ initChipInputs(document);
   <span>I agree</span>
 </label>
 
+<label class="checkbox">
+  <input type="checkbox" class="checkbox-input" id="partial"
+    data-checkbox-tristate data-checkbox-default="mixed" />
+  <span>Some selected</span>
+</label>
+
 <div class="field">
   <span class="field-label" id="size-label">Size</span>
   <div class="radio-group" role="radiogroup" aria-labelledby="size-label">
@@ -602,6 +609,25 @@ initChipInputs(document);
   </div>
 </div>
 ```
+
+```javascript
+import {
+  initTriStateCheckbox,
+  initTriStateCheckboxes,
+} from "./components/checkbox.js";
+
+const partial = initTriStateCheckbox(document.getElementById("partial"), {
+  onChange: ({ state, indeterminate }) => console.log(state, indeterminate),
+});
+
+partial?.getState(); // "true" | "false" | "mixed"
+partial?.setState("mixed");
+partial?.cycle();
+
+initTriStateCheckboxes(document); // all `[data-checkbox-tristate]` inputs
+```
+
+`data-checkbox-default` accepts `"true"`, `"false"`, or `"mixed"`. Click cycles **unchecked → checked → mixed**. Native `indeterminate` is set for mixed; `aria-checked` mirrors the state. Use a wrapping `<label>` **or** `for` (not both) so a single click does not activate the control twice.
 
 #### Date picker
 
@@ -1116,12 +1142,29 @@ On/off switch for boolean settings. Uses `role="switch"` and `aria-checked` on t
   <button type="button" class="toggle-btn" role="switch" aria-checked="false">
     <span class="toggle-track" aria-hidden="true">
       <span class="toggle-thumb">
-        <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+        <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
       </span>
     </span>
     <span class="toggle-label">Enable notifications</span>
   </button>
   <input type="hidden" class="toggle-value" name="notifications" value="false" />
+</div>
+```
+
+Tri-state variant (`data-toggle-tristate`) cycles **off → on → mixed**. ARIA `switch` is boolean-only, so the button uses `role="checkbox"` with `aria-checked="mixed"`. Include a minus (`remove`) icon for the mixed thumb, or one is injected automatically.
+
+```html
+<div class="toggle" id="my-toggle-tri" data-toggle-tristate data-toggle-default="mixed">
+  <button type="button" class="toggle-btn" role="checkbox" aria-checked="mixed">
+    <span class="toggle-track" aria-hidden="true">
+      <span class="toggle-thumb">
+        <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+        <span data-icon="remove" data-icon-class="toggle-thumb-icon toggle-thumb-icon--mixed" aria-hidden="true"></span>
+      </span>
+    </span>
+    <span class="toggle-label">Apply to selection</span>
+  </button>
+  <input type="hidden" class="toggle-value" name="apply" value="mixed" />
 </div>
 ```
 
@@ -1139,10 +1182,18 @@ toggle?.setChecked(true);
 toggle?.toggle();
 toggle?.setDisabled(true);
 
+const tri = initToggle(document.getElementById("my-toggle-tri"), {
+  onChange: ({ state }) => console.log(state),
+});
+
+tri?.getState(); // "true" | "false" | "mixed"
+tri?.setState("mixed");
+tri?.cycle();
+
 initToggles(document); // all `.toggle` blocks
 ```
 
-`data-toggle-default` and `data-toggle-disabled` mirror the JS options. For a group of switches, wrap items in `.toggle-group`.
+`data-toggle-default`, `data-toggle-tristate`, and `data-toggle-disabled` mirror the JS options. For a group of switches, wrap items in `.toggle-group`.
 
 ### Segmented control
 
@@ -1584,7 +1635,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 
 **Chrome**
 
-- Rename columns inline (Enter to commit, Escape to cancel).
+- Rename columns by clicking the header label (pointer cursor + “Click to edit” tooltip; Enter to commit, Escape to cancel); resting headers look like normal table headers until edited.
 - Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**, **Add before**, and **Add after**. Only one column menu open at a time. Menus use fixed positioning so they are not clipped by the table scroll container.
 - Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
 - Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
