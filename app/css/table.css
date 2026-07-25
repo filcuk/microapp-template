@@ -48,7 +48,7 @@
 .table thead th {
   font-weight: 600;
   color: var(--text);
-  background: var(--code-bg);
+  background: var(--table-header-bg);
 }
 
 .table tbody tr:last-child td,

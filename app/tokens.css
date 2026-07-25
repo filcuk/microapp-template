@@ -9,6 +9,8 @@
   --bg: #f6f8fa;
   --surface: #ffffff;
   --section-bg: #eaeef2;
+  --input-bg: #ffffff;
+  --table-header-bg: #e6ebf0;
   --text: #1f2328;
   --muted: #656d76;
   --border: #d0d7de;
@@ -49,6 +51,8 @@
   --bg: #0d1117;
   --surface: #161b22;
   --section-bg: #12161c;
+  --input-bg: #262c35;
+  --table-header-bg: #10151b;
   --text: #e6edf3;
   --muted: #8b949e;
   --border: #30363d;

@@ -24,6 +24,7 @@ import { initSpinner } from "./components/spinner.js";
 import { initProgressIndicator } from "./components/progress-indicator.js";
 import { initRichTextEditor } from "./components/rich-text-editor.js";
 import { initTable } from "./components/table.js";
+import { initTabularInput } from "./components/tabular-input.js";
 import { initBadge } from "./components/badge.js";
 import { initChipGroup, initChipInput } from "./components/chip.js";
 
@@ -51,6 +52,7 @@ const demoSegmentedViewResult = document.getElementById("demo-segmented-view-res
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
 const demoPaginationResult = document.getElementById("demo-pagination-result");
 const demoTableResult = document.getElementById("demo-table-result");
+const demoTabularInputResult = document.getElementById("demo-tabular-input-result");
 const demoProgressBarResult = document.getElementById("demo-progress-bar-result");
 const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
@@ -393,6 +395,30 @@ initTable(document.getElementById("demo-table"), {
     demoTableResult.textContent = selectedIds.length
       ? `Selected: ${selectedIds.join(", ")}`
       : "No rows selected.";
+  },
+});
+
+function formatTabularInputResult(columns, rows, source) {
+  const types = columns.map((col) => col.type).join(", ");
+  return `${columns.length} columns (${types}) · ${rows.length} rows · ${source}`;
+}
+
+initTabularInput(document.getElementById("demo-tabular-input"), {
+  columns: [
+    { id: "name", label: "Name", type: "text" },
+    { id: "qty", label: "Qty", type: "number" },
+    { id: "active", label: "Active", type: "logical" },
+  ],
+  rows: [
+    { id: "r1", cells: { name: "Widget", qty: 12, active: true } },
+    { id: "r2", cells: { name: "Gadget", qty: 3, active: false } },
+    { id: "r3", cells: { name: "Doohickey", qty: 7, active: true } },
+    { id: "r4", cells: { name: "Thingamajig", qty: 1, active: false } },
+    { id: "r5", cells: { name: "Whatsit", qty: 24, active: true } },
+  ],
+  onChange: ({ columns, rows, source }) => {
+    if (!demoTabularInputResult) return;
+    demoTabularInputResult.textContent = formatTabularInputResult(columns, rows, source);
   },
 });
 

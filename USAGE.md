@@ -201,6 +201,7 @@ app/
     overlays.css        # Banners, tooltips, modals
     rich-text-editor.css # Rich text editor layout + Toast UI token overrides
     table.css            # Data tables
+    controls-tabular-input.css # Editable typed grid
   config.js             # Fork defaults (repo URL, brand, theme key)
   version.js            # APP_VERSION + TEMPLATE_VERSION (SemVer 2.0.0)
   main.js               # index.html entry
@@ -246,10 +247,10 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
-| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
+| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
@@ -273,6 +274,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
+| **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste with type detection. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -392,6 +394,7 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
   <button type="button" class="btn">Undo</button>
   <button type="button" class="btn">Redo</button>
   <button type="button" class="btn btn-primary">Save</button>
+  <button type="button" class="btn btn-danger">Delete</button>
   <button type="button" class="btn btn-icon" aria-label="More options" data-icon="lines"
     data-icon-class="btn-icon-svg"></button>
 </div>
@@ -1481,6 +1484,72 @@ initTables(document);
 ```
 
 `data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. Add `.table-block--wide` to remove the default `40rem` max width.
+
+### Tabular input
+
+Editable data grid for collecting rows of typed values. Mount an empty `.tabular-input` root; `initTabularInput()` renders the table and controls. Column types are **`text`**, **`number`**, and **`logical`** (checkbox). Other kinds of values (dates, enums, etc.) use **text**.
+
+**Chrome**
+
+- Rename columns inline (Enter to commit, Escape to cancel).
+- Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**, **Add before**, and **Add after**. Only one column menu open at a time. Menus use fixed positioning so they are not clipped by the table scroll container.
+- Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
+- Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
+- Header **reset** opens a size-picker popover next to the button (up to **8×8**); choosing a size replaces the table with a blank text-column grid. Programmatic `reset({ columnCount, rowCount })` skips the picker (defaults to **3×2**).
+- Icon chrome uses `data-tooltip` (add/remove row, add column, reset, column menu trigger). Requires `initTooltips()` via `initShell()`.
+
+**Paste**
+
+- Paste Excel/TSV (`text/plain` with tabs or multiple lines) while focus is in the grid.
+- Starts at the focused body cell (else top-left); expands rows/columns as needed; overwrites that rectangle; keeps surplus cells outside it.
+- Re-detects each column’s type from its full values (number → logical → text), then coerces cells.
+- Plain single-cell paste without tabs/newlines still goes into the focused field as usual.
+
+**Keyboard**
+
+- **Tab / Shift+Tab** move through fields and header controls first, then **remove row** buttons, then **move row** (up/down) controls.
+- **Arrow keys** move between body cells (left/right are caret-edge-aware in text/number fields; up/down always change row).
+
+```html
+<div class="tabular-input" id="inventory-grid" aria-label="Inventory"></div>
+```
+
+```javascript
+import { initTabularInput, initTabularInputs } from "./components/tabular-input.js";
+
+const grid = initTabularInput(document.getElementById("inventory-grid"), {
+  columns: [
+    { id: "name", label: "Name", type: "text" },
+    { id: "qty", label: "Qty", type: "number" },
+    { id: "active", label: "Active", type: "logical" },
+  ],
+  rows: [
+    { id: "r1", cells: { name: "Widget", qty: 12, active: true } },
+  ],
+  onChange: ({ columns, rows, source }) => console.log(source, columns, rows),
+});
+
+grid?.getData();
+grid?.addRow();
+grid?.addColumn({ label: "Notes", type: "text" });
+grid?.addColumn({ label: "Before qty" }, { index: 1 }); // insert at index
+grid?.removeRow("r1");
+grid?.moveRow("r1", { delta: -1 });
+grid?.removeColumn("qty");
+grid?.renameColumn("name", "Item");
+grid?.setColumnType("active", "text");
+grid?.reset(); // blank 3×2; no size picker
+grid?.reset({ columnCount: 4, rowCount: 5 });
+grid?.setData({ columns: [...], rows: [...] });
+grid?.setDisabled(true);
+grid?.destroy();
+
+initTabularInputs(document); // all `.tabular-input` roots
+```
+
+`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"move-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, `"paste"`, `"reset"`, and `"api"`.
+
+Icons used: `plus`, `delete` (reset), `remove` (row/column), `type-text`, `type-number`, `type-logical`, `chevron-down` — defined in [`app/utils/icons.js`](app/utils/icons.js).
 
 ### Page navigation
 
