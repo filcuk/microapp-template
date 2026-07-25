@@ -1495,7 +1495,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 - Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**, **Add before**, and **Add after**. Only one column menu open at a time. Menus use fixed positioning so they are not clipped by the table scroll container.
 - Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
 - Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
-- Header **reset** opens a confirm dialog (`.btn-danger`); confirming restores a blank **3 text columns × 2 rows** table. Programmatic `reset()` skips the dialog.
+- Header **reset** opens a size-picker popover next to the button (up to **8×8**); choosing a size replaces the table with a blank text-column grid. Programmatic `reset({ columnCount, rowCount })` skips the picker (defaults to **3×2**).
 - Icon chrome uses `data-tooltip` (add/remove row, add column, reset, column menu trigger). Requires `initTooltips()` via `initShell()`.
 
 **Paste**
@@ -1538,7 +1538,8 @@ grid?.moveRow("r1", { delta: -1 });
 grid?.removeColumn("qty");
 grid?.renameColumn("name", "Item");
 grid?.setColumnType("active", "text");
-grid?.reset(); // blank 3×2; no confirm dialog
+grid?.reset(); // blank 3×2; no size picker
+grid?.reset({ columnCount: 4, rowCount: 5 });
 grid?.setData({ columns: [...], rows: [...] });
 grid?.setDisabled(true);
 grid?.destroy();

@@ -21,19 +21,22 @@
  *
  * Paste: Excel/TSV clipboard paste expands from the focused body cell
  * (fallback top-left), overwrites that rectangle, auto-detects column types.
- * Reset (header): blank 3 text columns × 2 rows.
+ * Reset (header): size picker for a blank text-column table.
  */
 
 import { parseBooleanAttr, setHidden, getFocusableElements, FOCUSABLE_SELECTOR } from "../utils/dom.js";
 import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
-import { initDialog } from "./dialog.js";
+import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-listeners.js";
 
 /** @typedef {"text" | "number" | "logical"} ColumnType */
 /** @typedef {{ id: string, label: string, type: ColumnType }} Column */
 /** @typedef {{ id: string, cells: Record<string, string | number | boolean | null> }} Row */
 
 const COLUMN_TYPES = new Set(["text", "number", "logical"]);
+const SIZE_PICKER_MAX_COLS = 8;
+const SIZE_PICKER_MAX_ROWS = 8;
+const SIZE_PICKER_DEFAULT = { cols: 3, rows: 2 };
 
 const TYPE_OPTIONS = [
   ["text", "Text"],
@@ -310,7 +313,57 @@ export function initTabularInput(
   resetBtn.className = "btn btn-icon tabular-input-reset";
   resetBtn.setAttribute("aria-label", "Reset table");
   resetBtn.dataset.tooltip = "Reset table";
+  resetBtn.setAttribute("aria-haspopup", "dialog");
+  resetBtn.setAttribute("aria-expanded", "false");
   resetBtn.append(createIcon("delete", { className: "btn-icon-svg" }));
+
+  const resetSizeLabelId = `tabular-input-reset-size-${nextId("dlg")}`;
+  const resetSlot = document.createElement("div");
+  resetSlot.className = "tabular-input-reset-slot";
+
+  const sizePopover = document.createElement("div");
+  sizePopover.className = "tabular-input-size-popover hidden";
+  sizePopover.setAttribute("role", "dialog");
+  sizePopover.setAttribute("aria-label", "Choose table size");
+  sizePopover.hidden = true;
+
+  const sizePickerLabel = document.createElement("div");
+  sizePickerLabel.id = resetSizeLabelId;
+  sizePickerLabel.className = "tabular-input-size-picker-label";
+  sizePickerLabel.setAttribute("aria-live", "polite");
+
+  const sizePicker = document.createElement("div");
+  sizePicker.className = "tabular-input-size-picker";
+  sizePicker.setAttribute("role", "grid");
+  sizePicker.setAttribute("aria-label", "Table size");
+  sizePicker.setAttribute("aria-describedby", resetSizeLabelId);
+
+  /** @type {HTMLButtonElement[]} */
+  const sizePickerCells = [];
+  let sizePickerCols = SIZE_PICKER_DEFAULT.cols;
+  let sizePickerRows = SIZE_PICKER_DEFAULT.rows;
+  let sizePopoverOpen = false;
+
+  for (let row = 1; row <= SIZE_PICKER_MAX_ROWS; row += 1) {
+    const rowEl = document.createElement("div");
+    rowEl.className = "tabular-input-size-picker-row";
+    rowEl.setAttribute("role", "row");
+    for (let col = 1; col <= SIZE_PICKER_MAX_COLS; col += 1) {
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "tabular-input-size-picker-cell";
+      cell.setAttribute("role", "gridcell");
+      cell.dataset.cols = String(col);
+      cell.dataset.rows = String(row);
+      cell.setAttribute("aria-label", `${col} by ${row}`);
+      rowEl.append(cell);
+      sizePickerCells.push(cell);
+    }
+    sizePicker.append(rowEl);
+  }
+
+  sizePopover.append(sizePickerLabel, sizePicker);
+  resetSlot.append(resetBtn, sizePopover);
 
   const liveEl = document.createElement("div");
   liveEl.className = "tabular-input-live";
@@ -319,62 +372,156 @@ export function initTabularInput(
   rootEl.replaceChildren(wrapEl, liveEl);
   rootEl.classList.add("tabular-input");
 
-  const resetDialogTitleId = `tabular-input-reset-title-${nextId("dlg")}`;
-  const resetDialogEl = document.createElement("div");
-  resetDialogEl.className = "modal tabular-input-reset-dialog hidden";
-  resetDialogEl.setAttribute("role", "dialog");
-  resetDialogEl.setAttribute("aria-modal", "true");
-  resetDialogEl.setAttribute("aria-labelledby", resetDialogTitleId);
-  resetDialogEl.hidden = true;
+  function setSizePickerHighlight(cols, rows) {
+    sizePickerCols = cols;
+    sizePickerRows = rows;
+    sizePickerLabel.textContent = `${cols} × ${rows}`;
+    for (const cell of sizePickerCells) {
+      const c = Number(cell.dataset.cols);
+      const r = Number(cell.dataset.rows);
+      const inRange = c <= cols && r <= rows;
+      const isCorner = c === cols && r === rows;
+      cell.classList.toggle("is-selected", inRange);
+      cell.setAttribute("aria-selected", isCorner ? "true" : "false");
+      cell.tabIndex = isCorner ? 0 : -1;
+    }
+  }
 
-  const resetBackdrop = document.createElement("div");
-  resetBackdrop.className = "modal-backdrop";
-  resetBackdrop.dataset.dialogClose = "";
+  function clearSizePopoverPosition() {
+    sizePopover.style.position = "";
+    sizePopover.style.top = "";
+    sizePopover.style.left = "";
+    sizePopover.style.right = "";
+    sizePopover.style.bottom = "";
+    sizePopover.style.zIndex = "";
+  }
 
-  const resetPanel = document.createElement("div");
-  resetPanel.className = "modal-panel";
+  function positionSizePopover() {
+    const rect = resetBtn.getBoundingClientRect();
+    const gap = 4;
+    const padding = 8;
+    const viewportWidth = document.documentElement.clientWidth;
 
-  const resetHeader = document.createElement("div");
-  resetHeader.className = "modal-header";
-  const resetTitle = document.createElement("h2");
-  resetTitle.id = resetDialogTitleId;
-  resetTitle.textContent = "Reset table?";
-  const resetCloseBtn = document.createElement("button");
-  resetCloseBtn.type = "button";
-  resetCloseBtn.className = "modal-close";
-  resetCloseBtn.setAttribute("aria-label", "Close");
-  resetCloseBtn.dataset.dialogClose = "";
-  resetCloseBtn.textContent = "×";
-  resetHeader.append(resetTitle, resetCloseBtn);
+    sizePopover.style.position = "fixed";
+    sizePopover.style.zIndex = "200";
+    sizePopover.style.bottom = "auto";
+    sizePopover.style.right = "auto";
+    sizePopover.style.top = `${rect.bottom + gap}px`;
+    sizePopover.style.left = `${rect.left}px`;
 
-  const resetBody = document.createElement("div");
-  resetBody.className = "modal-body";
-  const resetMessage = document.createElement("p");
-  resetMessage.textContent =
-    "This clears all data and restores a blank table with 3 text columns and 2 rows. This cannot be undone.";
-  resetBody.append(resetMessage);
+    const placed = sizePopover.getBoundingClientRect();
+    if (placed.bottom > window.innerHeight - padding) {
+      sizePopover.style.top = `${Math.max(padding, rect.top - placed.height - gap)}px`;
+    }
+    const placedX = sizePopover.getBoundingClientRect();
+    if (placedX.right > viewportWidth - padding) {
+      sizePopover.style.left = `${Math.max(padding, viewportWidth - placedX.width - padding)}px`;
+    }
+    if (placedX.left < padding) {
+      sizePopover.style.left = `${padding}px`;
+    }
+  }
 
-  const resetFooter = document.createElement("div");
-  resetFooter.className = "modal-footer";
-  const resetActions = document.createElement("div");
-  resetActions.className = "modal-footer-actions";
-  const resetCancelBtn = document.createElement("button");
-  resetCancelBtn.type = "button";
-  resetCancelBtn.className = "btn";
-  resetCancelBtn.dataset.dialogClose = "";
-  resetCancelBtn.textContent = "Cancel";
-  const resetConfirmBtn = document.createElement("button");
-  resetConfirmBtn.type = "button";
-  resetConfirmBtn.className = "btn btn-danger";
-  resetConfirmBtn.textContent = "Reset table";
-  resetActions.append(resetCancelBtn, resetConfirmBtn);
-  resetFooter.append(resetActions);
+  function closeSizePopover() {
+    if (!sizePopoverOpen) return;
+    sizePopoverOpen = false;
+    setHidden(sizePopover, true);
+    clearSizePopoverPosition();
+    resetBtn.setAttribute("aria-expanded", "false");
+    resetBtn.focus();
+  }
 
-  resetPanel.append(resetHeader, resetBody, resetFooter);
-  resetDialogEl.append(resetBackdrop, resetPanel);
-  document.body.append(resetDialogEl);
+  function openSizePopover() {
+    for (const menu of typeMenus) menu.closeMenu();
+    setSizePickerHighlight(SIZE_PICKER_DEFAULT.cols, SIZE_PICKER_DEFAULT.rows);
+    sizePopoverOpen = true;
+    setHidden(sizePopover, false);
+    resetBtn.setAttribute("aria-expanded", "true");
+    positionSizePopover();
+    const corner = sizePicker.querySelector(
+      '.tabular-input-size-picker-cell[aria-selected="true"]'
+    );
+    if (corner instanceof HTMLButtonElement) corner.focus();
+  }
 
-  const resetDialog = initDialog({ dialogEl: resetDialogEl });
+  function applySizePickerSelection() {
+    resetToBlank({
+      columnCount: sizePickerCols,
+      rowCount: sizePickerRows,
+    });
+    closeSizePopover();
+  }
+
+  sizePicker.addEventListener("pointerover", (event) => {
+    const cell = event.target.closest(".tabular-input-size-picker-cell");
+    if (!(cell instanceof HTMLButtonElement) || !sizePicker.contains(cell)) {
+      return;
+    }
+    setSizePickerHighlight(Number(cell.dataset.cols), Number(cell.dataset.rows));
+  });
+
+  sizePicker.addEventListener("pointerleave", () => {
+    setSizePickerHighlight(SIZE_PICKER_DEFAULT.cols, SIZE_PICKER_DEFAULT.rows);
+  });
+
+  sizePicker.addEventListener("click", (event) => {
+    const cell = event.target.closest(".tabular-input-size-picker-cell");
+    if (!(cell instanceof HTMLButtonElement) || !sizePicker.contains(cell)) {
+      return;
+    }
+    setSizePickerHighlight(Number(cell.dataset.cols), Number(cell.dataset.rows));
+    applySizePickerSelection();
+  });
+
+  sizePicker.addEventListener("keydown", (event) => {
+    if (!sizePopoverOpen) return;
+    const current = sizePicker.querySelector(
+      '.tabular-input-size-picker-cell[aria-selected="true"]'
+    );
+    if (!(current instanceof HTMLButtonElement)) return;
+
+    let cols = Number(current.dataset.cols);
+    let rows = Number(current.dataset.rows);
+    if (event.key === "ArrowRight") cols = Math.min(SIZE_PICKER_MAX_COLS, cols + 1);
+    else if (event.key === "ArrowLeft") cols = Math.max(1, cols - 1);
+    else if (event.key === "ArrowDown") rows = Math.min(SIZE_PICKER_MAX_ROWS, rows + 1);
+    else if (event.key === "ArrowUp") rows = Math.max(1, rows - 1);
+    else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      applySizePickerSelection();
+      return;
+    } else {
+      return;
+    }
+
+    event.preventDefault();
+    setSizePickerHighlight(cols, rows);
+    const next = sizePicker.querySelector(
+      `.tabular-input-size-picker-cell[data-cols="${cols}"][data-rows="${rows}"]`
+    );
+    if (next instanceof HTMLButtonElement) next.focus();
+  });
+
+  setSizePickerHighlight(SIZE_PICKER_DEFAULT.cols, SIZE_PICKER_DEFAULT.rows);
+
+  const removeSizePopoverOutside = onDocumentClickOutside((event) => {
+    if (!sizePopoverOpen) return;
+    if (resetSlot.contains(event.target)) return;
+    closeSizePopover();
+  });
+
+  const removeSizePopoverEscape = onDocumentEscape(() => {
+    if (!sizePopoverOpen) return false;
+    closeSizePopover();
+    return true;
+  }, { priority: 50 });
+
+  function onSizePopoverViewportChange() {
+    if (sizePopoverOpen) closeSizePopover();
+  }
+
+  window.addEventListener("scroll", onSizePopoverViewportChange, true);
+  window.addEventListener("resize", onSizePopoverViewportChange);
 
   function snapshot() {
     return {
@@ -705,6 +852,7 @@ export function initTabularInput(
       typeTrigger.addEventListener(
         "click",
         () => {
+          closeSizePopover();
           for (const menu of typeMenus) {
             if (menu !== typeMenuApi) menu.closeMenu();
           }
@@ -724,7 +872,7 @@ export function initTabularInput(
     const actionsTh = document.createElement("th");
     actionsTh.scope = "col";
     actionsTh.className = "tabular-input-row-move-col";
-    actionsTh.append(resetBtn);
+    actionsTh.append(resetSlot);
     return actionsTh;
   }
 
@@ -996,14 +1144,27 @@ export function initTabularInput(
     if (emitEvent) emit(source);
   }
 
-  function resetToBlank({ emitEvent = true, source = "reset" } = {}) {
+  function resetToBlank({
+    emitEvent = true,
+    source = "reset",
+    columnCount = SIZE_PICKER_DEFAULT.cols,
+    rowCount = SIZE_PICKER_DEFAULT.rows,
+  } = {}) {
     if (isDisabled) return;
-    columns = [
-      { id: nextId("col"), label: "Column 1", type: "text" },
-      { id: nextId("col"), label: "Column 2", type: "text" },
-      { id: nextId("col"), label: "Column 3", type: "text" },
-    ];
-    rows = [0, 1].map(() => ({
+    const cols = Math.max(
+      1,
+      Math.floor(Number(columnCount)) || SIZE_PICKER_DEFAULT.cols
+    );
+    const rowTotal = Math.max(
+      1,
+      Math.floor(Number(rowCount)) || SIZE_PICKER_DEFAULT.rows
+    );
+    columns = Array.from({ length: cols }, (_, index) => ({
+      id: nextId("col"),
+      label: `Column ${index + 1}`,
+      type: "text",
+    }));
+    rows = Array.from({ length: rowTotal }, () => ({
       id: nextId("row"),
       cells: Object.fromEntries(
         columns.map((col) => [col.id, defaultValueForType(col.type)])
@@ -1012,7 +1173,7 @@ export function initTabularInput(
     render();
     if (emitEvent) {
       emit(source);
-      announce("Table reset");
+      announce(`Table reset to ${cols} by ${rowTotal}`);
     }
   }
 
@@ -1024,14 +1185,11 @@ export function initTabularInput(
     addColumn();
   }
 
-  function onResetClick() {
+  function onResetClick(event) {
+    event.stopPropagation();
     if (isDisabled) return;
-    resetDialog?.openDialog();
-  }
-
-  function onResetConfirmClick() {
-    resetToBlank();
-    resetDialog?.closeDialog();
+    if (sizePopoverOpen) closeSizePopover();
+    else openSizePopover();
   }
 
   /**
@@ -1150,7 +1308,7 @@ export function initTabularInput(
   }
 
   function handleTabNavigation(event) {
-    if (resetDialog?.isDialogOpen()) return;
+    if (sizePopoverOpen) return;
     const active = document.activeElement;
     if (!(active instanceof HTMLElement) || !rootEl.contains(active)) return;
 
@@ -1215,7 +1373,7 @@ export function initTabularInput(
   }
 
   function handleArrowNavigation(event) {
-    if (resetDialog?.isDialogOpen()) return;
+    if (sizePopoverOpen) return;
     const active = document.activeElement;
     if (!(active instanceof HTMLElement) || !rootEl.contains(active)) return;
 
@@ -1302,7 +1460,6 @@ export function initTabularInput(
   addRowBtn.addEventListener("click", onAddRowClick);
   addColBtn.addEventListener("click", onAddColClick);
   resetBtn.addEventListener("click", onResetClick);
-  resetConfirmBtn.addEventListener("click", onResetConfirmClick);
   rootEl.addEventListener("paste", onPaste);
   rootEl.addEventListener("keydown", onRootKeydown);
 
@@ -1354,7 +1511,12 @@ export function initTabularInput(
       });
     },
     reset(options) {
-      resetToBlank({ ...options, source: options?.source ?? "api" });
+      resetToBlank({
+        columnCount: options?.columnCount,
+        rowCount: options?.rowCount,
+        emitEvent: options?.emitEvent,
+        source: options?.source ?? "api",
+      });
     },
     setDisabled(next) {
       isDisabled = Boolean(next);
@@ -1366,11 +1528,13 @@ export function initTabularInput(
       addRowBtn.removeEventListener("click", onAddRowClick);
       addColBtn.removeEventListener("click", onAddColClick);
       resetBtn.removeEventListener("click", onResetClick);
-      resetConfirmBtn.removeEventListener("click", onResetConfirmClick);
       rootEl.removeEventListener("paste", onPaste);
       rootEl.removeEventListener("keydown", onRootKeydown);
-      resetDialog?.destroy();
-      resetDialogEl.remove();
+      window.removeEventListener("scroll", onSizePopoverViewportChange, true);
+      window.removeEventListener("resize", onSizePopoverViewportChange);
+      removeSizePopoverOutside();
+      removeSizePopoverEscape();
+      closeSizePopover();
       rootEl.replaceChildren();
       rootEl.classList.remove("tabular-input", "tabular-input--disabled");
     },
