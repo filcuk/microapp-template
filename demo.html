@@ -26,6 +26,56 @@
   </header>
 
   <main id="main">
+    <section class="demo-tier" id="demo-tier-theme" aria-labelledby="demo-tier-theme-title">
+      <header class="demo-tier-header">
+        <h2 id="demo-tier-theme-title" class="demo-tier-title" data-page-nav-tier>Theme</h2>
+        <p class="demo-tier-lead">
+          Site chrome and appearance options.
+        </p>
+      </header>
+
+      <div class="demo-tier-body">
+        <section class="demo-section" aria-labelledby="demo-sticky-chrome">
+          <h2 id="demo-sticky-chrome" class="section-heading">Sticky chrome</h2>
+          <p class="demo-hint">
+            Optional stickiness for the site header and section titles
+            (<code>.section-heading</code> and <code>.demo-tier-title</code> via the tier header band).
+            A stuck tier header is pushed out when a subheading reaches it; subheadings
+            push each other the same way. Scroll with either toggle on to try it.
+          </p>
+          <div class="demo-card">
+            <div class="toggle-group" id="demo-sticky-chrome-toggles">
+              <div class="toggle" id="demo-sticky-header" data-toggle-default="false">
+                <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+                  <span class="toggle-track" aria-hidden="true">
+                    <span class="toggle-thumb">
+                      <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+                    </span>
+                  </span>
+                  <span class="toggle-label">Sticky site header</span>
+                </button>
+                <input type="hidden" class="toggle-value" value="false" />
+              </div>
+              <div class="toggle" id="demo-sticky-section-headings" data-toggle-default="false">
+                <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+                  <span class="toggle-track" aria-hidden="true">
+                    <span class="toggle-thumb">
+                      <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
+                    </span>
+                  </span>
+                  <span class="toggle-label">Sticky section headings</span>
+                </button>
+                <input type="hidden" class="toggle-value" value="false" />
+              </div>
+            </div>
+            <p id="demo-sticky-chrome-result" class="demo-hint" aria-live="polite">
+              Header: off · Section headings: off
+            </p>
+          </div>
+        </section>
+      </div>
+    </section>
+
     <section class="demo-tier" id="demo-tier-basic" aria-labelledby="demo-tier-basic-title">
       <header class="demo-tier-header">
         <h2 id="demo-tier-basic-title" class="demo-tier-title" data-page-nav-tier>Basic</h2>
@@ -1219,7 +1269,7 @@
       <header class="demo-tier-header">
         <h2 id="demo-tier-specialised-title" class="demo-tier-title" data-page-nav-tier>Specialised</h2>
         <p class="demo-tier-lead">
-          Documentation-heavy patterns and site-wide chrome.
+          Documentation-heavy patterns.
         </p>
       </header>
 
@@ -1517,56 +1567,6 @@ print(total)
             <button type="button" class="btn" id="demo-rich-text-get-html">Get HTML</button>
           </div>
           <p id="demo-rich-text-result" class="demo-hint" aria-live="polite">Use the buttons to read the current content.</p>
-        </section>
-
-        <section class="demo-section" aria-labelledby="demo-sticky-chrome">
-          <h2 id="demo-sticky-chrome" class="section-heading">Sticky chrome</h2>
-          <p class="demo-hint">
-            Optional stickiness for the site header and section titles
-            (<code>.section-heading</code> and <code>.demo-tier-title</code> via the tier header band).
-            A stuck tier header is pushed out when a subheading reaches it; subheadings
-            push each other the same way. Scroll with either toggle on to try it.
-          </p>
-          <div class="demo-card">
-            <div class="toggle-group" id="demo-sticky-chrome-toggles">
-              <div class="toggle" id="demo-sticky-header" data-toggle-default="false">
-                <button type="button" class="toggle-btn" role="switch" aria-checked="false">
-                  <span class="toggle-track" aria-hidden="true">
-                    <span class="toggle-thumb">
-                      <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
-                    </span>
-                  </span>
-                  <span class="toggle-label">Sticky site header</span>
-                </button>
-                <input type="hidden" class="toggle-value" value="false" />
-              </div>
-              <div class="toggle" id="demo-sticky-section-headings" data-toggle-default="false">
-                <button type="button" class="toggle-btn" role="switch" aria-checked="false">
-                  <span class="toggle-track" aria-hidden="true">
-                    <span class="toggle-thumb">
-                      <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
-                    </span>
-                  </span>
-                  <span class="toggle-label">Sticky section headings</span>
-                </button>
-                <input type="hidden" class="toggle-value" value="false" />
-              </div>
-            </div>
-            <p id="demo-sticky-chrome-result" class="demo-hint" aria-live="polite">
-              Header: off · Section headings: off
-            </p>
-          </div>
-        </section>
-
-        <section class="demo-section" aria-labelledby="demo-theme">
-          <h2 id="demo-theme" class="section-heading">Theme</h2>
-          <p class="demo-hint">
-            Use the light / dark / system toggle in the footer. Preference is saved in
-            <code>localStorage</code> and applied before first paint to avoid flash.
-          </p>
-          <p class="demo-hint">
-            Jump buttons (bottom right) are always visible; hover the right edge of the screen to open the section menu.
-          </p>
         </section>
       </div>
     </section>
