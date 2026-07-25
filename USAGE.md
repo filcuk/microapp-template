@@ -1492,7 +1492,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 **Chrome**
 
 - Rename columns inline (Enter to commit, Escape to cancel).
-- Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**. Only one column menu open at a time.
+- Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**, **Add before**, and **Add after**. Only one column menu open at a time. Menus use fixed positioning so they are not clipped by the table scroll container.
 - Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
 - Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
 - Header **reset** opens a confirm dialog (`.btn-danger`); confirming restores a blank **3 text columns × 2 rows** table. Programmatic `reset()` skips the dialog.
@@ -1532,6 +1532,7 @@ const grid = initTabularInput(document.getElementById("inventory-grid"), {
 grid?.getData();
 grid?.addRow();
 grid?.addColumn({ label: "Notes", type: "text" });
+grid?.addColumn({ label: "Before qty" }, { index: 1 }); // insert at index
 grid?.removeRow("r1");
 grid?.moveRow("r1", { delta: -1 });
 grid?.removeColumn("qty");

@@ -631,25 +631,33 @@ export function initTabularInput(
     columnGroupLi.append(columnGroup);
     typeMenu.append(columnGroupLi);
 
-    const removeLi = document.createElement("li");
-    removeLi.setAttribute("role", "none");
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className =
-      "dropdown-menu-item tabular-input-type-item tabular-input-remove-column";
-    removeBtn.setAttribute("role", "menuitem");
-    removeBtn.dataset.value = "remove-column";
-    removeBtn.dataset.tabularInputRemoveColumn = "";
-    removeBtn.setAttribute("aria-label", `Delete column ${column.label}`);
-    removeBtn.append(
-      createIcon("remove", { className: "tabular-input-type-item-icon" })
-    );
-    const removeLabel = document.createElement("span");
-    removeLabel.className = "tabular-input-type-item-label";
-    removeLabel.textContent = "Remove";
-    removeBtn.append(removeLabel);
-    removeLi.append(removeBtn);
-    typeMenu.append(removeLi);
+    for (const [value, text, iconId] of [
+      ["remove-column", "Remove", "remove"],
+      ["add-column-before", "Add before", "plus"],
+      ["add-column-after", "Add after", "plus"],
+    ]) {
+      const li = document.createElement("li");
+      li.setAttribute("role", "none");
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "dropdown-menu-item tabular-input-type-item";
+      item.setAttribute("role", "menuitem");
+      item.dataset.value = value;
+      if (value === "remove-column") {
+        item.classList.add("tabular-input-remove-column");
+        item.dataset.tabularInputRemoveColumn = "";
+        item.setAttribute("aria-label", `Delete column ${column.label}`);
+      }
+      item.append(
+        createIcon(iconId, { className: "tabular-input-type-item-icon" })
+      );
+      const label = document.createElement("span");
+      label.className = "tabular-input-type-item-label";
+      label.textContent = text;
+      item.append(label);
+      li.append(item);
+      typeMenu.append(li);
+    }
 
     const typeSlot = document.createElement("div");
     typeSlot.className = "tabular-input-type-slot dropdown";
@@ -660,10 +668,24 @@ export function initTabularInput(
       menuEl: typeMenu,
       toggleEl: typeTrigger,
       itemSelector: ".dropdown-menu-item",
+      fixed: true,
+      fixedAlign: "end",
       onSelect: ({ value }) => {
         if (isDisabled) return;
         if (value === "remove-column") {
           removeColumn(column.id, { source: "remove-column" });
+          return;
+        }
+        if (value === "add-column-before" || value === "add-column-after") {
+          const at = columns.findIndex((col) => col.id === column.id);
+          if (at < 0) return;
+          addColumn(
+            {},
+            {
+              index: value === "add-column-before" ? at : at + 1,
+              source: "add-column",
+            }
+          );
           return;
         }
         const nextType = parseColumnType(value);
@@ -895,7 +917,7 @@ export function initTabularInput(
 
   function addColumn(
     { label, type } = {},
-    { emitEvent = true, source = "add-column" } = {}
+    { emitEvent = true, source = "add-column", index } = {}
   ) {
     if (isDisabled) return null;
     const column = {
@@ -906,7 +928,11 @@ export function initTabularInput(
           : `Column ${columns.length + 1}`,
       type: parseColumnType(type),
     };
-    columns.push(column);
+    const insertAt =
+      typeof index === "number" && Number.isInteger(index)
+        ? Math.max(0, Math.min(index, columns.length))
+        : columns.length;
+    columns.splice(insertAt, 0, column);
     for (const row of rows) {
       row.cells[column.id] = defaultValueForType(column.type);
     }
