@@ -289,7 +289,13 @@
 /* Half on each side so adjacent cells match the outer edge inset */
 .tabular-input .table th,
 .tabular-input .table td {
-  padding: 0.4rem calc(var(--tabular-input-cell-gap) / 2);
+  padding: calc(var(--tabular-input-cell-gap) / 2);
+  border-bottom: none;
+}
+
+/* Full gap below the header band (band keeps its own bottom padding above that). */
+.tabular-input .table tbody tr:first-child > * {
+  padding-top: var(--tabular-input-cell-gap);
 }
 
 .tabular-input .table tr > :first-child {
