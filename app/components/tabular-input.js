@@ -897,7 +897,7 @@ export function initTabularInput(
     upBtn.type = "button";
     upBtn.className = "tabular-input-row-move-btn";
     upBtn.tabIndex = -1;
-    upBtn.dataset.tabularInputChrome = "";
+    upBtn.dataset.tabularInputChrome = "move-row";
     upBtn.setAttribute("aria-label", `Move row ${rowIndex + 1} up`);
     upBtn.disabled = isDisabled || rowIndex === 0;
     upBtn.append(
@@ -911,7 +911,7 @@ export function initTabularInput(
     downBtn.type = "button";
     downBtn.className = "tabular-input-row-move-btn";
     downBtn.tabIndex = -1;
-    downBtn.dataset.tabularInputChrome = "";
+    downBtn.dataset.tabularInputChrome = "move-row";
     downBtn.setAttribute("aria-label", `Move row ${rowIndex + 1} down`);
     downBtn.disabled = isDisabled || rowIndex >= rows.length - 1;
     downBtn.append(
@@ -934,7 +934,7 @@ export function initTabularInput(
     removeBtn.type = "button";
     removeBtn.className = "btn btn-icon tabular-input-remove-row";
     removeBtn.tabIndex = -1;
-    removeBtn.dataset.tabularInputChrome = "";
+    removeBtn.dataset.tabularInputChrome = "remove-row";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete row ${rowIndex + 1}`);
     removeBtn.dataset.tooltip = "Remove row";
@@ -1293,12 +1293,18 @@ export function initTabularInput(
   }
 
   function getChromeFocusables() {
-    return [...rootEl.querySelectorAll("[data-tabular-input-chrome]")].filter(
-      (el) =>
-        el instanceof HTMLElement &&
-        !el.disabled &&
-        isVisibleFocusable(el)
-    );
+    const filterChrome = (selector) =>
+      [...rootEl.querySelectorAll(selector)].filter(
+        (el) =>
+          el instanceof HTMLElement &&
+          !el.disabled &&
+          isVisibleFocusable(el)
+      );
+    // After data: all remove-row controls, then all move-row controls.
+    return [
+      ...filterChrome('[data-tabular-input-chrome="remove-row"]'),
+      ...filterChrome('[data-tabular-input-chrome="move-row"]'),
+    ];
   }
 
   function getDocumentTabbables() {

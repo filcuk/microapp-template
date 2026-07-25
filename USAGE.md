@@ -1507,7 +1507,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 
 **Keyboard**
 
-- **Tab / Shift+Tab** move through fields and header controls first; row move and row remove buttons are skipped mid-row and visited at the **end** of the table’s tab sequence.
+- **Tab / Shift+Tab** move through fields and header controls first, then **remove row** buttons, then **move row** (up/down) controls.
 - **Arrow keys** move between body cells (left/right are caret-edge-aware in text/number fields; up/down always change row).
 
 ```html
