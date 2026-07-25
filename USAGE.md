@@ -1492,11 +1492,11 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 **Chrome**
 
 - Rename columns inline (Enter to commit, Escape to cancel).
-- Change type from the chevron menu on the right of the column name (type icons + labels; values are coerced). Only one type menu open at a time.
-- Icon-only **add row** / **add column** (`plus`); column remove beside the label (`remove`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
+- Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**. Only one column menu open at a time.
+- Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
 - Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
 - Header **reset** opens a confirm dialog (`.btn-danger`); confirming restores a blank **3 text columns × 2 rows** table. Programmatic `reset()` skips the dialog.
-- Icon chrome uses `data-tooltip` (add/remove row & column, reset, column type trigger). Requires `initTooltips()` via `initShell()`.
+- Icon chrome uses `data-tooltip` (add/remove row, add column, reset, column menu trigger). Requires `initTooltips()` via `initShell()`.
 
 **Paste**
 

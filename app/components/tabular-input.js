@@ -15,9 +15,9 @@
  *     onChange?,
  *   })
  *
- * Layout: row delete on the left; column delete inline to the right of the
- * column label; Add column in the header after the last column; Add row in a
- * footer row under the data.
+ * Layout: row delete on the right (trailing column); column menu (type +
+ * remove) on the column label; Add column in the header after the last
+ * column; Add row in a footer row under the data.
  *
  * Paste: Excel/TSV clipboard paste expands from the focused body cell
  * (fallback top-left), overwrites that rectangle, auto-detects column types.
@@ -557,24 +557,24 @@ export function initTabularInput(
             el.setAttribute("aria-label", `${column.label}, row ${index + 1}`);
           }
         });
+      const typeTrigger = th.querySelector(".tabular-input-type-trigger");
+      if (typeTrigger) {
+        typeTrigger.setAttribute("aria-label", `Options for ${column.label}`);
+        typeTrigger.dataset.tooltip = `${typeLabel(column.type)} type`;
+      }
       const removeBtn = th.querySelector("[data-tabular-input-remove-column]");
       if (removeBtn) {
         removeBtn.setAttribute("aria-label", `Delete column ${column.label}`);
       }
-      const typeTrigger = th.querySelector(".tabular-input-type-trigger");
-      if (typeTrigger) {
-        typeTrigger.setAttribute("aria-label", `Type for ${column.label}`);
-        typeTrigger.dataset.tooltip = `${typeLabel(column.type)} type`;
-      }
     });
 
-    const menuId = `tabular-input-type-${column.id}`;
+    const menuId = `tabular-input-col-menu-${column.id}`;
 
     const typeTrigger = document.createElement("button");
     typeTrigger.type = "button";
     typeTrigger.className = "tabular-input-type-trigger dropdown-trigger";
     typeTrigger.disabled = isDisabled;
-    typeTrigger.setAttribute("aria-label", `Type for ${column.label}`);
+    typeTrigger.setAttribute("aria-label", `Options for ${column.label}`);
     typeTrigger.dataset.tooltip = `${typeLabel(column.type)} type`;
     typeTrigger.setAttribute("aria-haspopup", "menu");
     typeTrigger.setAttribute("aria-expanded", "false");
@@ -592,6 +592,14 @@ export function initTabularInput(
     typeMenu.className = "dropdown-menu tabular-input-type-menu hidden";
     typeMenu.setAttribute("role", "menu");
     setHidden(typeMenu, true);
+
+    const typeGroupLi = document.createElement("li");
+    typeGroupLi.setAttribute("role", "presentation");
+    const typeGroup = document.createElement("div");
+    typeGroup.className = "dropdown-menu-group";
+    typeGroup.textContent = "Type";
+    typeGroupLi.append(typeGroup);
+    typeMenu.append(typeGroupLi);
 
     for (const [value, text] of TYPE_OPTIONS) {
       const li = document.createElement("li");
@@ -615,6 +623,34 @@ export function initTabularInput(
       typeMenu.append(li);
     }
 
+    const columnGroupLi = document.createElement("li");
+    columnGroupLi.setAttribute("role", "presentation");
+    const columnGroup = document.createElement("div");
+    columnGroup.className = "dropdown-menu-group";
+    columnGroup.textContent = "Column";
+    columnGroupLi.append(columnGroup);
+    typeMenu.append(columnGroupLi);
+
+    const removeLi = document.createElement("li");
+    removeLi.setAttribute("role", "none");
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className =
+      "dropdown-menu-item tabular-input-type-item tabular-input-remove-column";
+    removeBtn.setAttribute("role", "menuitem");
+    removeBtn.dataset.value = "remove-column";
+    removeBtn.dataset.tabularInputRemoveColumn = "";
+    removeBtn.setAttribute("aria-label", `Delete column ${column.label}`);
+    removeBtn.append(
+      createIcon("remove", { className: "tabular-input-type-item-icon" })
+    );
+    const removeLabel = document.createElement("span");
+    removeLabel.className = "tabular-input-type-item-label";
+    removeLabel.textContent = "Remove";
+    removeBtn.append(removeLabel);
+    removeLi.append(removeBtn);
+    typeMenu.append(removeLi);
+
     const typeSlot = document.createElement("div");
     typeSlot.className = "tabular-input-type-slot dropdown";
     typeSlot.append(typeTrigger, typeMenu);
@@ -626,6 +662,10 @@ export function initTabularInput(
       itemSelector: ".dropdown-menu-item",
       onSelect: ({ value }) => {
         if (isDisabled) return;
+        if (value === "remove-column") {
+          removeColumn(column.id, { source: "remove-column" });
+          return;
+        }
         const nextType = parseColumnType(value);
         if (nextType === column.type) return;
         column.type = nextType;
@@ -639,7 +679,7 @@ export function initTabularInput(
     });
     if (typeMenuApi) {
       typeMenus.push(typeMenuApi);
-      // Close sibling type menus before this one toggles (only one open at a time).
+      // Close sibling column menus before this one toggles (only one open at a time).
       typeTrigger.addEventListener(
         "click",
         () => {
@@ -654,24 +694,7 @@ export function initTabularInput(
     const field = document.createElement("div");
     field.className = "tabular-input-col-field";
     field.append(labelInput, typeSlot);
-
-    const labelRow = document.createElement("div");
-    labelRow.className = "tabular-input-col-label-row";
-
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "btn btn-icon tabular-input-remove-column";
-    removeBtn.dataset.tabularInputRemoveColumn = "";
-    removeBtn.disabled = isDisabled;
-    removeBtn.setAttribute("aria-label", `Delete column ${column.label}`);
-    removeBtn.dataset.tooltip = "Remove column";
-    removeBtn.append(createIcon("remove", { className: "btn-icon-svg" }));
-    removeBtn.addEventListener("click", () => {
-      removeColumn(column.id, { source: "remove-column" });
-    });
-
-    labelRow.append(field, removeBtn);
-    th.append(labelRow);
+    th.append(field);
     return th;
   }
 
