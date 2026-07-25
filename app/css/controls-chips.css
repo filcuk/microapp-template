@@ -108,7 +108,7 @@ button.chip:disabled {
   padding: 0.35rem 0.5rem;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: var(--input-bg);
+  background: var(--code-bg);
   cursor: text;
 }
 
@@ -129,8 +129,8 @@ button.chip:disabled {
   width: auto;
   padding: 0 0.25rem;
   border: none;
-  border-radius: 0;
-  background: transparent;
+  border-radius: 4px;
+  background: var(--input-bg);
   outline: none;
 }
 
