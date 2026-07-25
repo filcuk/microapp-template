@@ -300,6 +300,12 @@ main {
   font-weight: 600;
 }
 
+.demo-colour-swatch {
+  height: 3rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
 .demo-banner-controls {
   display: flex;
   flex-direction: column;
