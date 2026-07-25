@@ -24,7 +24,7 @@
  * Reset (header): blank 3 text columns × 2 rows.
  */
 
-import { parseBooleanAttr, setHidden } from "../utils/dom.js";
+import { parseBooleanAttr, setHidden, getFocusableElements, FOCUSABLE_SELECTOR } from "../utils/dom.js";
 import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
 import { initDialog } from "./dialog.js";
@@ -690,6 +690,8 @@ export function initTabularInput(
     const upBtn = document.createElement("button");
     upBtn.type = "button";
     upBtn.className = "tabular-input-row-move-btn";
+    upBtn.tabIndex = -1;
+    upBtn.dataset.tabularInputChrome = "";
     upBtn.setAttribute("aria-label", `Move row ${rowIndex + 1} up`);
     upBtn.disabled = isDisabled || rowIndex === 0;
     upBtn.append(
@@ -702,6 +704,8 @@ export function initTabularInput(
     const downBtn = document.createElement("button");
     downBtn.type = "button";
     downBtn.className = "tabular-input-row-move-btn";
+    downBtn.tabIndex = -1;
+    downBtn.dataset.tabularInputChrome = "";
     downBtn.setAttribute("aria-label", `Move row ${rowIndex + 1} down`);
     downBtn.disabled = isDisabled || rowIndex >= rows.length - 1;
     downBtn.append(
@@ -723,6 +727,8 @@ export function initTabularInput(
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.className = "btn btn-icon tabular-input-remove-row";
+    removeBtn.tabIndex = -1;
+    removeBtn.dataset.tabularInputChrome = "";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete row ${rowIndex + 1}`);
     removeBtn.append(createIcon("remove", { className: "btn-icon-svg" }));
@@ -1055,11 +1061,187 @@ export function initTabularInput(
     announce("Pasted table data");
   }
 
+  function isVisibleFocusable(el) {
+    return el instanceof HTMLElement && el.offsetParent !== null && !el.closest(".hidden");
+  }
+
+  function getPrimaryFocusables() {
+    return getFocusableElements(rootEl).filter(
+      (el) => !el.closest("[data-tabular-input-chrome]")
+    );
+  }
+
+  function getChromeFocusables() {
+    return [...rootEl.querySelectorAll("[data-tabular-input-chrome]")].filter(
+      (el) =>
+        el instanceof HTMLElement &&
+        !el.disabled &&
+        isVisibleFocusable(el)
+    );
+  }
+
+  function getDocumentTabbables() {
+    return [...document.querySelectorAll(FOCUSABLE_SELECTOR)].filter((el) =>
+      isVisibleFocusable(el)
+    );
+  }
+
+  function handleTabNavigation(event) {
+    if (resetDialog?.isDialogOpen()) return;
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || !rootEl.contains(active)) return;
+
+    const primary = getPrimaryFocusables();
+    const chrome = getChromeFocusables();
+    const inChrome = Boolean(active.closest("[data-tabular-input-chrome]"));
+
+    if (!event.shiftKey) {
+      if (
+        !inChrome &&
+        primary.length &&
+        active === primary[primary.length - 1] &&
+        chrome.length
+      ) {
+        event.preventDefault();
+        chrome[0].focus();
+        return;
+      }
+      if (inChrome) {
+        const idx = chrome.indexOf(active);
+        if (idx >= 0 && idx < chrome.length - 1) {
+          event.preventDefault();
+          chrome[idx + 1].focus();
+          return;
+        }
+        if (idx === chrome.length - 1) {
+          event.preventDefault();
+          const doc = getDocumentTabbables();
+          const lastPrimary = primary[primary.length - 1];
+          const start = lastPrimary ? doc.indexOf(lastPrimary) : -1;
+          const next = doc.find(
+            (el, i) => i > start && !rootEl.contains(el)
+          );
+          next?.focus();
+        }
+      }
+      return;
+    }
+
+    if (inChrome) {
+      const idx = chrome.indexOf(active);
+      if (idx > 0) {
+        event.preventDefault();
+        chrome[idx - 1].focus();
+        return;
+      }
+      if (idx === 0 && primary.length) {
+        event.preventDefault();
+        primary[primary.length - 1].focus();
+      }
+    }
+  }
+
+  function getCellGrid() {
+    return rows.map((row) =>
+      columns.map((col) =>
+        rootEl.querySelector(
+          `[data-tabular-input-cell][data-row-id="${CSS.escape(row.id)}"][data-column-id="${CSS.escape(col.id)}"]`
+        )
+      )
+    );
+  }
+
+  function handleArrowNavigation(event) {
+    if (resetDialog?.isDialogOpen()) return;
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || !rootEl.contains(active)) return;
+
+    const cell = active.matches("[data-tabular-input-cell]")
+      ? active
+      : active.closest("[data-tabular-input-cell]");
+    if (!(cell instanceof HTMLElement)) return;
+
+    if (
+      active instanceof HTMLInputElement &&
+      (active.type === "text" || active.type === "number")
+    ) {
+      const start = active.selectionStart ?? 0;
+      const end = active.selectionEnd ?? 0;
+      const len = active.value.length;
+      if (event.key === "ArrowLeft" && (start !== 0 || end !== 0)) return;
+      if (event.key === "ArrowRight" && (start !== len || end !== len)) return;
+    }
+
+    const grid = getCellGrid();
+    let rowIndex = -1;
+    let colIndex = -1;
+    for (let r = 0; r < grid.length; r += 1) {
+      for (let c = 0; c < grid[r].length; c += 1) {
+        if (grid[r][c] === cell) {
+          rowIndex = r;
+          colIndex = c;
+        }
+      }
+    }
+    if (rowIndex < 0) return;
+
+    let nextRow = rowIndex;
+    let nextCol = colIndex;
+    if (event.key === "ArrowLeft") nextCol -= 1;
+    else if (event.key === "ArrowRight") nextCol += 1;
+    else if (event.key === "ArrowUp") nextRow -= 1;
+    else if (event.key === "ArrowDown") nextRow += 1;
+    else return;
+
+    if (
+      nextRow < 0 ||
+      nextCol < 0 ||
+      nextRow >= grid.length ||
+      nextCol >= (grid[0]?.length ?? 0)
+    ) {
+      return;
+    }
+
+    const next = grid[nextRow][nextCol];
+    if (!(next instanceof HTMLElement)) return;
+    event.preventDefault();
+    next.focus();
+    if (
+      next instanceof HTMLInputElement &&
+      next.type !== "checkbox" &&
+      typeof next.setSelectionRange === "function"
+    ) {
+      const len = next.value.length;
+      try {
+        next.setSelectionRange(len, len);
+      } catch {
+        /* number inputs may not support setSelectionRange in all browsers */
+      }
+    }
+  }
+
+  function onRootKeydown(event) {
+    if (isDisabled) return;
+    if (event.key === "Tab") {
+      handleTabNavigation(event);
+      return;
+    }
+    if (
+      event.key === "ArrowLeft" ||
+      event.key === "ArrowRight" ||
+      event.key === "ArrowUp" ||
+      event.key === "ArrowDown"
+    ) {
+      handleArrowNavigation(event);
+    }
+  }
+
   addRowBtn.addEventListener("click", onAddRowClick);
   addColBtn.addEventListener("click", onAddColClick);
   resetBtn.addEventListener("click", onResetClick);
   resetConfirmBtn.addEventListener("click", onResetConfirmClick);
   rootEl.addEventListener("paste", onPaste);
+  rootEl.addEventListener("keydown", onRootKeydown);
 
   render();
 
@@ -1123,6 +1305,7 @@ export function initTabularInput(
       resetBtn.removeEventListener("click", onResetClick);
       resetConfirmBtn.removeEventListener("click", onResetConfirmClick);
       rootEl.removeEventListener("paste", onPaste);
+      rootEl.removeEventListener("keydown", onRootKeydown);
       resetDialog?.destroy();
       resetDialogEl.remove();
       rootEl.replaceChildren();

@@ -1504,7 +1504,10 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 - Re-detects each column’s type from its full values (number → logical → text), then coerces cells.
 - Plain single-cell paste without tabs/newlines still goes into the focused field as usual.
 
-There is no drag-and-drop reorder in this version.
+**Keyboard**
+
+- **Tab / Shift+Tab** move through fields and header controls first; row move and row remove buttons are skipped mid-row and visited at the **end** of the table’s tab sequence.
+- **Arrow keys** move between body cells (left/right are caret-edge-aware in text/number fields; up/down always change row).
 
 ```html
 <div class="tabular-input" id="inventory-grid" aria-label="Inventory"></div>
