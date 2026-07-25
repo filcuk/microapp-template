@@ -665,22 +665,60 @@ export function initTabularInput(
   function createRowActionsHeader() {
     const actionsTh = document.createElement("th");
     actionsTh.scope = "col";
-    actionsTh.className = "tabular-input-row-actions-col";
+    actionsTh.className = "tabular-input-row-move-col";
     actionsTh.append(resetBtn);
     return actionsTh;
   }
 
-  function createAddColumnHeader() {
+  function createTrailingHeader() {
     const th = document.createElement("th");
     th.scope = "col";
-    th.className = "tabular-input-add-column-col";
+    th.className = "tabular-input-trailing-col";
     th.append(addColBtn);
     return th;
   }
 
-  function createRowActionsCell(row, rowIndex) {
-    const actionsTd = document.createElement("td");
-    actionsTd.className = "tabular-input-row-actions-col";
+  function createRowMoveCell(row, rowIndex) {
+    const td = document.createElement("td");
+    td.className = "tabular-input-row-move-col";
+
+    const split = document.createElement("div");
+    split.className = "tabular-input-row-move";
+    split.setAttribute("role", "group");
+    split.setAttribute("aria-label", `Move row ${rowIndex + 1}`);
+
+    const upBtn = document.createElement("button");
+    upBtn.type = "button";
+    upBtn.className = "tabular-input-row-move-btn";
+    upBtn.setAttribute("aria-label", `Move row ${rowIndex + 1} up`);
+    upBtn.disabled = isDisabled || rowIndex === 0;
+    upBtn.append(
+      createIcon("chevron-up", { className: "tabular-input-row-move-icon" })
+    );
+    upBtn.addEventListener("click", () => {
+      moveRow(row.id, { delta: -1, source: "move-row" });
+    });
+
+    const downBtn = document.createElement("button");
+    downBtn.type = "button";
+    downBtn.className = "tabular-input-row-move-btn";
+    downBtn.setAttribute("aria-label", `Move row ${rowIndex + 1} down`);
+    downBtn.disabled = isDisabled || rowIndex >= rows.length - 1;
+    downBtn.append(
+      createIcon("chevron-down", { className: "tabular-input-row-move-icon" })
+    );
+    downBtn.addEventListener("click", () => {
+      moveRow(row.id, { delta: 1, source: "move-row" });
+    });
+
+    split.append(upBtn, downBtn);
+    td.append(split);
+    return td;
+  }
+
+  function createTrailingRemoveCell(row, rowIndex) {
+    const td = document.createElement("td");
+    td.className = "tabular-input-trailing-col";
 
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
@@ -692,13 +730,13 @@ export function initTabularInput(
       removeRow(row.id, { source: "remove-row" });
     });
 
-    actionsTd.append(removeBtn);
-    return actionsTd;
+    td.append(removeBtn);
+    return td;
   }
 
-  function createAddColumnSpacerCell() {
+  function createTrailingSpacerCell() {
     const td = document.createElement("td");
-    td.className = "tabular-input-add-column-col";
+    td.className = "tabular-input-trailing-col";
     return td;
   }
 
@@ -707,19 +745,14 @@ export function initTabularInput(
     tr.className = "tabular-input-add-row-tr";
 
     const lead = document.createElement("td");
-    lead.className = "tabular-input-row-actions-col";
+    lead.className = "tabular-input-row-move-col";
 
     const cell = document.createElement("td");
     cell.className = "tabular-input-add-row-cell";
     cell.colSpan = Math.max(columns.length, 1);
     cell.append(addRowBtn);
 
-    tr.append(lead, cell);
-
-    if (columns.length > 0) {
-      tr.append(createAddColumnSpacerCell());
-    }
-
+    tr.append(lead, cell, createTrailingSpacerCell());
     return tr;
   }
 
@@ -735,13 +768,13 @@ export function initTabularInput(
     for (const column of columns) {
       headerRow.append(createHeaderCell(column));
     }
-    headerRow.append(createAddColumnHeader());
+    headerRow.append(createTrailingHeader());
     theadEl.append(headerRow);
 
     rows.forEach((row, rowIndex) => {
       const tr = document.createElement("tr");
       tr.dataset.rowId = row.id;
-      tr.append(createRowActionsCell(row, rowIndex));
+      tr.append(createRowMoveCell(row, rowIndex));
 
       for (const column of columns) {
         const td = document.createElement("td");
@@ -753,7 +786,7 @@ export function initTabularInput(
         tr.append(td);
       }
 
-      tr.append(createAddColumnSpacerCell());
+      tr.append(createTrailingRemoveCell(row, rowIndex));
       tbodyEl.append(tr);
     });
 
@@ -786,6 +819,34 @@ export function initTabularInput(
     if (emitEvent) {
       emit(source);
       announce("Row deleted");
+    }
+  }
+
+  function moveRow(
+    rowId,
+    { delta = 0, toIndex, emitEvent = true, source = "move-row" } = {}
+  ) {
+    if (isDisabled) return;
+    const fromIndex = rows.findIndex((row) => row.id === rowId);
+    if (fromIndex < 0) return;
+    const targetIndex =
+      typeof toIndex === "number" ? toIndex : fromIndex + Number(delta);
+    if (
+      !Number.isInteger(targetIndex) ||
+      targetIndex < 0 ||
+      targetIndex >= rows.length ||
+      targetIndex === fromIndex
+    ) {
+      return;
+    }
+    const next = rows.slice();
+    const [row] = next.splice(fromIndex, 1);
+    next.splice(targetIndex, 0, row);
+    rows = next;
+    render();
+    if (emitEvent) {
+      emit(source);
+      announce(`Row moved to position ${targetIndex + 1}`);
     }
   }
 
@@ -1019,6 +1080,9 @@ export function initTabularInput(
     },
     removeRow(rowId, options) {
       removeRow(rowId, { ...options, source: options?.source ?? "api" });
+    },
+    moveRow(rowId, options) {
+      moveRow(rowId, { ...options, source: options?.source ?? "api" });
     },
     addColumn(column, options) {
       return addColumn(column, {

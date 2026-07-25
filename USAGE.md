@@ -1493,8 +1493,9 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 
 - Rename columns inline (Enter to commit, Escape to cancel).
 - Change type from the chevron menu on the right of the column name (type icons + labels; values are coerced). Only one type menu open at a time.
-- Icon-only **add row** / **add column** (`plus`); row remove on the left and column remove beside the label (`remove`).
-- Header **reset** (`delete`) opens a confirm dialog (`.btn-danger`); confirming restores a blank **3 text columns × 2 rows** table. Programmatic `reset()` skips the dialog.
+- Icon-only **add row** / **add column** (`plus`); column remove beside the label (`remove`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
+- Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
+- Header **reset** opens a confirm dialog (`.btn-danger`); confirming restores a blank **3 text columns × 2 rows** table. Programmatic `reset()` skips the dialog.
 
 **Paste**
 
@@ -1528,6 +1529,7 @@ grid?.getData();
 grid?.addRow();
 grid?.addColumn({ label: "Notes", type: "text" });
 grid?.removeRow("r1");
+grid?.moveRow("r1", { delta: -1 });
 grid?.removeColumn("qty");
 grid?.renameColumn("name", "Item");
 grid?.setColumnType("active", "text");
@@ -1539,7 +1541,7 @@ grid?.destroy();
 initTabularInputs(document); // all `.tabular-input` roots
 ```
 
-`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, `"paste"`, `"reset"`, and `"api"`.
+`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"move-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, `"paste"`, `"reset"`, and `"api"`.
 
 Icons used: `plus`, `delete` (reset), `remove` (row/column), `type-text`, `type-number`, `type-logical`, `chevron-down` — defined in [`app/utils/icons.js`](app/utils/icons.js).
 
