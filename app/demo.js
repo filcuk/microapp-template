@@ -412,6 +412,9 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
   rows: [
     { id: "r1", cells: { name: "Widget", qty: 12, active: true } },
     { id: "r2", cells: { name: "Gadget", qty: 3, active: false } },
+    { id: "r3", cells: { name: "Doohickey", qty: 7, active: true } },
+    { id: "r4", cells: { name: "Thingamajig", qty: 1, active: false } },
+    { id: "r5", cells: { name: "Whatsit", qty: 24, active: true } },
   ],
   onChange: ({ columns, rows, source }) => {
     if (!demoTabularInputResult) return;
