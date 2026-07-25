@@ -567,7 +567,19 @@ export function initTabularInput(
         announce(`Column ${column.label} type set to ${nextType}`);
       },
     });
-    if (typeMenuApi) typeMenus.push(typeMenuApi);
+    if (typeMenuApi) {
+      typeMenus.push(typeMenuApi);
+      // Close sibling type menus before this one toggles (only one open at a time).
+      typeTrigger.addEventListener(
+        "click",
+        () => {
+          for (const menu of typeMenus) {
+            if (menu !== typeMenuApi) menu.closeMenu();
+          }
+        },
+        true
+      );
+    }
 
     const field = document.createElement("div");
     field.className = "tabular-input-col-field";
