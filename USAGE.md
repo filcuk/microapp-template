@@ -356,7 +356,7 @@ setStickySectionHeadings(true);
 syncStickyOffsets();
 ```
 
-When both are on, section headings sit below the site header via `--sticky-header-offset`. Inside a `.demo-tier`, they also clear the sticky tier band via `--sticky-local-tier-offset` (set per tier by `syncStickyOffsets()`).
+When both are on, section headings sit below the site header via `--sticky-header-offset`. Stuck chrome leaves a `--sticky-gap` inset above and below each band (background extends into those gaps so content does not show through). Tier headers stick until a `.section-heading` reaches them and pushes them out the top; subheadings push each other the same way as you move between sections.
 
 ### Dialog
 

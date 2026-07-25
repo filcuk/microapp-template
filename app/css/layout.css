@@ -75,24 +75,78 @@ img.brand-icon--dark {
 
 :root[data-sticky-header] body > header {
   position: sticky;
-  top: 0;
+  top: var(--sticky-gap);
   z-index: 40;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
-:root[data-sticky-section-headings] .demo-tier-header {
+/* Cover the inset above / below the stuck header so content doesn’t show through */
+:root[data-sticky-header] body > header::before,
+:root[data-sticky-header] body > header::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 100vw;
+  height: var(--sticky-gap);
+  transform: translateX(-50%);
+  background: var(--bg);
+  pointer-events: none;
+}
+
+:root[data-sticky-header] body > header::before {
+  bottom: 100%;
+}
+
+:root[data-sticky-header] body > header::after {
+  top: 100%;
+}
+
+:root[data-sticky-section-headings] .demo-tier-header,
+:root[data-sticky-section-headings] .section-heading {
   position: sticky;
-  top: var(--sticky-header-offset);
-  z-index: 35;
+  top: max(var(--sticky-header-offset), var(--sticky-gap));
+}
+
+:root[data-sticky-section-headings] .demo-tier-header {
+  z-index: 30;
 }
 
 :root[data-sticky-section-headings] .section-heading {
-  position: sticky;
-  top: calc(var(--sticky-header-offset) + var(--sticky-local-tier-offset));
-  z-index: 30;
+  z-index: 31;
   background: var(--bg);
   box-shadow: 0 1px 0 var(--border);
+}
+
+:root[data-sticky-section-headings] .demo-tier-header::before,
+:root[data-sticky-section-headings] .demo-tier-header::after,
+:root[data-sticky-section-headings] .section-heading::before,
+:root[data-sticky-section-headings] .section-heading::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--sticky-gap);
+  background: var(--bg);
+  pointer-events: none;
+}
+
+:root[data-sticky-section-headings] .demo-tier-header::before,
+:root[data-sticky-section-headings] .section-heading::before {
+  bottom: 100%;
+}
+
+:root[data-sticky-section-headings] .demo-tier-header::after,
+:root[data-sticky-section-headings] .section-heading::after {
+  top: 100%;
+}
+
+:root[data-sticky-section-headings] .demo-tier-header::before,
+:root[data-sticky-section-headings] .demo-tier-header::after {
+  left: 50%;
+  right: auto;
+  width: 100vw;
+  transform: translateX(-50%);
 }
 
 main {
@@ -114,7 +168,7 @@ main {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  scroll-margin-top: calc(var(--sticky-header-offset) + var(--sticky-local-tier-offset) + 1rem);
+  scroll-margin-top: calc(max(var(--sticky-header-offset), var(--sticky-gap)) + 1rem);
 }
 
 .heading-anchor {
@@ -203,7 +257,7 @@ main {
   font-size: 1.625rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  scroll-margin-top: calc(var(--sticky-header-offset) + 1.5rem);
+  scroll-margin-top: calc(max(var(--sticky-header-offset), var(--sticky-gap)) + 1.5rem);
 }
 
 .demo-tier-lead {

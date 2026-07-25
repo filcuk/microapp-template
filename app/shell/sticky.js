@@ -6,12 +6,53 @@
  *   data-sticky-section-headings
  *
  * Or call setStickyHeader() / setStickySectionHeadings().
- * syncStickyOffsets() keeps --sticky-header-offset and per-tier
- * --sticky-local-tier-offset in sync (needed when both are on).
+ * syncStickyOffsets() keeps --sticky-header-offset in sync so section
+ * headings clear a stuck site header (remeasured on scroll).
+ *
+ * `.demo-tier-header` and `.section-heading` share one sticky slot. Subheadings
+ * in sibling `.demo-section`s push each other out natively. Tier headers are
+ * pushed out by the first `.section-heading` in that tier (JS adjusts `top`).
  */
 
 function rootEl() {
   return document.documentElement;
+}
+
+/** Resolve `--sticky-gap` to CSS pixels. */
+function stickyGapPx(root) {
+  const raw = getComputedStyle(root).getPropertyValue("--sticky-gap").trim();
+  if (!raw) return 0;
+  if (raw.endsWith("px")) return parseFloat(raw) || 0;
+  if (raw.endsWith("rem")) {
+    const fontSize = parseFloat(getComputedStyle(root).fontSize) || 16;
+    return (parseFloat(raw) || 0) * fontSize;
+  }
+  return parseFloat(raw) || 0;
+}
+
+/**
+ * Live clearance below the site header chrome (border box + below gap).
+ * Remeasured on scroll because the header moves between in-flow and stuck.
+ */
+function measureStickyHeaderOffset(root) {
+  if (!root.hasAttribute("data-sticky-header")) return 0;
+  const siteHeader = document.querySelector("body > header");
+  if (!siteHeader) return 0;
+  const gap = stickyGapPx(root);
+  return Math.max(0, siteHeader.getBoundingClientRect().bottom + gap);
+}
+
+/** Sticky `top` used by section / tier headings, in CSS pixels. */
+function sectionStickY(root) {
+  const headerOffset =
+    parseFloat(root.style.getPropertyValue("--sticky-header-offset")) || 0;
+  return Math.max(headerOffset, stickyGapPx(root));
+}
+
+function clearTierHeaderPush() {
+  document.querySelectorAll(".demo-tier-header").forEach((el) => {
+    el.style.top = "";
+  });
 }
 
 /**
@@ -20,22 +61,46 @@ function rootEl() {
  */
 export function syncStickyOffsets() {
   const root = rootEl();
-  const headerSticky = root.hasAttribute("data-sticky-header");
-  const sectionsSticky = root.hasAttribute("data-sticky-section-headings");
+  const headerOffset = measureStickyHeaderOffset(root);
+  const next = `${Math.round(headerOffset)}px`;
+  if (root.style.getPropertyValue("--sticky-header-offset") !== next) {
+    root.style.setProperty("--sticky-header-offset", next);
+  }
+  syncStickyHeadingStack();
+}
 
-  const siteHeader = document.querySelector("body > header");
-  const headerOffset =
-    headerSticky && siteHeader ? siteHeader.getBoundingClientRect().height : 0;
-  root.style.setProperty("--sticky-header-offset", `${Math.round(headerOffset)}px`);
+/**
+ * Push each tier header out of the sticky slot as its first subheading arrives.
+ * Subheading-to-subheading handoff is native sticky (sibling sections).
+ */
+export function syncStickyHeadingStack() {
+  const root = rootEl();
 
-  document.querySelectorAll(".demo-tier").forEach((tier) => {
-    const band = tier.querySelector(":scope > .demo-tier-header");
-    const bandHeight =
-      sectionsSticky && band ? band.getBoundingClientRect().height : 0;
-    tier.style.setProperty(
-      "--sticky-local-tier-offset",
-      `${Math.round(bandHeight)}px`
-    );
+  if (!root.hasAttribute("data-sticky-section-headings")) {
+    clearTierHeaderPush();
+    return;
+  }
+
+  const stickY = sectionStickY(root);
+
+  document.querySelectorAll(".demo-tier-header").forEach((tierHeader) => {
+    const tier = tierHeader.closest(".demo-tier");
+    const sub = tier?.querySelector(".section-heading");
+    if (!sub) {
+      tierHeader.style.top = "";
+      return;
+    }
+
+    const height = tierHeader.offsetHeight;
+    const subTop = sub.getBoundingClientRect().top;
+    const overlap = stickY + height - subTop;
+    if (overlap <= 0) {
+      tierHeader.style.top = "";
+      return;
+    }
+
+    const push = Math.min(overlap, height);
+    tierHeader.style.top = `${Math.round(stickY - push)}px`;
   });
 }
 
@@ -61,14 +126,15 @@ export function isStickySectionHeadings() {
   return rootEl().hasAttribute("data-sticky-section-headings");
 }
 
-let resizeBound = false;
+let listenersBound = false;
 
 /**
- * Sync offsets now and on resize. Call once from `initShell()`.
+ * Sync offsets now and on resize/scroll. Call once from `initShell()`.
  */
 export function initStickyChrome() {
   syncStickyOffsets();
-  if (resizeBound) return;
-  resizeBound = true;
+  if (listenersBound) return;
+  listenersBound = true;
   window.addEventListener("resize", syncStickyOffsets);
+  window.addEventListener("scroll", syncStickyOffsets, { passive: true });
 }
