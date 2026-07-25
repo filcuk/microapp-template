@@ -35,7 +35,7 @@ Every HTML entry point should:
 
 `initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, sticky chrome offsets, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
-Optional `renderPageShell({ repoUrl, brandUrl, brandName, alsoSee })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to hide the footer related-apps menu.
+Optional `renderPageShell({ repoUrl, appUrl, brandUrl, brandName, alsoSee, alsoSeeUrl })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to hide the footer related-apps menu when there is no remote list. Set `alsoSeeUrl` to a JSON URL (top-level link array) to load a shared live list; local `alsoSee` is the fallback. Set `appUrl` to this app’s public site URL so a matching entry in the list is omitted.
 
 ## Module conventions
 

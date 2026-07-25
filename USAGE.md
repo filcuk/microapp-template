@@ -39,9 +39,11 @@ Optional shell overrides (repo link, brand URL, related apps, page nav scan):
 ```javascript
 initShell({
   repoUrl: "https://github.com/you/your-app",
+  appUrl: "https://you.github.io/your-app/",
   brandUrl: "https://yoursite.example",
   brandName: "Your name",
-  alsoSee: false, // or [] — hide the footer “also see” menu
+  alsoSee: false, // or [] — hide the footer “also see” menu when no remote list
+  alsoSeeUrl: "", // optional remote JSON (array of link objects)
   pageNav: { headingSelector: "main h2[id]" },
 });
 ```
@@ -75,11 +77,14 @@ Fork-sensitive defaults live in [`app/config.js`](app/config.js):
 ```javascript
 export const APP_CONFIG = {
   repoUrl: "https://github.com/you/your-app",
+  appUrl: "https://you.github.io/your-app/", // public Pages URL — omitted from “also see”
   brandUrl: "https://yoursite.example",
   brandName: "Your name",
   themeStorageKey: "microapp-theme",
   themeChangeEvent: "microapp-theme-change",
-  // Related apps in the footer “also see” menu — set to [] or false to hide
+  // Remote JSON for footer “also see” — empty skips fetch; falls back to alsoSee
+  alsoSeeUrl: "", // e.g. "https://raw.githubusercontent.com/you/shared/main/also-see.json"
+  // Local related apps (used when alsoSeeUrl is empty or fetch fails)
   alsoSee: [
     {
       label: "Example App A",
@@ -95,7 +100,9 @@ export const APP_CONFIG = {
 | Field | Used by |
 | ----- | ------- |
 | `repoUrl`, `brandUrl`, `brandName` | Footer links and brand tooltip via `renderPageShell()` |
-| `alsoSee` | Footer “also see” dropdown (`[]` / `false` disables) |
+| `appUrl` | Public site URL; matching entries are dropped from “also see” |
+| `alsoSeeUrl` | Optional remote JSON for footer “also see” (top-level array); empty skips fetch |
+| `alsoSee` | Local footer “also see” links (`[]` / `false` disables when there is no remote list) |
 | `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
 | `themeChangeEvent` | Theme changes; rich text editor syncs to dark mode |
 
@@ -263,7 +270,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` or `initShell({ alsoSee })`; `[]` / `false` disables). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl`, or `initShell({ alsoSee, alsoSeeUrl })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -420,9 +427,11 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Also see (related apps)
 
-Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` to `initShell()` / `renderPageShell()`):
+Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` to `initShell()` / `renderPageShell()`):
 
 ```javascript
+alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/also-see.json", // optional
+appUrl: "https://you.github.io/your-app/", // omit this site from the menu
 alsoSee: [
   {
     label: "Example App A",
@@ -431,15 +440,17 @@ alsoSee: [
     iconLight: "app/res/app-light.svg", // optional; falls back to `icon`
     iconDark: "app/res/app-dark.svg",
   },
-]
+],
 ```
 
 | Value | Behaviour |
 | ----- | --------- |
-| Array of links | Renders “also see” with a dropdown of those links |
-| `[]` or `false` | Hides the control |
+| `alsoSeeUrl` string | Fetches remote JSON (top-level array of link objects) and replaces the menu |
+| Local `alsoSee` array | Renders immediately; kept as fallback if the remote fetch fails or `alsoSeeUrl` is empty |
+| `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded |
+| `alsoSee: []` or `false` | Hides the control when there is no successful remote list |
 
-Each item opens in a new tab. Optional `subtitle` shows muted context under the label (same `.dropdown-menu-item-subtitle` pattern as dropdowns). Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`.
+Remote JSON shape matches each `alsoSee` entry (and may include this app — `appUrl` filters it out). Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Each item opens in a new tab. Optional `subtitle` shows muted context under the label (same `.dropdown-menu-item-subtitle` pattern as dropdowns). Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL).
 
 ### Heading links
 
