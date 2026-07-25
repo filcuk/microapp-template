@@ -65,7 +65,8 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName, alsoSee })` overrides 
 | `initSpinner()` / `initSpinners()` | Loading spinner; optional blocking overlay on a host |
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
 | `initColorPicker()` / `initColorPickers()` | Hex colour input with inline swatch preview |
-| `initToggle()` / `initToggles()` | On/off switch control |
+| `initToggle()` / `initToggles()` | On/off switch control; optional `data-toggle-tristate` for off → on → mixed |
+| `initTriStateCheckbox()` / `initTriStateCheckboxes()` | Tri-state checkbox (`data-checkbox-tristate`) — unchecked → checked → mixed |
 | `initBadge()` / `initBadges()` | Corner badge on a `.badge-host` (normal readout or `.badge--sm` dot) |
 | `initChipGroup()` / `initChipGroups()` | Selectable filter chips (toggle pressed; not removable) |
 | `initChipInput()` / `initChipInputs()` | Text field that adds removable chips |
