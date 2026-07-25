@@ -27,6 +27,7 @@
 import { parseBooleanAttr, setHidden } from "../utils/dom.js";
 import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
+import { initDialog } from "./dialog.js";
 
 /** @typedef {"text" | "number" | "logical"} ColumnType */
 /** @typedef {{ id: string, label: string, type: ColumnType }} Column */
@@ -307,6 +308,63 @@ export function initTabularInput(
 
   rootEl.replaceChildren(wrapEl, liveEl);
   rootEl.classList.add("tabular-input");
+
+  const resetDialogTitleId = `tabular-input-reset-title-${nextId("dlg")}`;
+  const resetDialogEl = document.createElement("div");
+  resetDialogEl.className = "modal tabular-input-reset-dialog hidden";
+  resetDialogEl.setAttribute("role", "dialog");
+  resetDialogEl.setAttribute("aria-modal", "true");
+  resetDialogEl.setAttribute("aria-labelledby", resetDialogTitleId);
+  resetDialogEl.hidden = true;
+
+  const resetBackdrop = document.createElement("div");
+  resetBackdrop.className = "modal-backdrop";
+  resetBackdrop.dataset.dialogClose = "";
+
+  const resetPanel = document.createElement("div");
+  resetPanel.className = "modal-panel";
+
+  const resetHeader = document.createElement("div");
+  resetHeader.className = "modal-header";
+  const resetTitle = document.createElement("h2");
+  resetTitle.id = resetDialogTitleId;
+  resetTitle.textContent = "Reset table?";
+  const resetCloseBtn = document.createElement("button");
+  resetCloseBtn.type = "button";
+  resetCloseBtn.className = "modal-close";
+  resetCloseBtn.setAttribute("aria-label", "Close");
+  resetCloseBtn.dataset.dialogClose = "";
+  resetCloseBtn.textContent = "×";
+  resetHeader.append(resetTitle, resetCloseBtn);
+
+  const resetBody = document.createElement("div");
+  resetBody.className = "modal-body";
+  const resetMessage = document.createElement("p");
+  resetMessage.textContent =
+    "This clears all data and restores a blank table with 3 text columns and 2 rows. This cannot be undone.";
+  resetBody.append(resetMessage);
+
+  const resetFooter = document.createElement("div");
+  resetFooter.className = "modal-footer";
+  const resetActions = document.createElement("div");
+  resetActions.className = "modal-footer-actions";
+  const resetCancelBtn = document.createElement("button");
+  resetCancelBtn.type = "button";
+  resetCancelBtn.className = "btn";
+  resetCancelBtn.dataset.dialogClose = "";
+  resetCancelBtn.textContent = "Cancel";
+  const resetConfirmBtn = document.createElement("button");
+  resetConfirmBtn.type = "button";
+  resetConfirmBtn.className = "btn btn-danger";
+  resetConfirmBtn.textContent = "Reset table";
+  resetActions.append(resetCancelBtn, resetConfirmBtn);
+  resetFooter.append(resetActions);
+
+  resetPanel.append(resetHeader, resetBody, resetFooter);
+  resetDialogEl.append(resetBackdrop, resetPanel);
+  document.body.append(resetDialogEl);
+
+  const resetDialog = initDialog({ dialogEl: resetDialogEl });
 
   function snapshot() {
     return {
@@ -837,7 +895,13 @@ export function initTabularInput(
   }
 
   function onResetClick() {
+    if (isDisabled) return;
+    resetDialog?.openDialog();
+  }
+
+  function onResetConfirmClick() {
     resetToBlank();
+    resetDialog?.closeDialog();
   }
 
   /**
@@ -933,6 +997,7 @@ export function initTabularInput(
   addRowBtn.addEventListener("click", onAddRowClick);
   addColBtn.addEventListener("click", onAddColClick);
   resetBtn.addEventListener("click", onResetClick);
+  resetConfirmBtn.addEventListener("click", onResetConfirmClick);
   rootEl.addEventListener("paste", onPaste);
 
   render();
@@ -992,7 +1057,10 @@ export function initTabularInput(
       addRowBtn.removeEventListener("click", onAddRowClick);
       addColBtn.removeEventListener("click", onAddColClick);
       resetBtn.removeEventListener("click", onResetClick);
+      resetConfirmBtn.removeEventListener("click", onResetConfirmClick);
       rootEl.removeEventListener("paste", onPaste);
+      resetDialog?.destroy();
+      resetDialogEl.remove();
       rootEl.replaceChildren();
       rootEl.classList.remove("tabular-input", "tabular-input--disabled");
     },

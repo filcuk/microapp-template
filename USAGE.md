@@ -250,7 +250,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. |
-| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
+| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
@@ -394,6 +394,7 @@ Flex row for grouping related buttons. Wraps on narrow viewports.
   <button type="button" class="btn">Undo</button>
   <button type="button" class="btn">Redo</button>
   <button type="button" class="btn btn-primary">Save</button>
+  <button type="button" class="btn btn-danger">Delete</button>
   <button type="button" class="btn btn-icon" aria-label="More options" data-icon="lines"
     data-icon-class="btn-icon-svg"></button>
 </div>
