@@ -70,7 +70,7 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
 | `initPagination()` / `initPaginations()` | Client-side pagination (numbered pages, no URL change) |
 | `initTable()` / `initTables()` | Data table with optional sortable columns and row selection |
-| `initTabularInput()` / `initTabularInputs()` | Editable typed grid (text / number / logical); add/remove rows and columns; rename |
+| `initTabularInput()` / `initTabularInputs()` | Editable typed grid; paste; reset; add/remove rows and columns; rename / type |
 | `initProgressIndicator()` / `initProgressIndicators()` | Multi-step wizard with indicators, panels, and back/next |
 | `initRichTextEditor()` / `initRichTextEditors()` | Toast UI rich text editor (Markdown + WYSIWYG); requires vendor scripts |
 | `onDocumentClickOutside()` / `onDocumentEscape()` | Shared document listeners — do not add per-instance `document` listeners for these |

@@ -274,7 +274,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
-| **Tabular input** | Editable grid with typed columns (text / number / logical), add/delete rows and columns, and inline rename. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
+| **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste with type detection. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -1489,7 +1489,21 @@ initTables(document);
 
 Editable data grid for collecting rows of typed values. Mount an empty `.tabular-input` root; `initTabularInput()` renders the table and controls. Column types are **`text`**, **`number`**, and **`logical`** (checkbox). Other kinds of values (dates, enums, etc.) use **text**.
 
-Users can rename columns inline (Enter to commit, Escape to cancel), change type from the chevron menu on the right of the column name (styled like other dropdowns; values are coerced), and add or delete rows and columns. Row delete sits in a leading action column; column delete is inline to the right of the column label. **Add column** is in the header after the last column; **Add row** is a footer row under the data. There is no drag-and-drop reorder in this version.
+**Chrome**
+
+- Rename columns inline (Enter to commit, Escape to cancel).
+- Change type from the chevron menu on the right of the column name (type icons + labels; values are coerced). Only one type menu open at a time.
+- Icon-only **add row** / **add column** (`plus`); row remove on the left and column remove beside the label (`remove`).
+- Header **reset** (`delete`) opens a confirm dialog (`.btn-danger`); confirming restores a blank **3 text columns × 2 rows** table. Programmatic `reset()` skips the dialog.
+
+**Paste**
+
+- Paste Excel/TSV (`text/plain` with tabs or multiple lines) while focus is in the grid.
+- Starts at the focused body cell (else top-left); expands rows/columns as needed; overwrites that rectangle; keeps surplus cells outside it.
+- Re-detects each column’s type from its full values (number → logical → text), then coerces cells.
+- Plain single-cell paste without tabs/newlines still goes into the focused field as usual.
+
+There is no drag-and-drop reorder in this version.
 
 ```html
 <div class="tabular-input" id="inventory-grid" aria-label="Inventory"></div>
@@ -1517,6 +1531,7 @@ grid?.removeRow("r1");
 grid?.removeColumn("qty");
 grid?.renameColumn("name", "Item");
 grid?.setColumnType("active", "text");
+grid?.reset(); // blank 3×2; no confirm dialog
 grid?.setData({ columns: [...], rows: [...] });
 grid?.setDisabled(true);
 grid?.destroy();
@@ -1524,7 +1539,9 @@ grid?.destroy();
 initTabularInputs(document); // all `.tabular-input` roots
 ```
 
-`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, and `"api"`.
+`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, `"paste"`, `"reset"`, and `"api"`.
+
+Icons used: `plus`, `delete` (reset), `remove` (row/column), `type-text`, `type-number`, `type-logical`, `chevron-down` — defined in [`app/utils/icons.js`](app/utils/icons.js).
 
 ### Page navigation
 
