@@ -7,6 +7,46 @@ import {
 } from "./render-shell.js";
 
 /**
+ * Drop a failed menu icon; remove the wrap when empty, or show the remaining
+ * theme variant in both themes so the slot is not blank.
+ *
+ * @param {HTMLImageElement} img
+ */
+function hideBrokenAlsoSeeIcon(img) {
+  const wrap = img.closest(".dropdown-menu-item-icon-wrap");
+  img.remove();
+  if (!wrap) return;
+
+  const remaining = wrap.querySelectorAll("img");
+  if (!remaining.length) {
+    wrap.remove();
+    return;
+  }
+
+  remaining.forEach((el) => {
+    el.classList.remove("brand-icon--light", "brand-icon--dark");
+  });
+}
+
+/**
+ * Hide also-see icons that 404 (including already-failed cached loads).
+ *
+ * @param {ParentNode} root
+ */
+function bindAlsoSeeIconFallback(root) {
+  root.querySelectorAll(".dropdown-menu-item-icon").forEach((img) => {
+    if (!(img instanceof HTMLImageElement)) return;
+    if (img.complete && img.naturalWidth === 0) {
+      hideBrokenAlsoSeeIcon(img);
+      return;
+    }
+    img.addEventListener("error", () => hideBrokenAlsoSeeIcon(img), {
+      once: true,
+    });
+  });
+}
+
+/**
  * @param {ParentNode} [root=document]
  * @returns {ReturnType<typeof initPopupMenu> | null}
  */
@@ -24,6 +64,8 @@ function wireAlsoSeeMenu(root = document) {
     trigger.classList.add("external-link");
     trigger.append(createIcon("arrow-outward", { className: "external-link-icon" }));
   }
+
+  bindAlsoSeeIconFallback(menuEl);
 
   return initPopupMenu({
     containerEl,
