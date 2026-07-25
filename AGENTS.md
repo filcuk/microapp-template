@@ -20,7 +20,7 @@ Prefer the simplest approach that fits the existing template.
 
 ## Reuse the design system
 
-- Use CSS custom properties from `app/tokens.css` (`--bg`, `--accent`, etc.)
+- Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, etc.)
 - Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.section-panel`, `.code-block`, `.theme-toggle`
 - Add or edit inline UI icons in `app/icons.js` only — do not duplicate SVG paths in HTML
 - Do not introduce parallel styling systems (Tailwind, CSS-in-JS, component libraries)
