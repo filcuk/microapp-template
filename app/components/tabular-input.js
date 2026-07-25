@@ -46,6 +46,13 @@ function typeIconId(type) {
   return `type-${parseColumnType(type)}`;
 }
 
+/** Display label for a column type (`Text` / `Number` / `Logical`). */
+function typeLabel(type) {
+  const normalized = parseColumnType(type);
+  const match = TYPE_OPTIONS.find(([value]) => value === normalized);
+  return match ? match[1] : "Text";
+}
+
 /**
  * Normalize a column type string. Unknown values become `"text"`.
  * @param {unknown} raw
@@ -288,18 +295,21 @@ export function initTabularInput(
   addRowBtn.type = "button";
   addRowBtn.className = "btn btn-icon tabular-input-add-row";
   addRowBtn.setAttribute("aria-label", "Add row");
+  addRowBtn.dataset.tooltip = "Add row";
   addRowBtn.append(createIcon("plus", { className: "btn-icon-svg" }));
 
   const addColBtn = document.createElement("button");
   addColBtn.type = "button";
   addColBtn.className = "btn btn-icon tabular-input-add-column";
   addColBtn.setAttribute("aria-label", "Add column");
+  addColBtn.dataset.tooltip = "Add column";
   addColBtn.append(createIcon("plus", { className: "btn-icon-svg" }));
 
   const resetBtn = document.createElement("button");
   resetBtn.type = "button";
   resetBtn.className = "btn btn-icon tabular-input-reset";
   resetBtn.setAttribute("aria-label", "Reset table");
+  resetBtn.dataset.tooltip = "Reset table";
   resetBtn.append(createIcon("delete", { className: "btn-icon-svg" }));
 
   const liveEl = document.createElement("div");
@@ -554,6 +564,7 @@ export function initTabularInput(
       const typeTrigger = th.querySelector(".tabular-input-type-trigger");
       if (typeTrigger) {
         typeTrigger.setAttribute("aria-label", `Type for ${column.label}`);
+        typeTrigger.dataset.tooltip = `${typeLabel(column.type)} type`;
       }
     });
 
@@ -564,6 +575,7 @@ export function initTabularInput(
     typeTrigger.className = "tabular-input-type-trigger dropdown-trigger";
     typeTrigger.disabled = isDisabled;
     typeTrigger.setAttribute("aria-label", `Type for ${column.label}`);
+    typeTrigger.dataset.tooltip = `${typeLabel(column.type)} type`;
     typeTrigger.setAttribute("aria-haspopup", "menu");
     typeTrigger.setAttribute("aria-expanded", "false");
     typeTrigger.setAttribute("aria-controls", menuId);
@@ -652,6 +664,7 @@ export function initTabularInput(
     removeBtn.dataset.tabularInputRemoveColumn = "";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete column ${column.label}`);
+    removeBtn.dataset.tooltip = "Remove column";
     removeBtn.append(createIcon("remove", { className: "btn-icon-svg" }));
     removeBtn.addEventListener("click", () => {
       removeColumn(column.id, { source: "remove-column" });
@@ -731,6 +744,7 @@ export function initTabularInput(
     removeBtn.dataset.tabularInputChrome = "";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete row ${rowIndex + 1}`);
+    removeBtn.dataset.tooltip = "Remove row";
     removeBtn.append(createIcon("remove", { className: "btn-icon-svg" }));
     removeBtn.addEventListener("click", () => {
       removeRow(row.id, { source: "remove-row" });

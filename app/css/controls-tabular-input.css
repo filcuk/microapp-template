@@ -57,7 +57,8 @@
 }
 
 .tabular-input-col-label,
-.tabular-input-cell {
+.tabular-input-cell,
+.tabular-input-logical {
   min-height: calc(var(--control-height) - 0.25rem);
   padding: 0 0.5rem;
   font-size: 0.875rem;
@@ -160,7 +161,8 @@
   box-sizing: border-box;
 }
 
-.tabular-input-cell {
+.tabular-input-cell,
+.tabular-input-logical {
   font: inherit;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -170,7 +172,8 @@
   box-sizing: border-box;
 }
 
-.tabular-input-cell:focus {
+.tabular-input-cell:focus,
+.tabular-input-logical:focus-within {
   outline: 2px solid var(--accent);
   outline-offset: -1px;
   border-color: var(--accent);
@@ -203,7 +206,7 @@
   align-items: center;
   justify-content: center;
   margin: 0;
-  width: 100%;
+  line-height: 0;
 }
 
 .tabular-input-row-move-col {
