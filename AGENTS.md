@@ -35,7 +35,7 @@ Every HTML entry point should:
 
 `initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
-Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks.
+Optional `renderPageShell({ repoUrl, brandUrl, brandName, alsoSee })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to hide the footer related-apps menu.
 
 ## Module conventions
 
@@ -43,7 +43,8 @@ Optional `renderPageShell({ repoUrl, brandUrl, brandName })` overrides for forks
 | -------- | ------- |
 | `initX({ … })` | Single instance (dialog, combo, dropdown, expand, tab) |
 | `initXs(root)` | Scan a subtree for blocks (e.g. `initTabs`, `initExpands`, `initAccordions`, `initCodeBlocks`) |
-| `initShell()` | Standard page boot (footer, theme, page nav, tooltips, external links, heading links) |
+| `initShell()` | Standard page boot (footer, theme, page nav, tooltips, external links, heading links, also-see) |
+| `initAlsoSee(root)` | Footer “also see” related-apps menu — no-op when disabled |
 | `initExternalLinks(root)` | Append arrow-outward icon to external links |
 | `initHeadingLinks(root)` | Copy-link button on `main h2[id]` headings |
 | `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with copy, modes, toolbar toggles |

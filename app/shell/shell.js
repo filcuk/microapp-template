@@ -1,4 +1,5 @@
 import { renderPageShell } from "./render-shell.js";
+import { initAlsoSee } from "./also-see.js";
 import { initIcons } from "../utils/icons.js";
 import { initTheme, initThemeToggle } from "./theme.js";
 import { initPageNavPanel } from "./page-nav.js";
@@ -34,6 +35,8 @@ function bindGlobalErrorHandlers(onError) {
  * @param {string} [options.repoUrl]
  * @param {string} [options.brandUrl]
  * @param {string} [options.brandName]
+ * @param {false | { label: string, url: string, icon?: string, iconLight?: string, iconDark?: string }[]} [options.alsoSee]
+ *   Related-app links for the footer “also see” menu. `false` or `[]` hides it.
  * @param {string} [options.appVersion] Override app SemVer (default from `app/version.js`)
  * @param {string} [options.templateVersion] Override template SemVer (default from `app/version.js`)
  * @param {import("./page-nav.js").PageNavOptions} [options.pageNav] Passed to `initPageNavPanel()`
@@ -46,6 +49,7 @@ export function initShell(options = {}) {
   initIcons();
   initExternalLinks(document);
   initHeadingLinks(document);
+  initAlsoSee(document);
   initTheme();
   initThemeToggle(document.getElementById("theme-toggle"));
   initTooltips(document);

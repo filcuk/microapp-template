@@ -384,7 +384,8 @@
             <div class="demo-card">
               <h3 class="demo-card-title">Dropdown</h3>
               <p class="demo-hint">Single-select menu; closes after a choice. Optional
-                <code>.dropdown-menu-group</code> headers group items.</p>
+                <code>.dropdown-menu-group</code> headers and
+                <code>.dropdown-menu-item-subtitle</code> context lines.</p>
               <div class="dropdown" id="demo-dropdown">
                 <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
                   aria-expanded="false" aria-controls="demo-dropdown-menu">
@@ -397,12 +398,18 @@
                   </li>
                   <li role="none">
                     <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
-                      Example 1
+                      <span class="dropdown-menu-item-text">
+                        <span class="dropdown-menu-item-label">Example 1</span>
+                        <span class="dropdown-menu-item-subtitle">Short description for this option</span>
+                      </span>
                     </button>
                   </li>
                   <li role="none">
                     <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
-                      Example 2
+                      <span class="dropdown-menu-item-text">
+                        <span class="dropdown-menu-item-label">Example 2</span>
+                        <span class="dropdown-menu-item-subtitle">Another bit of helpful context</span>
+                      </span>
                     </button>
                   </li>
                   <li role="presentation">
@@ -410,7 +417,10 @@
                   </li>
                   <li role="none">
                     <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
-                      Example 3
+                      <span class="dropdown-menu-item-text">
+                        <span class="dropdown-menu-item-label">Example 3</span>
+                        <span class="dropdown-menu-item-subtitle">Grouped with Example 4</span>
+                      </span>
                     </button>
                   </li>
                   <li role="none">
