@@ -450,7 +450,7 @@ alsoSee: [
 | `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded |
 | `alsoSee: []` or `false` | Hides the control when there is no successful remote list |
 
-Remote JSON shape matches each `alsoSee` entry (and may include this app — `appUrl` filters it out). Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Each item opens in a new tab. Optional `subtitle` shows muted context under the label (same `.dropdown-menu-item-subtitle` pattern as dropdowns). Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL).
+Remote JSON shape matches each `alsoSee` entry (and may include this app — `appUrl` filters it out). Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label (same `.dropdown-menu-item-subtitle` pattern as dropdowns). Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL).
 
 ### Heading links
 

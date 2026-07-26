@@ -162,6 +162,22 @@ export function initPopupMenu({
   function onMenuClick(e) {
     const item = e.target.closest(itemSelector);
     if (!item) return;
+
+    if (item instanceof HTMLAnchorElement) {
+      // Modified clicks: let the browser open a new tab; only close the menu.
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+        if (closeOnSelect) {
+          isOpen = false;
+          setHidden(menuEl, true);
+          clearFixedPosition();
+          toggleEl?.setAttribute("aria-expanded", "false");
+        }
+        return;
+      }
+      // Plain primary click: onSelect handles navigation (e.g. same window).
+      e.preventDefault();
+    }
+
     activateItem(item);
   }
 

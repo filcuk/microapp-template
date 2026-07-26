@@ -72,10 +72,16 @@ function wireAlsoSeeMenu(root = document) {
     menuEl,
     toggleEl: trigger,
     itemSelector: ".dropdown-menu-item",
+    // Fixed so the upward menu is not covered by main content (editors, etc.).
+    fixed: true,
     onSelect: ({ item }) => {
-      const url = item.dataset.url;
+      // Plain left-click / keyboard: same window. Middle-click and Ctrl/Cmd-click
+      // use the native <a> behaviour (menu.js skips onSelect for those).
+      const url =
+        (item instanceof HTMLAnchorElement && item.getAttribute("href")) ||
+        item.dataset.url;
       if (!url) return;
-      window.open(url, "_blank", "noopener,noreferrer");
+      window.location.assign(url);
     },
   });
 }

@@ -650,6 +650,8 @@ body > footer {
   position: relative;
   display: inline-block;
   align-self: center;
+  /* Keep the menu above in-flow main content when not using fixed positioning. */
+  z-index: 20;
 }
 
 .footer-also-see-trigger {
