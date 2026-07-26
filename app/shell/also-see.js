@@ -2,6 +2,7 @@ import { APP_CONFIG } from "../config.js";
 import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
 import {
+  alsoSeeHasItems,
   mountAlsoSee,
   normalizeAlsoSee,
 } from "./render-shell.js";
@@ -72,10 +73,16 @@ function wireAlsoSeeMenu(root = document) {
     menuEl,
     toggleEl: trigger,
     itemSelector: ".dropdown-menu-item",
+    // Fixed so the upward menu is not covered by main content (editors, etc.).
+    fixed: true,
     onSelect: ({ item }) => {
-      const url = item.dataset.url;
+      // Plain left-click / keyboard: same window. Middle-click and Ctrl/Cmd-click
+      // use the native <a> behaviour (menu.js skips onSelect for those).
+      const url =
+        (item instanceof HTMLAnchorElement && item.getAttribute("href")) ||
+        item.dataset.url;
       if (!url) return;
-      window.open(url, "_blank", "noopener,noreferrer");
+      window.location.assign(url);
     },
   });
 }
@@ -93,16 +100,27 @@ async function fetchAlsoSeeJson(url) {
 }
 
 /**
+ * @param {object} [options]
+ * @returns {string[] | false | null | undefined}
+ */
+function resolveAlsoSeeTopics(options = {}) {
+  if ("alsoSeeTopics" in options) return options.alsoSeeTopics;
+  if ("alsoSeeTopics" in APP_CONFIG) return APP_CONFIG.alsoSeeTopics;
+  return undefined;
+}
+
+/**
  * Wire the footer “also see” dropdown (opens related-app links).
  * No-op when `#footer-also-see` is absent and there is no remote URL to load.
  *
- * When `alsoSeeUrl` is set, fetches that JSON (top-level array of link objects)
+ * When `alsoSeeUrl` is set, fetches that JSON (topics and/or flat links)
  * and replaces the menu (excluding `appUrl`). On failure, keeps the local fallback.
  *
  * @param {ParentNode} [root=document]
  * @param {object} [options]
  * @param {string} [options.alsoSeeUrl]
  * @param {string} [options.appUrl]
+ * @param {string[] | false | null} [options.alsoSeeTopics] Topic whitelist
  * @returns {Promise<ReturnType<typeof initPopupMenu> | null>}
  */
 export async function initAlsoSee(root = document, options = {}) {
@@ -118,6 +136,7 @@ export async function initAlsoSee(root = document, options = {}) {
       : typeof APP_CONFIG.appUrl === "string"
         ? APP_CONFIG.appUrl.trim()
         : "";
+  const alsoSeeTopics = resolveAlsoSeeTopics(options);
 
   let menuApi = wireAlsoSeeMenu(root);
 
@@ -125,15 +144,15 @@ export async function initAlsoSee(root = document, options = {}) {
 
   try {
     const data = await fetchAlsoSeeJson(alsoSeeUrl);
-    const links = normalizeAlsoSee(data, appUrl);
-    if (!links.length) {
+    const sections = normalizeAlsoSee(data, appUrl, alsoSeeTopics);
+    if (!alsoSeeHasItems(sections)) {
       menuApi?.destroy?.();
       mountAlsoSee(root, []);
       return null;
     }
 
     menuApi?.destroy?.();
-    mountAlsoSee(root, links);
+    mountAlsoSee(root, sections);
     menuApi = wireAlsoSeeMenu(root);
   } catch {
     // Keep local fallback already in the footer host.
