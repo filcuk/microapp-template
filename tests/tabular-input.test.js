@@ -5,7 +5,10 @@ import {
   coerceCellValue,
   defaultValueForType,
   parseClipboardTable,
+  formatClipboardTable,
+  formatCellForClipboard,
   isTabularClipboardText,
+  splitClipboardMatrix,
   detectColumnType,
   isNumericCellValue,
   isLogicalCellValue,
@@ -84,4 +87,81 @@ test("isNumericCellValue and isLogicalCellValue helpers", () => {
   assert.equal(isNumericCellValue("x"), false);
   assert.equal(isLogicalCellValue("yes"), true);
   assert.equal(isLogicalCellValue("maybe"), false);
+});
+
+test("formatClipboardTable emits Excel TSV with header row", () => {
+  const text = formatClipboardTable(
+    [
+      { id: "name", label: "Name", type: "text" },
+      { id: "qty", label: "Qty", type: "number" },
+      { id: "on", label: "On", type: "logical" },
+    ],
+    [
+      { id: "r1", cells: { name: "Widget", qty: 12, on: true } },
+      { id: "r2", cells: { name: "Gadget", qty: null, on: false } },
+    ]
+  );
+  assert.equal(text, "Name\tQty\tOn\nWidget\t12\ttrue\nGadget\t\tfalse");
+});
+
+test("formatClipboardTable quotes cells with tabs or newlines", () => {
+  assert.equal(
+    formatClipboardTable(
+      [{ id: "a", label: "A", type: "text" }],
+      [{ id: "r1", cells: { a: "x\ty" } }]
+    ),
+    'A\n"x\ty"'
+  );
+});
+
+test("formatCellForClipboard handles null and logical", () => {
+  assert.equal(formatCellForClipboard(null, "number"), "");
+  assert.equal(formatCellForClipboard(true, "logical"), "true");
+  assert.equal(formatCellForClipboard(false, "logical"), "false");
+});
+
+test("splitClipboardMatrix treats all rows as data by default", () => {
+  assert.deepEqual(splitClipboardMatrix([
+    ["a", "b"],
+    ["1", "2"],
+  ]), {
+    labels: ["Column 1", "Column 2"],
+    data: [
+      ["a", "b"],
+      ["1", "2"],
+    ],
+  });
+});
+
+test("splitClipboardMatrix uses first row as headers when requested", () => {
+  assert.deepEqual(
+    splitClipboardMatrix(
+      [
+        ["Name", "Qty"],
+        ["Widget", "12"],
+      ],
+      { firstRowIsHeader: true }
+    ),
+    {
+      labels: ["Name", "Qty"],
+      data: [["Widget", "12"]],
+    }
+  );
+});
+
+test("splitClipboardMatrix falls back empty header cells to Column N", () => {
+  assert.deepEqual(
+    splitClipboardMatrix([["", "On"], ["x", "true"]], {
+      firstRowIsHeader: true,
+    }),
+    {
+      labels: ["Column 1", "On"],
+      data: [["x", "true"]],
+    }
+  );
+});
+
+test("splitClipboardMatrix returns null for empty matrix", () => {
+  assert.equal(splitClipboardMatrix([]), null);
+  assert.equal(splitClipboardMatrix([[]]), null);
 });
