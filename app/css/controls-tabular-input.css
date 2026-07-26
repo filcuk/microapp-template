@@ -6,8 +6,52 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
   max-width: 100%;
   min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Centered canvas breakout when columns exceed the page body width. */
+.tabular-input.tabular-input--breakout {
+  width: min(
+    var(--tabular-breakout-width),
+    calc(100vw - 2 * var(--page-padding-x))
+  );
+  max-width: calc(100vw - 2 * var(--page-padding-x));
+  margin-left: calc(
+    (
+        100% -
+          min(
+            var(--tabular-breakout-width),
+            calc(100vw - 2 * var(--page-padding-x))
+          )
+      ) /
+      2
+  );
+}
+
+.tabular-input-footer-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tabular-input-breakout-toggle {
+  gap: 0.35rem;
+  height: calc(var(--control-height) - 0.25rem);
+  min-height: calc(var(--control-height) - 0.25rem);
+  padding: 0 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.tabular-input-breakout-toggle .btn-icon-svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 
 .tabular-input-wrap {
@@ -286,7 +330,7 @@
   vertical-align: middle;
 }
 
-.tabular-input-add-row-tr:hover {
+.tabular-input .table tbody tr.tabular-input-add-row-tr:hover {
   background: transparent;
 }
 
