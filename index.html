@@ -6,7 +6,16 @@
     <meta name="description" content="A short description of what your app does." />
     <title>My Microapp</title>
     <link rel="icon" href="app/res/app-light.svg" type="image/svg+xml" data-brand-icon />
-    <script>window.__MICROAPP__={themeStorageKey:"microapp-theme"};</script>
+    <script>
+      window.__MICROAPP__ = {
+        themeStorageKey: "microapp-theme",
+        // App logo / favicon: pair (default) or single.
+        // Pair: appIconLight + appIconDark. Single: appIcon only, set light/dark to "".
+        // appIcon: "app/res/app.svg",
+        // appIconLight: "app/res/app-light.svg",
+        // appIconDark: "app/res/app-dark.svg",
+      };
+    </script>
     <script src="app/theme-init.js"></script>
     <link rel="stylesheet" href="app/styles.css" />
   </head>
