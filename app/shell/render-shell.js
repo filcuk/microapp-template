@@ -199,8 +199,8 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
 function renderAlsoSeeLinkItem(link, index) {
   const iconMarkup = link.iconLight
     ? `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
-              <img class="dropdown-menu-item-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="20" height="20" />
-              <img class="dropdown-menu-item-icon brand-icon--dark" src="${escapeAttr(link.iconDark)}" alt="" width="20" height="20" />
+              <img class="dropdown-menu-item-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="24" height="24" />
+              <img class="dropdown-menu-item-icon brand-icon--dark" src="${escapeAttr(link.iconDark)}" alt="" width="24" height="24" />
             </span>`
     : "";
   const subtitleMarkup = link.subtitle
