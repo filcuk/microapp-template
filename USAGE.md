@@ -449,7 +449,7 @@ alsoSee: [
         label: "Example App A",
         subtitle: "Sample related microapp", // optional
         url: "https://example.com/app-a",
-        iconLight: "app/res/app-light.svg", // optional; falls back to `icon`
+        iconLight: "app/res/app-light.svg", // or single `icon` for one image
         iconDark: "app/res/app-dark.svg",
       },
     ],
@@ -495,7 +495,7 @@ Remote / local JSON is a top-level array of **topic sections** and/or **flat lin
 ]
 ```
 
-Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Topic headers use the same `.dropdown-menu-group` pattern as dropdowns. Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label. Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL). Flat legacy arrays (links only, no topics) still work.
+Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Topic headers use the same `.dropdown-menu-group` pattern as dropdowns. Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label. Icons: use `iconLight` + `iconDark` for theme-swapped logos (`brand-icon--light` / `brand-icon--dark`), or a single `icon` for one always-visible image. If both forms are present, the light/dark pair wins. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL). Flat legacy arrays (links only, no topics) still work.
 
 ### Heading links
 
