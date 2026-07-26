@@ -43,7 +43,8 @@ initShell({
   brandUrl: "https://yoursite.example",
   brandName: "Your name",
   alsoSee: false, // or [] — hide the footer “also see” menu when no remote list
-  alsoSeeUrl: "", // optional remote JSON (array of link objects)
+  alsoSeeUrl: "", // optional remote JSON (topics + links)
+  alsoSeeTopics: null, // optional topic whitelist; null = all topics
   pageNav: { headingSelector: "main h2[id]" },
 });
 ```
@@ -83,15 +84,21 @@ export const APP_CONFIG = {
   themeStorageKey: "microapp-theme",
   themeChangeEvent: "microapp-theme-change",
   // Remote JSON for footer “also see” — empty skips fetch; falls back to alsoSee
-  alsoSeeUrl: "", // e.g. "https://raw.githubusercontent.com/you/shared/main/also-see.json"
+  alsoSeeUrl: "", // e.g. "https://raw.githubusercontent.com/you/shared/main/apps/links.json"
+  alsoSeeTopics: null, // e.g. ["Power BI", "Database"] — omit / null = all topics
   // Local related apps (used when alsoSeeUrl is empty or fetch fails)
   alsoSee: [
     {
-      label: "Example App A",
-      subtitle: "Sample related microapp",
-      url: "https://example.com/app-a",
-      iconLight: "app/res/app-light.svg",
-      iconDark: "app/res/app-dark.svg",
+      topic: "Examples",
+      items: [
+        {
+          label: "Example App A",
+          subtitle: "Sample related microapp",
+          url: "https://example.com/app-a",
+          iconLight: "app/res/app-light.svg",
+          iconDark: "app/res/app-dark.svg",
+        },
+      ],
     },
   ],
 };
@@ -101,8 +108,9 @@ export const APP_CONFIG = {
 | ----- | ------- |
 | `repoUrl`, `brandUrl`, `brandName` | Footer links and brand tooltip via `renderPageShell()` |
 | `appUrl` | Public site URL; matching entries are dropped from “also see” |
-| `alsoSeeUrl` | Optional remote JSON for footer “also see” (top-level array); empty skips fetch |
-| `alsoSee` | Local footer “also see” links (`[]` / `false` disables when there is no remote list) |
+| `alsoSeeUrl` | Optional remote JSON for footer “also see”; empty skips fetch |
+| `alsoSeeTopics` | Optional topic whitelist (`null` / omit = all; `[]` = flat links only) |
+| `alsoSee` | Local footer “also see” list (`[]` / `false` disables when there is no remote list) |
 | `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
 | `themeChangeEvent` | Theme changes; rich text editor syncs to dark mode |
 
@@ -270,7 +278,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl`, or `initShell({ alsoSee, alsoSeeUrl })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -427,30 +435,67 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Also see (related apps)
 
-Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` to `initShell()` / `renderPageShell()`):
+Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` to `initShell()` / `renderPageShell()`):
 
 ```javascript
-alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/also-see.json", // optional
+alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/apps/links.json", // optional
+alsoSeeTopics: ["Power BI", "Database"], // optional whitelist; omit / null = all topics
 appUrl: "https://you.github.io/your-app/", // omit this site from the menu
 alsoSee: [
   {
-    label: "Example App A",
-    subtitle: "Sample related microapp", // optional
-    url: "https://example.com/app-a",
-    iconLight: "app/res/app-light.svg", // optional; falls back to `icon`
-    iconDark: "app/res/app-dark.svg",
+    topic: "Examples",
+    items: [
+      {
+        label: "Example App A",
+        subtitle: "Sample related microapp", // optional
+        url: "https://example.com/app-a",
+        iconLight: "app/res/app-light.svg", // optional; falls back to `icon`
+        iconDark: "app/res/app-dark.svg",
+      },
+    ],
+  },
+  {
+    label: "Profile",
+    subtitle: "Find me on GitHub",
+    url: "https://github.com/you",
+    icon: "https://example.com/icon.svg",
   },
 ],
 ```
 
 | Value | Behaviour |
 | ----- | --------- |
-| `alsoSeeUrl` string | Fetches remote JSON (top-level array of link objects) and replaces the menu |
+| `alsoSeeUrl` string | Fetches remote JSON and replaces the menu |
 | Local `alsoSee` array | Renders immediately; kept as fallback if the remote fetch fails or `alsoSeeUrl` is empty |
-| `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded |
+| `alsoSeeTopics` string[] | Case-insensitive topic whitelist; omit / `null` / `false` = all topics; `[]` = hide named topics (flat links still show) |
+| `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded; empty topics are dropped |
 | `alsoSee: []` or `false` | Hides the control when there is no successful remote list |
 
-Remote JSON shape matches each `alsoSee` entry (and may include this app — `appUrl` filters it out). Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label (same `.dropdown-menu-item-subtitle` pattern as dropdowns). Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL).
+Remote / local JSON is a top-level array of **topic sections** and/or **flat links**:
+
+```json
+[
+  {
+    "topic": "Power BI",
+    "items": [
+      {
+        "label": "Power BI Tabulator",
+        "subtitle": "Tabular conversion for DAX & M",
+        "url": "https://filcuk.github.io/pbi-tabulator/",
+        "icon": "https://filcuk.github.io/pbi-tabulator/app/res/icon.svg"
+      }
+    ]
+  },
+  {
+    "label": "Profile",
+    "subtitle": "Find me on GitHub",
+    "url": "https://github.com/filcuk",
+    "icon": "https://example.com/icon.svg"
+  }
+]
+```
+
+Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Topic headers use the same `.dropdown-menu-group` pattern as dropdowns. Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label. Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL). Flat legacy arrays (links only, no topics) still work.
 
 ### Heading links
 

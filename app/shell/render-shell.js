@@ -9,6 +9,7 @@ const DEFAULTS = {
   brandName: APP_CONFIG.brandName,
   alsoSee: APP_CONFIG.alsoSee,
   alsoSeeUrl: APP_CONFIG.alsoSeeUrl,
+  alsoSeeTopics: APP_CONFIG.alsoSeeTopics,
   appVersion: APP_VERSION,
   templateVersion: TEMPLATE_VERSION,
 };
@@ -81,62 +82,132 @@ export function normalizeSiteUrl(value) {
 }
 
 /**
+ * @typedef {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }} AlsoSeeLink
+ * @typedef {{ topic: string | null, items: AlsoSeeLink[] }} AlsoSeeSection
+ */
+
+/**
+ * @param {unknown} link
+ * @param {string} exclude Normalized site URL to drop, or ""
+ * @returns {AlsoSeeLink | null}
+ */
+function normalizeAlsoSeeLink(link, exclude) {
+  if (!link || typeof link !== "object") return null;
+
+  const label = typeof link.label === "string" ? link.label.trim() : "";
+  const url = typeof link.url === "string" ? link.url.trim() : "";
+  if (!label || !url) return null;
+  if (exclude && normalizeSiteUrl(url) === exclude) return null;
+
+  const subtitle =
+    typeof link.subtitle === "string" ? link.subtitle.trim() : "";
+  const icon =
+    typeof link.icon === "string" && link.icon.trim() ? link.icon.trim() : "";
+  const iconLight =
+    typeof link.iconLight === "string" && link.iconLight.trim()
+      ? link.iconLight.trim()
+      : icon;
+  const iconDark =
+    typeof link.iconDark === "string" && link.iconDark.trim()
+      ? link.iconDark.trim()
+      : iconLight;
+
+  return { label, subtitle, url, iconLight, iconDark };
+}
+
+/**
+ * @param {unknown} topics
+ * @returns {Set<string> | null} Lowercased topic whitelist, or null for “all topics”
+ */
+function normalizeAlsoSeeTopicFilter(topics) {
+  if (topics === undefined || topics === null || topics === false) return null;
+  if (!Array.isArray(topics)) return null;
+  return new Set(
+    topics
+      .filter((t) => typeof t === "string")
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
+/** @param {AlsoSeeSection[]} sections */
+export function alsoSeeHasItems(sections) {
+  return sections.some((section) => section.items.length > 0);
+}
+
+/**
+ * Normalize also-see JSON / config into sections.
+ *
+ * Accepts a top-level array of:
+ * - `{ topic, items: link[] }` topic groups
+ * - flat `{ label, url, … }` links (rendered without a group header)
+ *
  * @param {unknown} alsoSee
  * @param {string} [excludeUrl] Drop entries whose `url` matches this app’s public URL
- * @returns {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }[]}
+ * @param {string[] | false | null} [topics] Optional topic whitelist (case-insensitive).
+ *   Omit / `null` / `false` → all topics. Empty array → no named topics (flat links only).
+ *   Ungrouped flat links are always kept.
+ * @returns {AlsoSeeSection[]}
  */
-export function normalizeAlsoSee(alsoSee, excludeUrl = "") {
+export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
   if (alsoSee === false || alsoSee === null || alsoSee === undefined) return [];
   if (!Array.isArray(alsoSee)) return [];
 
   const exclude = normalizeSiteUrl(excludeUrl);
+  const topicFilter = normalizeAlsoSeeTopicFilter(topics);
+  /** @type {AlsoSeeSection[]} */
+  const sections = [];
 
-  return alsoSee
-    .filter((link) => link && typeof link === "object")
-    .map((link) => {
-      const label = typeof link.label === "string" ? link.label.trim() : "";
-      const url = typeof link.url === "string" ? link.url.trim() : "";
-      if (!label || !url) return null;
-      if (exclude && normalizeSiteUrl(url) === exclude) return null;
+  for (const entry of alsoSee) {
+    if (!entry || typeof entry !== "object") continue;
 
-      const subtitle =
-        typeof link.subtitle === "string" ? link.subtitle.trim() : "";
-      const icon =
-        typeof link.icon === "string" && link.icon.trim() ? link.icon.trim() : "";
-      const iconLight =
-        typeof link.iconLight === "string" && link.iconLight.trim()
-          ? link.iconLight.trim()
-          : icon;
-      const iconDark =
-        typeof link.iconDark === "string" && link.iconDark.trim()
-          ? link.iconDark.trim()
-          : iconLight;
+    if (Array.isArray(entry.items)) {
+      const topic =
+        typeof entry.topic === "string" ? entry.topic.trim() : "";
+      if (topicFilter) {
+        if (!topic || !topicFilter.has(topic.toLowerCase())) continue;
+      }
 
-      return { label, subtitle, url, iconLight, iconDark };
-    })
-    .filter(Boolean);
+      const items = entry.items
+        .map((link) => normalizeAlsoSeeLink(link, exclude))
+        .filter(Boolean);
+      if (!items.length) continue;
+
+      sections.push({ topic: topic || null, items });
+      continue;
+    }
+
+    const link = normalizeAlsoSeeLink(entry, exclude);
+    if (!link) continue;
+
+    const last = sections[sections.length - 1];
+    if (last && last.topic === null) {
+      last.items.push(link);
+    } else {
+      sections.push({ topic: null, items: [link] });
+    }
+  }
+
+  return sections;
 }
 
 /**
- * @param {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }[]} links
+ * @param {AlsoSeeLink} link
+ * @param {number} index
  * @returns {string}
  */
-export function renderAlsoSeeMarkup(links) {
-  if (!links.length) return "";
-
-  const items = links
-    .map((link, index) => {
-      const iconMarkup = link.iconLight
-        ? `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+function renderAlsoSeeLinkItem(link, index) {
+  const iconMarkup = link.iconLight
+    ? `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
               <img class="dropdown-menu-item-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="20" height="20" />
               <img class="dropdown-menu-item-icon brand-icon--dark" src="${escapeAttr(link.iconDark)}" alt="" width="20" height="20" />
             </span>`
-        : "";
-      const subtitleMarkup = link.subtitle
-        ? `<span class="dropdown-menu-item-subtitle">${escapeText(link.subtitle)}</span>`
-        : "";
+    : "";
+  const subtitleMarkup = link.subtitle
+    ? `<span class="dropdown-menu-item-subtitle">${escapeText(link.subtitle)}</span>`
+    : "";
 
-      return `<li role="none">
+  return `<li role="none">
           <a href="${escapeAttr(link.url)}" class="dropdown-menu-item" role="menuitem" data-no-external-icon data-value="${index}">
             ${iconMarkup}
             <span class="dropdown-menu-item-text">
@@ -145,6 +216,31 @@ export function renderAlsoSeeMarkup(links) {
             </span>
           </a>
         </li>`;
+}
+
+/**
+ * @param {AlsoSeeSection[]} sections
+ * @returns {string}
+ */
+export function renderAlsoSeeMarkup(sections) {
+  if (!alsoSeeHasItems(sections)) return "";
+
+  let index = 0;
+  const items = sections
+    .map((section, sectionIndex) => {
+      const linksMarkup = section.items
+        .map((link) => renderAlsoSeeLinkItem(link, index++))
+        .join("");
+      if (!section.topic) {
+        const divider =
+          sectionIndex > 0
+            ? `<li role="separator" class="dropdown-menu-separator"></li>`
+            : "";
+        return `${divider}${linksMarkup}`;
+      }
+      return `<li role="presentation">
+          <div class="dropdown-menu-group">${escapeText(section.topic)}</div>
+        </li>${linksMarkup}`;
     })
     .join("");
 
@@ -161,15 +257,15 @@ export function renderAlsoSeeMarkup(links) {
  * Replace the footer “also see” host contents with link markup.
  *
  * @param {ParentNode | null | undefined} root
- * @param {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }[]} links
+ * @param {AlsoSeeSection[]} sections
  * @returns {HTMLElement | null} Host element, or null if missing
  */
-export function mountAlsoSee(root, links) {
+export function mountAlsoSee(root, sections) {
   const host =
     root?.querySelector?.("#footer-also-see-host") ??
     document.getElementById("footer-also-see-host");
   if (!host) return null;
-  host.innerHTML = renderAlsoSeeMarkup(links);
+  host.innerHTML = renderAlsoSeeMarkup(sections);
   return host;
 }
 
@@ -187,13 +283,22 @@ export function renderPageShell(options = {}) {
 
   if (document.getElementById("app-page-footer")) return;
 
-  const { repoUrl, brandUrl, brandName, alsoSee, appUrl, appVersion, templateVersion } = {
+  const {
+    repoUrl,
+    brandUrl,
+    brandName,
+    alsoSee,
+    alsoSeeTopics,
+    appUrl,
+    appVersion,
+    templateVersion,
+  } = {
     ...DEFAULTS,
     ...options,
   };
   const issuesUrl = `${repoUrl}/issues`;
-  const alsoSeeLinks = normalizeAlsoSee(alsoSee, appUrl);
-  const alsoSeeMarkup = renderAlsoSeeMarkup(alsoSeeLinks);
+  const alsoSeeSections = normalizeAlsoSee(alsoSee, appUrl, alsoSeeTopics);
+  const alsoSeeMarkup = renderAlsoSeeMarkup(alsoSeeSections);
 
   document.body.insertAdjacentHTML(
     "beforeend",
