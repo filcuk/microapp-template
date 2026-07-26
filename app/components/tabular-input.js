@@ -1334,6 +1334,7 @@ export function initTabularInput(
   }
 
   function render() {
+    closeTooltip();
     for (const menu of typeMenus) menu.destroy();
     typeMenus = [];
     syncDisabled();
