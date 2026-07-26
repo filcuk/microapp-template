@@ -4,9 +4,11 @@ import { APP_VERSION, TEMPLATE_VERSION } from "../version.js";
 
 const DEFAULTS = {
   repoUrl: APP_CONFIG.repoUrl,
+  appUrl: APP_CONFIG.appUrl,
   brandUrl: APP_CONFIG.brandUrl,
   brandName: APP_CONFIG.brandName,
   alsoSee: APP_CONFIG.alsoSee,
+  alsoSeeUrl: APP_CONFIG.alsoSeeUrl,
   appVersion: APP_VERSION,
   templateVersion: TEMPLATE_VERSION,
 };
@@ -57,12 +59,37 @@ function escapeText(value) {
 }
 
 /**
+ * Normalize a site URL for equality checks (scheme, host, path; no query/hash; no trailing slash).
+ *
+ * @param {unknown} value
+ * @returns {string}
+ */
+export function normalizeSiteUrl(value) {
+  if (typeof value !== "string") return "";
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  try {
+    const parsed = new URL(trimmed);
+    parsed.hash = "";
+    parsed.search = "";
+    const path = parsed.pathname.replace(/\/+$/, "");
+    return `${parsed.protocol}//${parsed.host}${path}`.toLowerCase();
+  } catch {
+    return trimmed.replace(/\/+$/, "").toLowerCase();
+  }
+}
+
+/**
  * @param {unknown} alsoSee
+ * @param {string} [excludeUrl] Drop entries whose `url` matches this app’s public URL
  * @returns {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }[]}
  */
-export function normalizeAlsoSee(alsoSee) {
+export function normalizeAlsoSee(alsoSee, excludeUrl = "") {
   if (alsoSee === false || alsoSee === null || alsoSee === undefined) return [];
   if (!Array.isArray(alsoSee)) return [];
+
+  const exclude = normalizeSiteUrl(excludeUrl);
 
   return alsoSee
     .filter((link) => link && typeof link === "object")
@@ -70,6 +97,7 @@ export function normalizeAlsoSee(alsoSee) {
       const label = typeof link.label === "string" ? link.label.trim() : "";
       const url = typeof link.url === "string" ? link.url.trim() : "";
       if (!label || !url) return null;
+      if (exclude && normalizeSiteUrl(url) === exclude) return null;
 
       const subtitle =
         typeof link.subtitle === "string" ? link.subtitle.trim() : "";
@@ -93,7 +121,7 @@ export function normalizeAlsoSee(alsoSee) {
  * @param {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }[]} links
  * @returns {string}
  */
-function renderAlsoSeeMarkup(links) {
+export function renderAlsoSeeMarkup(links) {
   if (!links.length) return "";
 
   const items = links
@@ -130,6 +158,22 @@ function renderAlsoSeeMarkup(links) {
 }
 
 /**
+ * Replace the footer “also see” host contents with link markup.
+ *
+ * @param {ParentNode | null | undefined} root
+ * @param {{ label: string, subtitle: string, url: string, iconLight: string, iconDark: string }[]} links
+ * @returns {HTMLElement | null} Host element, or null if missing
+ */
+export function mountAlsoSee(root, links) {
+  const host =
+    root?.querySelector?.("#footer-also-see-host") ??
+    document.getElementById("footer-also-see-host");
+  if (!host) return null;
+  host.innerHTML = renderAlsoSeeMarkup(links);
+  return host;
+}
+
+/**
  * Inject shared page chrome: footer (links + theme toggle) and page navigation.
  * Skips if `#app-page-footer` already exists.
  */
@@ -143,12 +187,12 @@ export function renderPageShell(options = {}) {
 
   if (document.getElementById("app-page-footer")) return;
 
-  const { repoUrl, brandUrl, brandName, alsoSee, appVersion, templateVersion } = {
+  const { repoUrl, brandUrl, brandName, alsoSee, appUrl, appVersion, templateVersion } = {
     ...DEFAULTS,
     ...options,
   };
   const issuesUrl = `${repoUrl}/issues`;
-  const alsoSeeLinks = normalizeAlsoSee(alsoSee);
+  const alsoSeeLinks = normalizeAlsoSee(alsoSee, appUrl);
   const alsoSeeMarkup = renderAlsoSeeMarkup(alsoSeeLinks);
 
   document.body.insertAdjacentHTML(
@@ -162,7 +206,7 @@ export function renderPageShell(options = {}) {
           <a href="${issuesUrl}" target="_blank" rel="noopener noreferrer">issue</a></span>
           <span class="footer-meta-sep" aria-hidden="true">·</span>
           <span>star on
-          <a href="${repoUrl}" target="_blank" rel="noopener noreferrer">GitHub</a></span>${alsoSeeMarkup}
+          <a href="${repoUrl}" target="_blank" rel="noopener noreferrer">GitHub</a></span><span id="footer-also-see-host">${alsoSeeMarkup}</span>
           <span class="footer-meta-sep" aria-hidden="true">·</span>
           <span>microapp by</span>
         </div>
