@@ -115,7 +115,9 @@ export function initPopupMenu({
     setHidden(menuEl, true);
     clearFixedPosition();
     toggleEl?.setAttribute("aria-expanded", "false");
-    toggleEl?.focus();
+    if (toggleEl?.isConnected) {
+      toggleEl.focus();
+    }
   }
 
   function openMenu() {
@@ -132,13 +134,24 @@ export function initPopupMenu({
   }
 
   function activateItem(item) {
-    if (closeOnSelect) closeMenu();
+    // Close the panel before onSelect so handlers can tear down the DOM, but
+    // defer focus restore until afterward — focusing a trigger that is about
+    // to be destroyed (e.g. remove column) would flash its tooltip.
+    if (closeOnSelect) {
+      isOpen = false;
+      setHidden(menuEl, true);
+      clearFixedPosition();
+      toggleEl?.setAttribute("aria-expanded", "false");
+    }
     onSelect?.({
       containerEl,
       item,
       value: item.dataset.value,
       label: menuItemLabel(item),
     });
+    if (closeOnSelect && toggleEl?.isConnected) {
+      toggleEl.focus();
+    }
   }
 
   function onToggleClick(e) {

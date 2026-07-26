@@ -12,6 +12,7 @@
  *     columns: [{ id?, label, type }],
  *     rows: [{ id?, cells: { [columnId]: value } }],
  *     disabled?,
+ *     breakout?, // default true — allow centered canvas breakout when wide
  *     onChange?,
  *   })
  *
@@ -19,8 +20,15 @@
  * remove) on the column label; Add column in the header after the last
  * column; Add row in a footer row under the data.
  *
+ * Width: when columns exceed the page body, the grid can break out
+ * centered up to the canvas (viewport minus page padding). A Fit/Overflow
+ * toggle beside add-row appears only while overflowing so the user can
+ * constrain to body width.
+ *
  * Paste: Excel/TSV clipboard paste expands from the focused body cell
  * (fallback top-left), overwrites that rectangle, auto-detects column types.
+ * Footer Paste / Paste with Headers replace the whole grid from the clipboard
+ * (sized to the clipboard; optional first-row headers).
  * Reset (header): size picker for a blank text-column table.
  */
 
@@ -179,6 +187,95 @@ export function parseClipboardTable(text) {
 }
 
 /**
+ * Format a cell value for Excel-friendly TSV.
+ * @param {unknown} value
+ * @param {ColumnType} [type]
+ */
+export function formatCellForClipboard(value, type) {
+  if (value === null || value === undefined) return "";
+  if (type === "logical" || typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+  return String(value);
+}
+
+/**
+ * Escape a TSV field (quote when it contains tab, newline, or quotes).
+ * @param {string} value
+ */
+function escapeTsvCell(value) {
+  const text = String(value ?? "");
+  if (/[\t\n\r"]/.test(text)) {
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+  return text;
+}
+
+/**
+ * Serialize columns + rows to Excel-friendly TSV (header row + data).
+ * @param {Column[]} columns
+ * @param {Row[]} rows
+ * @returns {string}
+ */
+export function formatClipboardTable(columns, rows) {
+  const cols = Array.isArray(columns) ? columns : [];
+  const dataRows = Array.isArray(rows) ? rows : [];
+  if (!cols.length) return "";
+
+  const header = cols.map((col) => escapeTsvCell(col.label ?? ""));
+  const body = dataRows.map((row) =>
+    cols.map((col) =>
+      escapeTsvCell(formatCellForClipboard(row?.cells?.[col.id], col.type))
+    )
+  );
+  return [header, ...body].map((line) => line.join("\t")).join("\n");
+}
+
+/**
+ * Copy text to the clipboard (Clipboard API, with execCommand fallback).
+ * @param {string} text
+ * @returns {Promise<boolean>}
+ */
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fall through to execCommand.
+    }
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "0";
+  textarea.style.left = "0";
+  textarea.style.width = "1px";
+  textarea.style.height = "1px";
+  textarea.style.padding = "0";
+  textarea.style.border = "none";
+  textarea.style.outline = "none";
+  textarea.style.boxShadow = "none";
+  textarea.style.background = "transparent";
+  textarea.style.opacity = "0";
+  document.body.append(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  textarea.remove();
+  return ok;
+}
+
+/**
  * True when clipboard text looks like a multi-cell table (TSV / multi-line).
  * @param {string} text
  */
@@ -187,6 +284,79 @@ export function isTabularClipboardText(text) {
   if (!value) return false;
   if (value.includes("\t")) return true;
   return /[\r\n]/.test(value);
+}
+
+/**
+ * Split a clipboard string matrix into column labels and data rows.
+ * When `firstRowIsHeader` is true, row 0 becomes labels; otherwise labels are
+ * `Column 1`…`Column N` and every row is data.
+ * @param {string[][]} matrix
+ * @param {{ firstRowIsHeader?: boolean }} [options]
+ * @returns {{ labels: string[], data: string[][] } | null}
+ */
+export function splitClipboardMatrix(matrix, { firstRowIsHeader = false } = {}) {
+  if (!Array.isArray(matrix) || matrix.length === 0) return null;
+  const width = matrix[0]?.length ?? 0;
+  if (!width) return null;
+
+  /** @param {string[]} row */
+  function padRow(row) {
+    const next = row.slice(0, width);
+    while (next.length < width) next.push("");
+    return next;
+  }
+
+  if (firstRowIsHeader) {
+    const labels = matrix[0].map((cell, index) => {
+      const label = String(cell ?? "").trim();
+      return label || `Column ${index + 1}`;
+    });
+    return {
+      labels,
+      data: matrix.slice(1).map(padRow),
+    };
+  }
+
+  return {
+    labels: Array.from(
+      { length: width },
+      (_, index) => `Column ${index + 1}`
+    ),
+    data: matrix.map(padRow),
+  };
+}
+
+/**
+ * Read plain text from the clipboard (Clipboard API).
+ * Returns `null` when unavailable or denied (caller may fall back to a paste event).
+ * @returns {Promise<string | null>}
+ */
+async function readTextFromClipboard() {
+  if (!window.isSecureContext || !navigator.clipboard) return null;
+
+  if (typeof navigator.clipboard.readText === "function") {
+    try {
+      return await navigator.clipboard.readText();
+    } catch {
+      // NotAllowedError / permission — try read() or paste-event fallback.
+    }
+  }
+
+  if (typeof navigator.clipboard.read === "function") {
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        if (!item.types.includes("text/plain")) continue;
+        const blob = await item.getType("text/plain");
+        return await blob.text();
+      }
+      return "";
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 function resolveDisabled(rootEl, disabledOption) {
@@ -268,12 +438,28 @@ function normalizeRows(rows, columns, nextId) {
  */
 export function initTabularInput(
   rootEl,
-  { columns: columnsOption, rows: rowsOption, disabled, onChange } = {}
+  {
+    columns: columnsOption,
+    rows: rowsOption,
+    disabled,
+    breakout: breakoutOption,
+    onChange,
+  } = {}
 ) {
   if (!rootEl) return null;
 
   const nextId = createIdFactory();
   let isDisabled = resolveDisabled(rootEl, disabled);
+  /** User preference: allow centered canvas breakout when the grid overflows. */
+  let breakoutEnabled =
+    typeof breakoutOption === "boolean"
+      ? breakoutOption
+      : (parseBooleanAttr(rootEl.dataset.tabularInputBreakout) ?? true);
+  /** Whether content is wider than the page-body slot. */
+  let isOverflowing = false;
+  /** @type {number | null} */
+  let breakoutSyncFrame = null;
+
   /** @type {Column[]} */
   let columns = normalizeColumns(columnsOption, nextId);
   /** @type {Row[]} */
@@ -295,12 +481,62 @@ export function initTabularInput(
   tableEl.append(theadEl, tbodyEl);
   wrapEl.append(tableEl);
 
+  const breakoutBtn = document.createElement("button");
+  breakoutBtn.type = "button";
+  breakoutBtn.className = "btn tabular-input-breakout-toggle";
+  breakoutBtn.setAttribute("aria-pressed", "true");
+  setHidden(breakoutBtn, true);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "btn tabular-input-copy";
+  copyBtn.setAttribute("aria-label", "Copy table");
+  copyBtn.dataset.tooltip = "Copy for Excel";
+  const copyLabelEl = document.createElement("span");
+  copyLabelEl.className = "tabular-input-action-label";
+  copyLabelEl.textContent = "Copy";
+  copyBtn.append(
+    createIcon("copy", { className: "btn-icon-svg" }),
+    copyLabelEl
+  );
+
+  const pasteBtn = document.createElement("button");
+  pasteBtn.type = "button";
+  pasteBtn.className = "btn tabular-input-paste";
+  pasteBtn.setAttribute("aria-label", "Paste table");
+  pasteBtn.dataset.tooltip = "Replace table from clipboard";
+  const pasteLabelEl = document.createElement("span");
+  pasteLabelEl.className = "tabular-input-action-label";
+  pasteLabelEl.textContent = "Paste";
+  pasteBtn.append(
+    createIcon("paste", { className: "btn-icon-svg" }),
+    pasteLabelEl
+  );
+
+  const pasteHeadersBtn = document.createElement("button");
+  pasteHeadersBtn.type = "button";
+  pasteHeadersBtn.className = "btn tabular-input-paste-headers";
+  pasteHeadersBtn.setAttribute("aria-label", "Paste with headers");
+  pasteHeadersBtn.dataset.tooltip =
+    "Replace table from clipboard; first row becomes column headers";
+  const pasteHeadersLabelEl = document.createElement("span");
+  pasteHeadersLabelEl.className = "tabular-input-action-label";
+  pasteHeadersLabelEl.textContent = "Paste with Headers";
+  pasteHeadersBtn.append(
+    createIcon("paste-special", { className: "btn-icon-svg" }),
+    pasteHeadersLabelEl
+  );
+
   const addRowBtn = document.createElement("button");
   addRowBtn.type = "button";
   addRowBtn.className = "btn btn-icon tabular-input-add-row";
   addRowBtn.setAttribute("aria-label", "Add row");
   addRowBtn.dataset.tooltip = "Add row";
   addRowBtn.append(createIcon("plus", { className: "btn-icon-svg" }));
+
+  const footerActions = document.createElement("div");
+  footerActions.className = "tabular-input-footer-actions";
+  footerActions.append(addRowBtn, breakoutBtn, copyBtn, pasteBtn, pasteHeadersBtn);
 
   const addColBtn = document.createElement("button");
   addColBtn.type = "button";
@@ -552,11 +788,126 @@ export function initTabularInput(
     });
   }
 
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let copyResetTimer = null;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let pasteResetTimer = null;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let pasteHeadersResetTimer = null;
+
+  /**
+   * Active “press Ctrl+V” capture when Clipboard API read is unavailable.
+   * @type {{
+   *   button: HTMLButtonElement,
+   *   reset: () => void,
+   *   resolve: (text: string | null) => void,
+   *   cleanup: () => void,
+   * } | null}
+   */
+  let pasteCaptureSession = null;
+
   function syncDisabled() {
     rootEl.classList.toggle("tabular-input--disabled", isDisabled);
     addRowBtn.disabled = isDisabled;
     addColBtn.disabled = isDisabled;
     resetBtn.disabled = isDisabled;
+    breakoutBtn.disabled = isDisabled;
+    copyBtn.disabled = isDisabled;
+    pasteBtn.disabled = isDisabled;
+    pasteHeadersBtn.disabled = isDisabled;
+  }
+
+  function getSlotWidth() {
+    const slot = rootEl.parentElement;
+    return slot?.clientWidth ?? rootEl.clientWidth;
+  }
+
+  function getCanvasMaxWidth() {
+    const main = rootEl.closest("main");
+    let pad = 0;
+    if (main) {
+      const style = getComputedStyle(main);
+      pad =
+        (parseFloat(style.paddingLeft) || 0) +
+        (parseFloat(style.paddingRight) || 0);
+    }
+    if (!pad) {
+      const probe = document.createElement("div");
+      probe.style.cssText =
+        "position:absolute;visibility:hidden;pointer-events:none;width:var(--page-padding-x)";
+      document.body.append(probe);
+      pad = probe.offsetWidth * 2;
+      probe.remove();
+    }
+    return Math.max(0, document.documentElement.clientWidth - pad);
+  }
+
+  function syncBreakoutButton() {
+    const active = isOverflowing && breakoutEnabled;
+    const shortLabel = active ? "Fit" : "Overflow";
+    const tip = active ? "Fit to page width" : "Expand to canvas width";
+    breakoutBtn.setAttribute("aria-pressed", active ? "true" : "false");
+    breakoutBtn.setAttribute("aria-label", tip);
+    breakoutBtn.dataset.tooltip = tip;
+    const iconId = active ? "fullscreen-exit" : "fullscreen";
+    const labelEl = document.createElement("span");
+    labelEl.className = "tabular-input-breakout-label";
+    labelEl.textContent = shortLabel;
+    breakoutBtn.replaceChildren(
+      createIcon(iconId, { className: "btn-icon-svg" }),
+      labelEl
+    );
+  }
+
+  function getWrapBorderX() {
+    const style = getComputedStyle(wrapEl);
+    return (
+      (parseFloat(style.borderLeftWidth) || 0) +
+      (parseFloat(style.borderRightWidth) || 0)
+    );
+  }
+
+  function clearBreakoutStyles() {
+    rootEl.classList.remove("tabular-input--breakout");
+    rootEl.style.removeProperty("--tabular-breakout-width");
+    rootEl.style.removeProperty("width");
+    rootEl.style.removeProperty("max-width");
+    rootEl.style.removeProperty("margin-left");
+    wrapEl.style.removeProperty("overflow-x");
+  }
+
+  function syncBreakoutLayout() {
+    breakoutSyncFrame = null;
+
+    // Measure against the page-body slot without breakout applied.
+    clearBreakoutStyles();
+    const slotWidth = getSlotWidth();
+    const contentWidth = Math.max(tableEl.scrollWidth, wrapEl.scrollWidth);
+    isOverflowing = contentWidth > slotWidth + 1;
+
+    setHidden(breakoutBtn, !isOverflowing);
+    syncBreakoutButton();
+
+    if (!isOverflowing || !breakoutEnabled) return;
+
+    // Include .table-wrap borders so the table fits without a 1–2px scrollbar.
+    const needed = Math.ceil(contentWidth + getWrapBorderX());
+    const canvasMax = getCanvasMaxWidth();
+    const width = Math.min(needed, canvasMax);
+    rootEl.style.setProperty("--tabular-breakout-width", `${width}px`);
+    rootEl.style.width = `${width}px`;
+    rootEl.style.maxWidth = `calc(100vw - 2 * var(--page-padding-x))`;
+    rootEl.style.marginLeft = `calc((100% - ${width}px) / 2)`;
+    rootEl.classList.add("tabular-input--breakout");
+    // Hide residual subpixel overflow when we sized to fit; keep scroll if clamped.
+    wrapEl.style.overflowX = needed <= canvasMax ? "hidden" : "";
+  }
+
+  function scheduleBreakoutSync() {
+    if (breakoutSyncFrame !== null) return;
+    breakoutSyncFrame = requestAnimationFrame(() => {
+      syncBreakoutLayout();
+    });
   }
 
   /**
@@ -976,13 +1327,14 @@ export function initTabularInput(
     const cell = document.createElement("td");
     cell.className = "tabular-input-add-row-cell";
     cell.colSpan = Math.max(columns.length, 1);
-    cell.append(addRowBtn);
+    cell.append(footerActions);
 
     tr.append(lead, cell, createTrailingSpacerCell());
     return tr;
   }
 
   function render() {
+    closeTooltip();
     for (const menu of typeMenus) menu.destroy();
     typeMenus = [];
     syncDisabled();
@@ -1017,6 +1369,7 @@ export function initTabularInput(
     });
 
     tbodyEl.append(createAddRowFooter());
+    scheduleBreakoutSync();
   }
 
   function addRow({ emitEvent = true, source = "add-row" } = {}) {
@@ -1282,6 +1635,45 @@ export function initTabularInput(
     }
   }
 
+  /**
+   * Replace the entire grid from a clipboard matrix (exact size).
+   * @param {string[][]} matrix
+   * @param {{ firstRowIsHeader?: boolean }} [options]
+   * @returns {boolean}
+   */
+  function replaceTableFromMatrix(matrix, { firstRowIsHeader = false } = {}) {
+    const split = splitClipboardMatrix(matrix, { firstRowIsHeader });
+    if (!split) return false;
+
+    const { labels } = split;
+    let { data } = split;
+    if (!data.length) {
+      data = [Array.from({ length: labels.length }, () => "")];
+    }
+
+    columns = labels.map((label) => ({
+      id: nextId("col"),
+      label,
+      type: /** @type {ColumnType} */ ("text"),
+    }));
+    rows = data.map((cells) => ({
+      id: nextId("row"),
+      cells: Object.fromEntries(
+        columns.map((col, index) => [col.id, cells[index] ?? ""])
+      ),
+    }));
+
+    for (const column of columns) {
+      const values = rows.map((row) => row.cells[column.id]);
+      const nextType = detectColumnType(values);
+      column.type = nextType;
+      for (const row of rows) {
+        row.cells[column.id] = coerceCellValue(row.cells[column.id], nextType);
+      }
+    }
+    return true;
+  }
+
   function onPaste(event) {
     if (isDisabled) return;
     const text = event.clipboardData?.getData("text/plain") ?? "";
@@ -1476,11 +1868,246 @@ export function initTabularInput(
     }
   }
 
+  function onBreakoutClick() {
+    if (isDisabled || !isOverflowing) return;
+    breakoutEnabled = !breakoutEnabled;
+    closeTooltip();
+    syncBreakoutLayout();
+  }
+
+  function setActionButtonLabel(button, text) {
+    const labelEl = button.querySelector(".tabular-input-action-label");
+    if (labelEl) labelEl.textContent = text;
+  }
+
+  function resetCopyButtonLabel() {
+    setActionButtonLabel(copyBtn, "Copy");
+    copyBtn.setAttribute("aria-label", "Copy table");
+    copyBtn.dataset.tooltip = "Copy for Excel";
+  }
+
+  function resetPasteButtonLabel() {
+    setActionButtonLabel(pasteBtn, "Paste");
+    pasteBtn.setAttribute("aria-label", "Paste table");
+    pasteBtn.dataset.tooltip = "Replace table from clipboard";
+  }
+
+  function resetPasteHeadersButtonLabel() {
+    setActionButtonLabel(pasteHeadersBtn, "Paste with Headers");
+    pasteHeadersBtn.setAttribute("aria-label", "Paste with headers");
+    pasteHeadersBtn.dataset.tooltip =
+      "Replace table from clipboard; first row becomes column headers";
+  }
+
+  /**
+   * Flash a temporary label on a clipboard action button.
+   * @param {HTMLButtonElement} button
+   * @param {{ success: string, fail: string, reset: () => void, getTimer: () => ReturnType<typeof setTimeout> | null, setTimer: (id: ReturnType<typeof setTimeout> | null) => void }} opts
+   * @param {boolean} ok
+   */
+  function flashActionButton(button, opts, ok) {
+    const prev = opts.getTimer();
+    if (prev !== null) {
+      clearTimeout(prev);
+      opts.setTimer(null);
+    }
+    if (ok) {
+      setActionButtonLabel(button, opts.success);
+      button.setAttribute("aria-label", opts.success);
+    } else {
+      setActionButtonLabel(button, opts.fail);
+      button.setAttribute("aria-label", opts.fail);
+    }
+    opts.setTimer(
+      setTimeout(() => {
+        opts.setTimer(null);
+        opts.reset();
+      }, 1500)
+    );
+  }
+
+  async function onCopyClick() {
+    if (isDisabled) return;
+    closeTooltip();
+    const text = formatClipboardTable(columns, rows);
+    const ok = await copyTextToClipboard(text);
+    flashActionButton(
+      copyBtn,
+      {
+        success: "Copied",
+        fail: "Failed",
+        reset: resetCopyButtonLabel,
+        getTimer: () => copyResetTimer,
+        setTimer: (id) => {
+          copyResetTimer = id;
+        },
+      },
+      ok
+    );
+    if (ok) announce("Table copied");
+  }
+
+  /**
+   * @param {{ firstRowIsHeader: boolean, button: HTMLButtonElement, reset: () => void, getTimer: () => ReturnType<typeof setTimeout> | null, setTimer: (id: ReturnType<typeof setTimeout> | null) => void, announceOk: string }} opts
+   */
+  async function onPasteReplaceClick(opts) {
+    if (isDisabled) return;
+
+    // Second click while armed cancels.
+    if (pasteCaptureSession?.button === opts.button) {
+      endPasteCapture(null);
+      announce("Paste cancelled");
+      return;
+    }
+
+    // Start read while the click's user activation is still fresh.
+    const readPromise = readTextFromClipboard();
+    closeTooltip();
+
+    let text = await readPromise;
+    if (text === null) {
+      text = await waitForPasteViaShortcut(opts.button, opts.reset);
+      if (text === null) return;
+    }
+
+    const matrix = parseClipboardTable(text);
+    const ok = replaceTableFromMatrix(matrix, {
+      firstRowIsHeader: opts.firstRowIsHeader,
+    });
+    if (ok) {
+      render();
+      emit("paste");
+      announce(opts.announceOk);
+    }
+    flashActionButton(
+      opts.button,
+      {
+        success: "Pasted",
+        fail: "Failed",
+        reset: opts.reset,
+        getTimer: opts.getTimer,
+        setTimer: opts.setTimer,
+      },
+      ok
+    );
+  }
+
+  /**
+   * End an armed paste-capture session.
+   * @param {string | null} text
+   */
+  function endPasteCapture(text) {
+    const session = pasteCaptureSession;
+    if (!session) return;
+    pasteCaptureSession = null;
+    session.cleanup();
+    session.reset();
+    session.resolve(text);
+  }
+
+  /**
+   * When Clipboard API read is blocked, arm a one-shot document paste listener
+   * and prompt for Ctrl+V (same data path as in-grid paste).
+   * @param {HTMLButtonElement} button
+   * @param {() => void} reset
+   * @returns {Promise<string | null>}
+   */
+  function waitForPasteViaShortcut(button, reset) {
+    endPasteCapture(null);
+
+    return new Promise((resolve) => {
+      setActionButtonLabel(button, "Ctrl+V");
+      button.setAttribute("aria-label", "Press Control V to paste");
+      button.dataset.tooltip = "Press Ctrl+V to paste";
+      announce("Press Control V to paste");
+
+      /** @param {ClipboardEvent} event */
+      function onPaste(event) {
+        const next = event.clipboardData?.getData("text/plain") ?? "";
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        endPasteCapture(next);
+      }
+
+      const removeEscape = onDocumentEscape(() => {
+        endPasteCapture(null);
+        announce("Paste cancelled");
+        return true;
+      }, { priority: 60 });
+
+      const timer = setTimeout(() => {
+        endPasteCapture(null);
+        announce("Paste timed out");
+      }, 15000);
+
+      function cleanup() {
+        clearTimeout(timer);
+        document.removeEventListener("paste", onPaste, true);
+        removeEscape();
+      }
+
+      pasteCaptureSession = {
+        button,
+        reset,
+        resolve,
+        cleanup,
+      };
+
+      document.addEventListener("paste", onPaste, true);
+    });
+  }
+
+  function onPasteClick() {
+    return onPasteReplaceClick({
+      firstRowIsHeader: false,
+      button: pasteBtn,
+      reset: resetPasteButtonLabel,
+      getTimer: () => pasteResetTimer,
+      setTimer: (id) => {
+        pasteResetTimer = id;
+      },
+      announceOk: "Table replaced from clipboard",
+    });
+  }
+
+  function onPasteHeadersClick() {
+    return onPasteReplaceClick({
+      firstRowIsHeader: true,
+      button: pasteHeadersBtn,
+      reset: resetPasteHeadersButtonLabel,
+      getTimer: () => pasteHeadersResetTimer,
+      setTimer: (id) => {
+        pasteHeadersResetTimer = id;
+      },
+      announceOk: "Table replaced from clipboard with headers",
+    });
+  }
+
+  function onBreakoutViewportChange() {
+    scheduleBreakoutSync();
+  }
+
+  /** Slot width only — avoid observing the grid itself (breakout would loop). */
+  const breakoutResizeObserver =
+    typeof ResizeObserver === "function"
+      ? new ResizeObserver(() => {
+          scheduleBreakoutSync();
+        })
+      : null;
+  if (rootEl.parentElement) {
+    breakoutResizeObserver?.observe(rootEl.parentElement);
+  }
+
   addRowBtn.addEventListener("click", onAddRowClick);
   addColBtn.addEventListener("click", onAddColClick);
   resetBtn.addEventListener("click", onResetClick);
+  breakoutBtn.addEventListener("click", onBreakoutClick);
+  copyBtn.addEventListener("click", onCopyClick);
+  pasteBtn.addEventListener("click", onPasteClick);
+  pasteHeadersBtn.addEventListener("click", onPasteHeadersClick);
   rootEl.addEventListener("paste", onPaste);
   rootEl.addEventListener("keydown", onRootKeydown);
+  window.addEventListener("resize", onBreakoutViewportChange);
 
   render();
 
@@ -1541,21 +2168,56 @@ export function initTabularInput(
       isDisabled = Boolean(next);
       render();
     },
+    setBreakoutEnabled(next) {
+      breakoutEnabled = Boolean(next);
+      syncBreakoutLayout();
+    },
+    getBreakoutEnabled() {
+      return breakoutEnabled;
+    },
     destroy() {
       for (const menu of typeMenus) menu.destroy();
       typeMenus = [];
+      if (breakoutSyncFrame !== null) {
+        cancelAnimationFrame(breakoutSyncFrame);
+        breakoutSyncFrame = null;
+      }
+      if (copyResetTimer !== null) {
+        clearTimeout(copyResetTimer);
+        copyResetTimer = null;
+      }
+      if (pasteResetTimer !== null) {
+        clearTimeout(pasteResetTimer);
+        pasteResetTimer = null;
+      }
+      if (pasteHeadersResetTimer !== null) {
+        clearTimeout(pasteHeadersResetTimer);
+        pasteHeadersResetTimer = null;
+      }
+      endPasteCapture(null);
+      breakoutResizeObserver?.disconnect();
       addRowBtn.removeEventListener("click", onAddRowClick);
       addColBtn.removeEventListener("click", onAddColClick);
       resetBtn.removeEventListener("click", onResetClick);
+      breakoutBtn.removeEventListener("click", onBreakoutClick);
+      copyBtn.removeEventListener("click", onCopyClick);
+      pasteBtn.removeEventListener("click", onPasteClick);
+      pasteHeadersBtn.removeEventListener("click", onPasteHeadersClick);
       rootEl.removeEventListener("paste", onPaste);
       rootEl.removeEventListener("keydown", onRootKeydown);
+      window.removeEventListener("resize", onBreakoutViewportChange);
       window.removeEventListener("scroll", onSizePopoverViewportChange, true);
       window.removeEventListener("resize", onSizePopoverViewportChange);
       removeSizePopoverOutside();
       removeSizePopoverEscape();
       closeSizePopover();
+      clearBreakoutStyles();
       rootEl.replaceChildren();
-      rootEl.classList.remove("tabular-input", "tabular-input--disabled");
+      rootEl.classList.remove(
+        "tabular-input",
+        "tabular-input--disabled",
+        "tabular-input--breakout"
+      );
     },
   };
 }

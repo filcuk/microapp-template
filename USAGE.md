@@ -296,7 +296,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
-| **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste with type detection. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
+| **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
 | **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
@@ -1649,9 +1649,18 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 - Rename columns by clicking the header label (pointer cursor + “Click to edit” tooltip; Enter to commit, Escape to cancel); resting headers look like normal table headers until edited.
 - Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**, **Add before**, and **Add after**. Only one column menu open at a time. Menus use fixed positioning so they are not clipped by the table scroll container.
 - Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
+- **Copy** (beside Fit/Overflow) copies the grid as Excel-friendly TSV (header + rows) for paste into spreadsheets.
+- **Paste** replaces the whole grid from the clipboard, sized exactly to the clipboard (columns labeled `Column 1`…`N`; types auto-detected).
+- **Paste with Headers** same as Paste, but the first clipboard row becomes column labels and the remaining rows are data.
 - Leading column: header **reset** (`delete`); body rows get a square **up/down split** control to shift the row (`chevron-up` / `chevron-down`). First/last row disables the blocked direction.
 - Header **reset** opens a size-picker popover next to the button (up to **8×8**); choosing a size replaces the table with a blank text-column grid. Programmatic `reset({ columnCount, rowCount })` skips the picker (defaults to **3×2**).
 - Icon chrome uses `data-tooltip` (add/remove row, add column, reset, column menu trigger). Requires `initTooltips()` via `initShell()`.
+
+**Width / canvas breakout**
+
+- When the grid is wider than the page body, it **breaks out centered** up to the canvas (`100vw` minus page padding) instead of scrolling inside the body.
+- A **Fit** / **Overflow** toggle (`fullscreen` / `fullscreen-exit`) sits beside **add row** and appears **only while overflowing**; use it to constrain back to the body (horizontal scroll) or expand again. Tooltips stay “Fit to page width” / “Expand to canvas width”. Default is breakout on.
+- Opt out via `breakout: false` or `data-tabular-input-breakout="false"` (initial preference). `setBreakoutEnabled(boolean)` / `getBreakoutEnabled()` are also available.
 
 **Paste**
 
@@ -1659,6 +1668,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 - Starts at the focused body cell (else top-left); expands rows/columns as needed; overwrites that rectangle; keeps surplus cells outside it.
 - Re-detects each column’s type from its full values (number → logical → text), then coerces cells.
 - Plain single-cell paste without tabs/newlines still goes into the focused field as usual.
+- Footer **Paste** / **Paste with Headers** read the clipboard (secure context) and replace the entire grid; empty header cells fall back to `Column N`; a headers-only clipboard yields one blank data row. If clipboard read is blocked, the button prompts for **Ctrl+V** and captures the next paste.
 
 **Keyboard**
 
@@ -1697,14 +1707,16 @@ grid?.reset(); // blank 3×2; no size picker
 grid?.reset({ columnCount: 4, rowCount: 5 });
 grid?.setData({ columns: [...], rows: [...] });
 grid?.setDisabled(true);
+grid?.setBreakoutEnabled(false);
+grid?.getBreakoutEnabled();
 grid?.destroy();
 
 initTabularInputs(document); // all `.tabular-input` roots
 ```
 
-`data-tabular-input-disabled` mirrors the `disabled` option. `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"move-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, `"paste"`, `"reset"`, and `"api"`.
+`data-tabular-input-disabled` mirrors the `disabled` option. `data-tabular-input-breakout` mirrors the `breakout` option (default on). `onChange` `source` values include `"input"`, `"add-row"`, `"remove-row"`, `"move-row"`, `"add-column"`, `"remove-column"`, `"rename"`, `"type-change"`, `"paste"`, `"reset"`, and `"api"`.
 
-Icons used: `plus`, `delete` (reset), `remove` (row/column), `type-text`, `type-number`, `type-logical`, `chevron-down` — defined in [`app/utils/icons.js`](app/utils/icons.js).
+Icons used: `plus`, `delete` (reset), `remove` (row/column), `type-text`, `type-number`, `type-logical`, `chevron-down`, `fullscreen`, `fullscreen-exit`, `copy`, `paste`, `paste-special` — defined in [`app/utils/icons.js`](app/utils/icons.js).
 
 ### Page navigation
 
