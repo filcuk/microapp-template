@@ -157,12 +157,21 @@ Do **not** delete shared infrastructure you still need: `shell.js`, `render-shel
 
 | Asset | Purpose |
 | ----- | ------- |
-| `app/res/app-light.svg` / `app-dark.svg` | Header logo, favicon |
+| `app/res/app-light.svg` + `app-dark.svg` **or** `app/res/app.svg` | Header logo, favicon |
 | `app/res/sig-light.svg` / `sig-dark.svg` | Footer signature icon |
 
-Theme-aware swapping is handled in CSS and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Replace the SVG files or edit [`app/config.js`](app/config.js) and [`app/shell/render-shell.js`](app/shell/render-shell.js).
+**App logo — pair (default)** or **single**:
 
-For header logos, set a meaningful `alt` on the visible theme variant and `aria-hidden="true"` on the duplicate variant so screen readers are not announced twice.
+| Mode | Files | Config (`APP_ICON_SRC` in [`brand-icon.js`](app/utils/brand-icon.js) and/or `window.__MICROAPP__`) | Header markup |
+| ---- | ----- | --- | --- |
+| Pair | `app-light.svg`, `app-dark.svg` | `light` / `dark` set (default); `icon` empty | Two `<img class="site-logo brand-icon--light\|dark">` (see `index.html`) |
+| Single | `app.svg` | `icon: "app/res/app.svg"`, `light`/`dark` (and `__MICROAPP__` `appIconLight`/`appIconDark`) `""` | One `<img class="site-logo" src="app/res/app.svg">` (no `brand-icon--*` classes) |
+
+Set `__MICROAPP__.appIcon` / `appIconLight` / `appIconDark` in the HTML bridge (before `theme-init.js`) so the favicon is correct before modules load. [`brand-icon.js`](app/utils/brand-icon.js) reads the same keys and keeps the favicon in sync on theme change. If both a single `icon` and a light/dark pair are configured, the pair wins.
+
+Theme-aware swapping for pair mode is handled in CSS (`brand-icon--light` / `brand-icon--dark`). Replace the SVG files or edit the paths above.
+
+For pair-mode header logos, set a meaningful `alt` on the visible theme variant and `aria-hidden="true"` on the duplicate variant so screen readers are not announced twice.
 
 ### 6. Checklist before first deploy
 
@@ -449,7 +458,7 @@ alsoSee: [
         label: "Example App A",
         subtitle: "Sample related microapp", // optional
         url: "https://example.com/app-a",
-        iconLight: "app/res/app-light.svg", // optional; falls back to `icon`
+        iconLight: "app/res/app-light.svg", // or single `icon` for one image
         iconDark: "app/res/app-dark.svg",
       },
     ],
@@ -495,7 +504,7 @@ Remote / local JSON is a top-level array of **topic sections** and/or **flat lin
 ]
 ```
 
-Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Topic headers use the same `.dropdown-menu-group` pattern as dropdowns. Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label. Icons use the same light/dark swap as the site logo (`brand-icon--light` / `brand-icon--dark`). A single `icon` path can replace both `iconLight` and `iconDark`. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL). Flat legacy arrays (links only, no topics) still work.
+Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no custom headers). Topic headers use the same `.dropdown-menu-group` pattern as dropdowns. Each item is a real link: left-click opens in the current window; middle-click or Ctrl/Cmd-click opens in a new tab. Optional `subtitle` shows muted context under the label. Icons: use `iconLight` + `iconDark` for theme-swapped logos (`brand-icon--light` / `brand-icon--dark`), or a single `icon` for one always-visible image. If both forms are present, the light/dark pair wins. Icon values may be local paths (`app/res/…`) or absolute URLs (e.g. another GitHub Pages site or a raw asset URL). Flat legacy arrays (links only, no topics) still work.
 
 ### Heading links
 
@@ -1952,7 +1961,7 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. App logo (`app/res/app-light.svg`, `app/res/app-dark.svg`) and signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swap by theme via CSS; favicon syncs in `app/utils/brand-icon.js`.
+Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swaps by theme via CSS; favicon syncs in `brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 
