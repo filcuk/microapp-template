@@ -2,6 +2,22 @@
 
 Rules for AI agents working in this microapp template repository.
 
+## Lifecycle skills
+
+Multi-step workflows live under [`.cursor/skills/`](.cursor/skills/). Read the matching `SKILL.md` when the task fits; shared rules and the feature dependency inventory are in [`.cursor/skills/_shared/`](.cursor/skills/_shared/).
+
+| Skill | Use when |
+| ----- | -------- |
+| [`init-app`](.cursor/skills/init-app/SKILL.md) | Fork / scaffold a new app from this template |
+| [`migrate-template`](.cursor/skills/migrate-template/SKILL.md) | Upgrade a fork to a newer template (partial or full) |
+| [`sync-shell`](.cursor/skills/sync-shell/SKILL.md) | Pull shell/theme/tokens/infra only |
+| [`restore-component`](.cursor/skills/restore-component/SKILL.md) | Add a trimmed catalogue component back into a fork |
+| [`finalize-app`](.cursor/skills/finalize-app/SKILL.md) | Remove unused components before shipping |
+| [`author-component`](.cursor/skills/author-component/SKILL.md) | Add a **new** reusable component to the template itself |
+| [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION` and update [`CHANGELOG.md`](CHANGELOG.md) |
+| [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) | Wire logos/icons — never invent artwork; request files from the user |
+| [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets after any lifecycle step |
+
 ## Confirm before complexity
 
 Ask the user before adding:
@@ -182,3 +198,4 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 3. Keep changes focused — one concern per file when possible
 4. Update `USAGE.md` when you add or change a reusable component, module API, or deploy workflow (see `.cursor/rules/usage-docs.mdc`)
 5. Update `AGENTS.md` if you add a new `initX` pattern to the module conventions table
+6. For a new catalogue component, follow the **`author-component`** skill and update `.cursor/skills/_shared/component-map.md`

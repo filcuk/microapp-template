@@ -4,6 +4,8 @@ How to fork this template into your own app, deploy it, and use the design syste
 
 ## Creating a new app from this template
 
+Cursor agents can drive this with skills under [`.cursor/skills/`](.cursor/skills/): **`init-app`** (fork setup), **`handle-assets`** (logos/icons — user supplies files), **`finalize-app`** (trim unused components before ship), plus migrate/sync/restore helpers listed in [`AGENTS.md`](AGENTS.md#lifecycle-skills).
+
 ### 1. Create the repository
 
 1. Click **Use this template** on GitHub (or clone this repo).
