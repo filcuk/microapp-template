@@ -25,10 +25,21 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
+}
+
+.code-block--toolbar-bottom > .code-block-toolbar {
+  border-bottom: none;
+  border-top: 1px solid var(--border);
+}
+
+.code-block-toolbar__btn.btn-icon {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
 }
 
 .code-block-body {
@@ -161,11 +172,6 @@
 
 .code-block--edit .code-block-editor-stack pre.line-numbers + .code-block-editor {
   padding-left: var(--code-gutter-width);
-}
-
-.code-block-copy {
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
 }
 
 .surface-actions {

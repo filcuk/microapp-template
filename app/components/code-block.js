@@ -1,35 +1,71 @@
 /**
- * Interactive code blocks: optional line numbers, Prism highlight toggle, copy button.
+ * Interactive code blocks: optional toolbar, Prism highlight, line numbers, copy/paste.
  *
  * Markup:
- *   <div class="code-block" data-code-mode="select" data-code-copy="true">
- *     <div class="code-block-toolbar">…toggles…</div>
+ *   <div class="code-block"
+ *     data-code-mode="select"
+ *     data-code-toolbar="top"
+ *     data-code-toolbar-actions="clear,copy,paste,maximize,line-numbers,highlight"
+ *     data-code-surface-actions="copy,maximize">
  *     <div class="code-block-body">
- *       <button type="button" class="code-block-copy btn">Copy</button>
  *       <pre class="line-numbers language-python"><code>…</code></pre>
  *     </div>
  *   </div>
  *
  * Options via data attributes on `.code-block`:
  *   data-code-mode="view|select|edit" — interaction mode (default `select`)
- *   data-code-copy="false"          — omit copy button behaviour
- *   data-code-line-numbers="false"  — start without line numbers
- *   data-code-highlight="false"     — start without highlighting
+ *   data-code-toolbar="top|bottom|none" — control bar position
+ *   data-code-toolbar-actions — comma list: clear, copy, paste, maximize,
+ *     line-numbers, highlight (default `line-numbers,highlight` when omitted
+ *     and a toolbar position is not `none`)
+ *   data-code-surface-actions — comma list: copy, maximize (hover actions);
+ *     `none` / empty / `false` disables the floating strip
+ *   data-code-copy="false" — legacy: omit surface copy
+ *   data-code-line-numbers="false" — start without line numbers
+ *   data-code-highlight="false" — start without highlighting
  *
- * Edit mode uses a transparent textarea over a highlighted `<pre>` so line
- * numbers and Prism tokens match view/select appearance. Shared `--code-*`
- * metrics keep caret and glyphs aligned.
- *
- * Optional fullscreen: add `data-expandable-surface` on `.code-block` and
- * `data-expandable-surface-trigger` on `.code-block-body`; wire with
- * `initExpandableSurfaces()` from `app/expandable-surface.js`.
+ * Edit mode uses a transparent textarea over a highlighted `<pre>`.
+ * Maximize requires `data-expandable-surface` + `initExpandableSurfaces()`;
+ * toolbar Maximize uses `data-expandable-surface-open`.
  */
 
 import { setHidden } from "../utils/dom.js";
-import { copyText } from "../utils/clipboard.js";
+import { copyText, readText, armPasteCapture } from "../utils/clipboard.js";
+import { createIcon } from "../utils/icons.js";
 
 const LANGUAGE_RE = /language-([\w-]+)/;
 const CODE_MODES = ["view", "select", "edit"];
+const TOOLBAR_POSITIONS = ["top", "bottom", "none"];
+const TOOLBAR_ACTION_IDS = [
+  "clear",
+  "copy",
+  "paste",
+  "maximize",
+  "line-numbers",
+  "highlight",
+];
+const SURFACE_ACTION_IDS = ["copy", "maximize"];
+const DEFAULT_TOOLBAR_ACTIONS = ["line-numbers", "highlight"];
+
+/**
+ * @param {string | undefined} raw
+ * @param {string[]} allowed
+ * @returns {Set<string> | null} null = attribute omitted
+ */
+function parseActionList(raw, allowed) {
+  if (raw === undefined) return null;
+  const trimmed = raw.trim().toLowerCase();
+  if (!trimmed || trimmed === "none" || trimmed === "false") {
+    return new Set();
+  }
+  const allowedSet = new Set(allowed);
+  const next = new Set();
+  for (const part of trimmed.split(",")) {
+    const id = part.trim();
+    if (allowedSet.has(id)) next.add(id);
+  }
+  return next;
+}
 
 function parseLanguage(codeEl) {
   for (const cls of codeEl.classList) {
@@ -43,19 +79,17 @@ function parseMode(value) {
   return CODE_MODES.includes(value) ? value : "select";
 }
 
+function parseToolbarPosition(value) {
+  return TOOLBAR_POSITIONS.includes(value) ? value : null;
+}
+
 function removeLineNumberMarkup(codeEl) {
   codeEl.querySelector(".line-numbers-rows")?.remove();
   codeEl.querySelector(".line-numbers-sizer")?.remove();
 }
 
-function setCopyEnabled(container, enabled) {
-  const copyBtn = container.querySelector(".code-block-copy");
-  if (!copyBtn) return;
-  setHidden(copyBtn, !enabled);
-  copyBtn.disabled = !enabled;
-}
-
 function updateLineNumbersToggle(toggle, highlightEnabled) {
+  if (!toggle) return;
   toggle.disabled = !highlightEnabled;
   toggle.setAttribute("aria-disabled", highlightEnabled ? "false" : "true");
 }
@@ -79,12 +113,39 @@ function countDisplayLines(text) {
 }
 
 /**
+ * @param {string} action
+ * @param {{ label: string, tooltip: string, icon: string, pressed?: boolean }} meta
+ */
+function createToolbarButton(action, meta) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn btn-icon code-block-toolbar__btn";
+  btn.dataset.codeToolbarAction = action;
+  btn.setAttribute("aria-label", meta.label);
+  btn.dataset.tooltip = meta.tooltip;
+  btn.dataset.tooltipPosition = "top";
+  if (meta.pressed !== undefined) {
+    btn.classList.add("btn-toggle");
+    btn.setAttribute("aria-pressed", meta.pressed ? "true" : "false");
+    btn.dataset.codeToggle = action;
+  }
+  if (action === "maximize") {
+    btn.dataset.expandableSurfaceOpen = "";
+  }
+  btn.append(createIcon(meta.icon, { className: "btn-icon-svg" }));
+  return btn;
+}
+
+/**
  * @param {HTMLElement} container
  * @param {{
  *   copyButton?: boolean,
  *   lineNumbers?: boolean,
  *   highlight?: boolean,
  *   mode?: string,
+ *   toolbar?: string,
+ *   toolbarActions?: string[] | string,
+ *   surfaceActions?: string[] | string,
  * }} [options]
  */
 export function initCodeBlock(container, options = {}) {
@@ -96,9 +157,14 @@ export function initCodeBlock(container, options = {}) {
   const code = pre?.querySelector("code");
   if (!pre || !code) return null;
 
-  const copyButton =
-    options.copyButton ??
-    container.dataset.codeCopy !== "false";
+  let body = container.querySelector(".code-block-body");
+  if (!body) {
+    body = document.createElement("div");
+    body.className = "code-block-body";
+    pre.parentNode?.insertBefore(body, pre);
+    body.appendChild(pre);
+  }
+
   const lineNumbersDefault =
     options.lineNumbers ??
     container.dataset.codeLineNumbers !== "false";
@@ -114,19 +180,72 @@ export function initCodeBlock(container, options = {}) {
   let lineNumbersEnabled = lineNumbersDefault;
   let highlightEnabled = highlightDefault;
 
-  const lineNumbersToggle = container.querySelector('[data-code-toggle="line-numbers"]');
-  const highlightToggle = container.querySelector('[data-code-toggle="highlight"]');
-  const copyBtn = container.querySelector(".code-block-copy");
+  /** @type {Set<string>} */
+  let toolbarActions;
+  const toolbarActionsOpt =
+    options.toolbarActions !== undefined
+      ? Array.isArray(options.toolbarActions)
+        ? options.toolbarActions.join(",")
+        : String(options.toolbarActions)
+      : container.dataset.codeToolbarActions;
+  const parsedToolbarActions = parseActionList(
+    toolbarActionsOpt,
+    TOOLBAR_ACTION_IDS
+  );
+  if (parsedToolbarActions) {
+    toolbarActions = parsedToolbarActions;
+  } else {
+    toolbarActions = new Set(DEFAULT_TOOLBAR_ACTIONS);
+  }
+
+  let toolbarPosition =
+    parseToolbarPosition(options.toolbar ?? container.dataset.codeToolbar) ??
+    (toolbarActions.size > 0 ? "top" : "none");
+
+  /** @type {Set<string>} */
+  let surfaceActions;
+  const surfaceActionsOpt =
+    options.surfaceActions !== undefined
+      ? Array.isArray(options.surfaceActions)
+        ? options.surfaceActions.join(",")
+        : String(options.surfaceActions)
+      : container.dataset.codeSurfaceActions;
+  const parsedSurfaceActions = parseActionList(
+    surfaceActionsOpt,
+    SURFACE_ACTION_IDS
+  );
+  if (parsedSurfaceActions) {
+    surfaceActions = parsedSurfaceActions;
+  } else if (options.copyButton === false || container.dataset.codeCopy === "false") {
+    surfaceActions = new Set();
+  } else {
+    surfaceActions = new Set(["copy"]);
+  }
+
   /** @type {HTMLTextAreaElement | null} */
   let editorEl = null;
   /** @type {HTMLElement | null} */
   let editorStackEl = null;
+  /** @type {HTMLElement | null} */
+  let toolbarEl = null;
+  /** @type {HTMLButtonElement | null} */
+  let lineNumbersToggle = null;
+  /** @type {HTMLButtonElement | null} */
+  let highlightToggle = null;
+  /** @type {HTMLButtonElement | null} */
+  let surfaceCopyBtn = null;
+  /** @type {ReturnType<typeof armPasteCapture> | null} */
+  let pasteCapture = null;
 
-  if (copyBtn && !copyBtn.closest(".surface-actions")) {
-    const actionsHost = document.createElement("div");
-    actionsHost.className = "surface-actions";
-    copyBtn.parentNode?.insertBefore(actionsHost, copyBtn);
-    actionsHost.appendChild(copyBtn);
+  function currentSource() {
+    return mode === "edit" && editorEl ? editorEl.value : source;
+  }
+
+  function commitSource(next) {
+    source = next;
+    code.dataset.source = next;
+    if (editorEl) editorEl.value = next;
+    refreshDisplay();
   }
 
   function ensureEditorStack() {
@@ -232,9 +351,7 @@ export function initCodeBlock(container, options = {}) {
       "aria-pressed",
       highlightEnabled ? "true" : "false"
     );
-    if (lineNumbersToggle) {
-      updateLineNumbersToggle(lineNumbersToggle, highlightEnabled);
-    }
+    updateLineNumbersToggle(lineNumbersToggle, highlightEnabled);
   }
 
   function syncLineNumberRows() {
@@ -266,6 +383,7 @@ export function initCodeBlock(container, options = {}) {
       renderPlain();
     }
     syncToggleStates();
+    syncEditableToolbarActions();
     syncLineNumberRows();
 
     if (mode === "edit" && editorEl) {
@@ -275,6 +393,204 @@ export function initCodeBlock(container, options = {}) {
     } else {
       syncStickyGutter();
     }
+  }
+
+  function syncEditableToolbarActions() {
+    const editable = mode !== "view";
+    for (const action of ["clear", "paste"]) {
+      const btn = toolbarEl?.querySelector(
+        `[data-code-toolbar-action="${action}"]`
+      );
+      if (!(btn instanceof HTMLButtonElement)) continue;
+      btn.disabled = !editable;
+      btn.setAttribute("aria-disabled", editable ? "false" : "true");
+    }
+
+    const surfaceCopyEnabled =
+      surfaceActions.has("copy") && (mode !== "view");
+    if (surfaceCopyBtn) {
+      setHidden(surfaceCopyBtn, !surfaceActions.has("copy"));
+      surfaceCopyBtn.disabled = !surfaceCopyEnabled;
+    }
+  }
+
+  /**
+   * @param {HTMLButtonElement} btn
+   * @param {string} idleLabel
+   * @param {boolean} ok
+   */
+  function flashButtonLabel(btn, idleLabel, ok) {
+    const prev = btn.getAttribute("aria-label") || idleLabel;
+    btn.setAttribute("aria-label", ok ? "Copied" : "Failed");
+    btn.dataset.tooltip = ok ? "Copied" : "Failed";
+    window.setTimeout(() => {
+      btn.setAttribute("aria-label", prev);
+      btn.dataset.tooltip = idleLabel;
+    }, 2000);
+  }
+
+  async function handleCopy(btn) {
+    const ok = await copyText(currentSource());
+    flashButtonLabel(btn, "Copy code", ok);
+  }
+
+  async function handlePaste(btn) {
+    if (mode === "view") return;
+
+    if (pasteCapture) {
+      pasteCapture.cancel();
+      pasteCapture = null;
+      btn.setAttribute("aria-label", "Paste code");
+      btn.dataset.tooltip = "Paste";
+      return;
+    }
+
+    let text = await readText();
+    if (text === null) {
+      btn.setAttribute("aria-label", "Press Control V to paste");
+      btn.dataset.tooltip = "Press Ctrl+V to paste";
+      pasteCapture = armPasteCapture({ timeoutMs: 15000 });
+      text = await pasteCapture.promise;
+      pasteCapture = null;
+      btn.setAttribute("aria-label", "Paste code");
+      btn.dataset.tooltip = "Paste";
+      if (text === null) return;
+    }
+
+    commitSource(normalizeSource(text));
+  }
+
+  function handleClear() {
+    if (mode === "view") return;
+    commitSource("");
+  }
+
+  function onToolbarClick(event) {
+    const btn = event.target.closest("[data-code-toolbar-action]");
+    if (!(btn instanceof HTMLButtonElement) || btn.disabled) return;
+    if (!toolbarEl?.contains(btn)) return;
+
+    const action = btn.dataset.codeToolbarAction;
+    if (action === "line-numbers") {
+      if (!highlightEnabled) return;
+      lineNumbersEnabled = !lineNumbersEnabled;
+      refreshDisplay();
+      return;
+    }
+    if (action === "highlight") {
+      highlightEnabled = !highlightEnabled;
+      refreshDisplay();
+      return;
+    }
+    if (action === "clear") {
+      handleClear();
+      return;
+    }
+    if (action === "copy") {
+      void handleCopy(btn);
+      return;
+    }
+    if (action === "paste") {
+      void handlePaste(btn);
+    }
+    // maximize: expandable-surface listens for data-expandable-surface-open
+  }
+
+  function rebuildToolbar() {
+    container.querySelectorAll(".code-block-toolbar").forEach((el) => el.remove());
+    toolbarEl = null;
+    lineNumbersToggle = null;
+    highlightToggle = null;
+
+    container.classList.remove(
+      "code-block--toolbar-top",
+      "code-block--toolbar-bottom"
+    );
+    container.dataset.codeToolbar = toolbarPosition;
+
+    if (toolbarPosition === "none" || toolbarActions.size === 0) {
+      return;
+    }
+
+    toolbarEl = document.createElement("div");
+    toolbarEl.className = "code-block-toolbar";
+    toolbarEl.setAttribute("role", "group");
+    toolbarEl.setAttribute("aria-label", "Code block options");
+
+    const specs = {
+      clear: { label: "Clear code", tooltip: "Clear", icon: "clear" },
+      copy: { label: "Copy code", tooltip: "Copy", icon: "copy" },
+      paste: { label: "Paste code", tooltip: "Paste", icon: "paste" },
+      maximize: {
+        label: "Maximise",
+        tooltip: "Maximise",
+        icon: "fullscreen",
+      },
+      "line-numbers": {
+        label: "Line numbers",
+        tooltip: "Line numbers",
+        icon: "lines",
+        pressed: lineNumbersEnabled,
+      },
+      highlight: {
+        label: "Highlight",
+        tooltip: "Highlight",
+        icon: "highlight",
+        pressed: highlightEnabled,
+      },
+    };
+
+    for (const action of TOOLBAR_ACTION_IDS) {
+      if (!toolbarActions.has(action)) continue;
+      const btn = createToolbarButton(action, specs[action]);
+      toolbarEl.appendChild(btn);
+      if (action === "line-numbers") lineNumbersToggle = btn;
+      if (action === "highlight") highlightToggle = btn;
+    }
+
+    toolbarEl.addEventListener("click", onToolbarClick);
+
+    if (toolbarPosition === "bottom") {
+      container.classList.add("code-block--toolbar-bottom");
+      container.appendChild(toolbarEl);
+    } else {
+      container.classList.add("code-block--toolbar-top");
+      container.insertBefore(toolbarEl, body);
+    }
+
+    syncToggleStates();
+    syncEditableToolbarActions();
+  }
+
+  function rebuildSurfaceActions() {
+    body.querySelector(".surface-actions")?.remove();
+    body.querySelectorAll(".code-block-copy").forEach((el) => el.remove());
+    surfaceCopyBtn = null;
+
+    if (!surfaceActions.has("copy") && !surfaceActions.has("maximize")) {
+      return;
+    }
+
+    if (!surfaceActions.has("copy")) return;
+
+    const actionsHost = document.createElement("div");
+    actionsHost.className = "surface-actions";
+
+    surfaceCopyBtn = document.createElement("button");
+    surfaceCopyBtn.type = "button";
+    surfaceCopyBtn.className = "btn btn-icon code-block-copy";
+    surfaceCopyBtn.setAttribute("aria-label", "Copy code");
+    surfaceCopyBtn.dataset.tooltip = "Copy";
+    surfaceCopyBtn.dataset.tooltipPosition = "top";
+    surfaceCopyBtn.append(createIcon("copy", { className: "btn-icon-svg" }));
+    surfaceCopyBtn.addEventListener("click", () => {
+      if (surfaceCopyBtn?.disabled) return;
+      void handleCopy(surfaceCopyBtn);
+    });
+
+    actionsHost.appendChild(surfaceCopyBtn);
+    body.insertBefore(actionsHost, body.firstChild);
+    syncEditableToolbarActions();
   }
 
   function applyMode() {
@@ -292,44 +608,25 @@ export function initCodeBlock(container, options = {}) {
       setHidden(editor, false);
       setHidden(pre, false);
       refreshDisplay();
-      setCopyEnabled(container, copyButton);
     } else {
       if (editorEl) {
         setHidden(editorEl, true);
       }
       setHidden(pre, false);
       refreshDisplay();
-      setCopyEnabled(container, copyButton && mode !== "view");
     }
   }
 
-  lineNumbersToggle?.addEventListener("click", () => {
-    if (!highlightEnabled) return;
-    lineNumbersEnabled = !lineNumbersEnabled;
-    refreshDisplay();
-  });
+  function writeToolbarAttrs() {
+    container.dataset.codeToolbar = toolbarPosition;
+    container.dataset.codeToolbarActions = [...toolbarActions].join(",");
+    container.dataset.codeSurfaceActions = [...surfaceActions].join(",") || "none";
+  }
 
-  highlightToggle?.addEventListener("click", () => {
-    highlightEnabled = !highlightEnabled;
-    refreshDisplay();
-  });
-
-  copyBtn?.addEventListener("click", async () => {
-    if (!copyButton || copyBtn.disabled) return;
-
-    const text = mode === "edit" && editorEl ? editorEl.value : source;
-    const label = copyBtn.getAttribute("aria-label") || "Copy code";
-    const ok = await copyText(text);
-
-    copyBtn.textContent = ok ? "Copied" : "Failed";
-    if (ok) copyBtn.setAttribute("aria-label", "Copied");
-    window.setTimeout(() => {
-      copyBtn.textContent = "Copy";
-      copyBtn.setAttribute("aria-label", label);
-    }, 2000);
-  });
-
+  rebuildToolbar();
+  rebuildSurfaceActions();
   applyMode();
+  writeToolbarAttrs();
 
   return {
     setLineNumbers(enabled) {
@@ -341,13 +638,10 @@ export function initCodeBlock(container, options = {}) {
       refreshDisplay();
     },
     getSource() {
-      return mode === "edit" && editorEl ? editorEl.value : source;
+      return currentSource();
     },
     setSource(next) {
-      source = next;
-      code.dataset.source = next;
-      if (editorEl) editorEl.value = next;
-      refreshDisplay();
+      commitSource(normalizeSource(String(next ?? "")));
     },
     getMode() {
       return mode;
@@ -362,6 +656,31 @@ export function initCodeBlock(container, options = {}) {
 
       mode = parsed;
       applyMode();
+    },
+    getToolbarPosition() {
+      return toolbarPosition;
+    },
+    setToolbarPosition(next) {
+      const parsed = parseToolbarPosition(next) ?? "none";
+      if (parsed === toolbarPosition) return;
+      toolbarPosition = parsed;
+      rebuildToolbar();
+      writeToolbarAttrs();
+    },
+    setToolbarActions(actions) {
+      const raw = Array.isArray(actions) ? actions.join(",") : String(actions ?? "");
+      toolbarActions = parseActionList(raw, TOOLBAR_ACTION_IDS) ?? new Set();
+      if (toolbarPosition === "none" && toolbarActions.size > 0) {
+        toolbarPosition = "top";
+      }
+      rebuildToolbar();
+      writeToolbarAttrs();
+    },
+    setSurfaceActions(actions) {
+      const raw = Array.isArray(actions) ? actions.join(",") : String(actions ?? "");
+      surfaceActions = parseActionList(raw, SURFACE_ACTION_IDS) ?? new Set();
+      rebuildSurfaceActions();
+      writeToolbarAttrs();
     },
   };
 }
