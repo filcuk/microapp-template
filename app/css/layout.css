@@ -634,6 +634,13 @@ body > footer {
   cursor: default;
 }
 
+/* Match .footer-meta-copy gap so · / “also see” spacing matches other entries */
+#footer-also-see-host:not(:empty) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .footer-also-see.dropdown {
   position: relative;
   display: inline-block;
