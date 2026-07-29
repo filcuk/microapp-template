@@ -33,8 +33,22 @@ import { initChipGroup, initChipInput } from "./components/chip.js";
 initShell();
 initExpands(document);
 initTabs(document);
-initCodeBlocks(document);
+const codeBlockInstances = initCodeBlocks(document);
 initExpandableSurfaces(document);
+
+const demoCodeBlock = codeBlockInstances[0] ?? null;
+
+initSegmentedControl(document.getElementById("demo-code-mode"), {
+  onChange: ({ value }) => {
+    demoCodeBlock?.setMode(value);
+  },
+});
+
+initSegmentedControl(document.getElementById("demo-code-toolbar"), {
+  onChange: ({ value }) => {
+    demoCodeBlock?.setToolbarPosition(value);
+  },
+});
 
 const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-single-result");
 const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");

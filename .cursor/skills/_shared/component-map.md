@@ -70,10 +70,10 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | progress-indicator | `app/components/progress-indicator.js` | `controls-disclosure.css` | — | — | `dom` | |
 | file-dropzone | `app/components/file-dropzone.js` | `controls-file.css` | — | Markup: `upload`; JS: `error` | `dom`, `icons` | |
 | file-download | `app/components/file-download.js` | `controls-file.css` | — | `upload` | `icons` | |
-| code-block | `app/components/code-block.js` | `code-block.css` | `app/vendor/prism/`, `app/prism.css` | — | `dom` | Load Prism scripts on the page |
-| expandable-surface | `app/components/expandable-surface.js` | `code-block.css` | — | `fullscreen`, `fullscreen-exit` | `dom`, `document-listeners`, `icons`; closes `tooltip` | |
+| code-block | `app/components/code-block.js` | `code-block.css` | `app/vendor/prism/`, `app/prism.css` | `clear`, `copy`, `paste`, `lines`, `highlight`, `fullscreen` | `dom`, `clipboard`, `icons` | Load Prism scripts on the page |
+| expandable-surface | `app/components/expandable-surface.js` | `code-block.css` | — | `fullscreen`, `fullscreen-exit` | `dom`, `document-listeners`, `icons`; closes `tooltip` | Code-block floating maximise respects `data-code-surface-actions` |
 | table | `app/components/table.js` | `table.css` | — | `chevron-up` (sort) | `dom`, `icons` | |
-| tabular-input | `app/components/tabular-input.js` | `controls-tabular-input.css` | — | `copy`, `paste`, `paste-special`, `plus`, `delete`, `remove`, `chevron-up`, `chevron-down` | `dom`, `document-listeners`, `menu`, `icons`; closes `tooltip` | |
+| tabular-input | `app/components/tabular-input.js` | `controls-tabular-input.css` | — | `copy`, `paste`, `paste-special`, `plus`, `delete`, `remove`, `chevron-up`, `chevron-down` | `dom`, `document-listeners`, `menu`, `icons`, `clipboard`; closes `tooltip` | |
 | rich-text-editor | `app/components/rich-text-editor.js`, `toastui-editor.js` | `rich-text-editor.css` | `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/`, `app/toastui-editor.css` | — | `config`, `dom` | Large vendor bundle |
 
 ## CSS-only / shell patterns (no dedicated component module)

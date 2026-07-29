@@ -36,6 +36,7 @@ import { parseBooleanAttr, setHidden, getFocusableElements, FOCUSABLE_SELECTOR }
 import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
 import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-listeners.js";
+import { copyText, readText, armPasteCapture } from "../utils/clipboard.js";
 import { closeTooltip } from "./tooltip.js";
 
 /** @typedef {"text" | "number" | "logical"} ColumnType */
@@ -232,50 +233,6 @@ export function formatClipboardTable(columns, rows) {
 }
 
 /**
- * Copy text to the clipboard (Clipboard API, with execCommand fallback).
- * @param {string} text
- * @returns {Promise<boolean>}
- */
-async function copyTextToClipboard(text) {
-  if (navigator.clipboard?.writeText && window.isSecureContext) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // Fall through to execCommand.
-    }
-  }
-
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.setAttribute("readonly", "");
-  textarea.style.position = "fixed";
-  textarea.style.top = "0";
-  textarea.style.left = "0";
-  textarea.style.width = "1px";
-  textarea.style.height = "1px";
-  textarea.style.padding = "0";
-  textarea.style.border = "none";
-  textarea.style.outline = "none";
-  textarea.style.boxShadow = "none";
-  textarea.style.background = "transparent";
-  textarea.style.opacity = "0";
-  document.body.append(textarea);
-  textarea.focus();
-  textarea.select();
-  textarea.setSelectionRange(0, textarea.value.length);
-
-  let ok = false;
-  try {
-    ok = document.execCommand("copy");
-  } catch {
-    ok = false;
-  }
-  textarea.remove();
-  return ok;
-}
-
-/**
  * True when clipboard text looks like a multi-cell table (TSV / multi-line).
  * @param {string} text
  */
@@ -326,38 +283,6 @@ export function splitClipboardMatrix(matrix, { firstRowIsHeader = false } = {}) 
   };
 }
 
-/**
- * Read plain text from the clipboard (Clipboard API).
- * Returns `null` when unavailable or denied (caller may fall back to a paste event).
- * @returns {Promise<string | null>}
- */
-async function readTextFromClipboard() {
-  if (!window.isSecureContext || !navigator.clipboard) return null;
-
-  if (typeof navigator.clipboard.readText === "function") {
-    try {
-      return await navigator.clipboard.readText();
-    } catch {
-      // NotAllowedError / permission — try read() or paste-event fallback.
-    }
-  }
-
-  if (typeof navigator.clipboard.read === "function") {
-    try {
-      const items = await navigator.clipboard.read();
-      for (const item of items) {
-        if (!item.types.includes("text/plain")) continue;
-        const blob = await item.getType("text/plain");
-        return await blob.text();
-      }
-      return "";
-    } catch {
-      return null;
-    }
-  }
-
-  return null;
-}
 
 function resolveDisabled(rootEl, disabledOption) {
   if (typeof disabledOption === "boolean") return disabledOption;
@@ -1930,7 +1855,7 @@ export function initTabularInput(
     if (isDisabled) return;
     closeTooltip();
     const text = formatClipboardTable(columns, rows);
-    const ok = await copyTextToClipboard(text);
+    const ok = await copyText(text);
     flashActionButton(
       copyBtn,
       {
@@ -1955,13 +1880,13 @@ export function initTabularInput(
 
     // Second click while armed cancels.
     if (pasteCaptureSession?.button === opts.button) {
-      endPasteCapture(null);
+      endPasteCapture();
       announce("Paste cancelled");
       return;
     }
 
     // Start read while the click's user activation is still fresh.
-    const readPromise = readTextFromClipboard();
+    const readPromise = readText();
     closeTooltip();
 
     let text = await readPromise;
@@ -1993,16 +1918,14 @@ export function initTabularInput(
   }
 
   /**
-   * End an armed paste-capture session.
-   * @param {string | null} text
+   * End an armed paste-capture session (cancels the shared capture).
    */
-  function endPasteCapture(text) {
+  function endPasteCapture() {
     const session = pasteCaptureSession;
     if (!session) return;
     pasteCaptureSession = null;
-    session.cleanup();
+    session.capture.cancel();
     session.reset();
-    session.resolve(text);
   }
 
   /**
@@ -2013,47 +1936,22 @@ export function initTabularInput(
    * @returns {Promise<string | null>}
    */
   function waitForPasteViaShortcut(button, reset) {
-    endPasteCapture(null);
+    endPasteCapture();
 
-    return new Promise((resolve) => {
-      setActionButtonLabel(button, "Ctrl+V");
-      button.setAttribute("aria-label", "Press Control V to paste");
-      button.dataset.tooltip = "Press Ctrl+V to paste";
-      announce("Press Control V to paste");
+    setActionButtonLabel(button, "Ctrl+V");
+    button.setAttribute("aria-label", "Press Control V to paste");
+    button.dataset.tooltip = "Press Ctrl+V to paste";
+    announce("Press Control V to paste");
 
-      /** @param {ClipboardEvent} event */
-      function onPaste(event) {
-        const next = event.clipboardData?.getData("text/plain") ?? "";
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        endPasteCapture(next);
+    const capture = armPasteCapture({ timeoutMs: 15000 });
+    pasteCaptureSession = { button, reset, capture };
+
+    return capture.promise.then((text) => {
+      if (pasteCaptureSession?.capture === capture) {
+        pasteCaptureSession = null;
+        reset();
       }
-
-      const removeEscape = onDocumentEscape(() => {
-        endPasteCapture(null);
-        announce("Paste cancelled");
-        return true;
-      }, { priority: 60 });
-
-      const timer = setTimeout(() => {
-        endPasteCapture(null);
-        announce("Paste timed out");
-      }, 15000);
-
-      function cleanup() {
-        clearTimeout(timer);
-        document.removeEventListener("paste", onPaste, true);
-        removeEscape();
-      }
-
-      pasteCaptureSession = {
-        button,
-        reset,
-        resolve,
-        cleanup,
-      };
-
-      document.addEventListener("paste", onPaste, true);
+      return text;
     });
   }
 
@@ -2194,7 +2092,7 @@ export function initTabularInput(
         clearTimeout(pasteHeadersResetTimer);
         pasteHeadersResetTimer = null;
       }
-      endPasteCapture(null);
+      endPasteCapture();
       breakoutResizeObserver?.disconnect();
       addRowBtn.removeEventListener("click", onAddRowClick);
       addColBtn.removeEventListener("click", onAddColClick);

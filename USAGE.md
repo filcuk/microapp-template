@@ -320,7 +320,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
 | **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
-| **Code blocks** | `.code-block` with Prism highlighting, line numbers, copy, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
+| **Code blocks** | `.code-block` with Prism highlighting, configurable toolbar (top/bottom/none), hover copy/maximise, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
 | **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
 | **Toolbar helper** | `.toolbar` flex row for button groups. See [`demo.html`](demo.html). |
@@ -1879,7 +1879,7 @@ Switch between Markdown and WYSIWYG using Toast UI’s built-in mode control in 
 
 ### Code highlighting (Prism)
 
-Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for examples with line numbers, highlight toggle, copy, and maximise.
+Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for a full-width example with toolbar actions, hover copy/maximise, and mode controls.
 
 ```html
 <link rel="stylesheet" href="app/prism.css" />
@@ -1889,13 +1889,15 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 ```
 
 ```html
-<div class="code-block" data-code-mode="select" data-code-copy="true" data-expandable-surface data-expandable-surface-label="Code sample">
-  <div class="code-block-toolbar" role="group" aria-label="Code block options">
-    <button type="button" class="btn code-block-toggle" data-code-toggle="line-numbers" aria-pressed="true">Line numbers</button>
-    <button type="button" class="btn code-block-toggle" data-code-toggle="highlight" aria-pressed="true">Highlight</button>
-  </div>
+<div class="code-block"
+  data-code-mode="edit"
+  data-code-toolbar="top"
+  data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
+  data-code-toolbar-align="maximize:right"
+  data-code-surface-actions="copy,maximize"
+  data-expandable-surface
+  data-expandable-surface-label="Code sample">
   <div class="code-block-body" data-expandable-surface-trigger>
-    <button type="button" class="code-block-copy btn" aria-label="Copy code">Copy</button>
     <pre class="line-numbers language-python"><code class="language-python">def greet(name: str) -> str:
     return f"Hello, {name}!"
 </code></pre>
@@ -1911,21 +1913,25 @@ initCodeBlocks(document);
 initExpandableSurfaces(document);
 ```
 
-Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line numbers require highlighting to be on.
+**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `highlight`, `line-numbers`. Defaults to `highlight,line-numbers` when omitted. Align any control with `data-code-toolbar-align` as `action:left|right` (comma-separated); **maximize defaults to `right`**, everything else to `left`. Clear / Copy / Paste show icon + label; highlight, line-numbers, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
+
+**Hover surface actions** — set `data-code-surface-actions` to `copy`, `maximize`, or both (`none` / empty / `false` hides the strip). Legacy `data-code-copy="false"` omits surface copy. When `data-expandable-surface` is present and surface actions are omitted, defaults include `copy,maximize`.
+
+Line numbers require highlighting to be on. Copy/paste use [`app/utils/clipboard.js`](app/utils/clipboard.js) (Clipboard API with insecure-context fallbacks).
 
 **Interaction modes** — set `data-code-mode` on `.code-block`:
 
 | Mode | Behaviour |
 | ---- | --------- |
-| `view` | Read-only display; text cannot be selected; copy button hidden |
-| `select` | Read-only; text selectable; copy and highlight toggles (default) |
-| `edit` | Transparent textarea over highlighted `<pre>` (shared metrics so caret matches glyphs). Line numbers and highlight toggles apply; line numbers still require highlight |
+| `view` | Read-only display; text cannot be selected; Clear/Paste disabled |
+| `select` | Read-only; text selectable (default) |
+| `edit` | Transparent textarea over highlighted `<pre>` (shared metrics so caret matches glyphs) |
 
-Switch modes at runtime via `initCodeBlock()` → `setMode("edit")`, `getMode()`, `getSource()`, `setSource(text)`.
+Runtime API from `initCodeBlock()`: `setMode`, `getMode`, `getSource`, `setSource`, `setToolbarPosition`, `setToolbarActions`, `setToolbarAlign`, `setSurfaceActions`, `setLineNumbers`, `setHighlight`.
 
 ### Expandable surface
 
-Reusable expanded overlay for code blocks, multi-line inputs, or any block marked with `data-expandable-surface`. A maximise icon appears on hover (injected into the trigger element); click expands the surface to the page body width (`--page-width`), Escape or backdrop click closes it.
+Reusable expanded overlay for code blocks, multi-line inputs, or any block marked with `data-expandable-surface`. A maximise control appears on hover when enabled (for code blocks, when `maximize` is in `data-code-surface-actions`); toolbar Maximize buttons use `data-expandable-surface-open`. Click expands the surface to the page body width (`--page-width`); Escape or backdrop click closes it.
 
 ```html
 <div class="field" data-expandable-surface data-expandable-surface-label="Notes">

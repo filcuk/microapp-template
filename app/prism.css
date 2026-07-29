@@ -78,16 +78,19 @@ pre[class*="language-"] {
   color: var(--banner-error-text);
 }
 
-/* Line numbers plugin (matches Prism layout: gutter via negative left offset) */
+/* Line numbers: gutter | scrolling code (single horizontal scrollport on code) */
 
 pre[class*="language-"].line-numbers {
   position: relative;
-  padding-left: 3.8em;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding-left: 0;
   counter-reset: linenumber;
+  overflow: hidden;
 }
 
-/* Full-height gutter chrome (digits stay on .line-numbers-rows).
- * --code-scroll-x counters horizontal scroll so the gutter stays sticky. */
+/* Full-height gutter chrome behind the digit column */
 pre[class*="language-"].line-numbers::before {
   content: "";
   position: absolute;
@@ -99,32 +102,44 @@ pre[class*="language-"].line-numbers::before {
   border-right: 1px solid var(--border);
   pointer-events: none;
   z-index: 2;
-  transform: translate3d(var(--code-scroll-x, 0px), 0, 0);
 }
 
 pre[class*="language-"].line-numbers > code {
-  /* position only — no z-index, or rows are trapped under ::before */
   position: relative;
   display: block;
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
-  padding: 0;
+  /* Gap between gutter border and first glyph (was 3.8em − 3em band) */
+  padding: 0 0 0 0.8em;
   white-space: inherit;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
-.line-numbers .line-numbers-rows {
-  position: absolute;
-  pointer-events: none;
+/*
+ * Digit column is a flex sibling of `code` (see code-block.js) — not inside the
+ * scrollport — so it stays fixed while code scrolls horizontally.
+ */
+pre.line-numbers > .line-numbers-rows {
+  position: relative;
+  flex: 0 0 3em;
   box-sizing: border-box;
-  top: 0;
-  left: -3.8em;
   width: 3em;
+  margin: 0;
+  padding: 0;
   font-size: 100%;
   letter-spacing: -1px;
   background: var(--code-bg);
   border-right: 1px solid var(--border);
+  pointer-events: none;
   user-select: none;
   z-index: 3;
-  transform: translate3d(var(--code-scroll-x, 0px), 0, 0);
+}
+
+/* Prism may inject a copy into `code`; never show it. */
+pre.line-numbers > code .line-numbers-rows {
+  display: none;
 }
 
 .line-numbers-rows > span {
