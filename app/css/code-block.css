@@ -252,23 +252,21 @@
   cursor: not-allowed;
 }
 
-.demo-code-modes {
-  display: grid;
-  gap: 1.25rem;
+.demo-code-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
 }
 
-@media (min-width: 52rem) {
-  .demo-code-modes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .demo-code-modes .field:last-child {
-    grid-column: 1 / -1;
-  }
-}
-
-.demo-code-modes .field {
+.demo-code-controls .field {
   gap: 0.5rem;
+  min-width: 12rem;
+}
+
+.code-block--full {
+  max-width: none;
+  width: 100%;
 }
 
 /* Expandable surface (code blocks, textareas, …) */
