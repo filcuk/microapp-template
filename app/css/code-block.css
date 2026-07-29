@@ -1,4 +1,19 @@
 .code-block {
+  /* Shared metrics: pre + overlay textarea must use these identically */
+  --code-font-family: var(--mono);
+  --code-font-size: 0.8125rem;
+  --code-font-weight: 400;
+  --code-font-style: normal;
+  --code-line-height: 1.6;
+  --code-letter-spacing: normal;
+  --code-word-spacing: normal;
+  --code-tab-size: 2;
+  --code-pad-block: 1rem;
+  --code-pad-inline-start: 1rem;
+  --code-pad-inline-end: 1.5rem;
+  --code-gutter-width: 3.8em;
+  --code-gutter-band: 3em;
+
   max-width: 40rem;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -27,42 +42,57 @@
  */
 .code-block .code-block-body pre,
 .code-block .code-block-body pre[class*="language-"] {
+  box-sizing: border-box;
   margin: 0;
-  padding: 1rem 1.5rem 1rem 1rem;
+  border: none;
+  border-radius: 0;
+  padding: var(--code-pad-block) var(--code-pad-inline-end) var(--code-pad-block)
+    var(--code-pad-inline-start);
   overflow: auto;
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  tab-size: 2;
+  scrollbar-gutter: stable;
+  font-family: var(--code-font-family);
+  font-size: var(--code-font-size);
+  font-weight: var(--code-font-weight);
+  font-style: var(--code-font-style);
+  font-variant-ligatures: none;
+  line-height: var(--code-line-height);
+  letter-spacing: var(--code-letter-spacing);
+  word-spacing: var(--code-word-spacing);
+  tab-size: var(--code-tab-size);
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
   color: var(--text);
   background: var(--input-bg);
-  border-radius: 0;
 }
 
-/* Keep Prism line-number gutter layout (vertical pad on code, not pre). */
 .code-block .code-block-body pre[class*="language-"].line-numbers {
-  padding: 0 1.5rem 0 3.8em;
+  padding-left: var(--code-gutter-width);
 }
 
 .code-block .code-block-body pre > code,
 .code-block .code-block-body pre[class*="language-"] > code {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
   font-family: inherit;
   font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  font-variant-ligatures: inherit;
   line-height: inherit;
-  white-space: pre;
-  background: transparent;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  tab-size: inherit;
+  white-space: inherit;
+  overflow-wrap: inherit;
+  word-break: inherit;
 }
 
 .code-block .code-block-body pre[class*="language-"].line-numbers > code {
   position: relative;
-  /* inline-block + min-width so long lines expand scroll width (avoids clipped glyphs) */
-  display: inline-block;
-  min-width: 100%;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-right: 0.25rem;
-  white-space: inherit;
-  box-sizing: border-box;
 }
 
 .code-block--view pre,
@@ -72,64 +102,40 @@
 
 .code-block-editor-stack {
   position: relative;
-  display: flex;
-  align-items: stretch;
   min-width: 0;
-}
-
-.code-block-editor-gutter {
-  flex: 0 0 3em;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 1rem 0.8em 1rem 0;
-  overflow: hidden;
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  letter-spacing: -1px;
-  text-align: right;
-  color: var(--muted);
-  background: var(--code-bg);
-  border-right: 1px solid var(--border);
-  user-select: none;
-  pointer-events: none;
-}
-
-.code-block-editor-stack--gutter {
-  counter-reset: linenumber;
-}
-
-.code-block-editor-gutter > span {
-  display: block;
-  counter-increment: linenumber;
-}
-
-.code-block-editor-gutter > span::before {
-  content: counter(linenumber);
-  display: block;
 }
 
 .code-block-editor {
   display: none;
-  flex: 1;
-  min-width: 0;
+  box-sizing: border-box;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-height: 6.5rem;
+  height: 100%;
   margin: 0;
-  padding: 1rem 1.5rem 1rem 1rem;
   border: none;
   border-radius: 0;
-  background: var(--input-bg);
-  color: var(--text);
-  caret-color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  tab-size: 2;
-  resize: none;
+  padding: var(--code-pad-block) var(--code-pad-inline-end) var(--code-pad-block)
+    var(--code-pad-inline-start);
   overflow: auto;
+  scrollbar-gutter: stable;
+  resize: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
+  -webkit-text-fill-color: transparent;
+  font-family: var(--code-font-family);
+  font-size: var(--code-font-size);
+  font-weight: var(--code-font-weight);
+  font-style: var(--code-font-style);
+  font-variant-ligatures: none;
+  line-height: var(--code-line-height);
+  letter-spacing: var(--code-letter-spacing);
+  word-spacing: var(--code-word-spacing);
+  tab-size: var(--code-tab-size);
   white-space: pre;
   overflow-wrap: normal;
+  word-break: normal;
 }
 
 .code-block-editor:focus {
@@ -138,6 +144,8 @@
 
 .code-block-editor::selection {
   background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .code-block--edit .code-block-editor {
@@ -145,7 +153,14 @@
 }
 
 .code-block--edit .code-block-editor-stack pre {
-  display: none;
+  pointer-events: none;
+  overflow: hidden;
+  /* Keep stable gutter so content width matches the scrolling textarea */
+  scrollbar-gutter: stable;
+}
+
+.code-block--edit .code-block-editor-stack pre.line-numbers + .code-block-editor {
+  padding-left: var(--code-gutter-width);
 }
 
 .code-block-copy {
@@ -315,22 +330,12 @@ body.expandable-surface-open {
 .expandable-surface.is-expanded.code-block .code-block-editor-stack {
   flex: 1;
   min-height: 0;
-  /* Keep row layout (gutter | editor); stretch to fill expanded body */
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
 }
 
 .expandable-surface.is-expanded.code-block .code-block-editor-stack pre {
   flex: 1;
-  min-height: 0;
-}
-
-.expandable-surface.is-expanded.code-block .code-block-editor {
-  flex: 1;
-  min-height: 0;
-  height: auto;
-}
-
-.expandable-surface.is-expanded.code-block .code-block-editor-gutter {
   min-height: 0;
 }
 

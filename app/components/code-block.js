@@ -16,9 +16,9 @@
  *   data-code-line-numbers="false"  — start without line numbers
  *   data-code-highlight="false"     — start without highlighting
  *
- * Edit mode uses a single visible `<textarea>` (no transparent overlay). Line
- * numbers in edit mode use a plain gutter beside the textarea; live Prism
- * highlighting applies in view/select only.
+ * Edit mode uses a transparent textarea over a highlighted `<pre>` so line
+ * numbers and Prism tokens match view/select appearance. Shared `--code-*`
+ * metrics keep caret and glyphs aligned.
  *
  * Optional fullscreen: add `data-expandable-surface` on `.code-block` and
  * `data-expandable-surface-trigger` on `.code-block-body`; wire with
@@ -54,9 +54,9 @@ function setCopyEnabled(container, enabled) {
   copyBtn.disabled = !enabled;
 }
 
-function updateLineNumbersToggle(toggle, enabled) {
-  toggle.disabled = !enabled;
-  toggle.setAttribute("aria-disabled", enabled ? "false" : "true");
+function updateLineNumbersToggle(toggle, highlightEnabled) {
+  toggle.disabled = !highlightEnabled;
+  toggle.setAttribute("aria-disabled", highlightEnabled ? "false" : "true");
 }
 
 function insertTabAtCursor(textarea) {
@@ -120,8 +120,6 @@ export function initCodeBlock(container, options = {}) {
   let editorEl = null;
   /** @type {HTMLElement | null} */
   let editorStackEl = null;
-  /** @type {HTMLElement | null} */
-  let editorGutterEl = null;
 
   if (copyBtn && !copyBtn.closest(".surface-actions")) {
     const actionsHost = document.createElement("div");
@@ -131,20 +129,14 @@ export function initCodeBlock(container, options = {}) {
   }
 
   function ensureEditorStack() {
-    if (editorEl && editorStackEl && editorGutterEl) {
-      return { stack: editorStackEl, editor: editorEl, gutter: editorGutterEl };
+    if (editorEl && editorStackEl) {
+      return { stack: editorStackEl, editor: editorEl };
     }
 
     editorStackEl = document.createElement("div");
     editorStackEl.className = "code-block-editor-stack";
     pre.parentNode?.insertBefore(editorStackEl, pre);
     editorStackEl.appendChild(pre);
-
-    editorGutterEl = document.createElement("div");
-    editorGutterEl.className = "code-block-editor-gutter";
-    editorGutterEl.setAttribute("aria-hidden", "true");
-    editorStackEl.appendChild(editorGutterEl);
-    setHidden(editorGutterEl, true);
 
     editorEl = document.createElement("textarea");
     editorEl.className = "code-block-editor";
@@ -160,17 +152,11 @@ export function initCodeBlock(container, options = {}) {
     editorEl.addEventListener("input", () => {
       source = editorEl.value;
       code.dataset.source = source;
-      if (mode === "edit") {
-        syncEditGutter();
-      } else {
-        refreshDisplay();
-      }
+      refreshDisplay();
     });
 
     editorEl.addEventListener("scroll", () => {
-      if (editorGutterEl) {
-        editorGutterEl.scrollTop = editorEl.scrollTop;
-      }
+      syncScrollPosition();
     });
 
     editorEl.addEventListener("keydown", (event) => {
@@ -179,21 +165,23 @@ export function initCodeBlock(container, options = {}) {
         insertTabAtCursor(editorEl);
         source = editorEl.value;
         code.dataset.source = source;
-        if (mode === "edit") {
-          syncEditGutter();
-        } else {
-          refreshDisplay();
-        }
+        refreshDisplay();
       }
     });
 
-    return { stack: editorStackEl, editor: editorEl, gutter: editorGutterEl };
+    return { stack: editorStackEl, editor: editorEl };
   }
 
   function syncSourceFromEditor() {
     if (!editorEl) return;
     source = editorEl.value;
     code.dataset.source = source;
+  }
+
+  function syncScrollPosition() {
+    if (!editorEl) return;
+    pre.scrollTop = editorEl.scrollTop;
+    pre.scrollLeft = editorEl.scrollLeft;
   }
 
   function applyLineNumbersClass() {
@@ -230,25 +218,12 @@ export function initCodeBlock(container, options = {}) {
       "aria-pressed",
       highlightEnabled ? "true" : "false"
     );
-
     if (lineNumbersToggle) {
-      // View/select: Prism line numbers need highlight. Edit: plain gutter stands alone.
-      const lineNumbersAvailable = mode === "edit" || highlightEnabled;
-      updateLineNumbersToggle(lineNumbersToggle, lineNumbersAvailable);
-    }
-
-    if (highlightToggle) {
-      // Live Prism tokens are not available in the single-layer editor.
-      const highlightAvailable = mode !== "edit";
-      highlightToggle.disabled = !highlightAvailable;
-      highlightToggle.setAttribute(
-        "aria-disabled",
-        highlightAvailable ? "false" : "true"
-      );
+      updateLineNumbersToggle(lineNumbersToggle, highlightEnabled);
     }
   }
 
-  function syncPrismLineNumberRows() {
+  function syncLineNumberRows() {
     if (!lineNumbersEnabled || !highlightEnabled) return;
     if (!pre.classList.contains("line-numbers")) return;
 
@@ -267,32 +242,9 @@ export function initCodeBlock(container, options = {}) {
     window.Prism?.plugins?.lineNumbers?.resize?.(pre);
   }
 
-  function syncEditGutter() {
-    if (!editorGutterEl) return;
-
-    const showGutter = mode === "edit" && lineNumbersEnabled;
-    setHidden(editorGutterEl, !showGutter);
-    editorStackEl?.classList.toggle("code-block-editor-stack--gutter", showGutter);
-
-    if (!showGutter) return;
-
-    const targetLines = countDisplayLines(source);
-    while (editorGutterEl.children.length < targetLines) {
-      editorGutterEl.appendChild(document.createElement("span"));
-    }
-    while (editorGutterEl.children.length > targetLines) {
-      editorGutterEl.lastElementChild?.remove();
-    }
-
-    editorGutterEl.scrollTop = editorEl?.scrollTop ?? 0;
-  }
-
   function refreshDisplay() {
-    if (mode === "edit") {
-      syncToggleStates();
-      syncEditGutter();
-      return;
-    }
+    const scrollTop = editorEl?.scrollTop ?? 0;
+    const scrollLeft = editorEl?.scrollLeft ?? 0;
 
     if (highlightEnabled) {
       renderHighlighted();
@@ -300,7 +252,13 @@ export function initCodeBlock(container, options = {}) {
       renderPlain();
     }
     syncToggleStates();
-    syncPrismLineNumberRows();
+    syncLineNumberRows();
+
+    if (mode === "edit" && editorEl) {
+      editorEl.scrollTop = scrollTop;
+      editorEl.scrollLeft = scrollLeft;
+      syncScrollPosition();
+    }
   }
 
   function applyMode() {
@@ -316,17 +274,13 @@ export function initCodeBlock(container, options = {}) {
       const { editor } = ensureEditorStack();
       editor.value = source;
       setHidden(editor, false);
-      setHidden(pre, true);
+      setHidden(pre, false);
       refreshDisplay();
       setCopyEnabled(container, copyButton);
     } else {
       if (editorEl) {
         setHidden(editorEl, true);
       }
-      if (editorGutterEl) {
-        setHidden(editorGutterEl, true);
-      }
-      editorStackEl?.classList.remove("code-block-editor-stack--gutter");
       setHidden(pre, false);
       refreshDisplay();
       setCopyEnabled(container, copyButton && mode !== "view");
@@ -334,13 +288,12 @@ export function initCodeBlock(container, options = {}) {
   }
 
   lineNumbersToggle?.addEventListener("click", () => {
-    if (mode !== "edit" && !highlightEnabled) return;
+    if (!highlightEnabled) return;
     lineNumbersEnabled = !lineNumbersEnabled;
     refreshDisplay();
   });
 
   highlightToggle?.addEventListener("click", () => {
-    if (mode === "edit") return;
     highlightEnabled = !highlightEnabled;
     refreshDisplay();
   });

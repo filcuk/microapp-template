@@ -1919,7 +1919,7 @@ Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line n
 | ---- | --------- |
 | `view` | Read-only display; text cannot be selected; copy button hidden |
 | `select` | Read-only; text selectable; copy and highlight toggles (default) |
-| `edit` | Editable overlay on highlighted `<pre>`; line numbers and highlight toggles apply |
+| `edit` | Transparent textarea over highlighted `<pre>` (shared metrics so caret matches glyphs). Line numbers and highlight toggles apply; line numbers still require highlight |
 
 Switch modes at runtime via `initCodeBlock()` → `setMode("edit")`, `getMode()`, `getSource()`, `setSource(text)`.
 

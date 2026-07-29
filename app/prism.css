@@ -11,7 +11,7 @@ pre[class*="language-"] {
 
 pre[class*="language-"] {
   margin: 0;
-  padding: 1rem;
+  padding: 1rem 1.5rem 1rem 1rem;
   overflow: auto;
   background: var(--code-bg);
   color: var(--text);
@@ -86,21 +86,42 @@ pre[class*="language-"].line-numbers {
   counter-reset: linenumber;
 }
 
+/* Full-height gutter chrome (digits stay on .line-numbers-rows) */
+pre[class*="language-"].line-numbers::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3em;
+  background: var(--code-bg);
+  border-right: 1px solid var(--border);
+  pointer-events: none;
+  z-index: 0;
+}
+
 pre[class*="language-"].line-numbers > code {
   position: relative;
+  z-index: 1;
+  display: block;
+  margin: 0;
+  padding: 0;
   white-space: inherit;
 }
 
 .line-numbers .line-numbers-rows {
   position: absolute;
   pointer-events: none;
+  box-sizing: border-box;
   top: 0;
   left: -3.8em;
   width: 3em;
   font-size: 100%;
   letter-spacing: -1px;
-  border-right: 1px solid var(--border);
+  border-right: none;
+  background: transparent;
   user-select: none;
+  z-index: 1;
 }
 
 .line-numbers-rows > span {
