@@ -20,7 +20,7 @@
  * To reuse an existing icon under another id, set `ref` to the target key:
  *   lines: { ref: "note" },
  *
- * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, arrow-outward, link, fullscreen, fullscreen-exit, upload, calendar, check, plus, delete, remove, type-text, type-number, type-logical, copy, paste, paste-special
+ * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, arrow-outward, link, fullscreen, fullscreen-exit, upload, calendar, check, plus, delete, remove, type-text, type-number, type-logical, copy, paste, paste-special, clear, highlight
  */
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -201,6 +201,18 @@ export const ICONS = {
     markup: `<path fill="currentColor" d="M5 5h2v1c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V5h2v6h2V5c0-1.1-.9-2-2-2h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h5v-2H5zm7-2c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1"/><path fill="currentColor" d="m21.29 16.29l-2.58-2.58a.996.996 0 1 0-1.41 1.41l.87.88H13c-.55 0-1 .45-1 1s.45 1 1 1h5.17l-.87.88a.996.996 0 1 0 1.41 1.41l2.58-2.58c.39-.4.39-1.03 0-1.42"/>`,
     attribution: ICON_ATTRIBUTIONS.materialIcons,
     name: "round-content-paste-go",
+  },
+  clear: {
+    viewBox: "0 0 24 24",
+    markup: `<path fill="currentColor" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59L7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12L5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4"/>`,
+    name: "round-clear",
+    attribution: ICON_ATTRIBUTIONS.materialIcons,
+  },
+  highlight: {
+    viewBox: "0 0 24 24",
+    markup: `<path fill="currentColor" d="M8.7 15.9L4.8 12l3.9-3.9a.984.984 0 0 0 0-1.4a.984.984 0 0 0-1.4 0l-4.59 4.59a.996.996 0 0 0 0 1.41l4.59 4.6c.39.39 1.01.39 1.4 0a.984.984 0 0 0 0-1.4m6.6 0l3.9-3.9l-3.9-3.9a.984.984 0 0 1 0-1.4a.984.984 0 0 1 1.4 0l4.59 4.59c.39.39.39 1.02 0 1.41l-4.59 4.6a.984.984 0 0 1-1.4 0a.984.984 0 0 1 0-1.4"/>`,
+    name: "round-code",
+    attribution: ICON_ATTRIBUTIONS.materialIcons,
   },
 };
 
