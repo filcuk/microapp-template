@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   alsoSeeHasItems,
+  mergeAlsoSeeSections,
   normalizeAlsoSee,
   normalizeSiteUrl,
   renderAlsoSeeMarkup,
@@ -102,13 +103,71 @@ test("normalizeAlsoSee filters topics by whitelist (case-insensitive)", () => {
     ["power bi"]
   );
 
-  assert.equal(sections.length, 2);
+  assert.equal(sections.length, 1);
   assert.equal(sections[0].topic, "Power BI");
-  assert.equal(sections[1].topic, null);
-  assert.equal(sections[1].items[0].label, "Profile");
+  assert.equal(sections[0].items[0].label, "A");
 });
 
-test("normalizeAlsoSee empty topic whitelist keeps only flat links", () => {
+test("normalizeAlsoSee includes ungrouped links only when \"\" is whitelisted", () => {
+  const without = normalizeAlsoSee(
+    [
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["Embedded"]
+  );
+  assert.equal(without.length, 1);
+  assert.equal(without[0].topic, "Embedded");
+
+  const withUngrouped = normalizeAlsoSee(
+    [
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["Embedded", ""]
+  );
+  assert.equal(withUngrouped.length, 2);
+  assert.equal(withUngrouped[0].topic, "Embedded");
+  assert.equal(withUngrouped[1].topic, null);
+  assert.equal(withUngrouped[1].items[0].label, "Profile");
+});
+
+test("normalizeAlsoSee true keeps all topics; false keeps none", () => {
+  const data = [
+    {
+      topic: "Power BI",
+      items: [{ label: "A", url: "https://example.com/a" }],
+    },
+    {
+      label: "Profile",
+      url: "https://github.com/filcuk",
+    },
+  ];
+
+  const all = normalizeAlsoSee(data, "", true);
+  assert.equal(all.length, 2);
+  assert.equal(all[0].topic, "Power BI");
+  assert.equal(all[1].topic, null);
+
+  const none = normalizeAlsoSee(data, "", false);
+  assert.equal(none.length, 0);
+});
+
+test("normalizeAlsoSee empty topic whitelist keeps nothing", () => {
   const sections = normalizeAlsoSee(
     [
       {
@@ -124,9 +183,87 @@ test("normalizeAlsoSee empty topic whitelist keeps only flat links", () => {
     []
   );
 
-  assert.equal(sections.length, 1);
-  assert.equal(sections[0].topic, null);
-  assert.equal(sections[0].items[0].label, "Profile");
+  assert.equal(sections.length, 0);
+});
+
+test("mergeAlsoSeeSections merges matching topics and dedupes by URL", () => {
+  const merged = mergeAlsoSeeSections(
+    [
+      {
+        topic: "Embedded",
+        items: [
+          {
+            label: "Remote A",
+            subtitle: "",
+            url: "https://example.com/a",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+      {
+        topic: null,
+        items: [
+          {
+            label: "Profile",
+            subtitle: "",
+            url: "https://github.com/filcuk",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+    ],
+    [
+      {
+        topic: "embedded",
+        items: [
+          {
+            label: "Remote A dup",
+            subtitle: "",
+            url: "https://example.com/a/",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+          {
+            label: "Local B",
+            subtitle: "",
+            url: "https://example.com/b",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+      {
+        topic: "Examples",
+        items: [
+          {
+            label: "Local C",
+            subtitle: "",
+            url: "https://example.com/c",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+    ]
+  );
+
+  assert.equal(merged.length, 3);
+  assert.equal(merged[0].topic, "Embedded");
+  assert.deepEqual(
+    merged[0].items.map((item) => item.label),
+    ["Remote A", "Local B"]
+  );
+  assert.equal(merged[1].topic, null);
+  assert.equal(merged[1].items[0].label, "Profile");
+  assert.equal(merged[2].topic, "Examples");
+  assert.equal(merged[2].items[0].label, "Local C");
 });
 
 test("renderAlsoSeeMarkup emits group headers for topics", () => {

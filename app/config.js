@@ -9,19 +9,29 @@ export const APP_CONFIG = {
    * Remote JSON for the footer “also see” menu.
    * Top-level array of `{ topic, items }` sections and/or flat link objects.
    * Prefer a raw.githubusercontent.com or GitHub Pages URL. Empty = skip fetch.
-   * On success, replaces local `alsoSee`. On failure, keeps `alsoSee` as fallback.
+   * On success, shows the remote list (merged with local when
+   * `alsoSeeIncludeLocal` is true). Local is never used as a fallback.
    */
   alsoSeeUrl:
     "https://raw.githubusercontent.com/filcuk/shared/refs/heads/main/apps/links.json",
   /**
-   * Optional topic whitelist (case-insensitive). Omit / `null` / `false` → all topics.
-   * Empty array → hide named topics (ungrouped flat links still show).
-   * Ungrouped flat links are never filtered by this list.
+   * Topic filter for the **remote** also-see list (case-insensitive):
+   * - `true` / omit / `null` → all topics (including ungrouped)
+   * - `false` → no remote topics
+   * - `string[]` → whitelist; include `""` to keep ungrouped flat links
+   *   (without `""`, ungrouped remote links are omitted)
+   * Local `alsoSee` is not filtered by this when `alsoSeeIncludeLocal` is true.
    */
-  alsoSeeTopics: ['Embedded'],
+  alsoSeeTopics: ["Embedded", ""],
   /**
-   * Local related apps (fallback when `alsoSeeUrl` is empty or fetch fails).
-   * Set to `[]` or `false` to hide the control when there is no remote list.
+   * When true, include local `alsoSee` in full (alone if there is no remote, or
+   * merged with the filtered remote — same topic names share one section; items
+   * de-duplicated by URL). When false, local is never shown.
+   */
+  alsoSeeIncludeLocal: true,
+  /**
+   * Local related apps — only used when `alsoSeeIncludeLocal` is true.
+   * Set to `[]` or `false` to contribute nothing when the toggle is on.
    * Entries: `{ topic, items: link[] }` and/or flat `{ label, url, subtitle?, icon? | iconLight?, iconDark? }`.
    * Icon paths may be local (`app/res/…`) or absolute URLs (e.g. GitHub Pages / raw assets).
    */

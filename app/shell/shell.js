@@ -39,8 +39,12 @@ function bindGlobalErrorHandlers(onError) {
  *   Related-app links for the footer “also see” menu (`{ topic, items }` and/or
  *   flat links). `false` or `[]` hides it when there is no remote list.
  * @param {string} [options.alsoSeeUrl] Remote JSON URL. Empty skips fetch.
- * @param {string[] | false | null} [options.alsoSeeTopics]
- *   Topic whitelist (case-insensitive). Omit / `null` / `false` → all topics.
+ * @param {boolean | string[] | null} [options.alsoSeeTopics]
+ *   Topic filter: `true` / omit / `null` = all; `false` = none; `string[]` =
+ *   whitelist (`""` includes ungrouped flat links).
+ * @param {boolean} [options.alsoSeeIncludeLocal]
+ *   When true, include local `alsoSee` (alone or merged with remote). When
+ *   false, local is never shown.
  * @param {string} [options.appVersion] Override app SemVer (default from `app/version.js`)
  * @param {string} [options.templateVersion] Override template SemVer (default from `app/version.js`)
  * @param {import("./page-nav.js").PageNavOptions} [options.pageNav] Passed to `initPageNavPanel()`
@@ -55,6 +59,7 @@ export function initShell(options = {}) {
     alsoSeeUrl,
     alsoSee,
     alsoSeeTopics,
+    alsoSeeIncludeLocal,
     appUrl,
     ...shellOptions
   } = options;
@@ -64,6 +69,9 @@ export function initShell(options = {}) {
   if ("alsoSee" in options) alsoSeeOptions.alsoSee = alsoSee;
   if ("alsoSeeUrl" in options) alsoSeeOptions.alsoSeeUrl = alsoSeeUrl;
   if ("alsoSeeTopics" in options) alsoSeeOptions.alsoSeeTopics = alsoSeeTopics;
+  if ("alsoSeeIncludeLocal" in options) {
+    alsoSeeOptions.alsoSeeIncludeLocal = alsoSeeIncludeLocal;
+  }
   if ("appUrl" in options) alsoSeeOptions.appUrl = appUrl;
 
   renderPageShell({ ...shellOptions, ...alsoSeeOptions });

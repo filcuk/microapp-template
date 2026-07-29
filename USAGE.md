@@ -44,7 +44,8 @@ initShell({
   appUrl: "https://you.github.io/your-app/",
   alsoSee: false, // or [] — hide the footer “also see” menu when no remote list
   alsoSeeUrl: "", // optional remote JSON (topics + links)
-  alsoSeeTopics: null, // optional topic whitelist; null = all topics
+  alsoSeeTopics: true, // filters remote only; true = all; false = none; ["Topic", ""] = whitelist
+  alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
   pageNav: { headingSelector: "main h2[id]" },
 });
 ```
@@ -83,8 +84,9 @@ export const APP_CONFIG = {
   themeChangeEvent: "microapp-theme-change",
   // Remote JSON for footer “also see” — empty skips fetch; falls back to alsoSee
   alsoSeeUrl: "", // e.g. "https://raw.githubusercontent.com/you/shared/main/apps/links.json"
-  alsoSeeTopics: null, // e.g. ["Power BI", "Database"] — omit / null = all topics
-  // Local related apps (used when alsoSeeUrl is empty or fetch fails)
+  alsoSeeTopics: true, // filters remote only; true = all; false = none; ["Topic", ""] = whitelist
+  alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
+  // Local related apps — only used when alsoSeeIncludeLocal is true
   alsoSee: [
     {
       topic: "Examples",
@@ -107,8 +109,9 @@ export const APP_CONFIG = {
 | `repoUrl` | Footer GitHub / issues links via `renderPageShell()` |
 | `appUrl` | Public site URL; matching entries are dropped from “also see” |
 | `alsoSeeUrl` | Optional remote JSON for footer “also see”; empty skips fetch |
-| `alsoSeeTopics` | Optional topic whitelist (`null` / omit = all; `[]` = flat links only) |
-| `alsoSee` | Local footer “also see” list (`[]` / `false` disables when there is no remote list) |
+| `alsoSeeTopics` | Filters **remote** topics only: `true` / omit / `null` = all; `false` = none; `string[]` whitelist (`""` = ungrouped) |
+| `alsoSeeIncludeLocal` | When `true`, include local `alsoSee` in full (alone or merged with remote); when `false`, local is never shown |
+| `alsoSee` | Local footer “also see” list (only when `alsoSeeIncludeLocal` is true) |
 | `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
 | `themeChangeEvent` | Theme changes; rich text editor syncs to dark mode |
 
@@ -284,7 +287,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -441,11 +444,12 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Also see (related apps)
 
-Footer control after the GitHub link. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` to `initShell()` / `renderPageShell()`):
+Footer control after the GitHub link. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal` to `initShell()` / `renderPageShell()`):
 
 ```javascript
 alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/apps/links.json", // optional
-alsoSeeTopics: ["Power BI", "Database"], // optional whitelist; omit / null = all topics
+alsoSeeTopics: ["Power BI", "Database", ""], // remote whitelist; "" keeps ungrouped remote links
+alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
 appUrl: "https://you.github.io/your-app/", // omit this site from the menu
 alsoSee: [
   {
@@ -471,9 +475,13 @@ alsoSee: [
 
 | Value | Behaviour |
 | ----- | --------- |
-| `alsoSeeUrl` string | Fetches remote JSON and replaces the menu |
-| Local `alsoSee` array | Renders immediately; kept as fallback if the remote fetch fails or `alsoSeeUrl` is empty |
-| `alsoSeeTopics` string[] | Case-insensitive topic whitelist; omit / `null` / `false` = all topics; `[]` = hide named topics (flat links still show) |
+| `alsoSeeUrl` string | Fetches remote JSON and shows it (merged with local when `alsoSeeIncludeLocal`) |
+| Local `alsoSee` array | Included in full only when `alsoSeeIncludeLocal` is true — never used as a fallback; not filtered by `alsoSeeTopics` |
+| `alsoSeeIncludeLocal: true` | Include local alone (no remote) or merge with filtered remote; same topics combined; URL de-dupe |
+| `alsoSeeIncludeLocal: false` | Local list is never shown |
+| `alsoSeeTopics: true` / omit / `null` | All **remote** topics (including ungrouped) |
+| `alsoSeeTopics: false` | No **remote** topics |
+| `alsoSeeTopics: string[]` | Case-insensitive remote whitelist; include `""` for ungrouped remote flat links |
 | `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded; empty topics are dropped |
 | `alsoSee: []` or `false` | Hides the control when there is no successful remote list |
 

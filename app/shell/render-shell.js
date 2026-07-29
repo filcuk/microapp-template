@@ -7,6 +7,7 @@ const DEFAULTS = {
   alsoSee: APP_CONFIG.alsoSee,
   alsoSeeUrl: APP_CONFIG.alsoSeeUrl,
   alsoSeeTopics: APP_CONFIG.alsoSeeTopics,
+  alsoSeeIncludeLocal: APP_CONFIG.alsoSeeIncludeLocal,
   appVersion: APP_VERSION,
   templateVersion: TEMPLATE_VERSION,
 };
@@ -133,22 +134,103 @@ function normalizeAlsoSeeLink(link, exclude) {
 
 /**
  * @param {unknown} topics
- * @returns {Set<string> | null} Lowercased topic whitelist, or null for “all topics”
+ * @returns {null | { names: Set<string>, includeUngrouped: boolean }}
+ *   `null` = all topics (including ungrouped). Otherwise a whitelist:
+ *   `names` are lowercased topic labels; `includeUngrouped` is true when `""` was listed.
  */
 function normalizeAlsoSeeTopicFilter(topics) {
-  if (topics === undefined || topics === null || topics === false) return null;
+  if (topics === true || topics === undefined || topics === null) return null;
+  if (topics === false) {
+    return { names: new Set(), includeUngrouped: false };
+  }
   if (!Array.isArray(topics)) return null;
-  return new Set(
-    topics
-      .filter((t) => typeof t === "string")
-      .map((t) => t.trim().toLowerCase())
-      .filter(Boolean)
-  );
+
+  /** @type {Set<string>} */
+  const names = new Set();
+  let includeUngrouped = false;
+  for (const entry of topics) {
+    if (typeof entry !== "string") continue;
+    if (entry.trim() === "") {
+      includeUngrouped = true;
+      continue;
+    }
+    names.add(entry.trim().toLowerCase());
+  }
+  return { names, includeUngrouped };
+}
+
+/**
+ * @param {null | { names: Set<string>, includeUngrouped: boolean }} topicFilter
+ * @param {string} topic Trimmed topic label, or "" for ungrouped
+ * @returns {boolean}
+ */
+function alsoSeeTopicAllowed(topicFilter, topic) {
+  if (!topicFilter) return true;
+  if (!topic) return topicFilter.includeUngrouped;
+  return topicFilter.names.has(topic.toLowerCase());
 }
 
 /** @param {AlsoSeeSection[]} sections */
 export function alsoSeeHasItems(sections) {
   return sections.some((section) => section.items.length > 0);
+}
+
+/**
+ * Merge also-see sections by topic (case-insensitive). Matching topics share one
+ * section; items are appended and de-duplicated by normalized URL. Primary
+ * section order and topic casing win; new topics from secondary are appended.
+ *
+ * @param {AlsoSeeSection[]} primary
+ * @param {AlsoSeeSection[]} secondary
+ * @returns {AlsoSeeSection[]}
+ */
+export function mergeAlsoSeeSections(primary = [], secondary = []) {
+  /** @type {AlsoSeeSection[]} */
+  const result = [];
+  /** @type {Map<string, AlsoSeeSection>} */
+  const byKey = new Map();
+
+  /**
+   * @param {string | null} topic
+   * @returns {string}
+   */
+  function sectionKey(topic) {
+    return topic == null ? "" : topic.toLowerCase();
+  }
+
+  /**
+   * @param {AlsoSeeSection[]} sections
+   */
+  function addSections(sections) {
+    for (const section of sections) {
+      if (!section?.items?.length) continue;
+      const key = sectionKey(section.topic);
+      const existing = byKey.get(key);
+      if (!existing) {
+        const copy = {
+          topic: section.topic,
+          items: [...section.items],
+        };
+        byKey.set(key, copy);
+        result.push(copy);
+        continue;
+      }
+
+      const seen = new Set(
+        existing.items.map((item) => normalizeSiteUrl(item.url)).filter(Boolean)
+      );
+      for (const item of section.items) {
+        const urlKey = normalizeSiteUrl(item.url);
+        if (urlKey && seen.has(urlKey)) continue;
+        if (urlKey) seen.add(urlKey);
+        existing.items.push(item);
+      }
+    }
+  }
+
+  addSections(primary);
+  addSections(secondary);
+  return result;
 }
 
 /**
@@ -160,9 +242,10 @@ export function alsoSeeHasItems(sections) {
  *
  * @param {unknown} alsoSee
  * @param {string} [excludeUrl] Drop entries whose `url` matches this app’s public URL
- * @param {string[] | false | null} [topics] Optional topic whitelist (case-insensitive).
- *   Omit / `null` / `false` → all topics. Empty array → no named topics (flat links only).
- *   Ungrouped flat links are always kept.
+ * @param {boolean | string[] | null} [topics] Topic filter:
+ *   `true` / omit / `null` → all topics (including ungrouped);
+ *   `false` → none;
+ *   `string[]` → whitelist (case-insensitive); include `""` for ungrouped flat links.
  * @returns {AlsoSeeSection[]}
  */
 export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
@@ -180,9 +263,7 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
     if (Array.isArray(entry.items)) {
       const topic =
         typeof entry.topic === "string" ? entry.topic.trim() : "";
-      if (topicFilter) {
-        if (!topic || !topicFilter.has(topic.toLowerCase())) continue;
-      }
+      if (!alsoSeeTopicAllowed(topicFilter, topic)) continue;
 
       const items = entry.items
         .map((link) => normalizeAlsoSeeLink(link, exclude))
@@ -192,6 +273,8 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
       sections.push({ topic: topic || null, items });
       continue;
     }
+
+    if (!alsoSeeTopicAllowed(topicFilter, "")) continue;
 
     const link = normalizeAlsoSeeLink(entry, exclude);
     if (!link) continue;
@@ -321,6 +404,7 @@ export function renderPageShell(options = {}) {
     repoUrl,
     alsoSee,
     alsoSeeTopics,
+    alsoSeeIncludeLocal,
     appUrl,
     appVersion,
     templateVersion,
@@ -329,7 +413,9 @@ export function renderPageShell(options = {}) {
     ...overrides,
   };
   const issuesUrl = `${repoUrl}/issues`;
-  const alsoSeeSections = normalizeAlsoSee(alsoSee, appUrl, alsoSeeTopics);
+  const alsoSeeSections = alsoSeeIncludeLocal
+    ? normalizeAlsoSee(alsoSee, appUrl, true)
+    : [];
   const alsoSeeMarkup = renderAlsoSeeMarkup(alsoSeeSections);
 
   document.body.insertAdjacentHTML(
