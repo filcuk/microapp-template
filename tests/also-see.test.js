@@ -260,10 +260,39 @@ test("mergeAlsoSeeSections merges matching topics and dedupes by URL", () => {
     merged[0].items.map((item) => item.label),
     ["Remote A", "Local B"]
   );
-  assert.equal(merged[1].topic, null);
-  assert.equal(merged[1].items[0].label, "Profile");
-  assert.equal(merged[2].topic, "Examples");
-  assert.equal(merged[2].items[0].label, "Local C");
+  assert.equal(merged[1].topic, "Examples");
+  assert.equal(merged[1].items[0].label, "Local C");
+  assert.equal(merged[2].topic, null);
+  assert.equal(merged[2].items[0].label, "Profile");
+});
+
+test("normalizeAlsoSee places ungrouped section last", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Extra",
+        url: "https://example.com/extra",
+      },
+    ],
+    "",
+    true
+  );
+
+  assert.equal(sections.length, 2);
+  assert.equal(sections[0].topic, "Embedded");
+  assert.equal(sections[1].topic, null);
+  assert.deepEqual(
+    sections[1].items.map((item) => item.label),
+    ["Profile", "Extra"]
+  );
 });
 
 test("renderAlsoSeeMarkup emits group headers for topics", () => {

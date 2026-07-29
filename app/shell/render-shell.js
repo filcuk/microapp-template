@@ -176,9 +176,35 @@ export function alsoSeeHasItems(sections) {
 }
 
 /**
+ * Keep named topics in encounter order; always place the ungrouped section last.
+ *
+ * @param {AlsoSeeSection[]} sections
+ * @returns {AlsoSeeSection[]}
+ */
+function orderAlsoSeeSections(sections) {
+  /** @type {AlsoSeeSection[]} */
+  const named = [];
+  /** @type {AlsoSeeSection | null} */
+  let ungrouped = null;
+  for (const section of sections) {
+    if (section.topic == null) {
+      if (!ungrouped) {
+        ungrouped = section;
+      } else {
+        ungrouped.items.push(...section.items);
+      }
+      continue;
+    }
+    named.push(section);
+  }
+  return ungrouped ? [...named, ungrouped] : named;
+}
+
+/**
  * Merge also-see sections by topic (case-insensitive). Matching topics share one
  * section; items are appended and de-duplicated by normalized URL. Primary
  * section order and topic casing win; new topics from secondary are appended.
+ * Ungrouped (no topic) sections are always last.
  *
  * @param {AlsoSeeSection[]} primary
  * @param {AlsoSeeSection[]} secondary
@@ -230,7 +256,7 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
 
   addSections(primary);
   addSections(secondary);
-  return result;
+  return orderAlsoSeeSections(result);
 }
 
 /**
@@ -287,7 +313,7 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
     }
   }
 
-  return sections;
+  return orderAlsoSeeSections(sections);
 }
 
 /**
