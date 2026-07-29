@@ -133,7 +133,7 @@ function countDisplayLines(text) {
  * @param {string} action
  * @param {{
  *   label: string,
- *   tooltip: string,
+ *   tooltip?: string,
  *   icon: string,
  *   textLabel?: string,
  *   pressed?: boolean,
@@ -148,8 +148,11 @@ function createToolbarButton(action, meta) {
     : "btn btn-icon code-block-toolbar__btn";
   btn.dataset.codeToolbarAction = action;
   btn.setAttribute("aria-label", meta.label);
-  btn.dataset.tooltip = meta.tooltip;
-  btn.dataset.tooltipPosition = "top";
+  /* Labeled buttons already show their name — skip tooltips. */
+  if (!withText && meta.tooltip) {
+    btn.dataset.tooltip = meta.tooltip;
+    btn.dataset.tooltipPosition = "top";
+  }
   if (meta.pressed !== undefined) {
     btn.classList.add("btn-toggle");
     btn.setAttribute("aria-pressed", meta.pressed ? "true" : "false");
@@ -454,12 +457,13 @@ export function initCodeBlock(container, options = {}) {
   function flashButtonLabel(btn, idleLabel, idleText, ok) {
     const prev = btn.getAttribute("aria-label") || idleLabel;
     const flash = ok ? "Copied" : "Failed";
+    const useTooltip = Object.hasOwn(btn.dataset, "tooltip");
     btn.setAttribute("aria-label", flash);
-    btn.dataset.tooltip = flash;
+    if (useTooltip) btn.dataset.tooltip = flash;
     setToolbarButtonText(btn, flash);
     window.setTimeout(() => {
       btn.setAttribute("aria-label", prev);
-      btn.dataset.tooltip = idleLabel;
+      if (useTooltip) btn.dataset.tooltip = idleLabel;
       setToolbarButtonText(btn, idleText);
     }, 2000);
   }
@@ -475,11 +479,13 @@ export function initCodeBlock(container, options = {}) {
   async function handlePaste(btn) {
     if (mode === "view") return;
 
+    const useTooltip = Object.hasOwn(btn.dataset, "tooltip");
+
     if (pasteCapture) {
       pasteCapture.cancel();
       pasteCapture = null;
       btn.setAttribute("aria-label", "Paste code");
-      btn.dataset.tooltip = "Paste";
+      if (useTooltip) btn.dataset.tooltip = "Paste";
       setToolbarButtonText(btn, "Paste");
       return;
     }
@@ -487,13 +493,13 @@ export function initCodeBlock(container, options = {}) {
     let text = await readText();
     if (text === null) {
       btn.setAttribute("aria-label", "Press Control V to paste");
-      btn.dataset.tooltip = "Press Ctrl+V to paste";
+      if (useTooltip) btn.dataset.tooltip = "Press Ctrl+V to paste";
       setToolbarButtonText(btn, "Ctrl+V");
       pasteCapture = armPasteCapture({ timeoutMs: 15000 });
       text = await pasteCapture.promise;
       pasteCapture = null;
       btn.setAttribute("aria-label", "Paste code");
-      btn.dataset.tooltip = "Paste";
+      if (useTooltip) btn.dataset.tooltip = "Paste";
       setToolbarButtonText(btn, "Paste");
       if (text === null) return;
     }
@@ -561,19 +567,16 @@ export function initCodeBlock(container, options = {}) {
     const specs = {
       clear: {
         label: "Clear code",
-        tooltip: "Clear",
         icon: "clear",
         textLabel: "Clear",
       },
       copy: {
         label: "Copy code",
-        tooltip: "Copy",
         icon: "copy",
         textLabel: "Copy",
       },
       paste: {
         label: "Paste code",
-        tooltip: "Paste",
         icon: "paste",
         textLabel: "Paste",
       },
