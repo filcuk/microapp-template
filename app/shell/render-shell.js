@@ -275,12 +275,13 @@ export function renderAlsoSeeMarkup(sections) {
     .join("");
 
   return `<span class="footer-meta-sep" aria-hidden="true">·</span>
-        <div class="footer-also-see dropdown" id="footer-also-see">
-          <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">also see</button>
-          <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
-            ${items}
-          </ul>
-        </div>`;
+        <span>also
+          <span class="footer-also-see dropdown" id="footer-also-see">
+            <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">see links</button>
+            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
+              ${items}
+            </ul>
+          </span></span>`;
 }
 
 /**

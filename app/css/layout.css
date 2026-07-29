@@ -643,7 +643,7 @@ body > footer {
 
 .footer-also-see.dropdown {
   position: relative;
-  display: inline-block;
+  display: inline;
   align-self: center;
   /* Keep the menu above in-flow main content when not using fixed positioning. */
   z-index: 20;
