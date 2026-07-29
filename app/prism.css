@@ -86,7 +86,8 @@ pre[class*="language-"].line-numbers {
   counter-reset: linenumber;
 }
 
-/* Full-height gutter chrome (digits stay on .line-numbers-rows) */
+/* Full-height gutter chrome (digits stay on .line-numbers-rows).
+ * --code-scroll-x counters horizontal scroll so the gutter stays sticky. */
 pre[class*="language-"].line-numbers::before {
   content: "";
   position: absolute;
@@ -97,12 +98,13 @@ pre[class*="language-"].line-numbers::before {
   background: var(--code-bg);
   border-right: 1px solid var(--border);
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
+  transform: translate3d(var(--code-scroll-x, 0px), 0, 0);
 }
 
 pre[class*="language-"].line-numbers > code {
+  /* position only — no z-index, or rows are trapped under ::before */
   position: relative;
-  z-index: 1;
   display: block;
   margin: 0;
   padding: 0;
@@ -118,10 +120,11 @@ pre[class*="language-"].line-numbers > code {
   width: 3em;
   font-size: 100%;
   letter-spacing: -1px;
-  border-right: none;
-  background: transparent;
+  background: var(--code-bg);
+  border-right: 1px solid var(--border);
   user-select: none;
-  z-index: 1;
+  z-index: 3;
+  transform: translate3d(var(--code-scroll-x, 0px), 0, 0);
 }
 
 .line-numbers-rows > span {

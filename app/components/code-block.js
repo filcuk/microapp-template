@@ -178,14 +178,26 @@ export function initCodeBlock(container, options = {}) {
     code.dataset.source = source;
   }
 
+  function syncStickyGutter() {
+    pre.style.setProperty("--code-scroll-x", `${pre.scrollLeft}px`);
+  }
+
   function syncScrollPosition() {
     if (!editorEl) return;
     pre.scrollTop = editorEl.scrollTop;
     pre.scrollLeft = editorEl.scrollLeft;
+    syncStickyGutter();
   }
+
+  pre.addEventListener("scroll", syncStickyGutter);
 
   function applyLineNumbersClass() {
     pre.classList.toggle("line-numbers", lineNumbersEnabled && highlightEnabled);
+    if (!pre.classList.contains("line-numbers")) {
+      pre.style.removeProperty("--code-scroll-x");
+    } else {
+      syncStickyGutter();
+    }
   }
 
   function renderPlain() {
@@ -193,6 +205,7 @@ export function initCodeBlock(container, options = {}) {
     pre.className = "";
     code.className = "";
     code.textContent = source;
+    pre.style.removeProperty("--code-scroll-x");
   }
 
   function renderHighlighted() {
@@ -258,6 +271,8 @@ export function initCodeBlock(container, options = {}) {
       editorEl.scrollTop = scrollTop;
       editorEl.scrollLeft = scrollLeft;
       syncScrollPosition();
+    } else {
+      syncStickyGutter();
     }
   }
 
