@@ -1892,7 +1892,8 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
 <div class="code-block"
   data-code-mode="edit"
   data-code-toolbar="top"
-  data-code-toolbar-actions="clear,copy,paste,maximize,line-numbers,highlight"
+  data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
+  data-code-toolbar-align="maximize:right"
   data-code-surface-actions="copy,maximize"
   data-expandable-surface
   data-expandable-surface-label="Code sample">
@@ -1912,7 +1913,7 @@ initCodeBlocks(document);
 initExpandableSurfaces(document);
 ```
 
-**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `line-numbers`, `highlight`. Defaults to `line-numbers,highlight` when omitted. Clear / Copy / Paste show icon + label; line-numbers, highlight, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
+**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `highlight`, `line-numbers`. Defaults to `highlight,line-numbers` when omitted. Align any control with `data-code-toolbar-align` as `action:left|right` (comma-separated); **maximize defaults to `right`**, everything else to `left`. Clear / Copy / Paste show icon + label; highlight, line-numbers, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
 
 **Hover surface actions** — set `data-code-surface-actions` to `copy`, `maximize`, or both (`none` / empty / `false` hides the strip). Legacy `data-code-copy="false"` omits surface copy. When `data-expandable-surface` is present and surface actions are omitted, defaults include `copy,maximize`.
 
@@ -1926,7 +1927,7 @@ Line numbers require highlighting to be on. Copy/paste use [`app/utils/clipboard
 | `select` | Read-only; text selectable (default) |
 | `edit` | Transparent textarea over highlighted `<pre>` (shared metrics so caret matches glyphs) |
 
-Runtime API from `initCodeBlock()`: `setMode`, `getMode`, `getSource`, `setSource`, `setToolbarPosition`, `setToolbarActions`, `setSurfaceActions`, `setLineNumbers`, `setHighlight`.
+Runtime API from `initCodeBlock()`: `setMode`, `getMode`, `getSource`, `setSource`, `setToolbarPosition`, `setToolbarActions`, `setToolbarAlign`, `setSurfaceActions`, `setLineNumbers`, `setHighlight`.
 
 ### Expandable surface
 

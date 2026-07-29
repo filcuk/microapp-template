@@ -5,7 +5,8 @@
  *   <div class="code-block"
  *     data-code-mode="select"
  *     data-code-toolbar="top"
- *     data-code-toolbar-actions="clear,copy,paste,maximize,line-numbers,highlight"
+ *     data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
+ *     data-code-toolbar-align="maximize:right"
  *     data-code-surface-actions="copy,maximize">
  *     <div class="code-block-body">
  *       <pre class="line-numbers language-python"><code>…</code></pre>
@@ -16,8 +17,10 @@
  *   data-code-mode="view|select|edit" — interaction mode (default `select`)
  *   data-code-toolbar="top|bottom|none" — control bar position
  *   data-code-toolbar-actions — comma list: clear, copy, paste, maximize,
- *     line-numbers, highlight (default `line-numbers,highlight` when omitted
+ *     highlight, line-numbers (default `highlight,line-numbers` when omitted
  *     and a toolbar position is not `none`)
+ *   data-code-toolbar-align — comma list of `action:left|right` (default
+ *     `maximize:right` when maximize is present; all others left)
  *   data-code-surface-actions — comma list: copy, maximize (hover actions);
  *     `none` / empty / `false` disables the floating strip
  *   data-code-copy="false" — legacy: omit surface copy
@@ -41,11 +44,13 @@ const TOOLBAR_ACTION_IDS = [
   "copy",
   "paste",
   "maximize",
-  "line-numbers",
   "highlight",
+  "line-numbers",
 ];
 const SURFACE_ACTION_IDS = ["copy", "maximize"];
-const DEFAULT_TOOLBAR_ACTIONS = ["line-numbers", "highlight"];
+const DEFAULT_TOOLBAR_ACTIONS = ["highlight", "line-numbers"];
+/** @type {Readonly<Record<string, "left" | "right">>} */
+const DEFAULT_TOOLBAR_ALIGN = { maximize: "right" };
 
 /**
  * @param {string | undefined} raw
@@ -65,6 +70,56 @@ function parseActionList(raw, allowed) {
     if (allowedSet.has(id)) next.add(id);
   }
   return next;
+}
+
+/**
+ * @param {string | undefined} raw
+ * @param {string[]} allowed
+ * @returns {Map<string, "left" | "right"> | null} null = attribute omitted
+ */
+function parseToolbarAlign(raw, allowed) {
+  if (raw === undefined) return null;
+  const allowedSet = new Set(allowed);
+  /** @type {Map<string, "left" | "right">} */
+  const next = new Map();
+  const trimmed = raw.trim().toLowerCase();
+  if (!trimmed || trimmed === "none" || trimmed === "false") {
+    return next;
+  }
+  for (const part of trimmed.split(",")) {
+    const [idRaw, sideRaw] = part.split(":");
+    const id = idRaw?.trim();
+    const side = sideRaw?.trim();
+    if (!id || !allowedSet.has(id)) continue;
+    if (side === "left" || side === "right") next.set(id, side);
+  }
+  return next;
+}
+
+/**
+ * @param {string} action
+ * @param {Map<string, "left" | "right">} alignMap
+ * @returns {"left" | "right"}
+ */
+function resolveToolbarAlign(action, alignMap) {
+  return alignMap.get(action) ?? DEFAULT_TOOLBAR_ALIGN[action] ?? "left";
+}
+
+/**
+ * @param {Map<string, "left" | "right">} alignMap
+ * @param {Set<string>} actions
+ */
+function serializeToolbarAlign(alignMap, actions) {
+  const parts = [];
+  for (const action of TOOLBAR_ACTION_IDS) {
+    if (!actions.has(action)) continue;
+    const side = resolveToolbarAlign(action, alignMap);
+    const fallback = DEFAULT_TOOLBAR_ALIGN[action] ?? "left";
+    if (side !== fallback || alignMap.has(action)) {
+      parts.push(`${action}:${side}`);
+    }
+  }
+  return parts.join(",");
 }
 
 function parseLanguage(codeEl) {
@@ -189,6 +244,7 @@ function setToolbarButtonText(btn, text) {
  *   mode?: string,
  *   toolbar?: string,
  *   toolbarActions?: string[] | string,
+ *   toolbarAlign?: string[] | string | Record<string, "left" | "right">,
  *   surfaceActions?: string[] | string,
  * }} [options]
  */
@@ -245,6 +301,20 @@ export function initCodeBlock(container, options = {}) {
   let toolbarPosition =
     parseToolbarPosition(options.toolbar ?? container.dataset.codeToolbar) ??
     (toolbarActions.size > 0 ? "top" : "none");
+
+  /** @type {Map<string, "left" | "right">} */
+  let toolbarAlign;
+  const toolbarAlignOpt =
+    options.toolbarAlign !== undefined
+      ? Array.isArray(options.toolbarAlign)
+        ? options.toolbarAlign.join(",")
+        : typeof options.toolbarAlign === "object" && options.toolbarAlign
+          ? Object.entries(options.toolbarAlign)
+              .map(([id, side]) => `${id}:${side}`)
+              .join(",")
+          : String(options.toolbarAlign)
+      : container.dataset.codeToolbarAlign;
+  toolbarAlign = parseToolbarAlign(toolbarAlignOpt, TOOLBAR_ACTION_IDS) ?? new Map();
 
   /** @type {Set<string>} */
   let surfaceActions;
@@ -564,6 +634,11 @@ export function initCodeBlock(container, options = {}) {
     toolbarEl.setAttribute("role", "group");
     toolbarEl.setAttribute("aria-label", "Code block options");
 
+    const startGroup = document.createElement("div");
+    startGroup.className = "code-block-toolbar__group code-block-toolbar__group--left";
+    const endGroup = document.createElement("div");
+    endGroup.className = "code-block-toolbar__group code-block-toolbar__group--right";
+
     const specs = {
       clear: {
         label: "Clear code",
@@ -602,11 +677,14 @@ export function initCodeBlock(container, options = {}) {
     for (const action of TOOLBAR_ACTION_IDS) {
       if (!toolbarActions.has(action)) continue;
       const btn = createToolbarButton(action, specs[action]);
-      toolbarEl.appendChild(btn);
+      const side = resolveToolbarAlign(action, toolbarAlign);
+      btn.dataset.codeToolbarAlign = side;
+      (side === "right" ? endGroup : startGroup).appendChild(btn);
       if (action === "line-numbers") lineNumbersToggle = btn;
       if (action === "highlight") highlightToggle = btn;
     }
 
+    toolbarEl.append(startGroup, endGroup);
     toolbarEl.addEventListener("click", onToolbarClick);
 
     if (toolbarPosition === "bottom") {
@@ -691,6 +769,12 @@ export function initCodeBlock(container, options = {}) {
   function writeToolbarAttrs() {
     container.dataset.codeToolbar = toolbarPosition;
     container.dataset.codeToolbarActions = [...toolbarActions].join(",");
+    const alignAttr = serializeToolbarAlign(toolbarAlign, toolbarActions);
+    if (alignAttr) {
+      container.dataset.codeToolbarAlign = alignAttr;
+    } else {
+      delete container.dataset.codeToolbarAlign;
+    }
     container.dataset.codeSurfaceActions = [...surfaceActions].join(",") || "none";
   }
 
@@ -744,6 +828,22 @@ export function initCodeBlock(container, options = {}) {
       if (toolbarPosition === "none" && toolbarActions.size > 0) {
         toolbarPosition = "top";
       }
+      rebuildToolbar();
+      writeToolbarAttrs();
+    },
+    /**
+     * @param {string[] | string | Record<string, "left" | "right">} alignments
+     *   e.g. `"maximize:right,copy:left"`, `["maximize:right"]`, or `{ maximize: "right" }`
+     */
+    setToolbarAlign(alignments) {
+      const raw = Array.isArray(alignments)
+        ? alignments.join(",")
+        : typeof alignments === "object" && alignments
+          ? Object.entries(alignments)
+              .map(([id, side]) => `${id}:${side}`)
+              .join(",")
+          : String(alignments ?? "");
+      toolbarAlign = parseToolbarAlign(raw, TOOLBAR_ACTION_IDS) ?? new Map();
       rebuildToolbar();
       writeToolbarAttrs();
     },

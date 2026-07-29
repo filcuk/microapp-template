@@ -31,6 +31,17 @@
   background: var(--surface);
 }
 
+.code-block-toolbar__group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.code-block-toolbar__group--right {
+  margin-inline-start: auto;
+}
+
 .code-block--toolbar-bottom > .code-block-toolbar {
   border-bottom: none;
   border-top: 1px solid var(--border);
