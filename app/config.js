@@ -3,8 +3,6 @@ export const APP_CONFIG = {
   /** Public site URL (GitHub Pages / custom domain). Used to hide this app in “also see”. */
   appUrl: "https://filcuk.github.io/microapp-template/",
   repoUrl: "https://github.com/filcuk/microapp-template",
-  brandUrl: "https://github.com/filcuk",
-  brandName: "Filcuk",
   themeStorageKey: "microapp-theme",
   themeChangeEvent: "microapp-theme-change",
   /**

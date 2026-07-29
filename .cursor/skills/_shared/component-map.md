@@ -13,7 +13,7 @@ When trimming: delete a feature’s JS only if unused; remove a **shared** CSS p
 | Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `brand-icon.js` |
 | Shell-pulled components | `app/components/tooltip.js`, `app/components/banner.js` (imported by `shell.js`) |
 | Core CSS | `app/tokens.css`, `app/css/layout.css`, `app/css/controls-buttons.css`, `app/css/overlays.css` (tooltips + banners + modals styles) |
-| Brand | `app/res/` logos / signatures as wired in HTML / `__MICROAPP__` |
+| Brand | `app/res/` logos as wired in HTML / `__MICROAPP__` |
 
 Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-toggle, tabular-input type menu).
 

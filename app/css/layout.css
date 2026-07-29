@@ -628,18 +628,6 @@ body > footer {
   user-select: none;
 }
 
-.footer-brand {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  line-height: 0;
-}
-
-.footer-brand img {
-  width: 1.625rem;
-  height: 1.625rem;
-}
-
 .footer-version {
   font-size: 0.8125rem;
   color: var(--muted);

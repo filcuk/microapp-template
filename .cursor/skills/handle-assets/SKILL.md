@@ -1,7 +1,7 @@
 ---
 name: handle-assets
 description: >-
-  Wire brand logos, signature icons, favicons, app/res files, and ICONS stubs
+  Wire brand logos, favicons, app/res files, and ICONS stubs
   without inventing artwork. Use when adding or replacing assets, logos, icons,
   favicons, or when init/restore/author needs user-supplied SVG or image files.
 ---
@@ -28,7 +28,6 @@ Aligns with `.cursor/rules/icons.mdc` and [../_shared/invariants.md](../_shared/
 | ---- | ------------- | ------ |
 | Brand pair (default) | `app/res/app-light.svg`, `app/res/app-dark.svg` | `APP_ICON_SRC.light` / `.dark`; header two `<img class="brand-icon--light\|dark">`; `__MICROAPP__.appIconLight` / `appIconDark` |
 | Brand single | `app/res/app.svg` | `APP_ICON_SRC.icon`; clear light/dark; one `<img>` without `brand-icon--*` |
-| Signature | `app/res/sig-light.svg`, `sig-dark.svg` | `SIG_ICON_SRC` in `app/utils/brand-icon.js` |
 | Favicon | same as brand resolve | `<link rel="icon" … data-brand-icon>` + `__MICROAPP__` before theme-init |
 | Inline UI icon | `app/utils/icons.js` `ICONS` entry | `data-icon="id"` or `createIcon("id")` |
 | Other res | `app/res/…` | Reference from HTML/CSS/JS only after file exists or user commits to add it |
@@ -43,7 +42,7 @@ List each missing or replacement asset: kind, target path or `ICONS` id, pair vs
 
 ### 2. Prepare structure (no artwork)
 
-- **Brand / res:** update paths in `index.html` (and other entries), `APP_ICON_SRC` / `SIG_ICON_SRC`, and `__MICROAPP__` as needed. Do not write SVG file contents.
+- **Brand / res:** update paths in `index.html` (and other entries), `APP_ICON_SRC`, and `__MICROAPP__` as needed. Do not write SVG file contents.
 - **UI icon:** if an existing id or `{ ref }` works, use it. Otherwise, only with user agreement, add:
 
 ```javascript

@@ -35,8 +35,6 @@ function bindGlobalErrorHandlers(onError) {
  * @param {object} [options]
  * @param {string} [options.repoUrl]
  * @param {string} [options.appUrl] Public site URL — entries matching this are omitted from “also see”
- * @param {string} [options.brandUrl]
- * @param {string} [options.brandName]
  * @param {false | object[]} [options.alsoSee]
  *   Related-app links for the footer “also see” menu (`{ topic, items }` and/or
  *   flat links). `false` or `[]` hides it when there is no remote list.

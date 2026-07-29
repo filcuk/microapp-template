@@ -56,7 +56,7 @@ Read `.github/workflows/pages.yml`:
 
 ### 4. Config / version
 
-- [ ] `app/config.js`: `repoUrl`, `appUrl`, `brandUrl`, `brandName` look intentional (not leftover template placeholders on a shipping fork, unless user kept them)
+- [ ] `app/config.js`: `repoUrl`, `appUrl` look intentional (not leftover template placeholders on a shipping fork, unless user kept them)
 - [ ] `app/version.js`: valid SemVer for `APP_VERSION` and `TEMPLATE_VERSION`
 - [ ] Theme storage key in `config.js` matches `__MICROAPP__.themeStorageKey` when overridden
 

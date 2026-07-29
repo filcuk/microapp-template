@@ -36,14 +36,12 @@ initShell(); // footer, theme toggle, page nav, tooltips, icons, links
 // …your app-specific inits…
 ```
 
-Optional shell overrides (repo link, brand URL, related apps, page nav scan):
+Optional shell overrides (repo link, related apps, page nav scan):
 
 ```javascript
 initShell({
   repoUrl: "https://github.com/you/your-app",
   appUrl: "https://you.github.io/your-app/",
-  brandUrl: "https://yoursite.example",
-  brandName: "Your name",
   alsoSee: false, // or [] — hide the footer “also see” menu when no remote list
   alsoSeeUrl: "", // optional remote JSON (topics + links)
   alsoSeeTopics: null, // optional topic whitelist; null = all topics
@@ -81,8 +79,6 @@ Fork-sensitive defaults live in [`app/config.js`](app/config.js):
 export const APP_CONFIG = {
   repoUrl: "https://github.com/you/your-app",
   appUrl: "https://you.github.io/your-app/", // public Pages URL — omitted from “also see”
-  brandUrl: "https://yoursite.example",
-  brandName: "Your name",
   themeStorageKey: "microapp-theme",
   themeChangeEvent: "microapp-theme-change",
   // Remote JSON for footer “also see” — empty skips fetch; falls back to alsoSee
@@ -108,7 +104,7 @@ export const APP_CONFIG = {
 
 | Field | Used by |
 | ----- | ------- |
-| `repoUrl`, `brandUrl`, `brandName` | Footer links and brand tooltip via `renderPageShell()` |
+| `repoUrl` | Footer GitHub / issues links via `renderPageShell()` |
 | `appUrl` | Public site URL; matching entries are dropped from “also see” |
 | `alsoSeeUrl` | Optional remote JSON for footer “also see”; empty skips fetch |
 | `alsoSeeTopics` | Optional topic whitelist (`null` / omit = all; `[]` = flat links only) |
@@ -160,7 +156,6 @@ Do **not** delete shared infrastructure you still need: `shell.js`, `render-shel
 | Asset | Purpose |
 | ----- | ------- |
 | `app/res/app-light.svg` + `app-dark.svg` **or** `app/res/app.svg` | Header logo, favicon |
-| `app/res/sig-light.svg` / `sig-dark.svg` | Footer signature icon |
 
 **App logo — pair (default)** or **single**:
 
@@ -265,7 +260,7 @@ app/
   prism.css             # Prism token colours (optional)
   toastui-editor.css    # Vendored Toast UI base CSS (optional)
   vendor/               # Prism, Toast UI (optional)
-  res/                  # App logo and signature SVGs
+  res/                  # App logo SVGs
 ```
 
 ### Module layers (JavaScript)
@@ -446,7 +441,7 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Also see (related apps)
 
-Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` to `initShell()` / `renderPageShell()`):
+Footer control after the GitHub link. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` to `initShell()` / `renderPageShell()`):
 
 ```javascript
 alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/apps/links.json", // optional
@@ -1963,7 +1958,7 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swaps by theme via CSS; favicon syncs in `brand-icon.js`.
+Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Favicon syncs in `brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 
