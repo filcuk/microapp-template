@@ -15,26 +15,20 @@ export const APP_CONFIG = {
   alsoSeeUrl:
     "https://raw.githubusercontent.com/filcuk/shared/refs/heads/main/apps/links.json",
   /**
-   * Topic filter for the **remote** also-see list (case-insensitive):
-   * - `true` / omit / `null` → all topics (including ungrouped)
-   * - `false` → no remote topics
-   * - `string[]` → whitelist; include `""` to keep ungrouped flat links
-   *   (without `""`, ungrouped remote links are omitted)
-   * Local `alsoSee` is not filtered by this when `alsoSeeIncludeLocal` is true.
+   * Topic filter for the **remote** also-see list (`"*"`, `""`, `"Topic"`,
+   * `"-Topic"`). Local `alsoSee` is not filtered when `alsoSeeIncludeLocal`
+   * is true. Uncomment one example below.
    */
-  alsoSeeTopics: ["Embedded", ""],
+  alsoSeeTopics: ["*"], // all remote links
+  // alsoSeeTopics: [], // no remote links
+  // alsoSeeTopics: ["*", "-Power BI"], // all remote except Power BI
+  // alsoSeeTopics: ["Embedded", ""], // only Embedded + ungrouped
   /**
    * When true, include local `alsoSee` in full (alone if there is no remote, or
    * merged with the filtered remote — same topic names share one section; items
    * de-duplicated by URL). When false, local is never shown.
    */
   alsoSeeIncludeLocal: true,
-  /**
-   * Local related apps — only used when `alsoSeeIncludeLocal` is true.
-   * Set to `[]` or `false` to contribute nothing when the toggle is on.
-   * Entries: `{ topic, items: link[] }` and/or flat `{ label, url, subtitle?, icon? | iconLight?, iconDark? }`.
-   * Icon paths may be local (`app/res/…`) or absolute URLs (e.g. GitHub Pages / raw assets).
-   */
   alsoSee: [
     {
       topic: "Examples",

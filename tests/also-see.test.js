@@ -31,7 +31,8 @@ test("normalizeAlsoSee excludes the current appUrl from flat links", () => {
         url: "https://pqms.gh.fitec.dev/",
       },
     ],
-    "https://filcuk.github.io/microapp-template"
+    "https://filcuk.github.io/microapp-template",
+    ["*"]
   );
 
   assert.equal(sections.length, 1);
@@ -70,7 +71,8 @@ test("normalizeAlsoSee keeps topic sections and drops empty ones after appUrl fi
         url: "https://github.com/filcuk",
       },
     ],
-    "https://filcuk.github.io/pbi-tabulator/"
+    "https://filcuk.github.io/pbi-tabulator/",
+    ["*"]
   );
 
   assert.equal(sections.length, 2);
@@ -146,7 +148,7 @@ test("normalizeAlsoSee includes ungrouped links only when \"\" is whitelisted", 
   assert.equal(withUngrouped[1].items[0].label, "Profile");
 });
 
-test("normalizeAlsoSee true keeps all topics; false keeps none", () => {
+test("normalizeAlsoSee \"*\" keeps all topics; empty filter keeps none", () => {
   const data = [
     {
       topic: "Power BI",
@@ -158,13 +160,63 @@ test("normalizeAlsoSee true keeps all topics; false keeps none", () => {
     },
   ];
 
-  const all = normalizeAlsoSee(data, "", true);
+  const all = normalizeAlsoSee(data, "", ["*"]);
   assert.equal(all.length, 2);
   assert.equal(all[0].topic, "Power BI");
   assert.equal(all[1].topic, null);
 
-  const none = normalizeAlsoSee(data, "", false);
-  assert.equal(none.length, 0);
+  assert.equal(normalizeAlsoSee(data, "", []).length, 0);
+  assert.equal(normalizeAlsoSee(data, "", ["-Power BI"]).length, 0);
+});
+
+test("normalizeAlsoSee \"*\" with exclusions drops listed topics", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "Power BI",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        topic: "Database",
+        items: [{ label: "B", url: "https://example.com/b" }],
+      },
+      {
+        topic: "Embedded",
+        items: [{ label: "C", url: "https://example.com/c" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["*", "-Database", "-power bi"]
+  );
+
+  assert.equal(sections.length, 2);
+  assert.equal(sections[0].topic, "Embedded");
+  assert.equal(sections[1].topic, null);
+  assert.equal(sections[1].items[0].label, "Profile");
+});
+
+test("normalizeAlsoSee \"-\" excludes ungrouped when using \"*\"", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["*", "-"]
+  );
+
+  assert.equal(sections.length, 1);
+  assert.equal(sections[0].topic, "Embedded");
 });
 
 test("normalizeAlsoSee empty topic whitelist keeps nothing", () => {
@@ -283,7 +335,7 @@ test("normalizeAlsoSee places ungrouped section last", () => {
       },
     ],
     "",
-    true
+    ["*"]
   );
 
   assert.equal(sections.length, 2);
@@ -359,13 +411,17 @@ test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
 });
 
 test("normalizeAlsoSee keeps a single icon without inventing a theme pair", () => {
-  const sections = normalizeAlsoSee([
-    {
-      label: "Legacy",
-      url: "https://example.com/legacy",
-      icon: "https://example.com/icon.svg",
-    },
-  ]);
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Legacy",
+        url: "https://example.com/legacy",
+        icon: "https://example.com/icon.svg",
+      },
+    ],
+    "",
+    ["*"]
+  );
 
   assert.equal(sections[0].items[0].icon, "https://example.com/icon.svg");
   assert.equal(sections[0].items[0].iconLight, "");
@@ -373,15 +429,19 @@ test("normalizeAlsoSee keeps a single icon without inventing a theme pair", () =
 });
 
 test("normalizeAlsoSee prefers iconLight/iconDark theme pair", () => {
-  const sections = normalizeAlsoSee([
-    {
-      label: "Modern",
-      url: "https://example.com/modern",
-      icon: "https://example.com/ignored.svg",
-      iconLight: "https://example.com/app-light.svg",
-      iconDark: "https://example.com/app-dark.svg",
-    },
-  ]);
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Modern",
+        url: "https://example.com/modern",
+        icon: "https://example.com/ignored.svg",
+        iconLight: "https://example.com/app-light.svg",
+        iconDark: "https://example.com/app-dark.svg",
+      },
+    ],
+    "",
+    ["*"]
+  );
 
   const item = sections[0].items[0];
   assert.equal(item.icon, "");

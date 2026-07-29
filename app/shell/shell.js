@@ -39,12 +39,12 @@ function bindGlobalErrorHandlers(onError) {
  *   Related-app links for the footer “also see” menu (`{ topic, items }` and/or
  *   flat links). `false` or `[]` hides it when there is no remote list.
  * @param {string} [options.alsoSeeUrl] Remote JSON URL. Empty skips fetch.
- * @param {boolean | string[] | null} [options.alsoSeeTopics]
- *   Topic filter: `true` / omit / `null` = all; `false` = none; `string[]` =
- *   whitelist (`""` includes ungrouped flat links).
+ * @param {string[]} [options.alsoSeeTopics]
+ *   Remote topic filter: `["*"]` = all; `"-Topic"` excludes; named strings
+ *   whitelist; `""` includes ungrouped; `[]` includes nothing.
  * @param {boolean} [options.alsoSeeIncludeLocal]
- *   When true, include local `alsoSee` (alone or merged with remote). When
- *   false, local is never shown.
+ *   When true, include local `alsoSee` in full (alone or merged with remote).
+ *   When false, local is never shown.
  * @param {string} [options.appVersion] Override app SemVer (default from `app/version.js`)
  * @param {string} [options.templateVersion] Override template SemVer (default from `app/version.js`)
  * @param {import("./page-nav.js").PageNavOptions} [options.pageNav] Passed to `initPageNavPanel()`

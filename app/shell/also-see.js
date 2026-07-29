@@ -162,7 +162,8 @@ function remountAlsoSee(root, sections, menuApi) {
  * @param {object} [options]
  * @param {string} [options.alsoSeeUrl]
  * @param {string} [options.appUrl]
- * @param {boolean | string[] | null} [options.alsoSeeTopics] Topic filter
+ * @param {string[]} [options.alsoSeeTopics] Remote topic filter
+ *   (`["*"]` = all; `"-Topic"` excludes; `[]` = none)
  * @param {boolean} [options.alsoSeeIncludeLocal] Include local list
  * @param {false | object[]} [options.alsoSee] Local related-app list
  * @returns {Promise<ReturnType<typeof initPopupMenu> | null>}
@@ -185,7 +186,7 @@ export async function initAlsoSee(root = document, options = {}) {
   const localAlsoSee = resolveAlsoSeeLocal(options);
   // Topic filter applies to remote only — local is included in full when enabled.
   const localSections = includeLocal
-    ? normalizeAlsoSee(localAlsoSee, appUrl, true)
+    ? normalizeAlsoSee(localAlsoSee, appUrl, ["*"])
     : [];
 
   let menuApi = wireAlsoSeeMenu(root);

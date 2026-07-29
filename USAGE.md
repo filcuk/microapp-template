@@ -44,7 +44,7 @@ initShell({
   appUrl: "https://you.github.io/your-app/",
   alsoSee: false, // or [] — hide the footer “also see” menu when no remote list
   alsoSeeUrl: "", // optional remote JSON (topics + links)
-  alsoSeeTopics: true, // filters remote only; true = all; false = none; ["Topic", ""] = whitelist
+  alsoSeeTopics: ["*"], // remote filter: ["*"]=all; ["*","-Topic"]=all except; ["A",""]=whitelist
   alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
   pageNav: { headingSelector: "main h2[id]" },
 });
@@ -84,7 +84,7 @@ export const APP_CONFIG = {
   themeChangeEvent: "microapp-theme-change",
   // Remote JSON for footer “also see” — empty skips fetch; falls back to alsoSee
   alsoSeeUrl: "", // e.g. "https://raw.githubusercontent.com/you/shared/main/apps/links.json"
-  alsoSeeTopics: true, // filters remote only; true = all; false = none; ["Topic", ""] = whitelist
+  alsoSeeTopics: ["*"], // remote filter: ["*"]=all; ["*","-Topic"]=all except; ["A",""]=whitelist
   alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
   // Local related apps — only used when alsoSeeIncludeLocal is true
   alsoSee: [
@@ -109,7 +109,7 @@ export const APP_CONFIG = {
 | `repoUrl` | Footer GitHub / issues links via `renderPageShell()` |
 | `appUrl` | Public site URL; matching entries are dropped from “also see” |
 | `alsoSeeUrl` | Optional remote JSON for footer “also see”; empty skips fetch |
-| `alsoSeeTopics` | Filters **remote** topics only: `true` / omit / `null` = all; `false` = none; `string[]` whitelist (`""` = ungrouped) |
+| `alsoSeeTopics` | Filters **remote** only: `["*"]` = all; `"-Topic"` excludes; named whitelist; `""` = ungrouped; `[]` = none |
 | `alsoSeeIncludeLocal` | When `true`, include local `alsoSee` in full (alone or merged with remote); when `false`, local is never shown |
 | `alsoSee` | Local footer “also see” list (only when `alsoSeeIncludeLocal` is true) |
 | `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
@@ -448,7 +448,7 @@ Footer control after the GitHub link. Configure in [`app/config.js`](app/config.
 
 ```javascript
 alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/apps/links.json", // optional
-alsoSeeTopics: ["Power BI", "Database", ""], // remote whitelist; "" keeps ungrouped remote links
+alsoSeeTopics: ["*", "-Database"], // all remote topics except Database
 alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
 appUrl: "https://you.github.io/your-app/", // omit this site from the menu
 alsoSee: [
@@ -479,9 +479,10 @@ alsoSee: [
 | Local `alsoSee` array | Included in full only when `alsoSeeIncludeLocal` is true — never used as a fallback; not filtered by `alsoSeeTopics` |
 | `alsoSeeIncludeLocal: true` | Include local alone (no remote) or merge with filtered remote; same topics combined; URL de-dupe |
 | `alsoSeeIncludeLocal: false` | Local list is never shown |
-| `alsoSeeTopics: true` / omit / `null` | All **remote** topics (including ungrouped) |
-| `alsoSeeTopics: false` | No **remote** topics |
-| `alsoSeeTopics: string[]` | Case-insensitive remote whitelist; include `""` for ungrouped remote flat links |
+| `alsoSeeTopics: ["*"]` | All **remote** topics (including ungrouped); only `"*"` means all |
+| `alsoSeeTopics: ["*", "-Topic"]` | All remote topics except exclusions (`"-"` excludes ungrouped) |
+| `alsoSeeTopics: string[]` | Case-insensitive remote whitelist; `""` for ungrouped; `"-Topic"` still excludes |
+| `alsoSeeTopics: []` | No **remote** topics (nothing included) |
 | `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded; empty topics are dropped |
 | `alsoSee: []` or `false` | Hides the control when there is no successful remote list |
 

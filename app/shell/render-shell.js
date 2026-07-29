@@ -133,41 +133,86 @@ function normalizeAlsoSeeLink(link, exclude) {
 }
 
 /**
+ * @typedef {{
+ *   allowAll: boolean,
+ *   include: Set<string>,
+ *   exclude: Set<string>,
+ *   includeUngrouped: boolean,
+ *   excludeUngrouped: boolean,
+ * }} AlsoSeeTopicFilter
+ */
+
+/**
+ * Parse `alsoSeeTopics` filter entries.
+ *
+ * - `"*"` → include all topics (including ungrouped); only way to mean “all”
+ * - `"Topic"` → include that topic (whitelist when `"*"` is absent)
+ * - `""` → include ungrouped flat links (redundant with `"*"`)
+ * - `"-Topic"` → exclude that topic (works with `"*"` or a whitelist)
+ * - `"-"` → exclude ungrouped flat links
+ * - `[]` / no include entries → include nothing
+ *
  * @param {unknown} topics
- * @returns {null | { names: Set<string>, includeUngrouped: boolean }}
- *   `null` = all topics (including ungrouped). Otherwise a whitelist:
- *   `names` are lowercased topic labels; `includeUngrouped` is true when `""` was listed.
+ * @returns {AlsoSeeTopicFilter}
  */
 function normalizeAlsoSeeTopicFilter(topics) {
-  if (topics === true || topics === undefined || topics === null) return null;
-  if (topics === false) {
-    return { names: new Set(), includeUngrouped: false };
-  }
-  if (!Array.isArray(topics)) return null;
+  /** @type {AlsoSeeTopicFilter} */
+  const filter = {
+    allowAll: false,
+    include: new Set(),
+    exclude: new Set(),
+    includeUngrouped: false,
+    excludeUngrouped: false,
+  };
 
-  /** @type {Set<string>} */
-  const names = new Set();
-  let includeUngrouped = false;
+  if (!Array.isArray(topics)) return filter;
+
   for (const entry of topics) {
     if (typeof entry !== "string") continue;
-    if (entry.trim() === "") {
-      includeUngrouped = true;
+    const trimmed = entry.trim();
+
+    if (trimmed === "*") {
+      filter.allowAll = true;
       continue;
     }
-    names.add(entry.trim().toLowerCase());
+
+    if (trimmed.startsWith("-")) {
+      const name = trimmed.slice(1).trim();
+      if (!name) {
+        filter.excludeUngrouped = true;
+      } else {
+        filter.exclude.add(name.toLowerCase());
+      }
+      continue;
+    }
+
+    if (!trimmed) {
+      filter.includeUngrouped = true;
+      continue;
+    }
+
+    filter.include.add(trimmed.toLowerCase());
   }
-  return { names, includeUngrouped };
+
+  return filter;
 }
 
 /**
- * @param {null | { names: Set<string>, includeUngrouped: boolean }} topicFilter
+ * @param {AlsoSeeTopicFilter} topicFilter
  * @param {string} topic Trimmed topic label, or "" for ungrouped
  * @returns {boolean}
  */
 function alsoSeeTopicAllowed(topicFilter, topic) {
-  if (!topicFilter) return true;
-  if (!topic) return topicFilter.includeUngrouped;
-  return topicFilter.names.has(topic.toLowerCase());
+  if (!topic) {
+    if (topicFilter.excludeUngrouped) return false;
+    if (topicFilter.allowAll) return true;
+    return topicFilter.includeUngrouped;
+  }
+
+  const key = topic.toLowerCase();
+  if (topicFilter.exclude.has(key)) return false;
+  if (topicFilter.allowAll) return true;
+  return topicFilter.include.has(key);
 }
 
 /** @param {AlsoSeeSection[]} sections */
@@ -268,10 +313,9 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
  *
  * @param {unknown} alsoSee
  * @param {string} [excludeUrl] Drop entries whose `url` matches this app’s public URL
- * @param {boolean | string[] | null} [topics] Topic filter:
- *   `true` / omit / `null` → all topics (including ungrouped);
- *   `false` → none;
- *   `string[]` → whitelist (case-insensitive); include `""` for ungrouped flat links.
+ * @param {string[]} [topics] Topic filter for this list:
+ *   only `"*"` means all topics; `"-Topic"` excludes; named strings whitelist;
+ *   `""` includes ungrouped; `[]` (or no include entries) includes nothing.
  * @returns {AlsoSeeSection[]}
  */
 export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
@@ -440,7 +484,7 @@ export function renderPageShell(options = {}) {
   };
   const issuesUrl = `${repoUrl}/issues`;
   const alsoSeeSections = alsoSeeIncludeLocal
-    ? normalizeAlsoSee(alsoSee, appUrl, true)
+    ? normalizeAlsoSee(alsoSee, appUrl, ["*"])
     : [];
   const alsoSeeMarkup = renderAlsoSeeMarkup(alsoSeeSections);
 
