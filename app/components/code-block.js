@@ -217,9 +217,14 @@ export function initCodeBlock(container, options = {}) {
   if (parsedSurfaceActions) {
     surfaceActions = parsedSurfaceActions;
   } else if (options.copyButton === false || container.dataset.codeCopy === "false") {
-    surfaceActions = new Set();
+    surfaceActions = new Set(
+      container.hasAttribute("data-expandable-surface") ? ["maximize"] : []
+    );
   } else {
     surfaceActions = new Set(["copy"]);
+    if (container.hasAttribute("data-expandable-surface")) {
+      surfaceActions.add("maximize");
+    }
   }
 
   /** @type {HTMLTextAreaElement | null} */
@@ -563,32 +568,44 @@ export function initCodeBlock(container, options = {}) {
   }
 
   function rebuildSurfaceActions() {
+    const existingExpand = body.querySelector(".expandable-surface__expand");
     body.querySelector(".surface-actions")?.remove();
     body.querySelectorAll(".code-block-copy").forEach((el) => el.remove());
     surfaceCopyBtn = null;
 
     if (!surfaceActions.has("copy") && !surfaceActions.has("maximize")) {
+      existingExpand?.remove();
       return;
     }
-
-    if (!surfaceActions.has("copy")) return;
 
     const actionsHost = document.createElement("div");
     actionsHost.className = "surface-actions";
 
-    surfaceCopyBtn = document.createElement("button");
-    surfaceCopyBtn.type = "button";
-    surfaceCopyBtn.className = "btn btn-icon code-block-copy";
-    surfaceCopyBtn.setAttribute("aria-label", "Copy code");
-    surfaceCopyBtn.dataset.tooltip = "Copy";
-    surfaceCopyBtn.dataset.tooltipPosition = "top";
-    surfaceCopyBtn.append(createIcon("copy", { className: "btn-icon-svg" }));
-    surfaceCopyBtn.addEventListener("click", () => {
-      if (surfaceCopyBtn?.disabled) return;
-      void handleCopy(surfaceCopyBtn);
-    });
+    if (surfaceActions.has("copy")) {
+      surfaceCopyBtn = document.createElement("button");
+      surfaceCopyBtn.type = "button";
+      surfaceCopyBtn.className = "btn btn-icon code-block-copy";
+      surfaceCopyBtn.setAttribute("aria-label", "Copy code");
+      surfaceCopyBtn.dataset.tooltip = "Copy";
+      surfaceCopyBtn.dataset.tooltipPosition = "top";
+      surfaceCopyBtn.append(createIcon("copy", { className: "btn-icon-svg" }));
+      surfaceCopyBtn.addEventListener("click", () => {
+        if (surfaceCopyBtn?.disabled) return;
+        void handleCopy(surfaceCopyBtn);
+      });
+      actionsHost.appendChild(surfaceCopyBtn);
+    }
 
-    actionsHost.appendChild(surfaceCopyBtn);
+    if (existingExpand && surfaceActions.has("maximize")) {
+      actionsHost.prepend(existingExpand);
+    } else {
+      existingExpand?.remove();
+    }
+
+    if (actionsHost.childNodes.length === 0) {
+      return;
+    }
+
     body.insertBefore(actionsHost, body.firstChild);
     syncEditableToolbarActions();
   }

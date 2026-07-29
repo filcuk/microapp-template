@@ -24,9 +24,10 @@ function onOverlayKeydown(event) {
  * @typedef {{
  *   surface: HTMLElement,
  *   placeholder: Comment,
- *   expandBtn: HTMLButtonElement,
+ *   expandBtn: HTMLButtonElement | null,
  *   label: string,
  *   previouslyFocused: Element | null,
+ *   onSurfaceClick: (event: Event) => void,
  * }} ExpandSession
  */
 
@@ -61,6 +62,10 @@ function ensureOverlay() {
   }, { priority: 90 });
 }
 
+/**
+ * @param {HTMLElement} btn
+ * @param {boolean} expanded
+ */
 function setExpandButtonState(btn, expanded) {
   const label = expanded ? COLLAPSE_LABEL : EXPAND_LABEL;
   btn.dataset.tooltip = label;
@@ -73,13 +78,44 @@ function setExpandButtonState(btn, expanded) {
 }
 
 /**
+ * @param {HTMLElement} surface
+ * @returns {HTMLElement[]}
+ */
+function getOpenTriggers(surface) {
+  return [...surface.querySelectorAll("[data-expandable-surface-open]")];
+}
+
+/**
+ * @param {ExpandSession} session
+ * @param {boolean} expanded
+ */
+function syncExpandControls(session, expanded) {
+  for (const btn of getOpenTriggers(session.surface)) {
+    setExpandButtonState(btn, expanded);
+  }
+}
+
+/**
+ * Whether a code-block should show the floating maximise control.
+ * @param {HTMLElement} surface
+ */
+function codeBlockWantsFloatingMaximize(surface) {
+  if (!surface.classList.contains("code-block")) return true;
+  const raw = surface.dataset.codeSurfaceActions;
+  if (raw === undefined) return true;
+  const trimmed = raw.trim().toLowerCase();
+  if (!trimmed || trimmed === "none" || trimmed === "false") return false;
+  return trimmed.split(",").some((part) => part.trim() === "maximize");
+}
+
+/**
  * @param {ExpandSession} session
  */
 function openSurface(session) {
   ensureOverlay();
   if (!stageEl || !overlayEl) return;
 
-  const { surface, placeholder, expandBtn, label } = session;
+  const { surface, placeholder, label } = session;
   if (!surface.parentNode) return;
 
   surface.parentNode.insertBefore(placeholder, surface);
@@ -89,7 +125,7 @@ function openSurface(session) {
   activeSession = session;
 
   surface.classList.add("is-expanded");
-  setExpandButtonState(expandBtn, true);
+  syncExpandControls(session, true);
 
   overlayEl.setAttribute("aria-label", label);
   setHidden(overlayEl, false);
@@ -103,7 +139,8 @@ function openSurface(session) {
 function closeActive() {
   if (!activeSession || !overlayEl) return;
 
-  const { surface, placeholder, expandBtn, previouslyFocused } = activeSession;
+  const session = activeSession;
+  const { surface, placeholder, previouslyFocused } = session;
   const parent = placeholder.parentNode;
 
   if (parent) {
@@ -112,7 +149,7 @@ function closeActive() {
   }
 
   surface.classList.remove("is-expanded");
-  setExpandButtonState(expandBtn, false);
+  syncExpandControls(session, false);
 
   setHidden(overlayEl, true);
   document.body.classList.remove("expandable-surface-open");
@@ -127,17 +164,38 @@ function closeActive() {
 }
 
 /**
- * Add a hover-revealed maximise control; expands the surface into an overlay
- * capped to the page body width (`--page-width`).
+ * @param {ExpandSession} session
+ */
+function toggleSession(session) {
+  if (activeSession === session) {
+    closeActive();
+    return;
+  }
+
+  if (activeSession) {
+    closeActive();
+  }
+
+  openSurface(session);
+}
+
+/**
+ * Add maximise controls; expands the surface into an overlay capped to the
+ * page body width (`--page-width`).
  *
  * Markup:
- *   <div class="code-block" data-expandable-surface data-expandable-surface-label="Code sample">
+ *   <div class="code-block" data-expandable-surface data-expandable-surface-label="Code sample"
+ *     data-code-surface-actions="copy,maximize">
  *     <div class="code-block-body" data-expandable-surface-trigger>…</div>
  *   </div>
  *
  * `data-expandable-surface` — element moved into the overlay when expanded.
- * `data-expandable-surface-trigger` — optional child that hosts the button (defaults to surface).
+ * `data-expandable-surface-trigger` — optional child that hosts the floating button.
  * `data-expandable-surface-label` — accessible name for the overlay dialog.
+ * `data-expandable-surface-open` — buttons (toolbar Maximize or floating control) that toggle.
+ *
+ * For `.code-block`, the floating button is shown only when `maximize` is listed
+ * in `data-code-surface-actions`.
  *
  * @param {HTMLElement} surface
  */
@@ -154,24 +212,33 @@ export function initExpandableSurface(surface) {
 
   trigger.classList.add("expandable-surface-trigger");
 
-  const expandBtn = document.createElement("button");
-  expandBtn.type = "button";
-  expandBtn.className = "expandable-surface__expand btn btn-icon";
-  expandBtn.dataset.tooltipPosition = "top";
-  setExpandButtonState(expandBtn, false);
+  const showFloating = codeBlockWantsFloatingMaximize(surface);
+  /** @type {HTMLButtonElement | null} */
+  let expandBtn = null;
 
-  const copyBtn = trigger.querySelector(".code-block-copy");
-  if (copyBtn) {
+  if (showFloating) {
+    expandBtn = document.createElement("button");
+    expandBtn.type = "button";
+    expandBtn.className = "expandable-surface__expand btn btn-icon";
+    expandBtn.dataset.tooltipPosition = "top";
+    expandBtn.dataset.expandableSurfaceOpen = "";
+    setExpandButtonState(expandBtn, false);
+
+    const copyBtn = trigger.querySelector(".code-block-copy");
     let actionsHost = trigger.querySelector(".surface-actions");
-    if (!actionsHost) {
-      actionsHost = document.createElement("div");
-      actionsHost.className = "surface-actions";
-      copyBtn.parentNode?.insertBefore(actionsHost, copyBtn);
-      actionsHost.appendChild(copyBtn);
+    if (copyBtn) {
+      if (!actionsHost) {
+        actionsHost = document.createElement("div");
+        actionsHost.className = "surface-actions";
+        copyBtn.parentNode?.insertBefore(actionsHost, copyBtn);
+        actionsHost.appendChild(copyBtn);
+      }
+      actionsHost.prepend(expandBtn);
+    } else if (actionsHost) {
+      actionsHost.prepend(expandBtn);
+    } else {
+      trigger.appendChild(expandBtn);
     }
-    actionsHost.prepend(expandBtn);
-  } else {
-    trigger.appendChild(expandBtn);
   }
 
   /** @type {ExpandSession} */
@@ -181,20 +248,17 @@ export function initExpandableSurface(surface) {
     expandBtn,
     label,
     previouslyFocused: null,
+    onSurfaceClick: (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const btn = target.closest("[data-expandable-surface-open]");
+      if (!(btn instanceof HTMLElement) || !surface.contains(btn)) return;
+      event.preventDefault();
+      toggleSession(session);
+    },
   };
 
-  expandBtn.addEventListener("click", () => {
-    if (activeSession === session) {
-      closeActive();
-      return;
-    }
-
-    if (activeSession) {
-      closeActive();
-    }
-
-    openSurface(session);
-  });
+  surface.addEventListener("click", session.onSurfaceClick);
 
   return {
     open() {
@@ -207,7 +271,8 @@ export function initExpandableSurface(surface) {
     },
     destroy() {
       if (activeSession === session) closeActive();
-      expandBtn.remove();
+      surface.removeEventListener("click", session.onSurfaceClick);
+      expandBtn?.remove();
       trigger.classList.remove("expandable-surface-trigger");
       surface.classList.remove("expandable-surface");
       delete surface.dataset.expandableSurfaceInit;
