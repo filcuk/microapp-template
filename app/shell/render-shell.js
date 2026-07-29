@@ -314,6 +314,9 @@ export function renderPageShell(options = {}) {
 
   if (document.getElementById("app-page-footer")) return;
 
+  const overrides = Object.fromEntries(
+    Object.entries(options).filter(([, value]) => value !== undefined)
+  );
   const {
     repoUrl,
     alsoSee,
@@ -323,7 +326,7 @@ export function renderPageShell(options = {}) {
     templateVersion,
   } = {
     ...DEFAULTS,
-    ...options,
+    ...overrides,
   };
   const issuesUrl = `${repoUrl}/issues`;
   const alsoSeeSections = normalizeAlsoSee(alsoSee, appUrl, alsoSeeTopics);

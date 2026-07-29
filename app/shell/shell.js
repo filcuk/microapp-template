@@ -58,11 +58,19 @@ export function initShell(options = {}) {
     appUrl,
     ...shellOptions
   } = options;
-  renderPageShell({ ...shellOptions, alsoSee, alsoSeeUrl, alsoSeeTopics, appUrl });
+  // Only forward also-see overrides when the caller set them — passing
+  // `undefined` would wipe APP_CONFIG defaults in renderPageShell / initAlsoSee.
+  const alsoSeeOptions = {};
+  if ("alsoSee" in options) alsoSeeOptions.alsoSee = alsoSee;
+  if ("alsoSeeUrl" in options) alsoSeeOptions.alsoSeeUrl = alsoSeeUrl;
+  if ("alsoSeeTopics" in options) alsoSeeOptions.alsoSeeTopics = alsoSeeTopics;
+  if ("appUrl" in options) alsoSeeOptions.appUrl = appUrl;
+
+  renderPageShell({ ...shellOptions, ...alsoSeeOptions });
   initIcons();
   initExternalLinks(document);
   initHeadingLinks(document);
-  void initAlsoSee(document, { alsoSeeUrl, appUrl, alsoSeeTopics });
+  void initAlsoSee(document, alsoSeeOptions);
   initTheme();
   initThemeToggle(document.getElementById("theme-toggle"));
   initStickyChrome();

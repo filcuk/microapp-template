@@ -104,8 +104,8 @@ async function fetchAlsoSeeJson(url) {
  * @returns {string[] | false | null | undefined}
  */
 function resolveAlsoSeeTopics(options = {}) {
-  if ("alsoSeeTopics" in options) return options.alsoSeeTopics;
-  if ("alsoSeeTopics" in APP_CONFIG) return APP_CONFIG.alsoSeeTopics;
+  if (options.alsoSeeTopics !== undefined) return options.alsoSeeTopics;
+  if (APP_CONFIG.alsoSeeTopics !== undefined) return APP_CONFIG.alsoSeeTopics;
   return undefined;
 }
 
