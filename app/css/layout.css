@@ -429,6 +429,17 @@ main {
   align-items: flex-end;
   justify-content: flex-end;
   padding: 1.5rem;
+  /* Compact (overlaps main): only jumps capture; edge-hover enables the full strip. */
+  pointer-events: none;
+}
+
+/* Gutter mode — strip sits clear of main, so the full zone can capture hover. */
+.page-nav--edge-hover .page-nav-trigger {
+  pointer-events: auto;
+}
+
+/* Compact mode — after opening via jumps, keep the strip live so the panel stays reachable. */
+.page-nav:not(.page-nav--edge-hover) .page-nav-trigger:hover {
   pointer-events: auto;
 }
 
@@ -531,6 +542,7 @@ main {
   width: 5.5rem;
   height: 2.75rem;
   flex-shrink: 0;
+  pointer-events: auto;
 }
 
 .page-nav-jump-ring {

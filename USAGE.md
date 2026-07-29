@@ -1806,7 +1806,7 @@ nav?.rebuild(); // call after adding/removing headings dynamically
 nav?.destroy(); // remove listeners when tearing down
 ```
 
-Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right; the section list appears when you hover the right-edge trigger strip (or focus a section link inside the panel). The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
+Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right. The section list opens on hover: when the right-edge strip sits in the gutter (clear of `main`), the full strip activates it; when the strip overlaps `main`, only hovering the jump buttons opens it (so page controls stay clickable). Focus inside the panel also keeps it open. The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
 
 Mark a top-level nav group by adding `data-page-nav-tier` to its `h2`. The next headings in document order nest under it until another tier heading appears. Tier links use full weight; nested section links are slightly smaller and muted.
 

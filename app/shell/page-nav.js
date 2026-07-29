@@ -27,6 +27,18 @@ function isTierHeading(heading) {
 }
 
 /**
+ * True when the fixed nav strip horizontally overlaps `main`.
+ * @param {HTMLElement} navEl
+ * @param {Element | null} mainEl
+ */
+function navOverlapsMain(navEl, mainEl) {
+  if (!mainEl) return true;
+  const navRect = navEl.getBoundingClientRect();
+  const mainRect = mainEl.getBoundingClientRect();
+  return navRect.left < mainRect.right && navRect.right > mainRect.left;
+}
+
+/**
  * @typedef {Object} PageNavOptions
  * @property {string} [headingSelector="main h2[id]"] CSS selector for section headings (must have `id`)
  * @property {ParentNode} [headingRoot=document] Root to scan for headings
@@ -65,10 +77,17 @@ export function initPageNav(
   const panelEl = navEl.querySelector(".page-nav-panel");
   const upBtn = navEl.querySelector('[data-page-nav="up"]');
   const downBtn = navEl.querySelector('[data-page-nav="down"]');
+  const mainEl = document.querySelector("main");
 
   let ticking = false;
   /** @type {HTMLElement[]} */
   let headings = [];
+
+  /** Toggle full right-edge hover when the strip clears `main`; otherwise jumps-only. */
+  function syncEdgeHoverMode() {
+    const edgeHover = !navOverlapsMain(navEl, mainEl);
+    navEl.classList.toggle("page-nav--edge-hover", edgeHover);
+  }
 
   /** @param {Event} event */
   function onLinkClick(event) {
@@ -160,6 +179,7 @@ export function initPageNav(
       maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
 
     navEl.style.setProperty("--scroll-progress", String(progress));
+    syncEdgeHoverMode();
     ticking = false;
   }
 
@@ -186,6 +206,7 @@ export function initPageNav(
     window.removeEventListener("resize", onScrollOrResize);
     upBtn?.removeEventListener("click", onJumpUp);
     downBtn?.removeEventListener("click", onJumpDown);
+    navEl.classList.remove("page-nav--edge-hover");
 
     listEl
       ?.querySelectorAll(".page-nav-link")
