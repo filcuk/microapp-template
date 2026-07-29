@@ -3,7 +3,7 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   overflow: hidden;
-  background: var(--code-bg);
+  background: var(--input-bg);
 }
 
 .code-block-toolbar {
@@ -18,29 +18,51 @@
 
 .code-block-body {
   position: relative;
+  background: var(--input-bg);
 }
 
-.code-block-body pre {
+/*
+ * Beat prism.css (loaded after styles.css): pre[class*="language-"] is (0,1,1),
+ * same as `.code-block-body pre`, so unqualified overrides lose to source order.
+ */
+.code-block .code-block-body pre,
+.code-block .code-block-body pre[class*="language-"] {
   margin: 0;
-  padding: 1rem;
+  padding: 1rem 1.5rem 1rem 1rem;
   overflow: auto;
   font-family: var(--mono);
   font-size: 0.8125rem;
   line-height: 1.6;
   tab-size: 2;
   color: var(--text);
-  background: transparent;
+  background: var(--input-bg);
+  border-radius: 0;
 }
 
-.code-block-body pre > code {
+/* Keep Prism line-number gutter layout (vertical pad on code, not pre). */
+.code-block .code-block-body pre[class*="language-"].line-numbers {
+  padding: 0 1.5rem 0 3.8em;
+}
+
+.code-block .code-block-body pre > code,
+.code-block .code-block-body pre[class*="language-"] > code {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   white-space: pre;
+  background: transparent;
 }
 
-.code-block-body pre[class*="language-"] {
-  border-radius: 0;
+.code-block .code-block-body pre[class*="language-"].line-numbers > code {
+  position: relative;
+  /* inline-block + min-width so long lines expand scroll width (avoids clipped glyphs) */
+  display: inline-block;
+  min-width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-right: 0.25rem;
+  white-space: inherit;
+  box-sizing: border-box;
 }
 
 .code-block--view pre,
@@ -50,22 +72,56 @@
 
 .code-block-editor-stack {
   position: relative;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.code-block-editor-gutter {
+  flex: 0 0 3em;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 1rem 0.8em 1rem 0;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  letter-spacing: -1px;
+  text-align: right;
+  color: var(--muted);
+  background: var(--code-bg);
+  border-right: 1px solid var(--border);
+  user-select: none;
+  pointer-events: none;
+}
+
+.code-block-editor-stack--gutter {
+  counter-reset: linenumber;
+}
+
+.code-block-editor-gutter > span {
+  display: block;
+  counter-increment: linenumber;
+}
+
+.code-block-editor-gutter > span::before {
+  content: counter(linenumber);
+  display: block;
 }
 
 .code-block-editor {
   display: none;
-  position: absolute;
-  inset: 0;
+  flex: 1;
+  min-width: 0;
   width: 100%;
-  height: 100%;
+  min-height: 6.5rem;
   margin: 0;
-  padding: 1rem;
+  padding: 1rem 1.5rem 1rem 1rem;
   border: none;
   border-radius: 0;
-  background: transparent;
-  color: transparent;
+  background: var(--input-bg);
+  color: var(--text);
   caret-color: var(--text);
-  -webkit-text-fill-color: transparent;
   font-family: var(--mono);
   font-size: 0.8125rem;
   line-height: 1.6;
@@ -82,8 +138,6 @@
 
 .code-block-editor::selection {
   background: color-mix(in srgb, var(--accent) 28%, transparent);
-  color: transparent;
-  -webkit-text-fill-color: transparent;
 }
 
 .code-block--edit .code-block-editor {
@@ -91,12 +145,7 @@
 }
 
 .code-block--edit .code-block-editor-stack pre {
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.code-block--edit .code-block-editor-stack pre.line-numbers + .code-block-editor {
-  padding-left: 3.8em;
+  display: none;
 }
 
 .code-block-copy {
@@ -266,12 +315,22 @@ body.expandable-surface-open {
 .expandable-surface.is-expanded.code-block .code-block-editor-stack {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
+  /* Keep row layout (gutter | editor); stretch to fill expanded body */
+  align-items: stretch;
 }
 
 .expandable-surface.is-expanded.code-block .code-block-editor-stack pre {
   flex: 1;
+  min-height: 0;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-editor {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-editor-gutter {
   min-height: 0;
 }
 
