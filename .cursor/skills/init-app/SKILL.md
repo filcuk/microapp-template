@@ -18,7 +18,7 @@ Ask for anything missing:
 | Input | Where it lands |
 | ----- | -------------- |
 | App name / title / tagline | `index.html` (`<title>`, `<h1>`, `.tagline`, logo `alt`) |
-| `repoUrl`, `appUrl`, `brandUrl`, `brandName` | `app/config.js` (and/or `initShell` overrides) |
+| `repoUrl`, `appUrl` | `app/config.js` (and/or `initShell` overrides) |
 | Initial `APP_VERSION` | `app/version.js` only — **do not** change `TEMPLATE_VERSION` |
 | Theme storage key | Default `microapp-theme`, or rename in `config.js` + `__MICROAPP__` |
 | Also-see | Real links, remote `alsoSeeUrl`, topics whitelist, or `false` / `[]` to hide |
@@ -38,7 +38,7 @@ Ask for anything missing:
 3. Set `APP_VERSION` in `app/version.js`.
 4. Ensure boot: `__MICROAPP__` (if needed) → `theme-init.js` → `styles.css` → `app/main.js` with `initShell()` first.
 5. Demo: keep, or delete `demo.html` + `app/demo.js` and drop `demo.html` from `.github/workflows/pages.yml`.
-6. Brand / signature / new UI icons → follow **`handle-assets`** (wire only; request files; do not invent artwork).
+6. Brand / new UI icons → follow **`handle-assets`** (wire only; request files; do not invent artwork).
 
 ## 4. Deploy checklist
 

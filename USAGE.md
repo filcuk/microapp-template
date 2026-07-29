@@ -36,17 +36,16 @@ initShell(); // footer, theme toggle, page nav, tooltips, icons, links
 // …your app-specific inits…
 ```
 
-Optional shell overrides (repo link, brand URL, related apps, page nav scan):
+Optional shell overrides (repo link, related apps, page nav scan):
 
 ```javascript
 initShell({
   repoUrl: "https://github.com/you/your-app",
   appUrl: "https://you.github.io/your-app/",
-  brandUrl: "https://yoursite.example",
-  brandName: "Your name",
   alsoSee: false, // or [] — hide the footer “also see” menu when no remote list
   alsoSeeUrl: "", // optional remote JSON (topics + links)
-  alsoSeeTopics: null, // optional topic whitelist; null = all topics
+  alsoSeeTopics: ["*"], // remote filter: ["*"]=all; ["*","-Topic"]=all except; ["A",""]=whitelist
+  alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
   pageNav: { headingSelector: "main h2[id]" },
 });
 ```
@@ -81,14 +80,13 @@ Fork-sensitive defaults live in [`app/config.js`](app/config.js):
 export const APP_CONFIG = {
   repoUrl: "https://github.com/you/your-app",
   appUrl: "https://you.github.io/your-app/", // public Pages URL — omitted from “also see”
-  brandUrl: "https://yoursite.example",
-  brandName: "Your name",
   themeStorageKey: "microapp-theme",
   themeChangeEvent: "microapp-theme-change",
   // Remote JSON for footer “also see” — empty skips fetch; falls back to alsoSee
   alsoSeeUrl: "", // e.g. "https://raw.githubusercontent.com/you/shared/main/apps/links.json"
-  alsoSeeTopics: null, // e.g. ["Power BI", "Database"] — omit / null = all topics
-  // Local related apps (used when alsoSeeUrl is empty or fetch fails)
+  alsoSeeTopics: ["*"], // remote filter: ["*"]=all; ["*","-Topic"]=all except; ["A",""]=whitelist
+  alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
+  // Local related apps — only used when alsoSeeIncludeLocal is true
   alsoSee: [
     {
       topic: "Examples",
@@ -108,11 +106,12 @@ export const APP_CONFIG = {
 
 | Field | Used by |
 | ----- | ------- |
-| `repoUrl`, `brandUrl`, `brandName` | Footer links and brand tooltip via `renderPageShell()` |
+| `repoUrl` | Footer GitHub / issues links via `renderPageShell()` |
 | `appUrl` | Public site URL; matching entries are dropped from “also see” |
 | `alsoSeeUrl` | Optional remote JSON for footer “also see”; empty skips fetch |
-| `alsoSeeTopics` | Optional topic whitelist (`null` / omit = all; `[]` = flat links only) |
-| `alsoSee` | Local footer “also see” list (`[]` / `false` disables when there is no remote list) |
+| `alsoSeeTopics` | Filters **remote** only: `["*"]` = all; `"-Topic"` excludes; named whitelist; `""` = ungrouped; `[]` = none |
+| `alsoSeeIncludeLocal` | When `true`, include local `alsoSee` in full (alone or merged with remote); when `false`, local is never shown |
+| `alsoSee` | Local footer “also see” list (only when `alsoSeeIncludeLocal` is true) |
 | `themeStorageKey` | `theme.js` and blocking `theme-init.js` |
 | `themeChangeEvent` | Theme changes; rich text editor syncs to dark mode |
 
@@ -160,7 +159,6 @@ Do **not** delete shared infrastructure you still need: `shell.js`, `render-shel
 | Asset | Purpose |
 | ----- | ------- |
 | `app/res/app-light.svg` + `app-dark.svg` **or** `app/res/app.svg` | Header logo, favicon |
-| `app/res/sig-light.svg` / `sig-dark.svg` | Footer signature icon |
 
 **App logo — pair (default)** or **single**:
 
@@ -265,7 +263,7 @@ app/
   prism.css             # Prism token colours (optional)
   toastui-editor.css    # Vendored Toast UI base CSS (optional)
   vendor/               # Prism, Toast UI (optional)
-  res/                  # App logo and signature SVGs
+  res/                  # App logo SVGs
 ```
 
 ### Module layers (JavaScript)
@@ -289,7 +287,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -446,11 +444,12 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Also see (related apps)
 
-Footer control between the GitHub and profile links. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` to `initShell()` / `renderPageShell()`):
+Footer control after the GitHub link. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal` to `initShell()` / `renderPageShell()`):
 
 ```javascript
 alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/apps/links.json", // optional
-alsoSeeTopics: ["Power BI", "Database"], // optional whitelist; omit / null = all topics
+alsoSeeTopics: ["*", "-Database"], // all remote topics except Database
+alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
 appUrl: "https://you.github.io/your-app/", // omit this site from the menu
 alsoSee: [
   {
@@ -476,9 +475,14 @@ alsoSee: [
 
 | Value | Behaviour |
 | ----- | --------- |
-| `alsoSeeUrl` string | Fetches remote JSON and replaces the menu |
-| Local `alsoSee` array | Renders immediately; kept as fallback if the remote fetch fails or `alsoSeeUrl` is empty |
-| `alsoSeeTopics` string[] | Case-insensitive topic whitelist; omit / `null` / `false` = all topics; `[]` = hide named topics (flat links still show) |
+| `alsoSeeUrl` string | Fetches remote JSON and shows it (merged with local when `alsoSeeIncludeLocal`) |
+| Local `alsoSee` array | Included in full only when `alsoSeeIncludeLocal` is true — never used as a fallback; not filtered by `alsoSeeTopics` |
+| `alsoSeeIncludeLocal: true` | Include local alone (no remote) or merge with filtered remote; same topics combined; URL de-dupe |
+| `alsoSeeIncludeLocal: false` | Local list is never shown |
+| `alsoSeeTopics: ["*"]` | All **remote** topics (including ungrouped); only `"*"` means all |
+| `alsoSeeTopics: ["*", "-Topic"]` | All remote topics except exclusions (`"-"` excludes ungrouped) |
+| `alsoSeeTopics: string[]` | Case-insensitive remote whitelist; `""` for ungrouped; `"-Topic"` still excludes |
+| `alsoSeeTopics: []` | No **remote** topics (nothing included) |
 | `appUrl` | Any entry whose `url` matches (trailing slash / case ignored) is excluded; empty topics are dropped |
 | `alsoSee: []` or `false` | Hides the control when there is no successful remote list |
 
@@ -1802,7 +1806,7 @@ nav?.rebuild(); // call after adding/removing headings dynamically
 nav?.destroy(); // remove listeners when tearing down
 ```
 
-Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right; the section list appears when you hover the right-edge trigger strip (or focus a section link inside the panel). The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
+Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right. The section list opens on hover: when the right-edge strip sits in the gutter (clear of `main`), the full strip activates it; when the strip overlaps `main`, only hovering the jump buttons opens it (so page controls stay clickable). Focus inside the panel also keeps it open. The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
 
 Mark a top-level nav group by adding `data-page-nav-tier` to its `h2`. The next headings in document order nest under it until another tier heading appears. Tier links use full weight; nested section links are slightly smaller and muted.
 
@@ -1915,7 +1919,7 @@ Set `data-code-copy="false"` on `.code-block` to disable the copy button. Line n
 | ---- | --------- |
 | `view` | Read-only display; text cannot be selected; copy button hidden |
 | `select` | Read-only; text selectable; copy and highlight toggles (default) |
-| `edit` | Editable overlay on highlighted `<pre>`; line numbers and highlight toggles apply |
+| `edit` | Transparent textarea over highlighted `<pre>` (shared metrics so caret matches glyphs). Line numbers and highlight toggles apply; line numbers still require highlight |
 
 Switch modes at runtime via `initCodeBlock()` → `setMode("edit")`, `getMode()`, `getSource()`, `setSource(text)`.
 
@@ -1963,7 +1967,7 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Signature (`app/res/sig-light.svg`, `app/res/sig-dark.svg`) swaps by theme via CSS; favicon syncs in `brand-icon.js`.
+Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Favicon syncs in `brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 

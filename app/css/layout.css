@@ -429,6 +429,17 @@ main {
   align-items: flex-end;
   justify-content: flex-end;
   padding: 1.5rem;
+  /* Compact (overlaps main): only jumps capture; edge-hover enables the full strip. */
+  pointer-events: none;
+}
+
+/* Gutter mode — strip sits clear of main, so the full zone can capture hover. */
+.page-nav--edge-hover .page-nav-trigger {
+  pointer-events: auto;
+}
+
+/* Compact mode — after opening via jumps, keep the strip live so the panel stays reachable. */
+.page-nav:not(.page-nav--edge-hover) .page-nav-trigger:hover {
   pointer-events: auto;
 }
 
@@ -531,6 +542,7 @@ main {
   width: 5.5rem;
   height: 2.75rem;
   flex-shrink: 0;
+  pointer-events: auto;
 }
 
 .page-nav-jump-ring {
@@ -628,27 +640,22 @@ body > footer {
   user-select: none;
 }
 
-.footer-brand {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  line-height: 0;
-}
-
-.footer-brand img {
-  width: 1.625rem;
-  height: 1.625rem;
-}
-
 .footer-version {
   font-size: 0.8125rem;
   color: var(--muted);
   cursor: default;
 }
 
+/* Match .footer-meta-copy gap so · / “also see” spacing matches other entries */
+#footer-also-see-host:not(:empty) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .footer-also-see.dropdown {
   position: relative;
-  display: inline-block;
+  display: inline;
   align-self: center;
   /* Keep the menu above in-flow main content when not using fixed positioning. */
   z-index: 20;

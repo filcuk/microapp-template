@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   alsoSeeHasItems,
+  mergeAlsoSeeSections,
   normalizeAlsoSee,
   normalizeSiteUrl,
   renderAlsoSeeMarkup,
@@ -30,7 +31,8 @@ test("normalizeAlsoSee excludes the current appUrl from flat links", () => {
         url: "https://pqms.gh.fitec.dev/",
       },
     ],
-    "https://filcuk.github.io/microapp-template"
+    "https://filcuk.github.io/microapp-template",
+    ["*"]
   );
 
   assert.equal(sections.length, 1);
@@ -69,7 +71,8 @@ test("normalizeAlsoSee keeps topic sections and drops empty ones after appUrl fi
         url: "https://github.com/filcuk",
       },
     ],
-    "https://filcuk.github.io/pbi-tabulator/"
+    "https://filcuk.github.io/pbi-tabulator/",
+    ["*"]
   );
 
   assert.equal(sections.length, 2);
@@ -102,13 +105,121 @@ test("normalizeAlsoSee filters topics by whitelist (case-insensitive)", () => {
     ["power bi"]
   );
 
-  assert.equal(sections.length, 2);
+  assert.equal(sections.length, 1);
   assert.equal(sections[0].topic, "Power BI");
+  assert.equal(sections[0].items[0].label, "A");
+});
+
+test("normalizeAlsoSee includes ungrouped links only when \"\" is whitelisted", () => {
+  const without = normalizeAlsoSee(
+    [
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["Embedded"]
+  );
+  assert.equal(without.length, 1);
+  assert.equal(without[0].topic, "Embedded");
+
+  const withUngrouped = normalizeAlsoSee(
+    [
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["Embedded", ""]
+  );
+  assert.equal(withUngrouped.length, 2);
+  assert.equal(withUngrouped[0].topic, "Embedded");
+  assert.equal(withUngrouped[1].topic, null);
+  assert.equal(withUngrouped[1].items[0].label, "Profile");
+});
+
+test("normalizeAlsoSee \"*\" keeps all topics; empty filter keeps none", () => {
+  const data = [
+    {
+      topic: "Power BI",
+      items: [{ label: "A", url: "https://example.com/a" }],
+    },
+    {
+      label: "Profile",
+      url: "https://github.com/filcuk",
+    },
+  ];
+
+  const all = normalizeAlsoSee(data, "", ["*"]);
+  assert.equal(all.length, 2);
+  assert.equal(all[0].topic, "Power BI");
+  assert.equal(all[1].topic, null);
+
+  assert.equal(normalizeAlsoSee(data, "", []).length, 0);
+  assert.equal(normalizeAlsoSee(data, "", ["-Power BI"]).length, 0);
+});
+
+test("normalizeAlsoSee \"*\" with exclusions drops listed topics", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "Power BI",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        topic: "Database",
+        items: [{ label: "B", url: "https://example.com/b" }],
+      },
+      {
+        topic: "Embedded",
+        items: [{ label: "C", url: "https://example.com/c" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["*", "-Database", "-power bi"]
+  );
+
+  assert.equal(sections.length, 2);
+  assert.equal(sections[0].topic, "Embedded");
   assert.equal(sections[1].topic, null);
   assert.equal(sections[1].items[0].label, "Profile");
 });
 
-test("normalizeAlsoSee empty topic whitelist keeps only flat links", () => {
+test("normalizeAlsoSee \"-\" excludes ungrouped when using \"*\"", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+    ],
+    "",
+    ["*", "-"]
+  );
+
+  assert.equal(sections.length, 1);
+  assert.equal(sections[0].topic, "Embedded");
+});
+
+test("normalizeAlsoSee empty topic whitelist keeps nothing", () => {
   const sections = normalizeAlsoSee(
     [
       {
@@ -124,9 +235,116 @@ test("normalizeAlsoSee empty topic whitelist keeps only flat links", () => {
     []
   );
 
-  assert.equal(sections.length, 1);
-  assert.equal(sections[0].topic, null);
-  assert.equal(sections[0].items[0].label, "Profile");
+  assert.equal(sections.length, 0);
+});
+
+test("mergeAlsoSeeSections merges matching topics and dedupes by URL", () => {
+  const merged = mergeAlsoSeeSections(
+    [
+      {
+        topic: "Embedded",
+        items: [
+          {
+            label: "Remote A",
+            subtitle: "",
+            url: "https://example.com/a",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+      {
+        topic: null,
+        items: [
+          {
+            label: "Profile",
+            subtitle: "",
+            url: "https://github.com/filcuk",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+    ],
+    [
+      {
+        topic: "embedded",
+        items: [
+          {
+            label: "Remote A dup",
+            subtitle: "",
+            url: "https://example.com/a/",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+          {
+            label: "Local B",
+            subtitle: "",
+            url: "https://example.com/b",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+      {
+        topic: "Examples",
+        items: [
+          {
+            label: "Local C",
+            subtitle: "",
+            url: "https://example.com/c",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+          },
+        ],
+      },
+    ]
+  );
+
+  assert.equal(merged.length, 3);
+  assert.equal(merged[0].topic, "Embedded");
+  assert.deepEqual(
+    merged[0].items.map((item) => item.label),
+    ["Remote A", "Local B"]
+  );
+  assert.equal(merged[1].topic, "Examples");
+  assert.equal(merged[1].items[0].label, "Local C");
+  assert.equal(merged[2].topic, null);
+  assert.equal(merged[2].items[0].label, "Profile");
+});
+
+test("normalizeAlsoSee places ungrouped section last", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Profile",
+        url: "https://github.com/filcuk",
+      },
+      {
+        topic: "Embedded",
+        items: [{ label: "A", url: "https://example.com/a" }],
+      },
+      {
+        label: "Extra",
+        url: "https://example.com/extra",
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  assert.equal(sections.length, 2);
+  assert.equal(sections[0].topic, "Embedded");
+  assert.equal(sections[1].topic, null);
+  assert.deepEqual(
+    sections[1].items.map((item) => item.label),
+    ["Profile", "Extra"]
+  );
 });
 
 test("renderAlsoSeeMarkup emits group headers for topics", () => {
@@ -193,13 +411,17 @@ test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
 });
 
 test("normalizeAlsoSee keeps a single icon without inventing a theme pair", () => {
-  const sections = normalizeAlsoSee([
-    {
-      label: "Legacy",
-      url: "https://example.com/legacy",
-      icon: "https://example.com/icon.svg",
-    },
-  ]);
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Legacy",
+        url: "https://example.com/legacy",
+        icon: "https://example.com/icon.svg",
+      },
+    ],
+    "",
+    ["*"]
+  );
 
   assert.equal(sections[0].items[0].icon, "https://example.com/icon.svg");
   assert.equal(sections[0].items[0].iconLight, "");
@@ -207,15 +429,19 @@ test("normalizeAlsoSee keeps a single icon without inventing a theme pair", () =
 });
 
 test("normalizeAlsoSee prefers iconLight/iconDark theme pair", () => {
-  const sections = normalizeAlsoSee([
-    {
-      label: "Modern",
-      url: "https://example.com/modern",
-      icon: "https://example.com/ignored.svg",
-      iconLight: "https://example.com/app-light.svg",
-      iconDark: "https://example.com/app-dark.svg",
-    },
-  ]);
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Modern",
+        url: "https://example.com/modern",
+        icon: "https://example.com/ignored.svg",
+        iconLight: "https://example.com/app-light.svg",
+        iconDark: "https://example.com/app-dark.svg",
+      },
+    ],
+    "",
+    ["*"]
+  );
 
   const item = sections[0].items[0];
   assert.equal(item.icon, "");

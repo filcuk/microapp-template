@@ -51,7 +51,7 @@ Every HTML entry point should:
 
 `initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, sticky chrome offsets, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
-Optional `renderPageShell({ repoUrl, appUrl, brandUrl, brandName, alsoSee, alsoSeeUrl, alsoSeeTopics })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to hide the footer related-apps menu when there is no remote list. Set `alsoSeeUrl` to a JSON URL (topic sections and/or flat links) to load a shared live list; local `alsoSee` is the fallback. Set `alsoSeeTopics` to a string array to show only those topics (case-insensitive; ungrouped flat links always remain). Set `appUrl` to this app’s public site URL so a matching entry in the list is omitted.
+Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to contribute no local links. Set `alsoSeeUrl` to a JSON URL (topic sections and/or flat links) to load a shared live list. Local `alsoSee` is included only when `alsoSeeIncludeLocal: true` (alone if there is no remote, or merged with remote — same topic names share one section); it is never used as a fallback and is not filtered by `alsoSeeTopics`. Set `alsoSeeTopics` to filter the **remote** list only: `["*"]` = all topics (only `"*"` means all); `"-Topic"` excludes; named strings whitelist; `""` includes ungrouped; `[]` (or no include entries) = none. Set `appUrl` to this app’s public site URL so a matching entry in the list is omitted.
 
 ## Module conventions
 

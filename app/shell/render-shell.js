@@ -1,15 +1,13 @@
 import { APP_CONFIG } from "../config.js";
-import { SIG_ICON_SRC } from "../utils/brand-icon.js";
 import { APP_VERSION, TEMPLATE_VERSION } from "../version.js";
 
 const DEFAULTS = {
   repoUrl: APP_CONFIG.repoUrl,
   appUrl: APP_CONFIG.appUrl,
-  brandUrl: APP_CONFIG.brandUrl,
-  brandName: APP_CONFIG.brandName,
   alsoSee: APP_CONFIG.alsoSee,
   alsoSeeUrl: APP_CONFIG.alsoSeeUrl,
   alsoSeeTopics: APP_CONFIG.alsoSeeTopics,
+  alsoSeeIncludeLocal: APP_CONFIG.alsoSeeIncludeLocal,
   appVersion: APP_VERSION,
   templateVersion: TEMPLATE_VERSION,
 };
@@ -135,23 +133,175 @@ function normalizeAlsoSeeLink(link, exclude) {
 }
 
 /**
+ * @typedef {{
+ *   allowAll: boolean,
+ *   include: Set<string>,
+ *   exclude: Set<string>,
+ *   includeUngrouped: boolean,
+ *   excludeUngrouped: boolean,
+ * }} AlsoSeeTopicFilter
+ */
+
+/**
+ * Parse `alsoSeeTopics` filter entries.
+ *
+ * - `"*"` → include all topics (including ungrouped); only way to mean “all”
+ * - `"Topic"` → include that topic (whitelist when `"*"` is absent)
+ * - `""` → include ungrouped flat links (redundant with `"*"`)
+ * - `"-Topic"` → exclude that topic (works with `"*"` or a whitelist)
+ * - `"-"` → exclude ungrouped flat links
+ * - `[]` / no include entries → include nothing
+ *
  * @param {unknown} topics
- * @returns {Set<string> | null} Lowercased topic whitelist, or null for “all topics”
+ * @returns {AlsoSeeTopicFilter}
  */
 function normalizeAlsoSeeTopicFilter(topics) {
-  if (topics === undefined || topics === null || topics === false) return null;
-  if (!Array.isArray(topics)) return null;
-  return new Set(
-    topics
-      .filter((t) => typeof t === "string")
-      .map((t) => t.trim().toLowerCase())
-      .filter(Boolean)
-  );
+  /** @type {AlsoSeeTopicFilter} */
+  const filter = {
+    allowAll: false,
+    include: new Set(),
+    exclude: new Set(),
+    includeUngrouped: false,
+    excludeUngrouped: false,
+  };
+
+  if (!Array.isArray(topics)) return filter;
+
+  for (const entry of topics) {
+    if (typeof entry !== "string") continue;
+    const trimmed = entry.trim();
+
+    if (trimmed === "*") {
+      filter.allowAll = true;
+      continue;
+    }
+
+    if (trimmed.startsWith("-")) {
+      const name = trimmed.slice(1).trim();
+      if (!name) {
+        filter.excludeUngrouped = true;
+      } else {
+        filter.exclude.add(name.toLowerCase());
+      }
+      continue;
+    }
+
+    if (!trimmed) {
+      filter.includeUngrouped = true;
+      continue;
+    }
+
+    filter.include.add(trimmed.toLowerCase());
+  }
+
+  return filter;
+}
+
+/**
+ * @param {AlsoSeeTopicFilter} topicFilter
+ * @param {string} topic Trimmed topic label, or "" for ungrouped
+ * @returns {boolean}
+ */
+function alsoSeeTopicAllowed(topicFilter, topic) {
+  if (!topic) {
+    if (topicFilter.excludeUngrouped) return false;
+    if (topicFilter.allowAll) return true;
+    return topicFilter.includeUngrouped;
+  }
+
+  const key = topic.toLowerCase();
+  if (topicFilter.exclude.has(key)) return false;
+  if (topicFilter.allowAll) return true;
+  return topicFilter.include.has(key);
 }
 
 /** @param {AlsoSeeSection[]} sections */
 export function alsoSeeHasItems(sections) {
   return sections.some((section) => section.items.length > 0);
+}
+
+/**
+ * Keep named topics in encounter order; always place the ungrouped section last.
+ *
+ * @param {AlsoSeeSection[]} sections
+ * @returns {AlsoSeeSection[]}
+ */
+function orderAlsoSeeSections(sections) {
+  /** @type {AlsoSeeSection[]} */
+  const named = [];
+  /** @type {AlsoSeeSection | null} */
+  let ungrouped = null;
+  for (const section of sections) {
+    if (section.topic == null) {
+      if (!ungrouped) {
+        ungrouped = section;
+      } else {
+        ungrouped.items.push(...section.items);
+      }
+      continue;
+    }
+    named.push(section);
+  }
+  return ungrouped ? [...named, ungrouped] : named;
+}
+
+/**
+ * Merge also-see sections by topic (case-insensitive). Matching topics share one
+ * section; items are appended and de-duplicated by normalized URL. Primary
+ * section order and topic casing win; new topics from secondary are appended.
+ * Ungrouped (no topic) sections are always last.
+ *
+ * @param {AlsoSeeSection[]} primary
+ * @param {AlsoSeeSection[]} secondary
+ * @returns {AlsoSeeSection[]}
+ */
+export function mergeAlsoSeeSections(primary = [], secondary = []) {
+  /** @type {AlsoSeeSection[]} */
+  const result = [];
+  /** @type {Map<string, AlsoSeeSection>} */
+  const byKey = new Map();
+
+  /**
+   * @param {string | null} topic
+   * @returns {string}
+   */
+  function sectionKey(topic) {
+    return topic == null ? "" : topic.toLowerCase();
+  }
+
+  /**
+   * @param {AlsoSeeSection[]} sections
+   */
+  function addSections(sections) {
+    for (const section of sections) {
+      if (!section?.items?.length) continue;
+      const key = sectionKey(section.topic);
+      const existing = byKey.get(key);
+      if (!existing) {
+        const copy = {
+          topic: section.topic,
+          items: [...section.items],
+        };
+        byKey.set(key, copy);
+        result.push(copy);
+        continue;
+      }
+
+      const seen = new Set(
+        existing.items.map((item) => normalizeSiteUrl(item.url)).filter(Boolean)
+      );
+      for (const item of section.items) {
+        const urlKey = normalizeSiteUrl(item.url);
+        if (urlKey && seen.has(urlKey)) continue;
+        if (urlKey) seen.add(urlKey);
+        existing.items.push(item);
+      }
+    }
+  }
+
+  addSections(primary);
+  addSections(secondary);
+  return orderAlsoSeeSections(result);
 }
 
 /**
@@ -163,9 +313,9 @@ export function alsoSeeHasItems(sections) {
  *
  * @param {unknown} alsoSee
  * @param {string} [excludeUrl] Drop entries whose `url` matches this app’s public URL
- * @param {string[] | false | null} [topics] Optional topic whitelist (case-insensitive).
- *   Omit / `null` / `false` → all topics. Empty array → no named topics (flat links only).
- *   Ungrouped flat links are always kept.
+ * @param {string[]} [topics] Topic filter for this list:
+ *   only `"*"` means all topics; `"-Topic"` excludes; named strings whitelist;
+ *   `""` includes ungrouped; `[]` (or no include entries) includes nothing.
  * @returns {AlsoSeeSection[]}
  */
 export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
@@ -183,9 +333,7 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
     if (Array.isArray(entry.items)) {
       const topic =
         typeof entry.topic === "string" ? entry.topic.trim() : "";
-      if (topicFilter) {
-        if (!topic || !topicFilter.has(topic.toLowerCase())) continue;
-      }
+      if (!alsoSeeTopicAllowed(topicFilter, topic)) continue;
 
       const items = entry.items
         .map((link) => normalizeAlsoSeeLink(link, exclude))
@@ -195,6 +343,8 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
       sections.push({ topic: topic || null, items });
       continue;
     }
+
+    if (!alsoSeeTopicAllowed(topicFilter, "")) continue;
 
     const link = normalizeAlsoSeeLink(entry, exclude);
     if (!link) continue;
@@ -207,7 +357,7 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
     }
   }
 
-  return sections;
+  return orderAlsoSeeSections(sections);
 }
 
 /**
@@ -278,12 +428,13 @@ export function renderAlsoSeeMarkup(sections) {
     .join("");
 
   return `<span class="footer-meta-sep" aria-hidden="true">·</span>
-        <div class="footer-also-see dropdown" id="footer-also-see">
-          <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">also see</button>
-          <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
-            ${items}
-          </ul>
-        </div>`;
+        <span>also
+          <span class="footer-also-see dropdown" id="footer-also-see">
+            <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">see links</button>
+            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
+              ${items}
+            </ul>
+          </span></span>`;
 }
 
 /**
@@ -316,21 +467,25 @@ export function renderPageShell(options = {}) {
 
   if (document.getElementById("app-page-footer")) return;
 
+  const overrides = Object.fromEntries(
+    Object.entries(options).filter(([, value]) => value !== undefined)
+  );
   const {
     repoUrl,
-    brandUrl,
-    brandName,
     alsoSee,
     alsoSeeTopics,
+    alsoSeeIncludeLocal,
     appUrl,
     appVersion,
     templateVersion,
   } = {
     ...DEFAULTS,
-    ...options,
+    ...overrides,
   };
   const issuesUrl = `${repoUrl}/issues`;
-  const alsoSeeSections = normalizeAlsoSee(alsoSee, appUrl, alsoSeeTopics);
+  const alsoSeeSections = alsoSeeIncludeLocal
+    ? normalizeAlsoSee(alsoSee, appUrl, ["*"])
+    : [];
   const alsoSeeMarkup = renderAlsoSeeMarkup(alsoSeeSections);
 
   document.body.insertAdjacentHTML(
@@ -345,13 +500,7 @@ export function renderPageShell(options = {}) {
           <span class="footer-meta-sep" aria-hidden="true">·</span>
           <span>star on
           <a href="${repoUrl}" target="_blank" rel="noopener noreferrer">GitHub</a></span><span id="footer-also-see-host">${alsoSeeMarkup}</span>
-          <span class="footer-meta-sep" aria-hidden="true">·</span>
-          <span>microapp by</span>
         </div>
-        <a class="footer-brand" href="${brandUrl}" target="_blank" rel="noopener noreferrer" data-tooltip="that's me!" data-tooltip-position="top">
-          <img class="brand-icon--light" src="${SIG_ICON_SRC.light}" alt="${escapeAttr(brandName)}" width="26" height="26" />
-          <img class="brand-icon--dark" src="${SIG_ICON_SRC.dark}" alt="${escapeAttr(brandName)}" width="26" height="26" />
-        </a>
       </div>
       <div id="theme-toggle" class="theme-toggle" role="group" aria-label="Theme">
         <button type="button" class="theme-toggle-btn" data-theme-mode="light" data-icon="light-mode" data-icon-class="theme-icon" aria-label="Light theme" aria-pressed="false" title="Light"></button>
