@@ -84,8 +84,25 @@ function parseToolbarPosition(value) {
 }
 
 function removeLineNumberMarkup(codeEl) {
+  const preEl = codeEl.parentElement;
   codeEl.querySelector(".line-numbers-rows")?.remove();
   codeEl.querySelector(".line-numbers-sizer")?.remove();
+  preEl?.querySelectorAll(".line-numbers-rows").forEach((el) => el.remove());
+  preEl?.querySelectorAll(".line-numbers-sizer").forEach((el) => el.remove());
+}
+
+/** Gutter digits live on `pre` so `code` can scroll horizontally without clipping them. */
+function renderLineNumberRows(preEl, lineCount) {
+  preEl.querySelectorAll(":scope > .line-numbers-rows").forEach((el) => el.remove());
+  const rows = document.createElement("span");
+  rows.className = "line-numbers-rows";
+  rows.setAttribute("aria-hidden", "true");
+  for (let i = 0; i < lineCount; i += 1) {
+    rows.appendChild(document.createElement("span"));
+  }
+  const codeEl = preEl.querySelector(":scope > code");
+  if (codeEl) preEl.insertBefore(rows, codeEl);
+  else preEl.appendChild(rows);
 }
 
 function updateLineNumbersToggle(toggle, highlightEnabled) {
@@ -327,26 +344,19 @@ export function initCodeBlock(container, options = {}) {
     code.dataset.source = source;
   }
 
-  function syncStickyGutter() {
-    pre.style.setProperty("--code-scroll-x", `${pre.scrollLeft}px`);
-  }
-
   function syncScrollPosition() {
     if (!editorEl) return;
     pre.scrollTop = editorEl.scrollTop;
-    pre.scrollLeft = editorEl.scrollLeft;
-    syncStickyGutter();
+    if (pre.classList.contains("line-numbers")) {
+      code.scrollLeft = editorEl.scrollLeft;
+      pre.scrollLeft = 0;
+    } else {
+      pre.scrollLeft = editorEl.scrollLeft;
+    }
   }
-
-  pre.addEventListener("scroll", syncStickyGutter);
 
   function applyLineNumbersClass() {
     pre.classList.toggle("line-numbers", lineNumbersEnabled && highlightEnabled);
-    if (!pre.classList.contains("line-numbers")) {
-      pre.style.removeProperty("--code-scroll-x");
-    } else {
-      syncStickyGutter();
-    }
   }
 
   function renderPlain() {
@@ -354,7 +364,6 @@ export function initCodeBlock(container, options = {}) {
     pre.className = "";
     code.className = "";
     code.textContent = source;
-    pre.style.removeProperty("--code-scroll-x");
   }
 
   function renderHighlighted() {
@@ -369,6 +378,12 @@ export function initCodeBlock(container, options = {}) {
     pre.className = `language-${language}`;
     applyLineNumbersClass();
     window.Prism.highlightElement(code);
+    /* Prism injects rows into `code`; discard those and keep a single set on `pre`. */
+    code.querySelector(".line-numbers-rows")?.remove();
+    code.querySelector(".line-numbers-sizer")?.remove();
+    if (pre.classList.contains("line-numbers")) {
+      renderLineNumberRows(pre, countDisplayLines(source));
+    }
   }
 
   function syncToggleStates() {
@@ -386,20 +401,9 @@ export function initCodeBlock(container, options = {}) {
   function syncLineNumberRows() {
     if (!lineNumbersEnabled || !highlightEnabled) return;
     if (!pre.classList.contains("line-numbers")) return;
-
-    const rows = pre.querySelector(".line-numbers-rows");
-    if (!rows) return;
-
-    const targetLines = countDisplayLines(source);
-
-    while (rows.children.length < targetLines) {
-      rows.appendChild(document.createElement("span"));
-    }
-    while (rows.children.length > targetLines) {
-      rows.lastElementChild?.remove();
-    }
-
-    window.Prism?.plugins?.lineNumbers?.resize?.(pre);
+    code.querySelector(".line-numbers-rows")?.remove();
+    code.querySelector(".line-numbers-sizer")?.remove();
+    renderLineNumberRows(pre, countDisplayLines(source));
   }
 
   function refreshDisplay() {
@@ -419,8 +423,6 @@ export function initCodeBlock(container, options = {}) {
       editorEl.scrollTop = scrollTop;
       editorEl.scrollLeft = scrollLeft;
       syncScrollPosition();
-    } else {
-      syncStickyGutter();
     }
   }
 

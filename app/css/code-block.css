@@ -81,7 +81,6 @@
   padding: var(--code-pad-block) var(--code-pad-inline-end) var(--code-pad-block)
     var(--code-pad-inline-start);
   overflow: auto;
-  scrollbar-gutter: stable;
   font-family: var(--code-font-family);
   font-size: var(--code-font-size);
   font-weight: var(--code-font-weight);
@@ -99,7 +98,11 @@
 }
 
 .code-block .code-block-body pre[class*="language-"].line-numbers {
-  padding-left: var(--code-gutter-width);
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding-left: 0;
+  overflow: hidden;
 }
 
 .code-block .code-block-body pre > code,
@@ -125,6 +128,20 @@
 
 .code-block .code-block-body pre[class*="language-"].line-numbers > code {
   position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: calc(var(--code-gutter-width) - var(--code-gutter-band));
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.code-block .code-block-body pre[class*="language-"].line-numbers > .line-numbers-rows {
+  flex: 0 0 var(--code-gutter-band);
+  width: var(--code-gutter-band);
+}
+
+.code-block .code-block-body pre[class*="language-"].line-numbers::before {
+  width: var(--code-gutter-band);
 }
 
 .code-block--view pre,
@@ -150,7 +167,6 @@
   padding: var(--code-pad-block) var(--code-pad-inline-end) var(--code-pad-block)
     var(--code-pad-inline-start);
   overflow: auto;
-  scrollbar-gutter: stable;
   resize: none;
   background: transparent;
   color: transparent;
@@ -187,12 +203,35 @@
 .code-block--edit .code-block-editor-stack pre {
   pointer-events: none;
   overflow: hidden;
-  /* Keep stable gutter so content width matches the scrolling textarea */
-  scrollbar-gutter: stable;
 }
 
+/*
+ * Highlight layer must not show its own bars — the textarea is transparent, so a
+ * second (often thin overlay) scrollbar would show through. Higher specificity
+ * than `.code-block .code-block-body pre[class*="language-"].line-numbers > code`.
+ */
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre,
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre[class*="language-"],
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre[class*="language-"].line-numbers,
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre > code,
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre[class*="language-"] > code,
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre[class*="language-"].line-numbers > code {
+  overflow: hidden;
+  scrollbar-width: none;
+}
+
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre::-webkit-scrollbar,
+.code-block.code-block--edit .code-block-body .code-block-editor-stack pre *::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Keep the editor scrollport in the text column (not under the gutter). */
 .code-block--edit .code-block-editor-stack pre.line-numbers + .code-block-editor {
-  padding-left: var(--code-gutter-width);
+  left: var(--code-gutter-band);
+  width: auto;
+  padding-left: calc(var(--code-gutter-width) - var(--code-gutter-band));
 }
 
 .surface-actions {
@@ -352,6 +391,20 @@ body.expandable-surface-open {
   min-height: 0;
 }
 
+.expandable-surface.is-expanded.code-block .code-block-body pre.line-numbers {
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-body pre.line-numbers > code {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
 .expandable-surface.is-expanded.code-block .code-block-editor-stack {
   flex: 1;
   min-height: 0;
@@ -362,6 +415,12 @@ body.expandable-surface-open {
 .expandable-surface.is-expanded.code-block .code-block-editor-stack pre {
   flex: 1;
   min-height: 0;
+}
+
+.expandable-surface.is-expanded.code-block .code-block-editor-stack pre.line-numbers + .code-block-editor {
+  /* Editor already inset from gutter via left; fill remaining stack height */
+  height: auto;
+  bottom: 0;
 }
 
 .expandable-surface.is-expanded.field {
