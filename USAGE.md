@@ -1912,7 +1912,7 @@ initCodeBlocks(document);
 initExpandableSurfaces(document);
 ```
 
-**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `line-numbers`, `highlight`. Defaults to `line-numbers,highlight` when omitted. Toolbar buttons are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
+**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `line-numbers`, `highlight`. Defaults to `line-numbers,highlight` when omitted. Clear / Copy / Paste show icon + label; line-numbers, highlight, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
 
 **Hover surface actions** — set `data-code-surface-actions` to `copy`, `maximize`, or both (`none` / empty / `false` hides the strip). Legacy `data-code-copy="false"` omits surface copy. When `data-expandable-surface` is present and surface actions are omitted, defaults include `copy,maximize`.
 

@@ -37,9 +37,30 @@
 }
 
 .code-block-toolbar__btn.btn-icon {
-  width: 2.25rem;
-  min-width: 2.25rem;
-  min-height: 2.25rem;
+  width: var(--control-height);
+  min-width: var(--control-height);
+  height: var(--control-height);
+  min-height: var(--control-height);
+  padding: 0;
+}
+
+.code-block-toolbar__btn--labeled {
+  gap: 0.4rem;
+  min-height: var(--control-height);
+  height: var(--control-height);
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+  box-sizing: border-box;
+}
+
+.code-block-toolbar__btn--labeled .btn-icon-svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.code-block-toolbar__label {
+  line-height: 1;
 }
 
 .code-block-body {

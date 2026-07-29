@@ -114,12 +114,21 @@ function countDisplayLines(text) {
 
 /**
  * @param {string} action
- * @param {{ label: string, tooltip: string, icon: string, pressed?: boolean }} meta
+ * @param {{
+ *   label: string,
+ *   tooltip: string,
+ *   icon: string,
+ *   textLabel?: string,
+ *   pressed?: boolean,
+ * }} meta
  */
 function createToolbarButton(action, meta) {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "btn btn-icon code-block-toolbar__btn";
+  const withText = Boolean(meta.textLabel);
+  btn.className = withText
+    ? "btn code-block-toolbar__btn code-block-toolbar__btn--labeled"
+    : "btn btn-icon code-block-toolbar__btn";
   btn.dataset.codeToolbarAction = action;
   btn.setAttribute("aria-label", meta.label);
   btn.dataset.tooltip = meta.tooltip;
@@ -133,7 +142,22 @@ function createToolbarButton(action, meta) {
     btn.dataset.expandableSurfaceOpen = "";
   }
   btn.append(createIcon(meta.icon, { className: "btn-icon-svg" }));
+  if (withText) {
+    const labelEl = document.createElement("span");
+    labelEl.className = "code-block-toolbar__label";
+    labelEl.textContent = meta.textLabel;
+    btn.append(labelEl);
+  }
   return btn;
+}
+
+/**
+ * @param {HTMLButtonElement} btn
+ * @param {string} text
+ */
+function setToolbarButtonText(btn, text) {
+  const labelEl = btn.querySelector(".code-block-toolbar__label");
+  if (labelEl) labelEl.textContent = text;
 }
 
 /**
@@ -422,21 +446,28 @@ export function initCodeBlock(container, options = {}) {
   /**
    * @param {HTMLButtonElement} btn
    * @param {string} idleLabel
+   * @param {string} idleText
    * @param {boolean} ok
    */
-  function flashButtonLabel(btn, idleLabel, ok) {
+  function flashButtonLabel(btn, idleLabel, idleText, ok) {
     const prev = btn.getAttribute("aria-label") || idleLabel;
-    btn.setAttribute("aria-label", ok ? "Copied" : "Failed");
-    btn.dataset.tooltip = ok ? "Copied" : "Failed";
+    const flash = ok ? "Copied" : "Failed";
+    btn.setAttribute("aria-label", flash);
+    btn.dataset.tooltip = flash;
+    setToolbarButtonText(btn, flash);
     window.setTimeout(() => {
       btn.setAttribute("aria-label", prev);
       btn.dataset.tooltip = idleLabel;
+      setToolbarButtonText(btn, idleText);
     }, 2000);
   }
 
   async function handleCopy(btn) {
     const ok = await copyText(currentSource());
-    flashButtonLabel(btn, "Copy code", ok);
+    const idleText = btn.querySelector(".code-block-toolbar__label")
+      ? "Copy"
+      : "Copy code";
+    flashButtonLabel(btn, "Copy", idleText, ok);
   }
 
   async function handlePaste(btn) {
@@ -447,6 +478,7 @@ export function initCodeBlock(container, options = {}) {
       pasteCapture = null;
       btn.setAttribute("aria-label", "Paste code");
       btn.dataset.tooltip = "Paste";
+      setToolbarButtonText(btn, "Paste");
       return;
     }
 
@@ -454,11 +486,13 @@ export function initCodeBlock(container, options = {}) {
     if (text === null) {
       btn.setAttribute("aria-label", "Press Control V to paste");
       btn.dataset.tooltip = "Press Ctrl+V to paste";
+      setToolbarButtonText(btn, "Ctrl+V");
       pasteCapture = armPasteCapture({ timeoutMs: 15000 });
       text = await pasteCapture.promise;
       pasteCapture = null;
       btn.setAttribute("aria-label", "Paste code");
       btn.dataset.tooltip = "Paste";
+      setToolbarButtonText(btn, "Paste");
       if (text === null) return;
     }
 
@@ -523,9 +557,24 @@ export function initCodeBlock(container, options = {}) {
     toolbarEl.setAttribute("aria-label", "Code block options");
 
     const specs = {
-      clear: { label: "Clear code", tooltip: "Clear", icon: "clear" },
-      copy: { label: "Copy code", tooltip: "Copy", icon: "copy" },
-      paste: { label: "Paste code", tooltip: "Paste", icon: "paste" },
+      clear: {
+        label: "Clear code",
+        tooltip: "Clear",
+        icon: "clear",
+        textLabel: "Clear",
+      },
+      copy: {
+        label: "Copy code",
+        tooltip: "Copy",
+        icon: "copy",
+        textLabel: "Copy",
+      },
+      paste: {
+        label: "Paste code",
+        tooltip: "Paste",
+        icon: "paste",
+        textLabel: "Paste",
+      },
       maximize: {
         label: "Maximise",
         tooltip: "Maximise",
