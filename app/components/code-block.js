@@ -26,6 +26,7 @@
  */
 
 import { setHidden } from "../utils/dom.js";
+import { copyText } from "../utils/clipboard.js";
 
 const LANGUAGE_RE = /language-([\w-]+)/;
 const CODE_MODES = ["view", "select", "edit"];
@@ -317,22 +318,15 @@ export function initCodeBlock(container, options = {}) {
     if (!copyButton || copyBtn.disabled) return;
 
     const text = mode === "edit" && editorEl ? editorEl.value : source;
+    const label = copyBtn.getAttribute("aria-label") || "Copy code";
+    const ok = await copyText(text);
 
-    try {
-      await navigator.clipboard.writeText(text);
-      const label = copyBtn.getAttribute("aria-label") || "Copy code";
-      copyBtn.textContent = "Copied";
-      copyBtn.setAttribute("aria-label", "Copied");
-      window.setTimeout(() => {
-        copyBtn.textContent = "Copy";
-        copyBtn.setAttribute("aria-label", label);
-      }, 2000);
-    } catch {
-      copyBtn.textContent = "Failed";
-      window.setTimeout(() => {
-        copyBtn.textContent = "Copy";
-      }, 2000);
-    }
+    copyBtn.textContent = ok ? "Copied" : "Failed";
+    if (ok) copyBtn.setAttribute("aria-label", "Copied");
+    window.setTimeout(() => {
+      copyBtn.textContent = "Copy";
+      copyBtn.setAttribute("aria-label", label);
+    }, 2000);
   });
 
   applyMode();
