@@ -138,7 +138,7 @@
           <div class="demo-grid demo-grid-2">
             <div class="demo-card">
               <h3 class="demo-card-title">Buttons</h3>
-              <p class="demo-hint">Standard set of buttons. Normal badge counts up; small badge is a dot.</p>
+              <p class="demo-hint">Standard height by default; add <code>btn-slim</code> for compact. Normal badge counts up; small badge is a dot.</p>
               <div class="demo-row">
                 <button type="button" class="btn">Default</button>
                 <button type="button" class="btn btn-primary">Primary</button>
@@ -159,6 +159,15 @@
                   <span class="badge badge--sm" aria-hidden="true"></span>
                 </span>
                 <button type="button" class="btn-link">Link button</button>
+              </div>
+              <div class="demo-row">
+                <button type="button" class="btn btn-slim">Slim</button>
+                <button type="button" class="btn btn-primary btn-slim">Slim primary</button>
+                <button type="button" class="btn btn-slim" disabled>Slim disabled</button>
+                <button type="button" class="btn btn-slim btn-icon btn-toggle" aria-pressed="false"
+                  aria-label="Slim icon toggle" data-tooltip="Slim icon button" data-icon="lines"
+                  data-icon-class="btn-icon-svg"></button>
+                <button type="button" class="btn btn-slim btn-danger">Slim danger</button>
               </div>
             </div>
             <div class="demo-card">
@@ -1569,7 +1578,6 @@
             data-code-mode="edit"
             data-code-toolbar="top"
             data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
-            data-code-toolbar-align="maximize:right"
             data-code-surface-actions="copy,maximize"
             data-expandable-surface
             data-expandable-surface-label="Python sample">
