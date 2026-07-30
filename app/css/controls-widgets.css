@@ -708,13 +708,18 @@
   max-width: 100%;
   --color-input-inset: 0.5rem;
   --color-input-text-gap: 0.75rem;
+  --color-input-end-pad: 0.375rem;
   --color-input-swatch-size: calc(var(--control-height) - 2 * var(--color-input-inset));
 }
 
 .color-input-field {
-  width: calc(9ch + var(--color-input-inset) + var(--color-input-swatch-size) + var(--color-input-text-gap));
+  width: calc(
+    9ch + var(--color-input-inset) + var(--color-input-swatch-size) + var(--color-input-text-gap) +
+      var(--color-input-end-pad)
+  );
   max-width: 100%;
   padding-left: calc(var(--color-input-inset) + var(--color-input-swatch-size) + var(--color-input-text-gap));
+  padding-right: var(--color-input-end-pad);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   letter-spacing: 0.02em;
