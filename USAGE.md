@@ -285,10 +285,10 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` (single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** dropdown for related apps (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
-| **Buttons** | `.btn` (default), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
+| **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
@@ -520,6 +520,18 @@ Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on h
 import { initHeadingLinks } from "./shell/heading-link.js";
 
 initHeadingLinks(document, { selector: "main h3[id]" });
+```
+
+### Buttons
+
+Standard height uses `--control-height`. Add `.btn-slim` for the compact `--control-height-slim` size (labeled or icon-only).
+
+```html
+<button type="button" class="btn">Standard</button>
+<button type="button" class="btn btn-slim">Slim</button>
+<button type="button" class="btn btn-primary btn-slim">Slim primary</button>
+<button type="button" class="btn btn-slim btn-icon" aria-label="More options"
+  data-icon="lines" data-icon-class="btn-icon-svg"></button>
 ```
 
 ### Toolbar
@@ -1893,7 +1905,6 @@ Optional syntax highlighting for docs or demos. See [`demo.html`](demo.html) for
   data-code-mode="edit"
   data-code-toolbar="top"
   data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
-  data-code-toolbar-align="maximize:right"
   data-code-surface-actions="copy,maximize"
   data-expandable-surface
   data-expandable-surface-label="Code sample">
@@ -1913,7 +1924,7 @@ initCodeBlocks(document);
 initExpandableSurfaces(document);
 ```
 
-**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `highlight`, `line-numbers`. Defaults to `highlight,line-numbers` when omitted. Align any control with `data-code-toolbar-align` as `action:left|right` (comma-separated); **maximize defaults to `right`**, everything else to `left`. Clear / Copy / Paste show icon + label; highlight, line-numbers, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
+**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `highlight`, `line-numbers`. Defaults to `highlight,line-numbers` when omitted. Align any control with `data-code-toolbar-align` as `action:left|right` (comma-separated); **highlight, line-numbers, and maximize default to `right`**, everything else to `left`. Clear / Copy / Paste show icon + label; highlight, line-numbers, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
 
 **Hover surface actions** — set `data-code-surface-actions` to `copy`, `maximize`, or both (`none` / empty / `false` hides the strip). Legacy `data-code-copy="false"` omits surface copy. When `data-expandable-surface` is present and surface actions are omitted, defaults include `copy,maximize`.
 

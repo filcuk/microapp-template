@@ -22,6 +22,14 @@
   cursor: pointer;
 }
 
+/* Compact height — works with labeled and icon buttons */
+.btn-slim {
+  min-height: var(--control-height-slim);
+  height: var(--control-height-slim);
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+}
+
 .btn:hover:not(:disabled) {
   border-color: var(--accent);
 }
@@ -69,8 +77,18 @@
   justify-content: center;
   width: var(--control-height);
   min-width: var(--control-height);
+  height: var(--control-height);
+  min-height: var(--control-height);
   padding: 0;
   color: var(--text);
+}
+
+.btn-icon.btn-slim {
+  width: var(--control-height-slim);
+  min-width: var(--control-height-slim);
+  height: var(--control-height-slim);
+  min-height: var(--control-height-slim);
+  padding: 0;
 }
 
 .btn-toggle[aria-pressed="true"] {
