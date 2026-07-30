@@ -1,19 +1,19 @@
 /**
- * Hex colour input with an inline swatch preview.
+ * Hex color input with an inline swatch preview.
  *
  * Markup:
- *   <div class="color-picker" data-color-picker-default="#0969da">
+ *   <div class="color-input" data-color-input-default="#0969da">
  *     <label class="field-label" for="my-color-input">Colour</label>
- *     <div class="color-picker-control">
- *       <input type="text" id="my-color-input" class="input color-picker-input"
+ *     <div class="color-input-control">
+ *       <input type="text" id="my-color-input" class="input color-input-field"
  *         autocomplete="off" spellcheck="false" aria-label="Hex colour" />
- *       <span class="color-picker-swatch" aria-hidden="true"></span>
- *       <input type="hidden" class="color-picker-value" name="colour" />
+ *       <span class="color-input-swatch" aria-hidden="true"></span>
+ *       <input type="hidden" class="color-input-value" name="color" />
  *     </div>
  *   </div>
  *
- * data-color-picker-default — initial hex value (#RGB or #RRGGBB)
- * data-color-picker-disabled — disable the control
+ * data-color-input-default — initial hex value (#RGB or #RRGGBB)
+ * data-color-input-disabled — disable the control
  */
 
 import { parseBooleanAttr } from "../utils/dom.js";
@@ -48,45 +48,45 @@ function isPartialHexInput(value) {
   return PARTIAL_HEX_PATTERN.test(String(value ?? "").trim());
 }
 
-function resolveDisabled(colorPickerEl, disabledOption) {
+function resolveDisabled(colorInputEl, disabledOption) {
   if (typeof disabledOption === "boolean") return disabledOption;
-  return parseBooleanAttr(colorPickerEl?.dataset.colorPickerDisabled) ?? false;
+  return parseBooleanAttr(colorInputEl?.dataset.colorInputDisabled) ?? false;
 }
 
 function syncSwatch(swatchEl, color) {
   if (!swatchEl) return;
   swatchEl.classList.toggle("is-empty", !color);
   if (color) {
-    swatchEl.style.setProperty("--color-picker-preview", color);
+    swatchEl.style.setProperty("--color-input-preview", color);
   } else {
-    swatchEl.style.removeProperty("--color-picker-preview");
+    swatchEl.style.removeProperty("--color-input-preview");
   }
 }
 
-export function initColorPicker(
-  colorPickerEl,
+export function initColorInput(
+  colorInputEl,
   { defaultValue, disabled, onChange, onInput } = {}
 ) {
-  if (!colorPickerEl) return null;
+  if (!colorInputEl) return null;
 
-  const textInput = colorPickerEl.querySelector(".color-picker-input");
-  const hiddenInput = colorPickerEl.querySelector(".color-picker-value");
-  const swatchEl = colorPickerEl.querySelector(".color-picker-swatch");
+  const textInput = colorInputEl.querySelector(".color-input-field");
+  const hiddenInput = colorInputEl.querySelector(".color-input-value");
+  const swatchEl = colorInputEl.querySelector(".color-input-swatch");
 
   if (!textInput || !swatchEl) return null;
 
   const initialRaw =
     defaultValue ??
-    colorPickerEl.dataset.colorPickerDefault ??
+    colorInputEl.dataset.colorInputDefault ??
     hiddenInput?.value ??
     textInput.value;
   let currentValue = parseHexColor(initialRaw);
   let isEditing = false;
-  let isDisabled = resolveDisabled(colorPickerEl, disabled);
+  let isDisabled = resolveDisabled(colorInputEl, disabled);
 
   function buildPayload(source) {
     return {
-      colorPickerEl,
+      colorInputEl,
       value: currentValue,
       display: formatDisplayValue(currentValue),
       source,
@@ -95,7 +95,7 @@ export function initColorPicker(
 
   function applyDisabled(nextDisabled) {
     isDisabled = nextDisabled;
-    colorPickerEl.classList.toggle("color-picker--disabled", nextDisabled);
+    colorInputEl.classList.toggle("color-input--disabled", nextDisabled);
     textInput.disabled = nextDisabled;
   }
 
@@ -236,11 +236,11 @@ export function initColorPicker(
   };
 }
 
-/** Wire every `.color-picker` block in `root`. */
-export function initColorPickers(root = document) {
+/** Wire every `.color-input` block in `root`. */
+export function initColorInputs(root = document) {
   const instances = [];
-  root.querySelectorAll(".color-picker").forEach((colorPickerEl) => {
-    const instance = initColorPicker(colorPickerEl);
+  root.querySelectorAll(".color-input").forEach((colorInputEl) => {
+    const instance = initColorInput(colorInputEl);
     if (instance) instances.push(instance);
   });
   return instances;

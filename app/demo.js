@@ -21,7 +21,7 @@ import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
 import { initSlider } from "./components/slider.js";
 import { initStepper } from "./components/stepper.js";
-import { initColorPicker } from "./components/color-picker.js";
+import { initColorInput } from "./components/color-input.js";
 import { initToggle } from "./components/toggle.js";
 import { initTriStateCheckbox } from "./components/checkbox.js";
 import { initSegmentedControl } from "./components/segmented-control.js";
@@ -67,7 +67,7 @@ const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoColorPickerResult = document.getElementById("demo-color-picker-result");
+const demoColorInputResult = document.getElementById("demo-color-input-result");
 const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
@@ -225,23 +225,23 @@ initStepper(document.getElementById("demo-stepper"), { onChange: stepperOnChange
 initStepper(document.getElementById("demo-stepper-decimal"), { onChange: stepperOnChange });
 updateStepperResult();
 
-function updateColorPickerResult() {
-  if (!demoColorPickerResult) return;
-  const withDefault = document.getElementById("demo-color-picker");
-  const empty = document.getElementById("demo-color-picker-empty");
-  const defaultValue = withDefault?.querySelector(".color-picker-value")?.value;
-  const emptyValue = empty?.querySelector(".color-picker-value")?.value;
-  demoColorPickerResult.textContent = [
+function updateColorInputResult() {
+  if (!demoColorInputResult) return;
+  const withDefault = document.getElementById("demo-color-input");
+  const empty = document.getElementById("demo-color-input-empty");
+  const defaultValue = withDefault?.querySelector(".color-input-value")?.value;
+  const emptyValue = empty?.querySelector(".color-input-value")?.value;
+  demoColorInputResult.textContent = [
     `Colour: ${defaultValue || "—"}`,
     `Empty: ${emptyValue || "—"}`,
   ].join(" · ");
 }
 
-const colorPickerOnChange = () => updateColorPickerResult();
+const colorInputOnChange = () => updateColorInputResult();
 
-initColorPicker(document.getElementById("demo-color-picker"), { onChange: colorPickerOnChange });
-initColorPicker(document.getElementById("demo-color-picker-empty"), { onChange: colorPickerOnChange });
-updateColorPickerResult();
+initColorInput(document.getElementById("demo-color-input"), { onChange: colorInputOnChange });
+initColorInput(document.getElementById("demo-color-input-empty"), { onChange: colorInputOnChange });
+updateColorInputResult();
 
 const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
 const demoProgressIndicatorVerticalLabels = ["Details", "Options", "Confirm"];

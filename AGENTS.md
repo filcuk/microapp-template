@@ -34,6 +34,17 @@ Prefer the simplest approach that fits the existing template.
 - No build step unless explicitly approved
 - No `package.json` unless the user requests it
 
+## Language (technical vs docs)
+
+Use **American English** for technical identifiers so they match web platform APIs and CSS/HTML conventions (`color`, `dialog`, `initialize`-style spellings where applicable):
+
+- File and directory names (`color-input.js`)
+- CSS class names, custom properties, and selectors (`.color-input`, `--accent`)
+- JS APIs, variables, and `data-*` attributes (`initColorInput`, `data-color-input-default`)
+- Form `name` values and other machine-facing strings
+
+Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, demo labels, user-visible copy) may stay in **British English** (`colour`, `normalise`, etc.).
+
 ## Reuse the design system
 
 - Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, etc.)
@@ -81,7 +92,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initProgressBar()` / `initProgressBars()` | Progress bar with optional percent or fraction label |
 | `initSpinner()` / `initSpinners()` | Loading spinner; optional blocking overlay on a host |
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
-| `initColorPicker()` / `initColorPickers()` | Hex colour input with inline swatch preview |
+| `initColorInput()` / `initColorInputs()` | Hex colour input with inline swatch preview |
 | `initToggle()` / `initToggles()` | On/off switch control; optional `data-toggle-tristate` for off → on → mixed |
 | `initTriStateCheckbox()` / `initTriStateCheckboxes()` | Tri-state checkbox (`data-checkbox-tristate`) — unchecked → checked → mixed |
 | `initBadge()` / `initBadges()` | Corner badge on a `.badge-host` (normal readout or `.badge--sm` dot) |
@@ -130,8 +141,8 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | `app/css/controls-buttons.css` | Toolbar, buttons |
 | `app/css/controls-badges.css` | Corner badges on controls and labels |
 | `app/css/controls-chips.css` | Selectable filter chips and removable input chips |
-| `app/css/controls-fields.css` | Fields, combobox, date/time, color picker |
-| `app/css/controls-widgets.css` | Toggle, segmented control, pagination, progress bar, spinner, slider, stepper |
+| `app/css/controls-fields.css` | Fields, combobox, date/time |
+| `app/css/controls-widgets.css` | Toggle, segmented control, pagination, progress bar, spinner, slider, stepper, color input |
 | `app/css/controls-section-panel.css` | Section panel grid rows |
 | `app/css/controls-menus.css` | Combo button, dropdown menus |
 | `app/css/controls-disclosure.css` | Expand, accordion, tabs, progress indicator |

@@ -694,7 +694,7 @@
   cursor: not-allowed;
 }
 
-.color-picker {
+.color-input {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -702,50 +702,50 @@
   max-width: 100%;
 }
 
-.color-picker-control {
+.color-input-control {
   position: relative;
   width: fit-content;
   max-width: 100%;
-  --color-picker-inset: 0.5rem;
-  --color-picker-text-gap: 0.75rem;
-  --color-picker-swatch-size: calc(var(--control-height) - 2 * var(--color-picker-inset));
+  --color-input-inset: 0.5rem;
+  --color-input-text-gap: 0.75rem;
+  --color-input-swatch-size: calc(var(--control-height) - 2 * var(--color-input-inset));
 }
 
-.color-picker-input {
-  width: calc(9ch + var(--color-picker-inset) + var(--color-picker-swatch-size) + var(--color-picker-text-gap));
+.color-input-field {
+  width: calc(9ch + var(--color-input-inset) + var(--color-input-swatch-size) + var(--color-input-text-gap));
   max-width: 100%;
-  padding-left: calc(var(--color-picker-inset) + var(--color-picker-swatch-size) + var(--color-picker-text-gap));
+  padding-left: calc(var(--color-input-inset) + var(--color-input-swatch-size) + var(--color-input-text-gap));
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
-.color-picker-input::placeholder {
+.color-input-field::placeholder {
   text-transform: none;
   letter-spacing: normal;
   font-family: inherit;
 }
 
-.color-picker-input[aria-invalid="true"] {
+.color-input-field[aria-invalid="true"] {
   border-color: var(--banner-error-border);
   outline-color: var(--banner-error-border);
 }
 
-.color-picker-swatch {
+.color-input-swatch {
   position: absolute;
-  top: var(--color-picker-inset);
-  left: var(--color-picker-inset);
-  width: var(--color-picker-swatch-size);
-  height: var(--color-picker-swatch-size);
+  top: var(--color-input-inset);
+  left: var(--color-input-inset);
+  width: var(--color-input-swatch-size);
+  height: var(--color-input-swatch-size);
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: var(--color-picker-preview, transparent);
+  background: var(--color-input-preview, transparent);
   pointer-events: none;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent);
 }
 
-.color-picker-swatch.is-empty {
+.color-input-swatch.is-empty {
   background-color: var(--surface);
   background-image:
     linear-gradient(45deg, var(--border) 25%, transparent 25%),
@@ -756,11 +756,11 @@
   background-position: 0 0, 0 4px, 4px -4px, -4px 0;
 }
 
-.color-picker--disabled {
+.color-input--disabled {
   opacity: 0.65;
 }
 
-.color-picker--disabled .color-picker-input {
+.color-input--disabled .color-input-field {
   cursor: not-allowed;
 }
 
