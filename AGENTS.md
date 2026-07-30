@@ -66,7 +66,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with toolbar/surface actions, modes, copy/paste |
 | `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
 | `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
-| `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer-mode reaction flashes; persistent tutorial tips — see [`DESIGN.md`](DESIGN.md) |
+| `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer reaction when in-place is not possible; persistent tutorial tips — see [`DESIGN.md`](DESIGN.md) |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `app/shell/render-shell.js` |
 | `initStickyChrome()` / `setStickyHeader()` / `setStickySectionHeadings()` | Optional sticky site header and section headings (`data-sticky-header`, `data-sticky-section-headings`) |
 | `initTab()` / `initTabs()` | Single tabbed section vs every `.tabs` block |
@@ -185,7 +185,7 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 
 ### Action feedback
 
-Follow [`DESIGN.md`](DESIGN.md): prefer **tooltips** for control reactions (Copied / Failed); use **banners** when page-level status is requested. Do not rewrite button labels for one-shot success/fail unless a prolonged mode (e.g. paste-arm `Ctrl+V`) must stay on the control. Use timer-mode `flashTooltip()` with `tone: "success" | "error"` for momentary feedback.
+Follow [`DESIGN.md`](DESIGN.md): prefer **in-place** label flashes when the control can show the outcome (Copy → Copied). Use timer-mode `flashTooltip()` with `tone: "success" | "error"` when in-place is not an option (icon-only controls). Use **banners** when page-level status is requested.
 
 ## Accessibility
 

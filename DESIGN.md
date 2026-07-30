@@ -8,20 +8,20 @@ Aesthetics follow a GitHub-inspired palette (based on [pqm-stepper](https://gith
 
 When a control reacts to a user action (copy succeeded, save failed, and similar):
 
-1. **Default — tooltip** on the control that was used.
-2. **When requested — banner** for page-level or persistent status messaging.
-3. **Not standard — rewriting the control itself** (e.g. changing a “Copy” label to “Copied”). Keep in-place label/icon swaps available only when a prolonged mode must stay visible on the control.
+1. **Default — in-place** on the control when it can show the outcome itself (e.g. labeled **Copy** → **Copied** / **Failed** for a short duration). Prefer this over a reaction tooltip.
+2. **Fallback — timer tooltip** when in-place is not practical (icon-only controls such as the floating code-block copy button). Use success/error tones with check / × icons.
+3. **When requested — banner** for page-level or persistent status messaging.
 
-**Exception:** clipboard paste-arming (prompting “Press Ctrl+V” / showing `Ctrl+V` on the button for up to ~15s) may rewrite the control. That is a waiting state, not a one-shot success/fail reaction. Momentary outcomes (Copied / Failed / Pasted) use timer-mode tooltips.
+**Also in-place:** clipboard paste-arming (prompting “Press Ctrl+V” / showing `Ctrl+V` on the button for up to ~15s) is a waiting state on the control, not only a one-shot flash.
 
-Success and error tooltips use bold green / red styling (banner success/error tokens) and a small leading icon: check for success, clear (×) for error. Info tooltips stay neutral with text only.
+Success and error **tooltips** (when used) use bold green / red styling (banner success/error tokens) and a small leading icon: check for success, clear (×) for error. Info tooltips stay neutral with text only.
 
 ## Tooltip modes
 
 | Mode | Role | Lifetime |
 | ---- | ---- | -------- |
 | **Hover** (default) | Describe a control on pointer over or focus | Until pointer/focus leaves |
-| **Timer** | Reaction feedback (e.g. click Copy → “Copied”) | Fixed duration; stays visible without hover |
+| **Timer** | Reaction feedback when in-place is not an option (e.g. icon-only copy → “Copied”) | Fixed duration; stays visible without hover |
 | **Persistent** | Tutorials / guided highlight | Until explicitly dismissed (e.g. user activates the highlighted control) |
 
 ### Mutual exclusion

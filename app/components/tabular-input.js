@@ -37,7 +37,7 @@ import { createIcon } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
 import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-listeners.js";
 import { copyText, readText, armPasteCapture } from "../utils/clipboard.js";
-import { closeTooltip, flashTooltip } from "./tooltip.js";
+import { closeTooltip } from "./tooltip.js";
 
 /** @typedef {"text" | "number" | "logical"} ColumnType */
 /** @typedef {{ id: string, label: string, type: ColumnType }} Column */
@@ -712,6 +712,13 @@ export function initTabularInput(
       liveEl.textContent = message;
     });
   }
+
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let copyResetTimer = null;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let pasteResetTimer = null;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let pasteHeadersResetTimer = null;
 
   /**
    * Active “press Ctrl+V” capture when Clipboard API read is unavailable.
@@ -1821,16 +1828,30 @@ export function initTabularInput(
   }
 
   /**
+   * Flash a temporary label on a clipboard action button (in-place; labeled controls).
    * @param {HTMLButtonElement} button
-   * @param {{ success: string, fail: string }} labels
+   * @param {{ success: string, fail: string, reset: () => void, getTimer: () => ReturnType<typeof setTimeout> | null, setTimer: (id: ReturnType<typeof setTimeout> | null) => void }} opts
    * @param {boolean} ok
    */
-  function flashClipboardTooltip(button, labels, ok) {
-    flashTooltip(button, {
-      text: ok ? labels.success : labels.fail,
-      tone: ok ? "success" : "error",
-      durationMs: 1500,
-    });
+  function flashActionButton(button, opts, ok) {
+    const prev = opts.getTimer();
+    if (prev !== null) {
+      clearTimeout(prev);
+      opts.setTimer(null);
+    }
+    if (ok) {
+      setActionButtonLabel(button, opts.success);
+      button.setAttribute("aria-label", opts.success);
+    } else {
+      setActionButtonLabel(button, opts.fail);
+      button.setAttribute("aria-label", opts.fail);
+    }
+    opts.setTimer(
+      setTimeout(() => {
+        opts.setTimer(null);
+        opts.reset();
+      }, 1500)
+    );
   }
 
   async function onCopyClick() {
@@ -1838,12 +1859,24 @@ export function initTabularInput(
     closeTooltip();
     const text = formatClipboardTable(columns, rows);
     const ok = await copyText(text);
-    flashClipboardTooltip(copyBtn, { success: "Copied", fail: "Failed" }, ok);
+    flashActionButton(
+      copyBtn,
+      {
+        success: "Copied",
+        fail: "Failed",
+        reset: resetCopyButtonLabel,
+        getTimer: () => copyResetTimer,
+        setTimer: (id) => {
+          copyResetTimer = id;
+        },
+      },
+      ok
+    );
     if (ok) announce("Table copied");
   }
 
   /**
-   * @param {{ firstRowIsHeader: boolean, button: HTMLButtonElement, reset: () => void, announceOk: string }} opts
+   * @param {{ firstRowIsHeader: boolean, button: HTMLButtonElement, reset: () => void, getTimer: () => ReturnType<typeof setTimeout> | null, setTimer: (id: ReturnType<typeof setTimeout> | null) => void, announceOk: string }} opts
    */
   async function onPasteReplaceClick(opts) {
     if (isDisabled) return;
@@ -1874,9 +1907,15 @@ export function initTabularInput(
       emit("paste");
       announce(opts.announceOk);
     }
-    flashClipboardTooltip(
+    flashActionButton(
       opts.button,
-      { success: "Pasted", fail: "Failed" },
+      {
+        success: "Pasted",
+        fail: "Failed",
+        reset: opts.reset,
+        getTimer: opts.getTimer,
+        setTimer: opts.setTimer,
+      },
       ok
     );
   }
@@ -1925,6 +1964,10 @@ export function initTabularInput(
       firstRowIsHeader: false,
       button: pasteBtn,
       reset: resetPasteButtonLabel,
+      getTimer: () => pasteResetTimer,
+      setTimer: (id) => {
+        pasteResetTimer = id;
+      },
       announceOk: "Table replaced from clipboard",
     });
   }
@@ -1934,6 +1977,10 @@ export function initTabularInput(
       firstRowIsHeader: true,
       button: pasteHeadersBtn,
       reset: resetPasteHeadersButtonLabel,
+      getTimer: () => pasteHeadersResetTimer,
+      setTimer: (id) => {
+        pasteHeadersResetTimer = id;
+      },
       announceOk: "Table replaced from clipboard with headers",
     });
   }
@@ -2036,6 +2083,18 @@ export function initTabularInput(
       if (breakoutSyncFrame !== null) {
         cancelAnimationFrame(breakoutSyncFrame);
         breakoutSyncFrame = null;
+      }
+      if (copyResetTimer !== null) {
+        clearTimeout(copyResetTimer);
+        copyResetTimer = null;
+      }
+      if (pasteResetTimer !== null) {
+        clearTimeout(pasteResetTimer);
+        pasteResetTimer = null;
+      }
+      if (pasteHeadersResetTimer !== null) {
+        clearTimeout(pasteHeadersResetTimer);
+        pasteHeadersResetTimer = null;
       }
       endPasteCapture();
       breakoutResizeObserver?.disconnect();

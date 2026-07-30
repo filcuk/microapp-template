@@ -527,8 +527,22 @@ export function initCodeBlock(container, options = {}) {
    * @param {boolean} ok
    */
   function flashCopyFeedback(btn, ok) {
+    const flash = ok ? "Copied" : "Failed";
+    const labelEl = btn.querySelector(".code-block-toolbar__label");
+    if (labelEl) {
+      const prevAria = btn.getAttribute("aria-label") || "Copy code";
+      const idleText = "Copy";
+      btn.setAttribute("aria-label", flash);
+      setToolbarButtonText(btn, flash);
+      window.setTimeout(() => {
+        btn.setAttribute("aria-label", prevAria);
+        setToolbarButtonText(btn, idleText);
+      }, 2000);
+      return;
+    }
+
     flashTooltip(btn, {
-      text: ok ? "Copied" : "Failed",
+      text: flash,
       tone: ok ? "success" : "error",
     });
   }
