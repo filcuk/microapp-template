@@ -41,7 +41,12 @@ export function initHeadingLinks(
       const ok = await copyText(headingUrl(heading));
       button.dataset.tooltip = ok ? TOOLTIP_COPIED : "Copy failed";
 
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
       button.blur();
+      if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
+        window.scrollTo(scrollX, scrollY);
+      }
       openTooltip(button);
 
       window.setTimeout(() => {

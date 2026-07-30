@@ -25,6 +25,8 @@ export async function copyText(text) {
   const textarea = document.createElement("textarea");
   textarea.value = text;
   textarea.setAttribute("readonly", "");
+  textarea.setAttribute("aria-hidden", "true");
+  textarea.tabIndex = -1;
   textarea.style.position = "fixed";
   textarea.style.top = "0";
   textarea.style.left = "0";
@@ -36,8 +38,18 @@ export async function copyText(text) {
   textarea.style.boxShadow = "none";
   textarea.style.background = "transparent";
   textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
   document.body.append(textarea);
-  textarea.focus();
+
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  const previouslyFocused =
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+
+  /* focus()/select() otherwise scroll the viewport to the temp node (jump up). */
+  textarea.focus({ preventScroll: true });
   textarea.select();
   textarea.setSelectionRange(0, textarea.value.length);
 
@@ -48,6 +60,13 @@ export async function copyText(text) {
     ok = false;
   }
   textarea.remove();
+
+  if (previouslyFocused?.isConnected) {
+    previouslyFocused.focus({ preventScroll: true });
+  }
+  if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
+    window.scrollTo(scrollX, scrollY);
+  }
   return ok;
 }
 

@@ -536,8 +536,14 @@ export function initCodeBlock(container, options = {}) {
     if (useTooltip) {
       btn.dataset.tooltip = flash;
       /* Re-open after click: dataset alone does not refresh the open tip,
-         and focus/mouse churn from the click otherwise hides it immediately. */
+         and focus/mouse churn from the click otherwise hides it immediately.
+         Preserve scroll — blur can jump the viewport on some browsers. */
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
       btn.blur();
+      if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
+        window.scrollTo(scrollX, scrollY);
+      }
       openTooltip(btn);
     }
     setToolbarButtonText(btn, flash);
