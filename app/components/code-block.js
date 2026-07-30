@@ -505,17 +505,23 @@ export function initCodeBlock(container, options = {}) {
 
   function syncEditableToolbarActions() {
     const editable = mode !== "view";
-    for (const action of ["clear", "paste"]) {
+    const hasContent = currentSource().length > 0;
+
+    for (const action of ["clear", "paste", "copy"]) {
       const btn = toolbarEl?.querySelector(
         `[data-code-toolbar-action="${action}"]`
       );
       if (!(btn instanceof HTMLButtonElement)) continue;
-      btn.disabled = !editable;
-      btn.setAttribute("aria-disabled", editable ? "false" : "true");
+      let enabled = true;
+      if (action === "paste") enabled = editable;
+      else if (action === "clear") enabled = editable && hasContent;
+      else enabled = hasContent;
+      btn.disabled = !enabled;
+      btn.setAttribute("aria-disabled", enabled ? "false" : "true");
     }
 
     const surfaceCopyEnabled =
-      surfaceActions.has("copy") && (mode !== "view");
+      surfaceActions.has("copy") && mode !== "view" && hasContent;
     if (surfaceCopyBtn) {
       setHidden(surfaceCopyBtn, !surfaceActions.has("copy"));
       surfaceCopyBtn.disabled = !surfaceCopyEnabled;
