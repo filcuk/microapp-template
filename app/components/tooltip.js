@@ -190,7 +190,7 @@ function restoreTimerTarget() {
   window.clearTimeout(timerId);
   timerState = null;
 
-  if (restoreText != null) {
+  if (restoreText !== null && restoreText !== undefined) {
     target.dataset.tooltip = restoreText;
   } else {
     delete target.dataset.tooltip;
