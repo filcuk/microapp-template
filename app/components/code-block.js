@@ -34,6 +34,7 @@
 import { setHidden } from "../utils/dom.js";
 import { copyText, readText, armPasteCapture } from "../utils/clipboard.js";
 import { createIcon } from "../utils/icons.js";
+import { openTooltip } from "./tooltip.js";
 
 const LANGUAGE_RE = /language-([\w-]+)/;
 const CODE_MODES = ["view", "select", "edit"];
@@ -532,7 +533,13 @@ export function initCodeBlock(container, options = {}) {
     const flash = ok ? "Copied" : "Failed";
     const useTooltip = Object.hasOwn(btn.dataset, "tooltip");
     btn.setAttribute("aria-label", flash);
-    if (useTooltip) btn.dataset.tooltip = flash;
+    if (useTooltip) {
+      btn.dataset.tooltip = flash;
+      /* Re-open after click: dataset alone does not refresh the open tip,
+         and focus/mouse churn from the click otherwise hides it immediately. */
+      btn.blur();
+      openTooltip(btn);
+    }
     setToolbarButtonText(btn, flash);
     window.setTimeout(() => {
       btn.setAttribute("aria-label", prev);
