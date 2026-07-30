@@ -67,7 +67,6 @@ const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoColorInputResult = document.getElementById("demo-color-input-result");
 const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
@@ -225,27 +224,9 @@ initStepper(document.getElementById("demo-stepper"), { onChange: stepperOnChange
 initStepper(document.getElementById("demo-stepper-decimal"), { onChange: stepperOnChange });
 updateStepperResult();
 
-function updateColorInputResult() {
-  if (!demoColorInputResult) return;
-  const withDefault = document.getElementById("demo-color-input");
-  const empty = document.getElementById("demo-color-input-empty");
-  const alpha = document.getElementById("demo-color-input-alpha");
-  const defaultValue = withDefault?.querySelector(".color-input-value")?.value;
-  const emptyValue = empty?.querySelector(".color-input-value")?.value;
-  const alphaValue = alpha?.querySelector(".color-input-value")?.value;
-  demoColorInputResult.textContent = [
-    `Colour: ${defaultValue || "—"}`,
-    `Empty: ${emptyValue || "—"}`,
-    `Alpha: ${alphaValue || "—"}`,
-  ].join(" · ");
-}
-
-const colorInputOnChange = () => updateColorInputResult();
-
-initColorInput(document.getElementById("demo-color-input"), { onChange: colorInputOnChange });
-initColorInput(document.getElementById("demo-color-input-empty"), { onChange: colorInputOnChange });
-initColorInput(document.getElementById("demo-color-input-alpha"), { onChange: colorInputOnChange });
-updateColorInputResult();
+initColorInput(document.getElementById("demo-color-input"));
+initColorInput(document.getElementById("demo-color-input-empty"));
+initColorInput(document.getElementById("demo-color-input-alpha"));
 
 const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
 const demoProgressIndicatorVerticalLabels = ["Details", "Options", "Confirm"];
