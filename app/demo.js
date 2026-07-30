@@ -11,6 +11,11 @@ import { initTabs } from "./components/tabs.js";
 import { initCodeBlocks } from "./components/code-block.js";
 import { initExpandableSurfaces } from "./components/expandable-surface.js";
 import { showBanner, hideBanner } from "./components/banner.js";
+import {
+  flashTooltip,
+  showPersistentTooltip,
+  dismissPersistentTooltip,
+} from "./components/tooltip.js";
 import { initFileDropzone } from "./components/file-dropzone.js";
 import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
@@ -697,6 +702,40 @@ if (iconToggleBtn) {
     iconToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
   });
 }
+
+document.getElementById("demo-tooltip-flash-success")?.addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  if (!(btn instanceof HTMLElement)) return;
+  flashTooltip(btn, { text: "Copied", tone: "success" });
+});
+
+document.getElementById("demo-tooltip-flash-error")?.addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  if (!(btn instanceof HTMLElement)) return;
+  flashTooltip(btn, { text: "Failed to copy", tone: "error" });
+});
+
+/** @type {string | null} */
+let demoPersistentTipId = null;
+const demoPersistentTarget = document.getElementById("demo-tooltip-persistent-dismiss");
+
+document.getElementById("demo-tooltip-persistent")?.addEventListener("click", () => {
+  if (!(demoPersistentTarget instanceof HTMLElement)) return;
+  if (demoPersistentTipId) {
+    dismissPersistentTooltip(demoPersistentTipId);
+  }
+  demoPersistentTipId = showPersistentTooltip(demoPersistentTarget, {
+    text: "Click this button to dismiss",
+    tone: "info",
+  });
+});
+
+demoPersistentTarget?.addEventListener("click", () => {
+  if (demoPersistentTipId) {
+    dismissPersistentTooltip(demoPersistentTipId);
+    demoPersistentTipId = null;
+  }
+});
 
 const demoBadge = initBadge(document.getElementById("demo-badge-host"));
 document.getElementById("demo-badge-btn")?.addEventListener("click", () => {

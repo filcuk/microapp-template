@@ -316,9 +316,9 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
-| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
+| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip. [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
-| **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
+| **Tooltips** | Hover (default), timer (`flashTooltip`), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
 | **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
 | **Code blocks** | `.code-block` with Prism highlighting, configurable toolbar (top/bottom/none), hover copy/maximise, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
 | **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
@@ -399,16 +399,41 @@ Close controls use `data-dialog-close` on backdrop, × button, or footer buttons
 
 ### Tooltip
 
+Hover tips (default): add `data-tooltip` and optional `data-tooltip-position="top|bottom|left|right"`. Optional `data-tooltip-tone="success|error"` for bold green/red tips with check / × icons (info is the default, text only).
+
 ```html
 <button type="button" data-tooltip="Help text" data-tooltip-position="top">?</button>
 ```
 
 ```javascript
-import { initTooltips } from "./components/tooltip.js";
+import {
+  initTooltips,
+  flashTooltip,
+  showPersistentTooltip,
+  dismissPersistentTooltip,
+} from "./components/tooltip.js";
+
 initTooltips(document);
+
+// Timer mode — reaction feedback (stays without hover; cancelled by another hover/timer tip)
+flashTooltip(copyBtn, {
+  text: "Copied",
+  tone: "success",
+  durationMs: 2000,
+});
+
+// Persistent mode — tutorial; dismiss only when intended
+const tipId = showPersistentTooltip(nextBtn, {
+  text: "Click Next to continue",
+});
+nextBtn.addEventListener(
+  "click",
+  () => dismissPersistentTooltip(tipId),
+  { once: true }
+);
 ```
 
-`initShell()` already calls `initTooltips(document)`.
+`initShell()` already calls `initTooltips(document)`. Modes and mutual exclusion are documented in [`DESIGN.md`](DESIGN.md).
 
 ### Banners
 
@@ -514,7 +539,7 @@ Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no 
 
 ### Heading links
 
-Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
+Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and shows a timer success (“Copied!”) or error tip.
 
 ```javascript
 import { initHeadingLinks } from "./shell/heading-link.js";

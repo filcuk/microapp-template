@@ -66,6 +66,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with toolbar/surface actions, modes, copy/paste |
 | `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
 | `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
+| `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer-mode reaction flashes; persistent tutorial tips — see [`DESIGN.md`](DESIGN.md) |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `app/shell/render-shell.js` |
 | `initStickyChrome()` / `setStickyHeader()` / `setStickySectionHeadings()` | Optional sticky site header and section headings (`data-sticky-header`, `data-sticky-section-headings`) |
 | `initTab()` / `initTabs()` | Single tabbed section vs every `.tabs` block |
@@ -182,18 +183,22 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 - Light / dark / auto theme via `data-theme` on `:root`
 - Blocking `app/theme-init.js` in `<head>` to prevent flash of wrong theme
 
+### Action feedback
+
+Follow [`DESIGN.md`](DESIGN.md): prefer **tooltips** for control reactions (Copied / Failed); use **banners** when page-level status is requested. Do not rewrite button labels for one-shot success/fail unless a prolonged mode (e.g. paste-arm `Ctrl+V`) must stay on the control. Use timer-mode `flashTooltip()` with `tone: "success" | "error"` for momentary feedback.
+
 ## Accessibility
 
 - Dialogs: focus trap, Escape to close (via document listener), restore focus, `aria-modal` and labelled titles
 - Toggle buttons: `aria-pressed` where state toggles
-- Tooltips: `aria-describedby` linking trigger to `#tooltip` on show/hide; keyboard focus support
+- Tooltips: hover / timer share one `#tooltip` slot; persistent tips are separate; `aria-describedby` linking; keyboard focus support for hover tips
 - Prefer semantic HTML (`header`, `main`, `footer`, `button`)
 - Popup menus: `aria-expanded` on toggle buttons
 - Page nav: outer `<nav aria-label="Page navigation">`; jump buttons have `aria-label`; section links are plain anchors with hash `href`; use `data-page-nav-tier` on group headings for nested nav lists
 
 ## When extending this template
 
-1. Read `USAGE.md` for available components and fork instructions
+1. Read `USAGE.md` for available components and fork instructions; read `DESIGN.md` for interaction philosophy
 2. Check `demo.html` for usage examples
 3. Keep changes focused — one concern per file when possible
 4. Update `USAGE.md` when you add or change a reusable component, module API, or deploy workflow (see `.cursor/rules/usage-docs.mdc`)

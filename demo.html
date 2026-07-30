@@ -646,7 +646,10 @@
 
         <section class="demo-section" aria-labelledby="demo-tooltips">
           <h2 id="demo-tooltips" class="section-heading">Tooltips</h2>
-          <p class="demo-hint">Add <code>data-tooltip</code> to any element; include optional <code>data-tooltip-position</code>.</p>
+          <p class="demo-hint">
+            Hover tips use <code>data-tooltip</code> and optional <code>data-tooltip-position</code>.
+            Timer flashes use <code>flashTooltip</code> (success/error tones). Persistent tips stay until dismissed.
+          </p>
           <div class="demo-row">
             <button type="button" class="btn" data-tooltip="Save your changes">
               Hover me
@@ -670,6 +673,20 @@
                 right
               </button>
             </span>
+          </div>
+          <div class="demo-row">
+            <button type="button" class="btn" id="demo-tooltip-flash-success" data-tooltip="Copy">
+              Flash success
+            </button>
+            <button type="button" class="btn" id="demo-tooltip-flash-error" data-tooltip="Copy">
+              Flash error
+            </button>
+            <button type="button" class="btn" id="demo-tooltip-persistent" data-tooltip="Start tutorial tip">
+              Show persistent
+            </button>
+            <button type="button" class="btn btn-primary" id="demo-tooltip-persistent-dismiss" data-tooltip="Click to dismiss the tip">
+              Dismiss target
+            </button>
           </div>
         </section>
 
