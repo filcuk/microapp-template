@@ -646,7 +646,11 @@
 
         <section class="demo-section" aria-labelledby="demo-tooltips">
           <h2 id="demo-tooltips" class="section-heading">Tooltips</h2>
-          <p class="demo-hint">Add <code>data-tooltip</code> to any element; include optional <code>data-tooltip-position</code>.</p>
+          <p class="demo-hint">
+            Hover tips use <code>data-tooltip</code> and optional <code>data-tooltip-position</code>.
+            Prefer in-place label flashes when a button can show the outcome; use timer
+            <code>flashTooltip</code> (success/error) for icon-only controls. Persistent tips stay until dismissed.
+          </p>
           <div class="demo-row">
             <button type="button" class="btn" data-tooltip="Save your changes">
               Hover me
@@ -670,6 +674,20 @@
                 right
               </button>
             </span>
+          </div>
+          <div class="demo-row">
+            <button type="button" class="btn" id="demo-tooltip-flash-success" data-tooltip="Copy">
+              Flash success
+            </button>
+            <button type="button" class="btn" id="demo-tooltip-flash-error" data-tooltip="Copy">
+              Flash error
+            </button>
+            <button type="button" class="btn" id="demo-tooltip-persistent" data-tooltip="Start tutorial tip">
+              Show persistent
+            </button>
+            <button type="button" class="btn btn-primary" id="demo-tooltip-persistent-dismiss" data-tooltip="Click to dismiss the tip">
+              Dismiss target
+            </button>
           </div>
         </section>
 
@@ -801,27 +819,37 @@
           <h2 id="demo-feedback" class="section-heading">Colour, progress &amp; spinner</h2>
           <p class="demo-hint">Status and loading indicators.</p>
           <div class="demo-fields">
-            <div class="demo-grid demo-grid-2">
-              <div class="color-picker" id="demo-color-picker" data-color-picker-default="#0969da">
-                <label class="field-label" for="demo-color-picker-input">Colour picker</label>
-                <div class="color-picker-control">
-                  <input type="text" id="demo-color-picker-input" class="input color-picker-input"
+            <div class="demo-row">
+              <div class="color-input" id="demo-color-input" data-color-input-default="#0969da">
+                <label class="field-label" for="demo-color-input-field">Simple</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-field" class="input color-input-field"
                     placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-                  <span class="color-picker-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-picker-value" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
                 </div>
               </div>
-              <div class="color-picker" id="demo-color-picker-empty">
-                <label class="field-label" for="demo-color-picker-empty-input">Colour picker (empty)</label>
-                <div class="color-picker-control">
-                  <input type="text" id="demo-color-picker-empty-input" class="input color-picker-input"
+              <div class="color-input" id="demo-color-input-empty">
+                <label class="field-label" for="demo-color-input-empty-field">Empty</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-empty-field" class="input color-input-field"
                     placeholder="#RRGGBB" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-                  <span class="color-picker-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-picker-value" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
+                </div>
+              </div>
+              <div class="color-input" id="demo-color-input-alpha" data-color-input-alpha
+                data-color-input-default="#ff338855">
+                <label class="field-label" for="demo-color-input-alpha-field">Alpha</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-alpha-field" class="input color-input-field"
+                    placeholder="#RRGGBBAA" autocomplete="off" spellcheck="false"
+                    aria-label="Hex colour with alpha" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
                 </div>
               </div>
             </div>
-            <p id="demo-color-picker-result" class="demo-hint" aria-live="polite">Colour: #0969DA · Empty: —</p>
             <div class="demo-grid demo-grid-2">
               <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
                 data-progress-bar-shine aria-labelledby="demo-progress-bar-label">

@@ -27,8 +27,8 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | `code-block.css` | code-block, expandable-surface |
 | `controls-badges.css` | badge |
 | `controls-chips.css` | chip |
-| `controls-fields.css` | field/input (CSS-only), combobox, date-picker, color-picker |
-| `controls-widgets.css` | toggle, checkbox, segmented-control, pagination, progress-bar, spinner, slider, stepper |
+| `controls-fields.css` | field/input (CSS-only), combobox, date-picker |
+| `controls-widgets.css` | toggle, checkbox, segmented-control, pagination, progress-bar, spinner, slider, stepper, color-input |
 | `controls-section-panel.css` | section-panel (CSS-only pattern) |
 | `controls-menus.css` | combo, dropdown, dropdown-toggle |
 | `controls-disclosure.css` | expand, accordion, tabs, progress-indicator |
@@ -52,7 +52,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | chip | `app/components/chip.js` | `controls-chips.css` | — | `error` (remove) | `dom`, `icons` | |
 | combobox | `app/components/combobox.js` | `controls-fields.css` | — | — | `dom`, `document-listeners` | |
 | date-picker | `app/components/date-picker/` (`index.js`, `calendar.js`, `parse.js`) | `controls-fields.css` | — | Markup: `calendar` | `dom`, `document-listeners` | |
-| color-picker | `app/components/color-picker.js` | `controls-fields.css` | — | — | `dom` | |
+| color-input | `app/components/color-input.js` | `controls-widgets.css` | — | — | `dom` | Hex field + swatch; optional alpha; not a spectrum picker |
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |
 | checkbox | `app/components/checkbox.js` | `controls-widgets.css` | — | — | `dom` | Tri-state checkbox |
 | segmented-control | `app/components/segmented-control.js` | `controls-widgets.css` | — | — | `dom` | |

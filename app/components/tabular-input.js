@@ -1809,12 +1809,14 @@ export function initTabularInput(
     setActionButtonLabel(copyBtn, "Copy");
     copyBtn.setAttribute("aria-label", "Copy table");
     copyBtn.dataset.tooltip = "Copy for Excel";
+    delete copyBtn.dataset.tooltipTone;
   }
 
   function resetPasteButtonLabel() {
     setActionButtonLabel(pasteBtn, "Paste");
     pasteBtn.setAttribute("aria-label", "Paste table");
     pasteBtn.dataset.tooltip = "Replace table from clipboard";
+    delete pasteBtn.dataset.tooltipTone;
   }
 
   function resetPasteHeadersButtonLabel() {
@@ -1822,10 +1824,11 @@ export function initTabularInput(
     pasteHeadersBtn.setAttribute("aria-label", "Paste with headers");
     pasteHeadersBtn.dataset.tooltip =
       "Replace table from clipboard; first row becomes column headers";
+    delete pasteHeadersBtn.dataset.tooltipTone;
   }
 
   /**
-   * Flash a temporary label on a clipboard action button.
+   * Flash a temporary label on a clipboard action button (in-place; labeled controls).
    * @param {HTMLButtonElement} button
    * @param {{ success: string, fail: string, reset: () => void, getTimer: () => ReturnType<typeof setTimeout> | null, setTimer: (id: ReturnType<typeof setTimeout> | null) => void }} opts
    * @param {boolean} ok
@@ -1941,6 +1944,7 @@ export function initTabularInput(
     setActionButtonLabel(button, "Ctrl+V");
     button.setAttribute("aria-label", "Press Control V to paste");
     button.dataset.tooltip = "Press Ctrl+V to paste";
+    button.dataset.tooltipTone = "error";
     announce("Press Control V to paste");
 
     const capture = armPasteCapture({ timeoutMs: 15000 });

@@ -228,8 +228,8 @@ app/
     controls-buttons.css  # Toolbar, buttons
     controls-badges.css   # Corner badges on controls/labels
     controls-chips.css    # Selectable / removable chips
-    controls-fields.css   # Fields, combobox, date/time, color picker
-    controls-widgets.css  # Toggle, segmented control, pagination, progress bar, spinner, slider, stepper
+    controls-fields.css   # Fields, combobox, date/time
+    controls-widgets.css  # Toggle, segmented, pagination, progress, spinner, slider, stepper, color input
     controls-section-panel.css # Section panel grid
     controls-menus.css    # Combo, dropdown
     controls-disclosure.css # Expand, accordion, tabs, progress indicator
@@ -291,7 +291,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-picker`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -301,7 +301,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine; error (stuck) and disabled states. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
-| **Colour picker** | Hex text input with inline swatch preview. [`app/color-picker.js`](app/color-picker.js). |
+| **Colour input** | Hex text input with inline swatch preview; optional alpha (`#RRGGBBAA`). [`app/components/color-input.js`](app/components/color-input.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. Optional tri-state (`data-toggle-tristate`) cycles off → on → mixed. [`app/components/toggle.js`](app/components/toggle.js). |
 | **Tri-state checkbox** | Checkbox that cycles unchecked → checked → mixed (`indeterminate`). [`app/components/checkbox.js`](app/components/checkbox.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
@@ -316,9 +316,9 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
-| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”, then “Copied!” on success. [`app/heading-link.js`](app/heading-link.js). |
+| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
-| **Tooltips** | Instant custom tooltips — no native `title` delay. Add `data-tooltip="…"` and optional `data-tooltip-position="top\|bottom\|left\|right"`. See [`app/tooltip.js`](app/tooltip.js). |
+| **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
 | **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
 | **Code blocks** | `.code-block` with Prism highlighting, configurable toolbar (top/bottom/none), hover copy/maximise, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
 | **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
@@ -399,16 +399,42 @@ Close controls use `data-dialog-close` on backdrop, × button, or footer buttons
 
 ### Tooltip
 
+Hover tips (default): add `data-tooltip` and optional `data-tooltip-position="top|bottom|left|right"`. Optional `data-tooltip-tone="success|error"` for bold green/red tips with check / × icons (info is the default, text only).
+
 ```html
 <button type="button" data-tooltip="Help text" data-tooltip-position="top">?</button>
 ```
 
 ```javascript
-import { initTooltips } from "./components/tooltip.js";
+import {
+  initTooltips,
+  flashTooltip,
+  showPersistentTooltip,
+  dismissPersistentTooltip,
+} from "./components/tooltip.js";
+
 initTooltips(document);
+
+// Timer mode — reaction feedback when the control cannot flash in-place
+// (e.g. icon-only). Prefer rewriting a visible label (Copy → Copied) when possible.
+flashTooltip(copyBtn, {
+  text: "Copied",
+  tone: "success",
+  durationMs: 2000,
+});
+
+// Persistent mode — tutorial; dismiss only when intended
+const tipId = showPersistentTooltip(nextBtn, {
+  text: "Click Next to continue",
+});
+nextBtn.addEventListener(
+  "click",
+  () => dismissPersistentTooltip(tipId),
+  { once: true }
+);
 ```
 
-`initShell()` already calls `initTooltips(document)`.
+`initShell()` already calls `initTooltips(document)`. Modes and mutual exclusion are documented in [`DESIGN.md`](DESIGN.md).
 
 ### Banners
 
@@ -514,7 +540,7 @@ Prefer a `raw.githubusercontent.com` or GitHub Pages URL and a simple `GET` (no 
 
 ### Heading links
 
-Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and the tooltip switches to “Copied!”.
+Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and shows a timer success (“Copied!”) or error tip (icon-only control).
 
 ```javascript
 import { initHeadingLinks } from "./shell/heading-link.js";
@@ -1179,42 +1205,61 @@ initSteppers(document); // all `.stepper` blocks
 
 `data-stepper-min`, `data-stepper-max`, `data-stepper-step`, `data-stepper-default`, `data-stepper-format`, and `data-stepper-disabled` mirror the JS options. Decrement and increment buttons disable at the min and max bounds.
 
-### Colour picker
+### Colour input
 
-Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. The swatch shows a checkerboard when empty or while the typed value is incomplete.
+Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. With `data-color-input-alpha` (or `alpha: true`), also accepts `#RGBA` / `#RRGGBBAA`; if no alpha digits are given, commit normalises to full opacity (`#RRGGBBFF`). The swatch shows a checkerboard when empty, incomplete, or under a semi-transparent value. Reserve **colour picker** for a future spectrum / selector UI — this component is only the hex field.
 
 ```html
-<div class="color-picker" id="my-color-picker" data-color-picker-default="#0969da">
-  <label class="field-label" for="my-color-input">Colour</label>
-  <div class="color-picker-control">
-    <input type="text" id="my-color-input" class="input color-picker-input"
+<div class="color-input" id="my-color-input" data-color-input-default="#0969da">
+  <label class="field-label" for="my-color-input-field">Colour</label>
+  <div class="color-input-control">
+    <input type="text" id="my-color-input-field" class="input color-input-field"
       placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-    <span class="color-picker-swatch" aria-hidden="true"></span>
-    <input type="hidden" class="color-picker-value" name="colour" />
+    <span class="color-input-swatch" aria-hidden="true"></span>
+    <input type="hidden" class="color-input-value" name="color" />
+  </div>
+</div>
+
+<div class="color-input" id="my-color-input-alpha" data-color-input-alpha
+  data-color-input-default="#ff338855">
+  <label class="field-label" for="my-color-input-alpha-field">Colour with alpha</label>
+  <div class="color-input-control">
+    <input type="text" id="my-color-input-alpha-field" class="input color-input-field"
+      placeholder="#RRGGBBAA" autocomplete="off" spellcheck="false"
+      aria-label="Hex colour with alpha" />
+    <span class="color-input-swatch" aria-hidden="true"></span>
+    <input type="hidden" class="color-input-value" name="color" />
   </div>
 </div>
 ```
 
 ```javascript
-import { initColorPicker, initColorPickers } from "./components/color-picker.js";
+import { initColorInput, initColorInputs } from "./components/color-input.js";
 
-const colorPicker = initColorPicker(document.getElementById("my-color-picker"), {
+const colorInput = initColorInput(document.getElementById("my-color-input"), {
   defaultValue: "#0969da",
   disabled: false,
   onChange: ({ value, display, source }) => console.log(value, source),
   onInput: ({ value, display }) => { /* live while typing */ },
 });
 
-colorPicker?.getValue(); // "#0969DA" or null
-colorPicker?.setValue("#ff5500");
-colorPicker?.setValue(""); // clear
-colorPicker?.commitInput();
-colorPicker?.setDisabled(true);
+colorInput?.getValue(); // "#0969DA" or null
+colorInput?.setValue("#ff5500");
+colorInput?.setValue(""); // clear
+colorInput?.commitInput();
+colorInput?.setDisabled(true);
 
-initColorPickers(document); // all `.color-picker` blocks
+const alphaInput = initColorInput(document.getElementById("my-color-input-alpha"), {
+  alpha: true,
+  defaultValue: "#ff338855",
+  onChange: ({ value }) => console.log(value), // "#FF338855"
+});
+alphaInput?.allowsAlpha(); // true
+
+initColorInputs(document); // all `.color-input` blocks
 ```
 
-`data-color-picker-default` and `data-color-picker-disabled` mirror the JS options. `parseHexColor()` is exported for reuse.
+`data-color-input-default`, `data-color-input-alpha`, and `data-color-input-disabled` mirror the JS options. `parseHexColor(value, { alpha })` is exported for reuse.
 
 ### Toggle
 
@@ -1924,7 +1969,7 @@ initCodeBlocks(document);
 initExpandableSurfaces(document);
 ```
 
-**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `highlight`, `line-numbers`. Defaults to `highlight,line-numbers` when omitted. Align any control with `data-code-toolbar-align` as `action:left|right` (comma-separated); **highlight, line-numbers, and maximize default to `right`**, everything else to `left`. Clear / Copy / Paste show icon + label; highlight, line-numbers, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
+**Toolbar** — set `data-code-toolbar` to `top`, `bottom`, or `none`. List controls in `data-code-toolbar-actions` (comma-separated): `clear`, `copy`, `paste`, `maximize`, `highlight`, `line-numbers`. Defaults to `highlight,line-numbers` when omitted. Align any control with `data-code-toolbar-align` as `action:left|right` (comma-separated); **highlight, line-numbers, and maximize default to `right`**, everything else to `left`. Clear / Copy / Paste show icon + label; highlight, line-numbers, and maximize are icon-only with tooltips. Clear and Paste are disabled in `view` mode; Clear and Copy (toolbar and hover) are disabled when the block is empty. Maximize requires `data-expandable-surface` (uses `data-expandable-surface-open`).
 
 **Hover surface actions** — set `data-code-surface-actions` to `copy`, `maximize`, or both (`none` / empty / `false` hides the strip). Legacy `data-code-copy="false"` omits surface copy. When `data-expandable-surface` is present and surface actions are omitted, defaults include `copy,maximize`.
 

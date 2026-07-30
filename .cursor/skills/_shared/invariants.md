@@ -37,6 +37,11 @@ Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `render
 - Existing classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.section-panel`, `.code-block`, `.theme-toggle`, etc.
 - Respect `prefers-reduced-motion` (tokens + `prefersReducedMotion()` in JS).
 
+## Language (technical vs docs)
+
+- **American English** for technical identifiers: file names, CSS classes/custom properties, JS APIs, `data-*` attributes, form `name` values (align with web platform APIs — e.g. `color`, not `colour`).
+- **British English** is fine in prose docs (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`) and user-visible copy.
+
 ## Versions
 
 | Constant | File | Who bumps |

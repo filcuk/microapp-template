@@ -1,28 +1,31 @@
 /**
- * Hex colour input with an inline swatch preview.
+ * Hex color input with an inline swatch preview.
  *
  * Markup:
- *   <div class="color-picker" data-color-picker-default="#0969da">
+ *   <div class="color-input" data-color-input-default="#0969da">
  *     <label class="field-label" for="my-color-input">Colour</label>
- *     <div class="color-picker-control">
- *       <input type="text" id="my-color-input" class="input color-picker-input"
+ *     <div class="color-input-control">
+ *       <input type="text" id="my-color-input" class="input color-input-field"
  *         autocomplete="off" spellcheck="false" aria-label="Hex colour" />
- *       <span class="color-picker-swatch" aria-hidden="true"></span>
- *       <input type="hidden" class="color-picker-value" name="colour" />
+ *       <span class="color-input-swatch" aria-hidden="true"></span>
+ *       <input type="hidden" class="color-input-value" name="color" />
  *     </div>
  *   </div>
  *
- * data-color-picker-default — initial hex value (#RGB or #RRGGBB)
- * data-color-picker-disabled — disable the control
+ * data-color-input-default — initial hex value (#RGB / #RRGGBB; with alpha also #RGBA / #RRGGBBAA)
+ * data-color-input-alpha — allow 4- and 8-digit hex with alpha
+ * data-color-input-disabled — disable the control
  */
 
 import { parseBooleanAttr } from "../utils/dom.js";
 
-const HEX_PATTERN = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-const PARTIAL_HEX_PATTERN = /^#?[0-9a-fA-F]{0,6}$/;
+const HEX_OPAQUE_PATTERN = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const HEX_ALPHA_PATTERN = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+const PARTIAL_HEX_OPAQUE_PATTERN = /^#?[0-9a-fA-F]{0,6}$/;
+const PARTIAL_HEX_ALPHA_PATTERN = /^#?[0-9a-fA-F]{0,8}$/;
 
 function expandShortHex(hex) {
-  if (hex.length === 3) {
+  if (hex.length === 3 || hex.length === 4) {
     return hex
       .split("")
       .map((char) => char + char)
@@ -31,62 +34,81 @@ function expandShortHex(hex) {
   return hex;
 }
 
-/** @returns {string | null} Normalised `#RRGGBB` or null when invalid. */
-export function parseHexColor(value) {
+/**
+ * @param {string} value
+ * @param {{ alpha?: boolean }} [options]
+ * @returns {string | null} Normalised `#RRGGBB` or `#RRGGBBAA`, or null when invalid.
+ */
+export function parseHexColor(value, { alpha = false } = {}) {
   const text = String(value ?? "").trim();
   if (!text) return null;
-  const match = text.match(HEX_PATTERN);
+  const match = text.match(alpha ? HEX_ALPHA_PATTERN : HEX_OPAQUE_PATTERN);
   if (!match) return null;
-  return `#${expandShortHex(match[1]).toUpperCase()}`;
+  let hex = expandShortHex(match[1]).toUpperCase();
+  if (alpha && hex.length === 6) {
+    hex += "FF";
+  }
+  return `#${hex}`;
 }
 
 function formatDisplayValue(value) {
   return value ?? "";
 }
 
-function isPartialHexInput(value) {
-  return PARTIAL_HEX_PATTERN.test(String(value ?? "").trim());
+function isPartialHexInput(value, alpha) {
+  const pattern = alpha ? PARTIAL_HEX_ALPHA_PATTERN : PARTIAL_HEX_OPAQUE_PATTERN;
+  return pattern.test(String(value ?? "").trim());
 }
 
-function resolveDisabled(colorPickerEl, disabledOption) {
+function resolveDisabled(colorInputEl, disabledOption) {
   if (typeof disabledOption === "boolean") return disabledOption;
-  return parseBooleanAttr(colorPickerEl?.dataset.colorPickerDisabled) ?? false;
+  return parseBooleanAttr(colorInputEl?.dataset.colorInputDisabled) ?? false;
+}
+
+function resolveAlpha(colorInputEl, alphaOption) {
+  if (typeof alphaOption === "boolean") return alphaOption;
+  return parseBooleanAttr(colorInputEl?.dataset.colorInputAlpha) ?? false;
 }
 
 function syncSwatch(swatchEl, color) {
   if (!swatchEl) return;
   swatchEl.classList.toggle("is-empty", !color);
   if (color) {
-    swatchEl.style.setProperty("--color-picker-preview", color);
+    swatchEl.style.setProperty("--color-input-preview", color);
   } else {
-    swatchEl.style.removeProperty("--color-picker-preview");
+    swatchEl.style.removeProperty("--color-input-preview");
   }
 }
 
-export function initColorPicker(
-  colorPickerEl,
-  { defaultValue, disabled, onChange, onInput } = {}
+export function initColorInput(
+  colorInputEl,
+  { defaultValue, alpha, disabled, onChange, onInput } = {}
 ) {
-  if (!colorPickerEl) return null;
+  if (!colorInputEl) return null;
 
-  const textInput = colorPickerEl.querySelector(".color-picker-input");
-  const hiddenInput = colorPickerEl.querySelector(".color-picker-value");
-  const swatchEl = colorPickerEl.querySelector(".color-picker-swatch");
+  const textInput = colorInputEl.querySelector(".color-input-field");
+  const hiddenInput = colorInputEl.querySelector(".color-input-value");
+  const swatchEl = colorInputEl.querySelector(".color-input-swatch");
 
   if (!textInput || !swatchEl) return null;
 
+  const allowAlpha = resolveAlpha(colorInputEl, alpha);
+  colorInputEl.classList.toggle("color-input--alpha", allowAlpha);
+
+  const parse = (value) => parseHexColor(value, { alpha: allowAlpha });
+
   const initialRaw =
     defaultValue ??
-    colorPickerEl.dataset.colorPickerDefault ??
+    colorInputEl.dataset.colorInputDefault ??
     hiddenInput?.value ??
     textInput.value;
-  let currentValue = parseHexColor(initialRaw);
+  let currentValue = parse(initialRaw);
   let isEditing = false;
-  let isDisabled = resolveDisabled(colorPickerEl, disabled);
+  let isDisabled = resolveDisabled(colorInputEl, disabled);
 
   function buildPayload(source) {
     return {
-      colorPickerEl,
+      colorInputEl,
       value: currentValue,
       display: formatDisplayValue(currentValue),
       source,
@@ -95,7 +117,7 @@ export function initColorPicker(
 
   function applyDisabled(nextDisabled) {
     isDisabled = nextDisabled;
-    colorPickerEl.classList.toggle("color-picker--disabled", nextDisabled);
+    colorInputEl.classList.toggle("color-input--disabled", nextDisabled);
     textInput.disabled = nextDisabled;
   }
 
@@ -119,7 +141,7 @@ export function initColorPicker(
     const parsed =
       nextValue === "" || nextValue === null || nextValue === undefined
         ? null
-        : parseHexColor(nextValue);
+        : parse(nextValue);
     if (nextValue && !parsed) return false;
     currentValue = parsed;
     isEditing = false;
@@ -138,7 +160,7 @@ export function initColorPicker(
       return true;
     }
 
-    const parsed = parseHexColor(raw);
+    const parsed = parse(raw);
     if (!parsed) {
       textInput.value = formatDisplayValue(currentValue);
       textInput.removeAttribute("aria-invalid");
@@ -174,14 +196,14 @@ export function initColorPicker(
       return;
     }
 
-    if (!isPartialHexInput(raw)) {
+    if (!isPartialHexInput(raw, allowAlpha)) {
       textInput.setAttribute("aria-invalid", "true");
       syncSwatch(swatchEl, null);
       return;
     }
 
     textInput.removeAttribute("aria-invalid");
-    const preview = parseHexColor(raw);
+    const preview = parse(raw);
     syncSwatch(swatchEl, preview);
     onInput?.({
       ...buildPayload("input"),
@@ -233,14 +255,17 @@ export function initColorPicker(
     isDisabled() {
       return isDisabled;
     },
+    allowsAlpha() {
+      return allowAlpha;
+    },
   };
 }
 
-/** Wire every `.color-picker` block in `root`. */
-export function initColorPickers(root = document) {
+/** Wire every `.color-input` block in `root`. */
+export function initColorInputs(root = document) {
   const instances = [];
-  root.querySelectorAll(".color-picker").forEach((colorPickerEl) => {
-    const instance = initColorPicker(colorPickerEl);
+  root.querySelectorAll(".color-input").forEach((colorInputEl) => {
+    const instance = initColorInput(colorInputEl);
     if (instance) instances.push(instance);
   });
   return instances;

@@ -1,6 +1,6 @@
 import { createIcon } from "../utils/icons.js";
 import { copyText } from "../utils/clipboard.js";
-import { openTooltip } from "../components/tooltip.js";
+import { flashTooltip } from "../components/tooltip.js";
 
 const TOOLTIP_DEFAULT = "Get link";
 const TOOLTIP_COPIED = "Copied!";
@@ -39,14 +39,11 @@ export function initHeadingLinks(
       history.replaceState(null, "", `#${heading.id}`);
 
       const ok = await copyText(headingUrl(heading));
-      button.dataset.tooltip = ok ? TOOLTIP_COPIED : "Copy failed";
-
-      button.blur();
-      openTooltip(button);
-
-      window.setTimeout(() => {
-        button.dataset.tooltip = TOOLTIP_DEFAULT;
-      }, 2000);
+      flashTooltip(button, {
+        text: ok ? TOOLTIP_COPIED : "Copy failed",
+        tone: ok ? "success" : "error",
+        restoreText: TOOLTIP_DEFAULT,
+      });
     });
 
     heading.append(button);

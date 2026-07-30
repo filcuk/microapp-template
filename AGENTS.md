@@ -34,6 +34,17 @@ Prefer the simplest approach that fits the existing template.
 - No build step unless explicitly approved
 - No `package.json` unless the user requests it
 
+## Language (technical vs docs)
+
+Use **American English** for technical identifiers so they match web platform APIs and CSS/HTML conventions (`color`, `dialog`, `initialize`-style spellings where applicable):
+
+- File and directory names (`color-input.js`)
+- CSS class names, custom properties, and selectors (`.color-input`, `--accent`)
+- JS APIs, variables, and `data-*` attributes (`initColorInput`, `data-color-input-default`)
+- Form `name` values and other machine-facing strings
+
+Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, demo labels, user-visible copy) may stay in **British English** (`colour`, `normalise`, etc.).
+
 ## Reuse the design system
 
 - Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, etc.)
@@ -66,6 +77,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with toolbar/surface actions, modes, copy/paste |
 | `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
 | `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
+| `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer reaction when in-place is not possible; persistent tutorial tips — see [`DESIGN.md`](DESIGN.md) |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `app/shell/render-shell.js` |
 | `initStickyChrome()` / `setStickyHeader()` / `setStickySectionHeadings()` | Optional sticky site header and section headings (`data-sticky-header`, `data-sticky-section-headings`) |
 | `initTab()` / `initTabs()` | Single tabbed section vs every `.tabs` block |
@@ -80,7 +92,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initProgressBar()` / `initProgressBars()` | Progress bar with optional percent or fraction label |
 | `initSpinner()` / `initSpinners()` | Loading spinner; optional blocking overlay on a host |
 | `initStepper()` / `initSteppers()` | Numeric nudger with decrement/increment buttons |
-| `initColorPicker()` / `initColorPickers()` | Hex colour input with inline swatch preview |
+| `initColorInput()` / `initColorInputs()` | Hex colour input with inline swatch preview; optional alpha |
 | `initToggle()` / `initToggles()` | On/off switch control; optional `data-toggle-tristate` for off → on → mixed |
 | `initTriStateCheckbox()` / `initTriStateCheckboxes()` | Tri-state checkbox (`data-checkbox-tristate`) — unchecked → checked → mixed |
 | `initBadge()` / `initBadges()` | Corner badge on a `.badge-host` (normal readout or `.badge--sm` dot) |
@@ -129,8 +141,8 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | `app/css/controls-buttons.css` | Toolbar, buttons |
 | `app/css/controls-badges.css` | Corner badges on controls and labels |
 | `app/css/controls-chips.css` | Selectable filter chips and removable input chips |
-| `app/css/controls-fields.css` | Fields, combobox, date/time, color picker |
-| `app/css/controls-widgets.css` | Toggle, segmented control, pagination, progress bar, spinner, slider, stepper |
+| `app/css/controls-fields.css` | Fields, combobox, date/time |
+| `app/css/controls-widgets.css` | Toggle, segmented control, pagination, progress bar, spinner, slider, stepper, color input |
 | `app/css/controls-section-panel.css` | Section panel grid rows |
 | `app/css/controls-menus.css` | Combo button, dropdown menus |
 | `app/css/controls-disclosure.css` | Expand, accordion, tabs, progress indicator |
@@ -182,18 +194,22 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 - Light / dark / auto theme via `data-theme` on `:root`
 - Blocking `app/theme-init.js` in `<head>` to prevent flash of wrong theme
 
+### Action feedback
+
+Follow [`DESIGN.md`](DESIGN.md): prefer **in-place** label flashes when the control can show the outcome (Copy → Copied). Use timer-mode `flashTooltip()` with `tone: "success" | "error"` when in-place is not an option (icon-only controls). Use **banners** when page-level status is requested.
+
 ## Accessibility
 
 - Dialogs: focus trap, Escape to close (via document listener), restore focus, `aria-modal` and labelled titles
 - Toggle buttons: `aria-pressed` where state toggles
-- Tooltips: `aria-describedby` linking trigger to `#tooltip` on show/hide; keyboard focus support
+- Tooltips: hover / timer share one `#tooltip` slot; persistent tips are separate; `aria-describedby` linking; keyboard focus support for hover tips
 - Prefer semantic HTML (`header`, `main`, `footer`, `button`)
 - Popup menus: `aria-expanded` on toggle buttons
 - Page nav: outer `<nav aria-label="Page navigation">`; jump buttons have `aria-label`; section links are plain anchors with hash `href`; use `data-page-nav-tier` on group headings for nested nav lists
 
 ## When extending this template
 
-1. Read `USAGE.md` for available components and fork instructions
+1. Read `USAGE.md` for available components and fork instructions; read `DESIGN.md` for interaction philosophy
 2. Check `demo.html` for usage examples
 3. Keep changes focused — one concern per file when possible
 4. Update `USAGE.md` when you add or change a reusable component, module API, or deploy workflow (see `.cursor/rules/usage-docs.mdc`)

@@ -34,6 +34,7 @@
 import { setHidden } from "../utils/dom.js";
 import { copyText, readText, armPasteCapture } from "../utils/clipboard.js";
 import { createIcon } from "../utils/icons.js";
+import { flashTooltip } from "./tooltip.js";
 
 const LANGUAGE_RE = /language-([\w-]+)/;
 const CODE_MODES = ["view", "select", "edit"];
@@ -504,17 +505,23 @@ export function initCodeBlock(container, options = {}) {
 
   function syncEditableToolbarActions() {
     const editable = mode !== "view";
-    for (const action of ["clear", "paste"]) {
+    const hasContent = currentSource().length > 0;
+
+    for (const action of ["clear", "paste", "copy"]) {
       const btn = toolbarEl?.querySelector(
         `[data-code-toolbar-action="${action}"]`
       );
       if (!(btn instanceof HTMLButtonElement)) continue;
-      btn.disabled = !editable;
-      btn.setAttribute("aria-disabled", editable ? "false" : "true");
+      let enabled = true;
+      if (action === "paste") enabled = editable;
+      else if (action === "clear") enabled = editable && hasContent;
+      else enabled = hasContent;
+      btn.disabled = !enabled;
+      btn.setAttribute("aria-disabled", enabled ? "false" : "true");
     }
 
     const surfaceCopyEnabled =
-      surfaceActions.has("copy") && (mode !== "view");
+      surfaceActions.has("copy") && mode !== "view" && hasContent;
     if (surfaceCopyBtn) {
       setHidden(surfaceCopyBtn, !surfaceActions.has("copy"));
       surfaceCopyBtn.disabled = !surfaceCopyEnabled;
@@ -523,30 +530,32 @@ export function initCodeBlock(container, options = {}) {
 
   /**
    * @param {HTMLButtonElement} btn
-   * @param {string} idleLabel
-   * @param {string} idleText
    * @param {boolean} ok
    */
-  function flashButtonLabel(btn, idleLabel, idleText, ok) {
-    const prev = btn.getAttribute("aria-label") || idleLabel;
+  function flashCopyFeedback(btn, ok) {
     const flash = ok ? "Copied" : "Failed";
-    const useTooltip = Object.hasOwn(btn.dataset, "tooltip");
-    btn.setAttribute("aria-label", flash);
-    if (useTooltip) btn.dataset.tooltip = flash;
-    setToolbarButtonText(btn, flash);
-    window.setTimeout(() => {
-      btn.setAttribute("aria-label", prev);
-      if (useTooltip) btn.dataset.tooltip = idleLabel;
-      setToolbarButtonText(btn, idleText);
-    }, 2000);
+    const labelEl = btn.querySelector(".code-block-toolbar__label");
+    if (labelEl) {
+      const prevAria = btn.getAttribute("aria-label") || "Copy code";
+      const idleText = "Copy";
+      btn.setAttribute("aria-label", flash);
+      setToolbarButtonText(btn, flash);
+      window.setTimeout(() => {
+        btn.setAttribute("aria-label", prevAria);
+        setToolbarButtonText(btn, idleText);
+      }, 2000);
+      return;
+    }
+
+    flashTooltip(btn, {
+      text: flash,
+      tone: ok ? "success" : "error",
+    });
   }
 
   async function handleCopy(btn) {
     const ok = await copyText(currentSource());
-    const idleText = btn.querySelector(".code-block-toolbar__label")
-      ? "Copy"
-      : "Copy code";
-    flashButtonLabel(btn, "Copy", idleText, ok);
+    flashCopyFeedback(btn, ok);
   }
 
   async function handlePaste(btn) {
@@ -558,7 +567,10 @@ export function initCodeBlock(container, options = {}) {
       pasteCapture.cancel();
       pasteCapture = null;
       btn.setAttribute("aria-label", "Paste code");
-      if (useTooltip) btn.dataset.tooltip = "Paste";
+      if (useTooltip) {
+        btn.dataset.tooltip = "Paste";
+        delete btn.dataset.tooltipTone;
+      }
       setToolbarButtonText(btn, "Paste");
       return;
     }
@@ -566,13 +578,19 @@ export function initCodeBlock(container, options = {}) {
     let text = await readText();
     if (text === null) {
       btn.setAttribute("aria-label", "Press Control V to paste");
-      if (useTooltip) btn.dataset.tooltip = "Press Ctrl+V to paste";
+      if (useTooltip) {
+        btn.dataset.tooltip = "Press Ctrl+V to paste";
+        btn.dataset.tooltipTone = "error";
+      }
       setToolbarButtonText(btn, "Ctrl+V");
       pasteCapture = armPasteCapture({ timeoutMs: 15000 });
       text = await pasteCapture.promise;
       pasteCapture = null;
       btn.setAttribute("aria-label", "Paste code");
-      if (useTooltip) btn.dataset.tooltip = "Paste";
+      if (useTooltip) {
+        btn.dataset.tooltip = "Paste";
+        delete btn.dataset.tooltipTone;
+      }
       setToolbarButtonText(btn, "Paste");
       if (text === null) return;
     }

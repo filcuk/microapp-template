@@ -120,6 +120,9 @@
 .tooltip {
   position: fixed;
   z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   max-width: 16rem;
   padding: 0.35rem 0.5rem;
   border: 1px solid var(--border);
@@ -144,6 +147,41 @@
 .tooltip.is-visible {
   visibility: visible;
   opacity: 1;
+}
+
+.tooltip__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  width: 0.875rem;
+  height: 0.875rem;
+  line-height: 0;
+}
+
+.tooltip__icon-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tooltip__label {
+  min-width: 0;
+}
+
+.tooltip--success {
+  font-weight: 700;
+  color: var(--banner-success-text);
+  background: var(--banner-success-bg);
+  border-color: var(--banner-success-border);
+}
+
+.tooltip--error {
+  font-weight: 700;
+  color: var(--banner-error-text);
+  background: var(--banner-error-bg);
+  border-color: var(--banner-error-border);
+}
+
+.tooltip--persistent {
+  z-index: 201;
 }
 
 /* Modals */

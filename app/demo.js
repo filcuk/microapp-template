@@ -11,12 +11,17 @@ import { initTabs } from "./components/tabs.js";
 import { initCodeBlocks } from "./components/code-block.js";
 import { initExpandableSurfaces } from "./components/expandable-surface.js";
 import { showBanner, hideBanner } from "./components/banner.js";
+import {
+  flashTooltip,
+  showPersistentTooltip,
+  dismissPersistentTooltip,
+} from "./components/tooltip.js";
 import { initFileDropzone } from "./components/file-dropzone.js";
 import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
 import { initSlider } from "./components/slider.js";
 import { initStepper } from "./components/stepper.js";
-import { initColorPicker } from "./components/color-picker.js";
+import { initColorInput } from "./components/color-input.js";
 import { initToggle } from "./components/toggle.js";
 import { initTriStateCheckbox } from "./components/checkbox.js";
 import { initSegmentedControl } from "./components/segmented-control.js";
@@ -62,7 +67,6 @@ const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoColorPickerResult = document.getElementById("demo-color-picker-result");
 const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
@@ -220,23 +224,9 @@ initStepper(document.getElementById("demo-stepper"), { onChange: stepperOnChange
 initStepper(document.getElementById("demo-stepper-decimal"), { onChange: stepperOnChange });
 updateStepperResult();
 
-function updateColorPickerResult() {
-  if (!demoColorPickerResult) return;
-  const withDefault = document.getElementById("demo-color-picker");
-  const empty = document.getElementById("demo-color-picker-empty");
-  const defaultValue = withDefault?.querySelector(".color-picker-value")?.value;
-  const emptyValue = empty?.querySelector(".color-picker-value")?.value;
-  demoColorPickerResult.textContent = [
-    `Colour: ${defaultValue || "—"}`,
-    `Empty: ${emptyValue || "—"}`,
-  ].join(" · ");
-}
-
-const colorPickerOnChange = () => updateColorPickerResult();
-
-initColorPicker(document.getElementById("demo-color-picker"), { onChange: colorPickerOnChange });
-initColorPicker(document.getElementById("demo-color-picker-empty"), { onChange: colorPickerOnChange });
-updateColorPickerResult();
+initColorInput(document.getElementById("demo-color-input"));
+initColorInput(document.getElementById("demo-color-input-empty"));
+initColorInput(document.getElementById("demo-color-input-alpha"));
 
 const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
 const demoProgressIndicatorVerticalLabels = ["Details", "Options", "Confirm"];
@@ -697,6 +687,40 @@ if (iconToggleBtn) {
     iconToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
   });
 }
+
+document.getElementById("demo-tooltip-flash-success")?.addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  if (!(btn instanceof HTMLElement)) return;
+  flashTooltip(btn, { text: "Copied", tone: "success" });
+});
+
+document.getElementById("demo-tooltip-flash-error")?.addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  if (!(btn instanceof HTMLElement)) return;
+  flashTooltip(btn, { text: "Failed to copy", tone: "error" });
+});
+
+/** @type {string | null} */
+let demoPersistentTipId = null;
+const demoPersistentTarget = document.getElementById("demo-tooltip-persistent-dismiss");
+
+document.getElementById("demo-tooltip-persistent")?.addEventListener("click", () => {
+  if (!(demoPersistentTarget instanceof HTMLElement)) return;
+  if (demoPersistentTipId) {
+    dismissPersistentTooltip(demoPersistentTipId);
+  }
+  demoPersistentTipId = showPersistentTooltip(demoPersistentTarget, {
+    text: "Click this button to dismiss",
+    tone: "info",
+  });
+});
+
+demoPersistentTarget?.addEventListener("click", () => {
+  if (demoPersistentTipId) {
+    dismissPersistentTooltip(demoPersistentTipId);
+    demoPersistentTipId = null;
+  }
+});
 
 const demoBadge = initBadge(document.getElementById("demo-badge-host"));
 document.getElementById("demo-badge-btn")?.addEventListener("click", () => {
