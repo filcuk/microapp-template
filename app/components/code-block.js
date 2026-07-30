@@ -6,7 +6,6 @@
  *     data-code-mode="select"
  *     data-code-toolbar="top"
  *     data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
- *     data-code-toolbar-align="maximize:right"
  *     data-code-surface-actions="copy,maximize">
  *     <div class="code-block-body">
  *       <pre class="line-numbers language-python"><code>…</code></pre>
@@ -20,7 +19,7 @@
  *     highlight, line-numbers (default `highlight,line-numbers` when omitted
  *     and a toolbar position is not `none`)
  *   data-code-toolbar-align — comma list of `action:left|right` (default
- *     `maximize:right` when maximize is present; all others left)
+ *     `highlight`, `line-numbers`, and `maximize` → `right`; others → `left`)
  *   data-code-surface-actions — comma list: copy, maximize (hover actions);
  *     `none` / empty / `false` disables the floating strip
  *   data-code-copy="false" — legacy: omit surface copy
@@ -43,14 +42,18 @@ const TOOLBAR_ACTION_IDS = [
   "clear",
   "copy",
   "paste",
-  "maximize",
   "highlight",
   "line-numbers",
+  "maximize",
 ];
 const SURFACE_ACTION_IDS = ["copy", "maximize"];
 const DEFAULT_TOOLBAR_ACTIONS = ["highlight", "line-numbers"];
 /** @type {Readonly<Record<string, "left" | "right">>} */
-const DEFAULT_TOOLBAR_ALIGN = { maximize: "right" };
+const DEFAULT_TOOLBAR_ALIGN = {
+  highlight: "right",
+  "line-numbers": "right",
+  maximize: "right",
+};
 
 /**
  * @param {string | undefined} raw
@@ -200,7 +203,7 @@ function createToolbarButton(action, meta) {
   const withText = Boolean(meta.textLabel);
   btn.className = withText
     ? "btn code-block-toolbar__btn code-block-toolbar__btn--labeled"
-    : "btn btn-icon code-block-toolbar__btn";
+    : "btn btn-slim btn-icon code-block-toolbar__btn";
   btn.dataset.codeToolbarAction = action;
   btn.setAttribute("aria-label", meta.label);
   /* Labeled buttons already show their name — skip tooltips. */
@@ -716,7 +719,7 @@ export function initCodeBlock(container, options = {}) {
     if (surfaceActions.has("copy")) {
       surfaceCopyBtn = document.createElement("button");
       surfaceCopyBtn.type = "button";
-      surfaceCopyBtn.className = "btn btn-icon code-block-copy";
+      surfaceCopyBtn.className = "btn btn-slim btn-icon code-block-copy";
       surfaceCopyBtn.setAttribute("aria-label", "Copy code");
       surfaceCopyBtn.dataset.tooltip = "Copy";
       surfaceCopyBtn.dataset.tooltipPosition = "top";

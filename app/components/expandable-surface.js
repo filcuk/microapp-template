@@ -219,7 +219,7 @@ export function initExpandableSurface(surface) {
   if (showFloating) {
     expandBtn = document.createElement("button");
     expandBtn.type = "button";
-    expandBtn.className = "expandable-surface__expand btn btn-icon";
+    expandBtn.className = "expandable-surface__expand btn btn-slim btn-icon";
     expandBtn.dataset.tooltipPosition = "top";
     expandBtn.dataset.expandableSurfaceOpen = "";
     setExpandButtonState(expandBtn, false);

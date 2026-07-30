@@ -47,21 +47,8 @@
   border-top: 1px solid var(--border);
 }
 
-.code-block-toolbar__btn.btn-icon {
-  width: var(--control-height);
-  min-width: var(--control-height);
-  height: var(--control-height);
-  min-height: var(--control-height);
-  padding: 0;
-}
-
 .code-block-toolbar__btn--labeled {
   gap: 0.4rem;
-  min-height: var(--control-height);
-  height: var(--control-height);
-  padding: 0 0.75rem;
-  font-size: 0.8125rem;
-  box-sizing: border-box;
 }
 
 .code-block-toolbar__btn--labeled .btn-icon-svg {

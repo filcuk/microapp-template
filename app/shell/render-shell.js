@@ -232,7 +232,7 @@ function orderAlsoSeeSections(sections) {
   /** @type {AlsoSeeSection | null} */
   let ungrouped = null;
   for (const section of sections) {
-    if (section.topic == null) {
+    if (section.topic === null || section.topic === undefined) {
       if (!ungrouped) {
         ungrouped = section;
       } else {
@@ -266,7 +266,7 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
    * @returns {string}
    */
   function sectionKey(topic) {
-    return topic == null ? "" : topic.toLowerCase();
+    return topic === null || topic === undefined ? "" : topic.toLowerCase();
   }
 
   /**
@@ -473,7 +473,6 @@ export function renderPageShell(options = {}) {
   const {
     repoUrl,
     alsoSee,
-    alsoSeeTopics,
     alsoSeeIncludeLocal,
     appUrl,
     appVersion,
