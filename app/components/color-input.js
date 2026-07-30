@@ -44,7 +44,11 @@ export function parseHexColor(value, { alpha = false } = {}) {
   if (!text) return null;
   const match = text.match(alpha ? HEX_ALPHA_PATTERN : HEX_OPAQUE_PATTERN);
   if (!match) return null;
-  return `#${expandShortHex(match[1]).toUpperCase()}`;
+  let hex = expandShortHex(match[1]).toUpperCase();
+  if (alpha && hex.length === 6) {
+    hex += "FF";
+  }
+  return `#${hex}`;
 }
 
 function formatDisplayValue(value) {

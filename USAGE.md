@@ -1207,7 +1207,7 @@ initSteppers(document); // all `.stepper` blocks
 
 ### Colour input
 
-Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. With `data-color-input-alpha` (or `alpha: true`), also accepts `#RGBA` / `#RRGGBBAA` and normalises to `#RRGGBBAA` when alpha digits are present. The swatch shows a checkerboard when empty, incomplete, or under a semi-transparent value. Reserve **colour picker** for a future spectrum / selector UI — this component is only the hex field.
+Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. With `data-color-input-alpha` (or `alpha: true`), also accepts `#RGBA` / `#RRGGBBAA`; if no alpha digits are given, commit normalises to full opacity (`#RRGGBBFF`). The swatch shows a checkerboard when empty, incomplete, or under a semi-transparent value. Reserve **colour picker** for a future spectrum / selector UI — this component is only the hex field.
 
 ```html
 <div class="color-input" id="my-color-input" data-color-input-default="#0969da">
