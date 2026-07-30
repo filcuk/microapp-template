@@ -839,7 +839,20 @@
                 </div>
               </div>
             </div>
-            <p id="demo-color-input-result" class="demo-hint" aria-live="polite">Colour: #0969DA · Empty: —</p>
+            <div class="demo-grid demo-grid-2">
+              <div class="color-input" id="demo-color-input-alpha" data-color-input-alpha
+                data-color-input-default="#ff338855">
+                <label class="field-label" for="demo-color-input-alpha-field">Colour input (alpha)</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-alpha-field" class="input color-input-field"
+                    placeholder="#RRGGBBAA" autocomplete="off" spellcheck="false"
+                    aria-label="Hex colour with alpha" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
+                </div>
+              </div>
+            </div>
+            <p id="demo-color-input-result" class="demo-hint" aria-live="polite">Colour: #0969DA · Empty: — · Alpha: #FF338855</p>
             <div class="demo-grid demo-grid-2">
               <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
                 data-progress-bar-shine aria-labelledby="demo-progress-bar-label">

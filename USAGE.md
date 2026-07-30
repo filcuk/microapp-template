@@ -301,7 +301,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine; error (stuck) and disabled states. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
-| **Colour input** | Hex text input with inline swatch preview. [`app/components/color-input.js`](app/components/color-input.js). |
+| **Colour input** | Hex text input with inline swatch preview; optional alpha (`#RRGGBBAA`). [`app/components/color-input.js`](app/components/color-input.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. Optional tri-state (`data-toggle-tristate`) cycles off → on → mixed. [`app/components/toggle.js`](app/components/toggle.js). |
 | **Tri-state checkbox** | Checkbox that cycles unchecked → checked → mixed (`indeterminate`). [`app/components/checkbox.js`](app/components/checkbox.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
@@ -1207,7 +1207,7 @@ initSteppers(document); // all `.stepper` blocks
 
 ### Colour input
 
-Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. The swatch shows a checkerboard when empty or while the typed value is incomplete. Reserve **colour picker** for a future spectrum / selector UI — this component is only the hex field.
+Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `#RRGGBB` (with or without `#` while typing). Values normalise to uppercase `#RRGGBB` on commit. With `data-color-input-alpha` (or `alpha: true`), also accepts `#RGBA` / `#RRGGBBAA` and normalises to `#RRGGBBAA` when alpha digits are present. The swatch shows a checkerboard when empty, incomplete, or under a semi-transparent value. Reserve **colour picker** for a future spectrum / selector UI — this component is only the hex field.
 
 ```html
 <div class="color-input" id="my-color-input" data-color-input-default="#0969da">
@@ -1215,6 +1215,18 @@ Hex colour field with a swatch inside the input on the left. Accepts `#RGB` or `
   <div class="color-input-control">
     <input type="text" id="my-color-input-field" class="input color-input-field"
       placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+    <span class="color-input-swatch" aria-hidden="true"></span>
+    <input type="hidden" class="color-input-value" name="color" />
+  </div>
+</div>
+
+<div class="color-input" id="my-color-input-alpha" data-color-input-alpha
+  data-color-input-default="#ff338855">
+  <label class="field-label" for="my-color-input-alpha-field">Colour with alpha</label>
+  <div class="color-input-control">
+    <input type="text" id="my-color-input-alpha-field" class="input color-input-field"
+      placeholder="#RRGGBBAA" autocomplete="off" spellcheck="false"
+      aria-label="Hex colour with alpha" />
     <span class="color-input-swatch" aria-hidden="true"></span>
     <input type="hidden" class="color-input-value" name="color" />
   </div>
@@ -1237,10 +1249,17 @@ colorInput?.setValue(""); // clear
 colorInput?.commitInput();
 colorInput?.setDisabled(true);
 
+const alphaInput = initColorInput(document.getElementById("my-color-input-alpha"), {
+  alpha: true,
+  defaultValue: "#ff338855",
+  onChange: ({ value }) => console.log(value), // "#FF338855"
+});
+alphaInput?.allowsAlpha(); // true
+
 initColorInputs(document); // all `.color-input` blocks
 ```
 
-`data-color-input-default` and `data-color-input-disabled` mirror the JS options. `parseHexColor()` is exported for reuse.
+`data-color-input-default`, `data-color-input-alpha`, and `data-color-input-disabled` mirror the JS options. `parseHexColor(value, { alpha })` is exported for reuse.
 
 ### Toggle
 

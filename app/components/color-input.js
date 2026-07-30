@@ -12,17 +12,20 @@
  *     </div>
  *   </div>
  *
- * data-color-input-default — initial hex value (#RGB or #RRGGBB)
+ * data-color-input-default — initial hex value (#RGB / #RRGGBB; with alpha also #RGBA / #RRGGBBAA)
+ * data-color-input-alpha — allow 4- and 8-digit hex with alpha
  * data-color-input-disabled — disable the control
  */
 
 import { parseBooleanAttr } from "../utils/dom.js";
 
-const HEX_PATTERN = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-const PARTIAL_HEX_PATTERN = /^#?[0-9a-fA-F]{0,6}$/;
+const HEX_OPAQUE_PATTERN = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const HEX_ALPHA_PATTERN = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+const PARTIAL_HEX_OPAQUE_PATTERN = /^#?[0-9a-fA-F]{0,6}$/;
+const PARTIAL_HEX_ALPHA_PATTERN = /^#?[0-9a-fA-F]{0,8}$/;
 
 function expandShortHex(hex) {
-  if (hex.length === 3) {
+  if (hex.length === 3 || hex.length === 4) {
     return hex
       .split("")
       .map((char) => char + char)
@@ -31,11 +34,15 @@ function expandShortHex(hex) {
   return hex;
 }
 
-/** @returns {string | null} Normalised `#RRGGBB` or null when invalid. */
-export function parseHexColor(value) {
+/**
+ * @param {string} value
+ * @param {{ alpha?: boolean }} [options]
+ * @returns {string | null} Normalised `#RRGGBB` or `#RRGGBBAA`, or null when invalid.
+ */
+export function parseHexColor(value, { alpha = false } = {}) {
   const text = String(value ?? "").trim();
   if (!text) return null;
-  const match = text.match(HEX_PATTERN);
+  const match = text.match(alpha ? HEX_ALPHA_PATTERN : HEX_OPAQUE_PATTERN);
   if (!match) return null;
   return `#${expandShortHex(match[1]).toUpperCase()}`;
 }
@@ -44,13 +51,19 @@ function formatDisplayValue(value) {
   return value ?? "";
 }
 
-function isPartialHexInput(value) {
-  return PARTIAL_HEX_PATTERN.test(String(value ?? "").trim());
+function isPartialHexInput(value, alpha) {
+  const pattern = alpha ? PARTIAL_HEX_ALPHA_PATTERN : PARTIAL_HEX_OPAQUE_PATTERN;
+  return pattern.test(String(value ?? "").trim());
 }
 
 function resolveDisabled(colorInputEl, disabledOption) {
   if (typeof disabledOption === "boolean") return disabledOption;
   return parseBooleanAttr(colorInputEl?.dataset.colorInputDisabled) ?? false;
+}
+
+function resolveAlpha(colorInputEl, alphaOption) {
+  if (typeof alphaOption === "boolean") return alphaOption;
+  return parseBooleanAttr(colorInputEl?.dataset.colorInputAlpha) ?? false;
 }
 
 function syncSwatch(swatchEl, color) {
@@ -65,7 +78,7 @@ function syncSwatch(swatchEl, color) {
 
 export function initColorInput(
   colorInputEl,
-  { defaultValue, disabled, onChange, onInput } = {}
+  { defaultValue, alpha, disabled, onChange, onInput } = {}
 ) {
   if (!colorInputEl) return null;
 
@@ -75,12 +88,17 @@ export function initColorInput(
 
   if (!textInput || !swatchEl) return null;
 
+  const allowAlpha = resolveAlpha(colorInputEl, alpha);
+  colorInputEl.classList.toggle("color-input--alpha", allowAlpha);
+
+  const parse = (value) => parseHexColor(value, { alpha: allowAlpha });
+
   const initialRaw =
     defaultValue ??
     colorInputEl.dataset.colorInputDefault ??
     hiddenInput?.value ??
     textInput.value;
-  let currentValue = parseHexColor(initialRaw);
+  let currentValue = parse(initialRaw);
   let isEditing = false;
   let isDisabled = resolveDisabled(colorInputEl, disabled);
 
@@ -119,7 +137,7 @@ export function initColorInput(
     const parsed =
       nextValue === "" || nextValue === null || nextValue === undefined
         ? null
-        : parseHexColor(nextValue);
+        : parse(nextValue);
     if (nextValue && !parsed) return false;
     currentValue = parsed;
     isEditing = false;
@@ -138,7 +156,7 @@ export function initColorInput(
       return true;
     }
 
-    const parsed = parseHexColor(raw);
+    const parsed = parse(raw);
     if (!parsed) {
       textInput.value = formatDisplayValue(currentValue);
       textInput.removeAttribute("aria-invalid");
@@ -174,14 +192,14 @@ export function initColorInput(
       return;
     }
 
-    if (!isPartialHexInput(raw)) {
+    if (!isPartialHexInput(raw, allowAlpha)) {
       textInput.setAttribute("aria-invalid", "true");
       syncSwatch(swatchEl, null);
       return;
     }
 
     textInput.removeAttribute("aria-invalid");
-    const preview = parseHexColor(raw);
+    const preview = parse(raw);
     syncSwatch(swatchEl, preview);
     onInput?.({
       ...buildPayload("input"),
@@ -232,6 +250,9 @@ export function initColorInput(
     },
     isDisabled() {
       return isDisabled;
+    },
+    allowsAlpha() {
+      return allowAlpha;
     },
   };
 }

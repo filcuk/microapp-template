@@ -229,11 +229,14 @@ function updateColorInputResult() {
   if (!demoColorInputResult) return;
   const withDefault = document.getElementById("demo-color-input");
   const empty = document.getElementById("demo-color-input-empty");
+  const alpha = document.getElementById("demo-color-input-alpha");
   const defaultValue = withDefault?.querySelector(".color-input-value")?.value;
   const emptyValue = empty?.querySelector(".color-input-value")?.value;
+  const alphaValue = alpha?.querySelector(".color-input-value")?.value;
   demoColorInputResult.textContent = [
     `Colour: ${defaultValue || "—"}`,
     `Empty: ${emptyValue || "—"}`,
+    `Alpha: ${alphaValue || "—"}`,
   ].join(" · ");
 }
 
@@ -241,6 +244,7 @@ const colorInputOnChange = () => updateColorInputResult();
 
 initColorInput(document.getElementById("demo-color-input"), { onChange: colorInputOnChange });
 initColorInput(document.getElementById("demo-color-input-empty"), { onChange: colorInputOnChange });
+initColorInput(document.getElementById("demo-color-input-alpha"), { onChange: colorInputOnChange });
 updateColorInputResult();
 
 const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
