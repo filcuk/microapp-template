@@ -387,7 +387,12 @@ export function flashTooltip(target, options) {
   }
 
   if (typeof target.blur === "function") {
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
     target.blur();
+    if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
+      window.scrollTo(scrollX, scrollY);
+    }
   }
 
   showSharedSlot(target, "timer");
