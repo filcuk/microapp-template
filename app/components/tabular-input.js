@@ -470,7 +470,7 @@ export function initTabularInput(
 
   const footerActions = document.createElement("div");
   footerActions.className = "tabular-input-footer-actions";
-  footerActions.append(addRowBtn, breakoutBtn, copyBtn, pasteBtn, pasteHeadersBtn);
+  footerActions.append(breakoutBtn, copyBtn, pasteBtn, pasteHeadersBtn);
 
   const addColBtn = document.createElement("button");
   addColBtn.type = "button";
@@ -1268,6 +1268,7 @@ export function initTabularInput(
 
     const lead = document.createElement("td");
     lead.className = "tabular-input-row-move-col";
+    lead.append(addRowBtn);
 
     const cell = document.createElement("td");
     cell.className = "tabular-input-add-row-cell";
