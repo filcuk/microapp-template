@@ -1346,6 +1346,21 @@ export function initTabularInput(
     cell.scrollIntoView({ block: "nearest", inline: "nearest" });
   }
 
+  /**
+   * Focus the delete-row button for a row by index.
+   * @param {number} rowIndex
+   */
+  function focusRowDelete(rowIndex) {
+    if (rowIndex < 0 || rowIndex >= rows.length) return;
+    const row = rows[rowIndex];
+    const btn = tbodyEl.querySelector(
+      `tr[data-row-id="${CSS.escape(row.id)}"] .tabular-input-remove-row`
+    );
+    if (!(btn instanceof HTMLElement)) return;
+    btn.focus();
+    btn.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
   function addRow({ emitEvent = true, source = "add-row" } = {}) {
     if (isDisabled) return null;
     const row = {
@@ -1366,10 +1381,15 @@ export function initTabularInput(
 
   function removeRow(rowId, { emitEvent = true, source = "remove-row" } = {}) {
     if (isDisabled) return;
-    const next = rows.filter((row) => row.id !== rowId);
-    if (next.length === rows.length) return;
-    rows = next;
+    const index = rows.findIndex((row) => row.id === rowId);
+    if (index < 0) return;
+    rows = rows.filter((row) => row.id !== rowId);
     render();
+    // Keep focus on the delete control at this index (next row slid up),
+    // or the new last row if the deleted row was last.
+    if (rows.length) {
+      focusRowDelete(Math.min(index, rows.length - 1));
+    }
     if (emitEvent) {
       emit(source);
       announce("Row deleted");
