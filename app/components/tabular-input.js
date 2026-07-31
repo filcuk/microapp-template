@@ -1244,8 +1244,6 @@ export function initTabularInput(
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.className = "btn btn-icon tabular-input-remove-row";
-    removeBtn.tabIndex = -1;
-    removeBtn.dataset.tabularInputChrome = "remove-row";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete row ${rowIndex + 1}`);
     removeBtn.dataset.tooltip = "Remove row";
@@ -1683,11 +1681,8 @@ export function initTabularInput(
           !el.disabled &&
           isVisibleFocusable(el)
       );
-    // After data: all remove-row controls, then all move-row controls.
-    return [
-      ...filterChrome('[data-tabular-input-chrome="remove-row"]'),
-      ...filterChrome('[data-tabular-input-chrome="move-row"]'),
-    ];
+    // After data (incl. per-row delete): move-row controls only.
+    return filterChrome('[data-tabular-input-chrome="move-row"]');
   }
 
   function getDocumentTabbables() {

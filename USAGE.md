@@ -1789,7 +1789,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 
 **Keyboard**
 
-- **Tab / Shift+Tab** move through fields and header controls first, then **remove row** buttons, then **move row** (up/down) controls.
+- **Tab / Shift+Tab** move through header controls and each row's cells, then that row's **delete** button, then the next row; **move row** (up/down) controls come after the data.
 - **Arrow keys** move between body cells (left/right are caret-edge-aware in text and number fields; up/down always change row).
 - Number cells are text inputs with `inputmode="decimal"` so the caret can walk digits; non-numeric keystrokes are rejected, in-progress drafts (`-`, `1,`, `1.`, `1e-`) are allowed, and the value is normalized on blur. Arrow up/down never steps the value.
 
