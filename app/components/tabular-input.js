@@ -1297,6 +1297,35 @@ export function initTabularInput(
     scheduleBreakoutSync();
   }
 
+  /**
+   * Focus the rename field for a column (selects label text for quick edit).
+   * @param {string} columnId
+   */
+  function focusColumnRename(columnId) {
+    const input = theadEl.querySelector(
+      `.tabular-input-col-label[data-column-id="${CSS.escape(columnId)}"]`
+    );
+    if (!(input instanceof HTMLInputElement)) return;
+    input.focus();
+    input.select();
+    input.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  /**
+   * Focus the first body cell of a row.
+   * @param {string} rowId
+   */
+  function focusRowFirstCell(rowId) {
+    const firstCol = columns[0];
+    if (!firstCol) return;
+    const cell = tbodyEl.querySelector(
+      `[data-tabular-input-cell][data-row-id="${CSS.escape(rowId)}"][data-column-id="${CSS.escape(firstCol.id)}"]`
+    );
+    if (!(cell instanceof HTMLElement)) return;
+    cell.focus();
+    cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
   function addRow({ emitEvent = true, source = "add-row" } = {}) {
     if (isDisabled) return null;
     const row = {
@@ -1307,6 +1336,7 @@ export function initTabularInput(
     };
     rows.push(row);
     render();
+    focusRowFirstCell(row.id);
     if (emitEvent) {
       emit(source);
       announce("Row added");
@@ -1376,6 +1406,7 @@ export function initTabularInput(
       row.cells[column.id] = defaultValueForType(column.type);
     }
     render();
+    focusColumnRename(column.id);
     if (emitEvent) {
       emit(source);
       announce(`Column ${column.label} added`);
