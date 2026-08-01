@@ -13,10 +13,12 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 - Agent lifecycle skills under `.cursor/skills/` (init-app, migrate-template, sync-shell, restore-component, finalize-app, author-component, release-template, handle-assets, health-check).
 - Shared `.cursor/skills/_shared/component-map.md` and `invariants.md` for trim/restore/migrate.
 - Colour input alpha variant (`data-color-input-alpha` / `alpha: true`) for `#RGBA` / `#RRGGBBAA`.
+- Also-see `order` on topics and links; embedded `iconSvg` / `iconSvgLight` / `iconSvgDark` (sanitized inline SVG).
 
 ### Changed
 
 - Renamed the hex colour field component from colour picker to **colour input** (`color-input` / `initColorInput`) so “colour picker” can mean a future spectrum selector.
+- Also-see menu lays topics out full width on a shared grid, choosing the column count that leaves the fewest empty cells.
 
 ## [0.9.0] - 2026-07-26
 

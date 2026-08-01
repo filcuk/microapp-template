@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   alsoSeeHasItems,
+  alsoSeeMenuColumns,
   mergeAlsoSeeSections,
   normalizeAlsoSee,
   normalizeSiteUrl,
@@ -347,10 +348,11 @@ test("normalizeAlsoSee places ungrouped section last", () => {
   );
 });
 
-test("renderAlsoSeeMarkup emits group headers for topics", () => {
+test("renderAlsoSeeMarkup emits nested topic groups with shared columns", () => {
   const markup = renderAlsoSeeMarkup([
     {
       topic: "Database",
+      order: null,
       items: [
         {
           label: "CS Builder",
@@ -359,38 +361,69 @@ test("renderAlsoSeeMarkup emits group headers for topics", () => {
           icon: "",
           iconLight: "",
           iconDark: "",
+          iconSvg: "",
+          iconSvgLight: "",
+          iconSvgDark: "",
+          order: null,
         },
       ],
     },
   ]);
 
-  assert.match(markup, /dropdown-menu-group">Database</);
+  assert.match(markup, /footer-also-see-topic/);
+  assert.match(markup, /footer-also-see-topic-label">Database</);
+  assert.match(markup, /aria-label="Database"/);
+  assert.match(markup, /--also-see-columns:\s*1/);
+  assert.match(markup, /footer-also-see-topic-links/);
   assert.match(markup, /href="https:\/\/example\.com\/cs"/);
   assert.match(markup, /CS Builder/);
   assert.equal(alsoSeeHasItems([]), false);
   assert.equal(
-    alsoSeeHasItems([{ topic: "X", items: [] }]),
+    alsoSeeHasItems([{ topic: "X", order: null, items: [] }]),
     false
   );
 });
 
-test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
+test("alsoSeeMenuColumns picks the grid with fewest trailing gaps", () => {
+  const section = (count) => ({
+    topic: `T${count}`,
+    order: null,
+    items: Array.from({ length: count }, () => ({ label: "x", url: "y" })),
+  });
+
+  assert.equal(alsoSeeMenuColumns([]), 1);
+  assert.equal(alsoSeeMenuColumns([section(1), section(1)]), 1);
+  // 4 + 1 + 1 + 2 links: two columns beat three (fewer holes) and one (taller).
+  assert.equal(
+    alsoSeeMenuColumns([section(4), section(1), section(1), section(2)]),
+    2
+  );
+  assert.equal(alsoSeeMenuColumns([section(6), section(3)]), 3);
+});
+
+test("renderAlsoSeeMarkup makes every topic full width", () => {
+  const fourLinks = [1, 2, 3, 4].map((n) => ({
+    label: `App ${n}`,
+    subtitle: "",
+    url: `https://example.com/${n}`,
+    icon: "",
+    iconLight: "",
+    iconDark: "",
+    iconSvg: "",
+    iconSvgLight: "",
+    iconSvgDark: "",
+    order: null,
+  }));
+
   const markup = renderAlsoSeeMarkup([
     {
-      topic: "Database",
-      items: [
-        {
-          label: "CS Builder",
-          subtitle: "",
-          url: "https://example.com/cs",
-          icon: "",
-          iconLight: "",
-          iconDark: "",
-        },
-      ],
+      topic: "Power BI",
+      order: 10,
+      items: fourLinks,
     },
     {
       topic: null,
+      order: null,
       items: [
         {
           label: "Profile",
@@ -399,15 +432,21 @@ test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
           icon: "",
           iconLight: "",
           iconDark: "",
+          iconSvg: "",
+          iconSvgLight: "",
+          iconSvgDark: "",
+          order: null,
         },
       ],
     },
   ]);
 
-  assert.match(
-    markup,
-    /dropdown-menu-group">Database[\s\S]*dropdown-menu-separator[\s\S]*Profile/
-  );
+  // 4 links + 1 ungrouped link: two columns leave the fewest holes.
+  assert.match(markup, /--also-see-columns:\s*2/);
+  assert.match(markup, /footer-also-see-topic--ungrouped[\s\S]*Profile/);
+  assert.doesNotMatch(markup, /--also-see-span/);
+  assert.doesNotMatch(markup, /dropdown-menu-separator/);
+  assert.doesNotMatch(markup, /dropdown-menu-group/);
 });
 
 test("normalizeAlsoSee keeps a single icon without inventing a theme pair", () => {
@@ -495,4 +534,199 @@ test("renderAlsoSeeMarkup uses one img for icon and a pair for light/dark", () =
     pair,
     /brand-icon--dark" src="https:\/\/example\.com\/app-dark\.svg"/
   );
+});
+
+test("normalizeAlsoSee sorts topics and links by order", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "Later",
+        order: 20,
+        items: [
+          { label: "B", url: "https://example.com/b", order: 20 },
+          { label: "A", url: "https://example.com/a", order: 10 },
+        ],
+      },
+      {
+        topic: "Earlier",
+        order: 10,
+        items: [{ label: "C", url: "https://example.com/c", order: 5 }],
+      },
+      {
+        label: "Ungrouped high",
+        url: "https://example.com/u2",
+        order: 20,
+      },
+      {
+        label: "Ungrouped low",
+        url: "https://example.com/u1",
+        order: 10,
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  assert.deepEqual(
+    sections.map((section) => section.topic),
+    ["Earlier", "Later", null]
+  );
+  assert.deepEqual(
+    sections[1].items.map((item) => item.label),
+    ["A", "B"]
+  );
+  assert.deepEqual(
+    sections[2].items.map((item) => item.label),
+    ["Ungrouped low", "Ungrouped high"]
+  );
+});
+
+test("normalizeAlsoSee puts missing order after numbered entries", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "No order",
+        items: [
+          { label: "Missing", url: "https://example.com/m" },
+          { label: "First", url: "https://example.com/f", order: 1 },
+        ],
+      },
+      {
+        topic: "Numbered",
+        order: 5,
+        items: [{ label: "N", url: "https://example.com/n" }],
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  assert.deepEqual(
+    sections.map((section) => section.topic),
+    ["Numbered", "No order"]
+  );
+  assert.deepEqual(
+    sections[1].items.map((item) => item.label),
+    ["First", "Missing"]
+  );
+  assert.equal(sections[0].order, 5);
+  assert.equal(sections[1].order, null);
+  assert.equal(sections[1].items[0].order, 1);
+  assert.equal(sections[1].items[1].order, null);
+});
+
+test("mergeAlsoSeeSections keeps lower topic order and re-sorts links", () => {
+  const merged = mergeAlsoSeeSections(
+    [
+      {
+        topic: "Embedded",
+        order: 30,
+        items: [
+          {
+            label: "Remote late",
+            subtitle: "",
+            url: "https://example.com/a",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+            order: 20,
+          },
+        ],
+      },
+    ],
+    [
+      {
+        topic: "embedded",
+        order: 10,
+        items: [
+          {
+            label: "Local early",
+            subtitle: "",
+            url: "https://example.com/b",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+            order: 5,
+          },
+        ],
+      },
+      {
+        topic: "Examples",
+        order: 20,
+        items: [
+          {
+            label: "Local C",
+            subtitle: "",
+            url: "https://example.com/c",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+            order: 1,
+          },
+        ],
+      },
+    ]
+  );
+
+  assert.deepEqual(
+    merged.map((section) => [section.topic, section.order]),
+    [
+      ["Embedded", 10],
+      ["Examples", 20],
+    ]
+  );
+  assert.deepEqual(
+    merged[0].items.map((item) => item.label),
+    ["Local early", "Remote late"]
+  );
+});
+
+test("normalizeAlsoSee prefers iconSvg over URL icons", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Sponsor",
+        url: "https://github.com/sponsors/filcuk",
+        icon: "https://example.com/ignored.svg",
+        iconSvg:
+          '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14"/></svg>',
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  const item = sections[0].items[0];
+  assert.match(item.iconSvg, /viewBox="0 0 16 16"/);
+  assert.equal(item.icon, "");
+  assert.equal(item.iconLight, "");
+  assert.equal(item.iconDark, "");
+});
+
+test("renderAlsoSeeMarkup emits sanitized inline SVG icons", () => {
+  const markup = renderAlsoSeeMarkup([
+    {
+      topic: null,
+      order: null,
+      items: [
+        {
+          label: "Sponsor",
+          subtitle: "",
+          url: "https://github.com/sponsors/filcuk",
+          icon: "",
+          iconLight: "",
+          iconDark: "",
+          iconSvg:
+            '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14"/></svg>',
+          iconSvgLight: "",
+          iconSvgDark: "",
+          order: null,
+        },
+      ],
+    },
+  ]);
+
+  assert.match(markup, /<svg\b[^>]*class="dropdown-menu-item-icon"/);
+  assert.match(markup, /viewBox="0 0 16 16"/);
+  assert.doesNotMatch(markup, /<img\b/);
 });

@@ -1,5 +1,6 @@
 import { APP_CONFIG } from "../config.js";
 import { APP_VERSION, TEMPLATE_VERSION } from "../version.js";
+import { sanitizeAlsoSeeSvg } from "../utils/also-see-svg.js";
 
 const DEFAULTS = {
   repoUrl: APP_CONFIG.repoUrl,
@@ -87,9 +88,82 @@ export function normalizeSiteUrl(value) {
  *   icon: string,
  *   iconLight: string,
  *   iconDark: string,
+ *   iconSvg: string,
+ *   iconSvgLight: string,
+ *   iconSvgDark: string,
+ *   order: number | null,
  * }} AlsoSeeLink
- * @typedef {{ topic: string | null, items: AlsoSeeLink[] }} AlsoSeeSection
+ * @typedef {{
+ *   topic: string | null,
+ *   order: number | null,
+ *   items: AlsoSeeLink[],
+ * }} AlsoSeeSection
  */
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function trimAlsoSeeString(value) {
+  return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+/**
+ * Parse an optional numeric `order` from JSON / config.
+ * Non-finite values are treated as missing (`null` → sort after numbered).
+ *
+ * @param {unknown} value
+ * @returns {number | null}
+ */
+export function parseAlsoSeeOrder(value) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  return value;
+}
+
+/**
+ * Sort key: finite orders ascending; missing orders after all finite ones.
+ *
+ * @param {number | null | undefined} order
+ * @returns {number}
+ */
+function alsoSeeOrderKey(order) {
+  return typeof order === "number" && Number.isFinite(order)
+    ? order
+    : Number.POSITIVE_INFINITY;
+}
+
+/**
+ * Stable sort by `order`, then original index.
+ *
+ * @template {{ order?: number | null }} T
+ * @param {T[]} items
+ * @returns {T[]}
+ */
+function sortByAlsoSeeOrder(items) {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => {
+      const byOrder = alsoSeeOrderKey(a.item.order) - alsoSeeOrderKey(b.item.order);
+      if (byOrder !== 0) return byOrder;
+      return a.index - b.index;
+    })
+    .map(({ item }) => item);
+}
+
+/**
+ * Prefer the lower finite `order` when merging sections; otherwise keep primary.
+ *
+ * @param {number | null | undefined} primary
+ * @param {number | null | undefined} secondary
+ * @returns {number | null}
+ */
+function mergeAlsoSeeOrder(primary, secondary) {
+  const a = parseAlsoSeeOrder(primary);
+  const b = parseAlsoSeeOrder(secondary);
+  if (a === null) return b;
+  if (b === null) return a;
+  return Math.min(a, b);
+}
 
 /**
  * @param {unknown} link
@@ -106,16 +180,55 @@ function normalizeAlsoSeeLink(link, exclude) {
 
   const subtitle =
     typeof link.subtitle === "string" ? link.subtitle.trim() : "";
-  const icon =
-    typeof link.icon === "string" && link.icon.trim() ? link.icon.trim() : "";
-  const iconLight =
-    typeof link.iconLight === "string" && link.iconLight.trim()
-      ? link.iconLight.trim()
-      : "";
-  const iconDark =
-    typeof link.iconDark === "string" && link.iconDark.trim()
-      ? link.iconDark.trim()
-      : "";
+  const order = parseAlsoSeeOrder(/** @type {{ order?: unknown }} */ (link).order);
+  const iconSvg = trimAlsoSeeString(
+    /** @type {{ iconSvg?: unknown }} */ (link).iconSvg
+  );
+  const iconSvgLight = trimAlsoSeeString(
+    /** @type {{ iconSvgLight?: unknown }} */ (link).iconSvgLight
+  );
+  const iconSvgDark = trimAlsoSeeString(
+    /** @type {{ iconSvgDark?: unknown }} */ (link).iconSvgDark
+  );
+
+  // Embedded SVG wins over URL icons (same pair / single precedence).
+  if (iconSvgLight || iconSvgDark) {
+    return {
+      label,
+      subtitle,
+      url,
+      icon: "",
+      iconLight: "",
+      iconDark: "",
+      iconSvg: "",
+      iconSvgLight: iconSvgLight || iconSvgDark,
+      iconSvgDark: iconSvgDark || iconSvgLight,
+      order,
+    };
+  }
+
+  if (iconSvg) {
+    return {
+      label,
+      subtitle,
+      url,
+      icon: "",
+      iconLight: "",
+      iconDark: "",
+      iconSvg,
+      iconSvgLight: "",
+      iconSvgDark: "",
+      order,
+    };
+  }
+
+  const icon = trimAlsoSeeString(/** @type {{ icon?: unknown }} */ (link).icon);
+  const iconLight = trimAlsoSeeString(
+    /** @type {{ iconLight?: unknown }} */ (link).iconLight
+  );
+  const iconDark = trimAlsoSeeString(
+    /** @type {{ iconDark?: unknown }} */ (link).iconDark
+  );
 
   // Theme pair when either light/dark is set; otherwise a single always-visible icon.
   if (iconLight || iconDark) {
@@ -126,10 +239,25 @@ function normalizeAlsoSeeLink(link, exclude) {
       icon: "",
       iconLight: iconLight || iconDark,
       iconDark: iconDark || iconLight,
+      iconSvg: "",
+      iconSvgLight: "",
+      iconSvgDark: "",
+      order,
     };
   }
 
-  return { label, subtitle, url, icon, iconLight: "", iconDark: "" };
+  return {
+    label,
+    subtitle,
+    url,
+    icon,
+    iconLight: "",
+    iconDark: "",
+    iconSvg: "",
+    iconSvgLight: "",
+    iconSvgDark: "",
+    order,
+  };
 }
 
 /**
@@ -221,7 +349,8 @@ export function alsoSeeHasItems(sections) {
 }
 
 /**
- * Keep named topics in encounter order; always place the ungrouped section last.
+ * Sort named topics by `order` (then encounter index); always place ungrouped
+ * last. Items within each section are also sorted by link `order`.
  *
  * @param {AlsoSeeSection[]} sections
  * @returns {AlsoSeeSection[]}
@@ -234,22 +363,45 @@ function orderAlsoSeeSections(sections) {
   for (const section of sections) {
     if (section.topic === null || section.topic === undefined) {
       if (!ungrouped) {
-        ungrouped = section;
+        ungrouped = {
+          topic: null,
+          order: null,
+          items: [...section.items],
+        };
       } else {
         ungrouped.items.push(...section.items);
       }
       continue;
     }
-    named.push(section);
+    named.push({
+      topic: section.topic,
+      order: section.order ?? null,
+      items: [...section.items],
+    });
   }
-  return ungrouped ? [...named, ungrouped] : named;
+
+  const sortedNamed = sortByAlsoSeeOrder(named).map((section) => ({
+    ...section,
+    items: sortByAlsoSeeOrder(section.items),
+  }));
+
+  if (!ungrouped) return sortedNamed;
+  return [
+    ...sortedNamed,
+    {
+      topic: null,
+      order: null,
+      items: sortByAlsoSeeOrder(ungrouped.items),
+    },
+  ];
 }
 
 /**
  * Merge also-see sections by topic (case-insensitive). Matching topics share one
- * section; items are appended and de-duplicated by normalized URL. Primary
- * section order and topic casing win; new topics from secondary are appended.
- * Ungrouped (no topic) sections are always last.
+ * section; items are appended and de-duplicated by normalized URL. On merge,
+ * the lower finite topic `order` wins. Named topics are sorted by `order`;
+ * ungrouped (no topic) sections are always last. Link `order` is applied within
+ * each section after merge.
  *
  * @param {AlsoSeeSection[]} primary
  * @param {AlsoSeeSection[]} secondary
@@ -280,6 +432,7 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
       if (!existing) {
         const copy = {
           topic: section.topic,
+          order: section.order ?? null,
           items: [...section.items],
         };
         byKey.set(key, copy);
@@ -287,6 +440,7 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
         continue;
       }
 
+      existing.order = mergeAlsoSeeOrder(existing.order, section.order);
       const seen = new Set(
         existing.items.map((item) => normalizeSiteUrl(item.url)).filter(Boolean)
       );
@@ -340,7 +494,11 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
         .filter(Boolean);
       if (!items.length) continue;
 
-      sections.push({ topic: topic || null, items });
+      sections.push({
+        topic: topic || null,
+        order: topic ? parseAlsoSeeOrder(entry.order) : null,
+        items,
+      });
       continue;
     }
 
@@ -353,7 +511,7 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
     if (last && last.topic === null) {
       last.items.push(link);
     } else {
-      sections.push({ topic: null, items: [link] });
+      sections.push({ topic: null, order: null, items: [link] });
     }
   }
 
@@ -365,6 +523,27 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
  * @returns {string}
  */
 function renderAlsoSeeIconMarkup(link) {
+  if (link.iconSvgLight || link.iconSvgDark) {
+    const light = sanitizeAlsoSeeSvg(
+      link.iconSvgLight,
+      "dropdown-menu-item-icon brand-icon--light"
+    );
+    const dark = sanitizeAlsoSeeSvg(
+      link.iconSvgDark,
+      "dropdown-menu-item-icon brand-icon--dark"
+    );
+    if (!light && !dark) return "";
+    return `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+              ${light}${dark}
+            </span>`;
+  }
+  if (link.iconSvg) {
+    const svg = sanitizeAlsoSeeSvg(link.iconSvg, "dropdown-menu-item-icon");
+    if (!svg) return "";
+    return `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+              ${svg}
+            </span>`;
+  }
   if (link.iconLight || link.iconDark) {
     return `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
               <img class="dropdown-menu-item-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="24" height="24" />
@@ -401,6 +580,73 @@ function renderAlsoSeeLinkItem(link, index) {
         </li>`;
 }
 
+/** Column counts the also-see menu may use. */
+const ALSO_SEE_MENU_COLUMNS = [1, 2, 3];
+
+/**
+ * Pick one column count for the whole menu. Every topic spans the full width,
+ * so the best count is the one that leaves the fewest trailing holes without
+ * making the menu unnecessarily tall.
+ *
+ * @param {AlsoSeeSection[]} sections
+ * @returns {number}
+ */
+export function alsoSeeMenuColumns(sections) {
+  const counts = (Array.isArray(sections) ? sections : [])
+    .map((section) => section?.items?.length ?? 0)
+    .filter((count) => count > 0);
+  if (!counts.length) return 1;
+
+  const largest = Math.max(...counts);
+  let best = 1;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  for (const columns of ALSO_SEE_MENU_COLUMNS) {
+    if (columns > largest) break;
+    let score = 0;
+    for (const count of counts) {
+      const rows = Math.ceil(count / columns);
+      score += rows + (rows * columns - count);
+    }
+    // Ties favour the wider grid, which is the shorter menu.
+    if (score <= bestScore) {
+      bestScore = score;
+      best = columns;
+    }
+  }
+
+  return best;
+}
+
+/**
+ * @param {AlsoSeeSection} section
+ * @param {number} startIndex
+ * @returns {{ markup: string, nextIndex: number }}
+ */
+function renderAlsoSeeTopic(section, startIndex) {
+  let index = startIndex;
+  const linksMarkup = section.items
+    .map((link) => renderAlsoSeeLinkItem(link, index++))
+    .join("");
+
+  if (!section.topic) {
+    return {
+      markup: `<li class="footer-also-see-topic footer-also-see-topic--ungrouped" role="presentation">
+          <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
+        </li>`,
+      nextIndex: index,
+    };
+  }
+
+  return {
+    markup: `<li class="footer-also-see-topic" role="group" aria-label="${escapeAttr(section.topic)}">
+          <div class="footer-also-see-topic-label">${escapeText(section.topic)}</div>
+          <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
+        </li>`,
+    nextIndex: index,
+  };
+}
+
 /**
  * @param {AlsoSeeSection[]} sections
  * @returns {string}
@@ -409,21 +655,13 @@ export function renderAlsoSeeMarkup(sections) {
   if (!alsoSeeHasItems(sections)) return "";
 
   let index = 0;
-  const items = sections
-    .map((section, sectionIndex) => {
-      const linksMarkup = section.items
-        .map((link) => renderAlsoSeeLinkItem(link, index++))
-        .join("");
-      if (!section.topic) {
-        const divider =
-          sectionIndex > 0
-            ? `<li role="separator" class="dropdown-menu-separator"></li>`
-            : "";
-        return `${divider}${linksMarkup}`;
-      }
-      return `<li role="presentation">
-          <div class="dropdown-menu-group">${escapeText(section.topic)}</div>
-        </li>${linksMarkup}`;
+  const filled = sections.filter((section) => section.items.length > 0);
+  const columns = alsoSeeMenuColumns(filled);
+  const topicsMarkup = filled
+    .map((section) => {
+      const rendered = renderAlsoSeeTopic(section, index);
+      index = rendered.nextIndex;
+      return rendered.markup;
     })
     .join("");
 
@@ -431,8 +669,8 @@ export function renderAlsoSeeMarkup(sections) {
         <span>also
           <span class="footer-also-see dropdown" id="footer-also-see">
             <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">see links</button>
-            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
-              ${items}
+            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden data-also-see-columns="${columns}" style="--also-see-columns: ${columns}">
+              ${topicsMarkup}
             </ul>
           </span></span>`;
 }

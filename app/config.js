@@ -7,10 +7,12 @@ export const APP_CONFIG = {
   themeChangeEvent: "microapp-theme-change",
   /**
    * Remote JSON for the footer “also see” menu.
-   * Top-level array of `{ topic, items }` sections and/or flat link objects.
-   * Prefer a raw.githubusercontent.com or GitHub Pages URL. Empty = skip fetch.
-   * On success, shows the remote list (merged with local when
-   * `alsoSeeIncludeLocal` is true). Local is never used as a fallback.
+   * Top-level array of `{ topic, items, order? }` sections and/or flat link objects.
+   * Optional `order` on topics/links; `iconSvg` / `iconSvgLight` / `iconSvgDark` for
+   * embedded SVG (wins over URL icons). Prefer a raw.githubusercontent.com or
+   * GitHub Pages URL. Empty = skip fetch. On success, shows the remote list
+   * (merged with local when `alsoSeeIncludeLocal` is true). Local is never used
+   * as a fallback.
    */
   alsoSeeUrl:
     "https://raw.githubusercontent.com/filcuk/shared/refs/heads/main/apps/links.json",
@@ -32,6 +34,7 @@ export const APP_CONFIG = {
   alsoSee: [
     {
       topic: "Examples",
+      order: 10,
       items: [
         {
           label: "Example App A",
@@ -39,6 +42,7 @@ export const APP_CONFIG = {
           url: "https://example.com/app-a",
           iconLight: "app/res/app-light.svg",
           iconDark: "app/res/app-dark.svg",
+          order: 10,
         },
         {
           label: "Example App B",
@@ -46,6 +50,7 @@ export const APP_CONFIG = {
           url: "https://example.com/app-b",
           iconLight: "app/res/app-light.svg",
           iconDark: "app/res/app-dark.svg",
+          order: 20,
         },
       ],
     },
@@ -55,6 +60,7 @@ export const APP_CONFIG = {
       url: "https://example.com/app-c",
       iconLight: "app/res/app-light.svg",
       iconDark: "app/res/app-dark.svg",
+      order: 10,
     },
   ],
 };
