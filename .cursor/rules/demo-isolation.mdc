@@ -1,0 +1,26 @@
+---
+description: Keep demo-only markup out of shared shell, utils, and layout APIs
+globs: demo.html,app/demo.js,app/shell/**/*.js,app/css/layout.css,app/utils/**/*.js
+alwaysApply: false
+---
+
+# Demo isolation — do not leak showcase chrome into shared code
+
+`demo.html` / `app/demo.js` may use **`demo-*`** classes for showcase-only helpers (e.g. `.demo-row`, `.demo-grid`, `.demo-card`, `.demo-hint`). Those are not part of the reusable design system.
+
+## Never
+
+- Reference `demo-*` class names from `app/shell/`, `app/utils/`, or other shared modules
+- Add selectors for `demo-*` in shared CSS that shell/components depend on (prefer generic names under `app/css/`)
+- Teach sticky, page-nav, or other shell behaviour to only work with demo-prefixed markup
+
+## When demo needs layout that shell also uses
+
+1. Give it a **generic** name (e.g. `.content-section`, `.content-tier`, `.section-heading`)
+2. Document it in `USAGE.md` as a reusable layout pattern
+3. Use that generic name in both the demo and shared JS/CSS
+
+## Allowed `demo-*` usage
+
+- Classes and ids that exist only in `demo.html` / `app/demo.js` / demo-only CSS helpers in `layout.css`
+- Element ids like `demo-combobox-result` for demo wiring

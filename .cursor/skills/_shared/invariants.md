@@ -36,6 +36,7 @@ Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `render
 - Tokens from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, …).
 - Existing classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.section-panel`, `.code-block`, `.theme-toggle`, etc.
 - Respect `prefers-reduced-motion` (tokens + `prefersReducedMotion()` in JS).
+- **Demo isolation:** showcase-only helpers may use `demo-*` in `demo.html` / `app/demo.js`. Shared shell, utils, and layout APIs must use generic class names (e.g. `.content-section`, `.content-tier`) — never hardcode `demo-*` selectors. See [`.cursor/rules/demo-isolation.mdc`](../../rules/demo-isolation.mdc).
 
 ## Language (technical vs docs)
 

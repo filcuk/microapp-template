@@ -10,8 +10,8 @@
  * headings clear a stuck site header (remeasured on scroll), and toggles
  * data-sticky-header-stuck for cover strips under the pinned site header.
  *
- * `.demo-tier-header` and `.section-heading` share one sticky slot. Subheadings
- * in sibling `.demo-section`s push each other out natively. Tier headers are
+ * `.content-tier-header` and `.section-heading` share one sticky slot. Subheadings
+ * in sibling `.content-section`s push each other out natively. Tier headers are
  * pushed out by the first `.section-heading` in that tier (JS adjusts `top`).
  */
 
@@ -67,7 +67,7 @@ function sectionStickY(root) {
 }
 
 function clearTierHeaderPush() {
-  document.querySelectorAll(".demo-tier-header").forEach((el) => {
+  document.querySelectorAll(".content-tier-header").forEach((el) => {
     el.style.top = "";
   });
 }
@@ -101,8 +101,8 @@ export function syncStickyHeadingStack() {
 
   const stickY = sectionStickY(root);
 
-  document.querySelectorAll(".demo-tier-header").forEach((tierHeader) => {
-    const tier = tierHeader.closest(".demo-tier");
+  document.querySelectorAll(".content-tier-header").forEach((tierHeader) => {
+    const tier = tierHeader.closest(".content-tier");
     const sub = tier?.querySelector(".section-heading");
     if (!sub) {
       tierHeader.style.top = "";

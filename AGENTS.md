@@ -136,7 +136,7 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | ---- | -------- |
 | `app/styles.css` | Entry point — `@import` only |
 | `app/tokens.css` | Reset, `:root` tokens, dark theme, base typography, `.hidden`, reduced-motion |
-| `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
+| `app/css/layout.css` | Page shell, sections, content tiers, section panels, page nav, footer, theme toggle |
 | `app/css/code-block.css` | Code blocks and expandable surfaces |
 | `app/css/controls-buttons.css` | Toolbar, buttons |
 | `app/css/controls-badges.css` | Corner badges on controls and labels |
@@ -153,6 +153,12 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | `app/css/controls-tabular-input.css` | Editable typed grid (tabular input) |
 
 Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.
+
+### Demo vs shared layout
+
+- **Shared layout** (usable in forks): `.content-section`, `.content-tier` / `.content-tier-header` / `.content-tier-title` / `.content-tier-lead` / `.content-tier-body`, `.section-heading`, `.section-panel`, …
+- **Demo-only helpers** (showcase arrangement): `.demo-row`, `.demo-grid`, `.demo-card`, `.demo-hint`, … — fine in `demo.html` / `app/demo.js`
+- Shell and shared CSS/JS must **not** select `demo-*` classes. If sticky, page-nav, or other chrome depends on markup, use generic names and document them in `USAGE.md`. See [`.cursor/rules/demo-isolation.mdc`](.cursor/rules/demo-isolation.mdc).
 
 ## JS module layers
 
