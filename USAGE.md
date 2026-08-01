@@ -1765,7 +1765,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 
 - Rename columns by clicking the header label (pointer cursor + “Click to edit” tooltip; Enter to commit, Escape to cancel); resting headers look like normal table headers until edited.
 - Column menu (chevron on the right of the name): **Type** group (text / number / logical; values are coerced) and **Column** group with **Remove**, **Add before**, and **Add after**. Only one column menu open at a time. Menus use fixed positioning so they are not clipped by the table scroll container.
-- Icon-only **add row** / **add column** (`plus`); **row remove** shares the trailing column with **add column** (header = add column, body = remove row).
+- Icon-only **add row** / **add column** (`plus`); **add row** sits in the leading chrome column under reset / move-row; **row remove** shares the trailing column with **add column** (header = add column, body = remove row). Adding a column focuses its header name (text selected, ready to rename); adding a row focuses the new row's first cell.
 - **Copy** (beside Fit/Overflow) copies the grid as Excel-friendly TSV (header + rows) for paste into spreadsheets.
 - **Paste** replaces the whole grid from the clipboard, sized exactly to the clipboard (columns labeled `Column 1`…`N`; types auto-detected).
 - **Paste with Headers** same as Paste, but the first clipboard row becomes column labels and the remaining rows are data.
@@ -1776,7 +1776,7 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 **Width / canvas breakout**
 
 - When the grid is wider than the page body, it **breaks out centered** up to the canvas (`100vw` minus page padding) instead of scrolling inside the body.
-- A **Fit** / **Overflow** toggle (`fullscreen` / `fullscreen-exit`) sits beside **add row** and appears **only while overflowing**; use it to constrain back to the body (horizontal scroll) or expand again. Tooltips stay “Fit to page width” / “Expand to canvas width”. Default is breakout on.
+- A **Fit** / **Overflow** toggle (`fullscreen` / `fullscreen-exit`) sits in the footer beside **Copy** (after **add row** in the leading chrome column) and appears **only while overflowing**; use it to constrain back to the body (horizontal scroll) or expand again. Tooltips stay “Fit to page width” / “Expand to canvas width”. Default is breakout on.
 - Opt out via `breakout: false` or `data-tabular-input-breakout="false"` (initial preference). `setBreakoutEnabled(boolean)` / `getBreakoutEnabled()` are also available.
 
 **Paste**
@@ -1789,8 +1789,9 @@ Editable data grid for collecting rows of typed values. Mount an empty `.tabular
 
 **Keyboard**
 
-- **Tab / Shift+Tab** move through fields and header controls first, then **remove row** buttons, then **move row** (up/down) controls.
-- **Arrow keys** move between body cells (left/right are caret-edge-aware in text/number fields; up/down always change row).
+- **Tab / Shift+Tab** move through header controls and each row's cells, then that row's **delete** button, then the next row; **move row** (up/down) controls come after the data.
+- **Arrow keys** move between body cells (left/right are caret-edge-aware in text and number fields; up/down always change row).
+- Number cells are text inputs with `inputmode="decimal"` so the caret can walk digits; non-numeric keystrokes are rejected, in-progress drafts (`-`, `1,`, `1.`, `1e-`) are allowed, and the value is normalized on blur. Arrow up/down never steps the value.
 
 ```html
 <div class="tabular-input" id="inventory-grid" aria-label="Inventory"></div>

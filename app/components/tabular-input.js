@@ -90,6 +90,15 @@ export function defaultValueForType(type) {
 }
 
 /**
+ * Is this a value a user could be part-way through typing in a number cell?
+ * Accepts in-progress drafts such as `-`, `1,`, `1.`, and `1e-`.
+ * @param {string} value
+ */
+export function isNumberDraft(value) {
+  return /^[-+]?[\d,]*(?:\.\d*)?(?:[eE][-+]?\d*)?$/.test(value);
+}
+
+/**
  * Coerce a cell value to the target column type.
  * @param {unknown} value
  * @param {ColumnType} type
@@ -461,7 +470,7 @@ export function initTabularInput(
 
   const footerActions = document.createElement("div");
   footerActions.className = "tabular-input-footer-actions";
-  footerActions.append(addRowBtn, breakoutBtn, copyBtn, pasteBtn, pasteHeadersBtn);
+  footerActions.append(breakoutBtn, copyBtn, pasteBtn, pasteHeadersBtn);
 
   const addColBtn = document.createElement("button");
   addColBtn.type = "button";
@@ -878,23 +887,35 @@ export function initTabularInput(
     input.dataset.columnId = column.id;
     input.setAttribute("aria-label", `${column.label}, row ${rowIndex + 1}`);
 
+    // Number cells stay type="text" so arrow keys can walk the caret through
+    // digits; type="number" hides the caret position from scripts.
+    input.type = "text";
+    input.value = value === null || value === undefined ? "" : String(value);
     if (column.type === "number") {
-      input.type = "number";
       input.inputMode = "decimal";
-      input.value = value === null || value === undefined ? "" : String(value);
       input.classList.add("tabular-input-cell--number");
-    } else {
-      input.type = "text";
-      input.value = value === null || value === undefined ? "" : String(value);
     }
+
+    let numberDraft = input.value;
 
     input.addEventListener("input", () => {
       if (isDisabled) return;
       if (column.type === "number") {
+        if (!isNumberDraft(input.value)) {
+          const shift = input.value.length - numberDraft.length;
+          const caret = Math.min(
+            Math.max((input.selectionStart ?? input.value.length) - shift, 0),
+            numberDraft.length
+          );
+          input.value = numberDraft;
+          input.setSelectionRange(caret, caret);
+          return;
+        }
+        numberDraft = input.value;
         if (input.value.trim() === "") {
           row.cells[column.id] = null;
         } else {
-          const parsed = Number(input.value);
+          const parsed = Number(input.value.replace(/,/g, ""));
           if (Number.isFinite(parsed)) {
             row.cells[column.id] = parsed;
           }
@@ -911,6 +932,7 @@ export function initTabularInput(
       const previous = row.cells[column.id];
       row.cells[column.id] = next;
       input.value = next === null ? "" : String(next);
+      numberDraft = input.value;
       if (previous !== next) emit("input");
     });
 
@@ -1222,8 +1244,6 @@ export function initTabularInput(
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.className = "btn btn-icon tabular-input-remove-row";
-    removeBtn.tabIndex = -1;
-    removeBtn.dataset.tabularInputChrome = "remove-row";
     removeBtn.disabled = isDisabled;
     removeBtn.setAttribute("aria-label", `Delete row ${rowIndex + 1}`);
     removeBtn.dataset.tooltip = "Remove row";
@@ -1248,6 +1268,7 @@ export function initTabularInput(
 
     const lead = document.createElement("td");
     lead.className = "tabular-input-row-move-col";
+    lead.append(addRowBtn);
 
     const cell = document.createElement("td");
     cell.className = "tabular-input-add-row-cell";
@@ -1297,6 +1318,50 @@ export function initTabularInput(
     scheduleBreakoutSync();
   }
 
+  /**
+   * Focus the rename field for a column (selects label text for quick edit).
+   * @param {string} columnId
+   */
+  function focusColumnRename(columnId) {
+    const input = theadEl.querySelector(
+      `.tabular-input-col-label[data-column-id="${CSS.escape(columnId)}"]`
+    );
+    if (!(input instanceof HTMLInputElement)) return;
+    input.focus();
+    input.select();
+    input.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  /**
+   * Focus the first body cell of a row.
+   * @param {string} rowId
+   */
+  function focusRowFirstCell(rowId) {
+    const firstCol = columns[0];
+    if (!firstCol) return;
+    const cell = tbodyEl.querySelector(
+      `[data-tabular-input-cell][data-row-id="${CSS.escape(rowId)}"][data-column-id="${CSS.escape(firstCol.id)}"]`
+    );
+    if (!(cell instanceof HTMLElement)) return;
+    cell.focus();
+    cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  /**
+   * Focus the delete-row button for a row by index.
+   * @param {number} rowIndex
+   */
+  function focusRowDelete(rowIndex) {
+    if (rowIndex < 0 || rowIndex >= rows.length) return;
+    const row = rows[rowIndex];
+    const btn = tbodyEl.querySelector(
+      `tr[data-row-id="${CSS.escape(row.id)}"] .tabular-input-remove-row`
+    );
+    if (!(btn instanceof HTMLElement)) return;
+    btn.focus();
+    btn.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
   function addRow({ emitEvent = true, source = "add-row" } = {}) {
     if (isDisabled) return null;
     const row = {
@@ -1307,6 +1372,7 @@ export function initTabularInput(
     };
     rows.push(row);
     render();
+    focusRowFirstCell(row.id);
     if (emitEvent) {
       emit(source);
       announce("Row added");
@@ -1316,10 +1382,15 @@ export function initTabularInput(
 
   function removeRow(rowId, { emitEvent = true, source = "remove-row" } = {}) {
     if (isDisabled) return;
-    const next = rows.filter((row) => row.id !== rowId);
-    if (next.length === rows.length) return;
-    rows = next;
+    const index = rows.findIndex((row) => row.id === rowId);
+    if (index < 0) return;
+    rows = rows.filter((row) => row.id !== rowId);
     render();
+    // Keep focus on the delete control at this index (next row slid up),
+    // or the new last row if the deleted row was last.
+    if (rows.length) {
+      focusRowDelete(Math.min(index, rows.length - 1));
+    }
     if (emitEvent) {
       emit(source);
       announce("Row deleted");
@@ -1376,6 +1447,7 @@ export function initTabularInput(
       row.cells[column.id] = defaultValueForType(column.type);
     }
     render();
+    focusColumnRename(column.id);
     if (emitEvent) {
       emit(source);
       announce(`Column ${column.label} added`);
@@ -1630,11 +1702,8 @@ export function initTabularInput(
           !el.disabled &&
           isVisibleFocusable(el)
       );
-    // After data: all remove-row controls, then all move-row controls.
-    return [
-      ...filterChrome('[data-tabular-input-chrome="remove-row"]'),
-      ...filterChrome('[data-tabular-input-chrome="move-row"]'),
-    ];
+    // After data (incl. per-row delete): move-row controls only.
+    return filterChrome('[data-tabular-input-chrome="move-row"]');
   }
 
   function getDocumentTabbables() {
@@ -1718,15 +1787,17 @@ export function initTabularInput(
       : active.closest("[data-tabular-input-cell]");
     if (!(cell instanceof HTMLElement)) return;
 
-    if (
-      active instanceof HTMLInputElement &&
-      (active.type === "text" || active.type === "number")
-    ) {
-      const start = active.selectionStart ?? 0;
-      const end = active.selectionEnd ?? 0;
-      const len = active.value.length;
-      if (event.key === "ArrowLeft" && (start !== 0 || end !== 0)) return;
-      if (event.key === "ArrowRight" && (start !== len || end !== len)) return;
+    // Left/right move the caret until it reaches an edge, then move cells.
+    if (active instanceof HTMLInputElement && active.type === "text") {
+      const start = active.selectionStart;
+      const end = active.selectionEnd;
+      if (typeof start === "number" && typeof end === "number") {
+        const len = active.value.length;
+        if (event.key === "ArrowLeft" && (start !== 0 || end !== 0)) return;
+        if (event.key === "ArrowRight" && (start !== len || end !== len)) {
+          return;
+        }
+      }
     }
 
     const grid = getCellGrid();
@@ -1768,11 +1839,12 @@ export function initTabularInput(
       next.type !== "checkbox" &&
       typeof next.setSelectionRange === "function"
     ) {
-      const len = next.value.length;
+      // Left → start (so further Left can leave); right/up/down → end.
+      const pos = event.key === "ArrowLeft" ? 0 : next.value.length;
       try {
-        next.setSelectionRange(len, len);
+        next.setSelectionRange(pos, pos);
       } catch {
-        /* number inputs may not support setSelectionRange in all browsers */
+        /* some input types may not support setSelectionRange */
       }
     }
   }

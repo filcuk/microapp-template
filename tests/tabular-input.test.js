@@ -12,6 +12,7 @@ import {
   detectColumnType,
   isNumericCellValue,
   isLogicalCellValue,
+  isNumberDraft,
 } from "../app/components/tabular-input.js";
 
 test("parseColumnType accepts known types and defaults unknown to text", () => {
@@ -52,6 +53,25 @@ test("coerceCellValue to logical", () => {
   assert.equal(coerceCellValue("off", "logical"), false);
   assert.equal(coerceCellValue("", "logical"), false);
   assert.equal(coerceCellValue("maybe", "logical"), true);
+});
+
+test("isNumberDraft accepts in-progress numeric input", () => {
+  assert.equal(isNumberDraft(""), true);
+  assert.equal(isNumberDraft("-"), true);
+  assert.equal(isNumberDraft("12"), true);
+  assert.equal(isNumberDraft("1,000"), true);
+  assert.equal(isNumberDraft("1."), true);
+  assert.equal(isNumberDraft(".5"), true);
+  assert.equal(isNumberDraft("1e-"), true);
+  assert.equal(isNumberDraft("1e-3"), true);
+});
+
+test("isNumberDraft rejects non-numeric input", () => {
+  assert.equal(isNumberDraft("abc"), false);
+  assert.equal(isNumberDraft("1a"), false);
+  assert.equal(isNumberDraft("--1"), false);
+  assert.equal(isNumberDraft("1.2.3"), false);
+  assert.equal(isNumberDraft("1 2"), false);
 });
 
 test("parseClipboardTable splits TSV and pads short rows", () => {
