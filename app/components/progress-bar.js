@@ -19,6 +19,7 @@
  * data-progress-bar-min / data-progress-bar-max — bounds (default 0 and 100)
  * data-progress-bar-label — "percent" or "fraction" when `.progress-bar-label` is present; omit label element for bar only
  * data-progress-bar-indeterminate — animated indeterminate state (ignores value)
+ * data-progress-bar-indeterminate-mode — "sweep" (default, left→right loop) or "bounce" (left→right→left)
  * data-progress-bar-error — stuck/failed state (keeps value; red fill; mutually exclusive with indeterminate)
  * data-progress-bar-disabled — muted, non-animated display (hidden input disabled for forms)
  * data-progress-bar-shine — soft highlight sweeping left→right across the filled segment
@@ -39,6 +40,10 @@ function clamp(value, min, max) {
 function computePercent(value, min, max) {
   if (max <= min) return 0;
   return ((value - min) / (max - min)) * 100;
+}
+
+function resolveIndeterminateMode(mode) {
+  return mode === "bounce" ? "bounce" : "sweep";
 }
 
 function resolveLabelFormat(progressBarEl, labelFormatOption, labelEl) {
@@ -67,7 +72,17 @@ function formatValueText(value, min, max, format, { isIndeterminate, isError }) 
 
 export function initProgressBar(
   progressBarEl,
-  { value, min, max, labelFormat, indeterminate, error, disabled, onChange } = {}
+  {
+    value,
+    min,
+    max,
+    labelFormat,
+    indeterminate,
+    indeterminateMode,
+    error,
+    disabled,
+    onChange,
+  } = {}
 ) {
   if (!progressBarEl) return null;
 
@@ -91,6 +106,9 @@ export function initProgressBar(
     typeof indeterminate === "boolean"
       ? indeterminate
       : parseBooleanAttr(progressBarEl?.dataset.progressBarIndeterminate) ?? false;
+  let currentIndeterminateMode = resolveIndeterminateMode(
+    indeterminateMode ?? progressBarEl.dataset.progressBarIndeterminateMode
+  );
   let isError =
     typeof error === "boolean"
       ? error
@@ -107,6 +125,7 @@ export function initProgressBar(
     const percent = computePercent(currentValue, minValue, maxValue);
 
     progressBarEl.classList.toggle("progress-bar--indeterminate", isIndeterminate);
+    progressBarEl.classList.toggle("progress-bar--bounce", currentIndeterminateMode === "bounce");
     progressBarEl.classList.toggle("progress-bar--error", isError);
     progressBarEl.classList.toggle("progress-bar--disabled", isDisabled);
     trackEl.setAttribute("aria-disabled", isDisabled ? "true" : "false");
@@ -160,6 +179,7 @@ export function initProgressBar(
         max: maxValue,
         percent,
         indeterminate: isIndeterminate,
+        indeterminateMode: currentIndeterminateMode,
         error: isError,
         disabled: isDisabled,
         source,
@@ -174,9 +194,15 @@ export function initProgressBar(
     syncDom({ emit, source });
   }
 
-  function setIndeterminate(nextIndeterminate, { emit = true, source = "api" } = {}) {
+  function setIndeterminate(nextIndeterminate, { emit = true, source = "api", mode } = {}) {
     isIndeterminate = Boolean(nextIndeterminate);
     if (isIndeterminate) isError = false;
+    if (mode !== undefined) currentIndeterminateMode = resolveIndeterminateMode(mode);
+    syncDom({ emit, source });
+  }
+
+  function setIndeterminateMode(nextMode, { emit = true, source = "api" } = {}) {
+    currentIndeterminateMode = resolveIndeterminateMode(nextMode);
     syncDom({ emit, source });
   }
 
@@ -209,11 +235,17 @@ export function initProgressBar(
     getPercent() {
       return computePercent(currentValue, minValue, maxValue);
     },
-    setIndeterminate(nextIndeterminate) {
-      setIndeterminate(nextIndeterminate);
+    setIndeterminate(nextIndeterminate, options) {
+      setIndeterminate(nextIndeterminate, { mode: options?.mode });
     },
     isIndeterminate() {
       return isIndeterminate;
+    },
+    setIndeterminateMode(nextMode) {
+      setIndeterminateMode(nextMode);
+    },
+    getIndeterminateMode() {
+      return currentIndeterminateMode;
     },
     setError(nextError) {
       setError(nextError);
