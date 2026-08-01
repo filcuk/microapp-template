@@ -1,3 +1,5 @@
+import { initBadge } from "./badge.js";
+import { setHidden } from "../utils/dom.js";
 import { initPopupMenu, menuItemLabel } from "../utils/menu.js";
 
 function isItemSelected(item) {
@@ -17,23 +19,31 @@ function getSelectedItems(menu, itemSelector) {
   return getMenuItems(menu, itemSelector).filter(isItemSelected);
 }
 
+/** Strip a legacy trailing “ (n)” count from older trigger labels. */
+function normalizeBaseLabel(label) {
+  return label.replace(/\s*\(\d+\)\s*$/, "").trim();
+}
+
 function readBaseLabel(dropdownEl, trigger) {
   const fromData = dropdownEl.dataset.toggleDropdownLabel?.trim();
-  if (fromData) return fromData;
+  if (fromData) return normalizeBaseLabel(fromData);
 
   const labelEl = trigger?.querySelector(".dropdown-trigger-label");
-  if (labelEl) return labelEl.textContent.trim();
+  if (labelEl) return normalizeBaseLabel(labelEl.textContent);
 
   if (!trigger) return "";
 
   const clone = trigger.cloneNode(true);
   clone.querySelector(".combo-btn-chevron")?.remove();
-  return clone.textContent.replace(/\s+/g, " ").trim();
+  return normalizeBaseLabel(clone.textContent.replace(/\s+/g, " "));
 }
 
 function ensureTriggerLabelEl(trigger, baseLabel) {
   let labelEl = trigger.querySelector(".dropdown-trigger-label");
-  if (labelEl) return labelEl;
+  if (labelEl) {
+    labelEl.textContent = baseLabel;
+    return labelEl;
+  }
 
   labelEl = document.createElement("span");
   labelEl.className = "dropdown-trigger-label";
@@ -52,8 +62,33 @@ function ensureTriggerLabelEl(trigger, baseLabel) {
   return labelEl;
 }
 
-function formatTriggerLabel(baseLabel, count) {
-  return count > 0 ? `${baseLabel} (${count})` : baseLabel;
+/**
+ * Prefer an existing `.badge-host` around the trigger; otherwise wrap the trigger
+ * and add a normal `.badge` for the selection count.
+ */
+function ensureSelectionBadgeHost(dropdownEl, trigger, baseLabel) {
+  let host = trigger.closest(".badge-host");
+  if (!host || !dropdownEl.contains(host)) {
+    host = document.createElement("span");
+    host.className = "badge-host";
+    trigger.parentNode?.insertBefore(host, trigger);
+    host.appendChild(trigger);
+  }
+
+  if (baseLabel && !host.dataset.badgeLabel) {
+    host.dataset.badgeLabel = baseLabel;
+  }
+
+  let badgeEl = host.querySelector(".badge");
+  if (!badgeEl) {
+    badgeEl = document.createElement("span");
+    badgeEl.className = "badge";
+    badgeEl.setAttribute("aria-hidden", "true");
+    setHidden(badgeEl, true);
+    host.appendChild(badgeEl);
+  }
+
+  return host;
 }
 
 /**
@@ -62,8 +97,9 @@ function formatTriggerLabel(baseLabel, count) {
  * Markup: same as {@link initDropdown} but use `role="menuitemcheckbox"` and
  * `aria-checked="true|false"` on each `.dropdown-menu-item`.
  *
- * The trigger label shows a count when items are selected, e.g. `Toggle items (3)`.
- * Set the base text via `.dropdown-trigger-label` or `data-toggle-dropdown-label`.
+ * Selection count is shown with a {@link initBadge} on the trigger (wrap the
+ * trigger in `.badge-host` with a `.badge`, or let this init create that markup).
+ * Base label: `.dropdown-trigger-label` or `data-toggle-dropdown-label`.
  *
  * @param {HTMLElement | null} dropdownEl
  * @param {{ onToggle?: (detail: object) => void }} [options]
@@ -78,17 +114,20 @@ export function initToggleDropdown(dropdownEl, { onToggle } = {}) {
   if (!menu || !trigger) return null;
 
   const baseLabel = readBaseLabel(dropdownEl, trigger);
-  const labelEl = ensureTriggerLabelEl(trigger, baseLabel);
+  ensureTriggerLabelEl(trigger, baseLabel);
 
-  function updateTriggerLabel() {
+  const badgeHost = ensureSelectionBadgeHost(dropdownEl, trigger, baseLabel);
+  const selectionBadge = initBadge(badgeHost, { value: 0 });
+
+  function updateSelectionCount() {
     const count = getSelectedItems(menu, itemSelector).length;
-    labelEl.textContent = formatTriggerLabel(baseLabel, count);
+    selectionBadge?.setValue(count);
   }
 
   for (const item of getMenuItems(menu, itemSelector)) {
     setItemSelected(item, isItemSelected(item));
   }
-  updateTriggerLabel();
+  updateSelectionCount();
 
   const menuControl = initPopupMenu({
     containerEl: dropdownEl,
@@ -101,7 +140,7 @@ export function initToggleDropdown(dropdownEl, { onToggle } = {}) {
       setItemSelected(item, selected);
 
       const selectedItems = getSelectedItems(menu, itemSelector);
-      updateTriggerLabel();
+      updateSelectionCount();
 
       onToggle?.({
         dropdownEl,
@@ -132,7 +171,7 @@ export function initToggleDropdown(dropdownEl, { onToggle } = {}) {
         const value = item.dataset.value;
         setItemSelected(item, valueSet.has(value));
       }
-      updateTriggerLabel();
+      updateSelectionCount();
     },
   };
 }

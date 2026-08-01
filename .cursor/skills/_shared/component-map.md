@@ -63,7 +63,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | stepper | `app/components/stepper.js` | `controls-widgets.css` | — | — | `dom` | |
 | combo | `app/components/combo.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
 | dropdown | `app/components/dropdown.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
-| dropdown-toggle | `app/components/dropdown-toggle.js` | `controls-menus.css` | — | — | `menu` | |
+| dropdown-toggle | `app/components/dropdown-toggle.js` | `controls-menus.css` | — | — | `menu`, badge | |
 | expand | `app/components/expand.js` | `controls-disclosure.css` | — | — | `dom` | |
 | accordion | `app/components/accordion.js` | `controls-disclosure.css` | — | — | `dom` | |
 | tabs | `app/components/tabs.js` | `controls-disclosure.css` | — | — | `dom` | |

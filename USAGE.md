@@ -309,7 +309,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
-| **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
+| **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open; selection count via badge. [`app/components/dropdown-toggle.js`](app/components/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
@@ -1564,7 +1564,7 @@ Optional **icons** — leading light/dark image pair via `.dropdown-menu-item-ic
 
 ### Toggle dropdown
 
-Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. The trigger shows the selection count when any items are active (e.g. `Toggle items (3)`).
+Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. Selection count is shown with a [Badge](#badge) on the trigger (hidden when none are selected). Wrap the trigger in `.badge-host` with a `.badge`, or omit that markup and let `initToggleDropdown` create it.
 
 ```javascript
 import { initToggleDropdown } from "./components/dropdown-toggle.js";
@@ -1581,11 +1581,14 @@ toggleDropdown?.setSelected(["alpha", "gamma"]);
 
 ```html
 <div class="dropdown" id="my-toggle-dropdown">
-  <button type="button" class="btn dropdown-trigger" aria-haspopup="menu" aria-expanded="false"
-    aria-controls="my-toggle-dropdown-menu">
-    <span class="dropdown-trigger-label">Toggle items</span>
-    <span class="combo-btn-chevron" aria-hidden="true"></span>
-  </button>
+  <span class="badge-host" data-badge-label="Toggle items">
+    <button type="button" class="btn dropdown-trigger" aria-haspopup="menu" aria-expanded="false"
+      aria-controls="my-toggle-dropdown-menu" aria-label="Toggle items">
+      <span class="dropdown-trigger-label">Toggle items</span>
+      <span class="combo-btn-chevron" aria-hidden="true"></span>
+    </button>
+    <span class="badge hidden" aria-hidden="true" hidden></span>
+  </span>
   <ul id="my-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
     <li role="none">
       <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
@@ -1594,6 +1597,8 @@ toggleDropdown?.setSelected(["alpha", "gamma"]);
   </ul>
 </div>
 ```
+
+Start the badge as `hidden` when the initial selection count is zero so it does not flash before `initToggleDropdown` runs.
 
 ### Expand
 

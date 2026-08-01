@@ -380,7 +380,6 @@
                 <h3 class="demo-card-title">Combobox</h3>
                 <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
                 <div class="combobox" id="demo-combobox" style="max-width: 14rem">
-                  <label class="field-label" for="demo-combobox-input">City</label>
                   <div class="combobox-control">
                     <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
                       aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
@@ -553,13 +552,16 @@
 
               <div class="demo-fields">
                 <h3 class="demo-card-title">Toggle dropdown</h3>
-                <p class="demo-hint">Multi-select; menu stays open while toggling items.</p>
+                <p class="demo-hint">Multi-select; menu stays open while toggling items. Selection count uses a badge.</p>
                 <div class="dropdown" id="demo-toggle-dropdown">
-                  <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
-                    aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
-                    <span class="dropdown-trigger-label">Toggle items</span>
-                    <span class="combo-btn-chevron" aria-hidden="true"></span>
-                  </button>
+                  <span class="badge-host" data-badge-label="Toggle items">
+                    <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
+                      aria-expanded="false" aria-controls="demo-toggle-dropdown-menu" aria-label="Toggle items">
+                      <span class="dropdown-trigger-label">Toggle items</span>
+                      <span class="combo-btn-chevron" aria-hidden="true"></span>
+                    </button>
+                    <span class="badge hidden" aria-hidden="true" hidden></span>
+                  </span>
                   <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
                     <li role="none">
                       <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
