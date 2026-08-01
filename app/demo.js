@@ -63,9 +63,6 @@ const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
-const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
-const demoPaginationResult = document.getElementById("demo-pagination-result");
 const demoTableResult = document.getElementById("demo-table-result");
 const demoTabularInputResult = document.getElementById("demo-tabular-input-result");
 const demoProgressBarResult = document.getElementById("demo-progress-bar-result");
@@ -273,13 +270,7 @@ initToggle(document.getElementById("demo-toggle-on"));
 initToggle(document.getElementById("demo-toggle-tristate"));
 initToggle(document.getElementById("demo-toggle-disabled"));
 
-initSegmentedControl(document.getElementById("demo-segmented-view"), {
-  onChange: ({ value }) => {
-    if (demoSegmentedViewResult) {
-      demoSegmentedViewResult.textContent = `View: ${value}`;
-    }
-  },
-});
+initSegmentedControl(document.getElementById("demo-segmented-view"));
 
 const demoChipFiltersResult = document.getElementById("demo-chip-filters-result");
 const demoChipFilterResults = document.getElementById("demo-chip-filter-results");
@@ -329,21 +320,8 @@ updateChipInputResult(
     .filter(Boolean)
 );
 
-initSegmentedControl(document.getElementById("demo-segmented-panels"), {
-  onChange: ({ value }) => {
-    if (demoSegmentedPanelsResult) {
-      demoSegmentedPanelsResult.textContent = `Range: ${value}`;
-    }
-  },
-});
-
-initPagination(document.getElementById("demo-pagination"), {
-  onChange: ({ page, pageCount }) => {
-    if (demoPaginationResult) {
-      demoPaginationResult.textContent = `Page ${page} of ${pageCount}`;
-    }
-  },
-});
+initSegmentedControl(document.getElementById("demo-segmented-panels"));
+initPagination(document.getElementById("demo-pagination"));
 
 initTable(document.getElementById("demo-table"), {
   onSort: ({ columnIndex, direction, sortType }) => {
