@@ -310,6 +310,12 @@ main {
   font-weight: 600;
 }
 
+.demo-divider {
+  margin: 0.35rem 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
 .demo-colour-swatch {
   height: 3rem;
   border-radius: 6px;
