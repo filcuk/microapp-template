@@ -347,10 +347,11 @@ test("normalizeAlsoSee places ungrouped section last", () => {
   );
 });
 
-test("renderAlsoSeeMarkup emits group headers for topics", () => {
+test("renderAlsoSeeMarkup emits nested topic groups with span", () => {
   const markup = renderAlsoSeeMarkup([
     {
       topic: "Database",
+      order: null,
       items: [
         {
           label: "CS Builder",
@@ -359,38 +360,52 @@ test("renderAlsoSeeMarkup emits group headers for topics", () => {
           icon: "",
           iconLight: "",
           iconDark: "",
+          iconSvg: "",
+          iconSvgLight: "",
+          iconSvgDark: "",
+          order: null,
         },
       ],
     },
   ]);
 
-  assert.match(markup, /dropdown-menu-group">Database</);
+  assert.match(markup, /footer-also-see-topic/);
+  assert.match(markup, /footer-also-see-topic-label">Database</);
+  assert.match(markup, /aria-label="Database"/);
+  assert.match(markup, /--also-see-span:\s*1/);
+  assert.match(markup, /footer-also-see-topic-links/);
   assert.match(markup, /href="https:\/\/example\.com\/cs"/);
   assert.match(markup, /CS Builder/);
   assert.equal(alsoSeeHasItems([]), false);
   assert.equal(
-    alsoSeeHasItems([{ topic: "X", items: [] }]),
+    alsoSeeHasItems([{ topic: "X", order: null, items: [] }]),
     false
   );
 });
 
-test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
+test("renderAlsoSeeMarkup caps topic span and marks ungrouped", () => {
+  const fourLinks = [1, 2, 3, 4].map((n) => ({
+    label: `App ${n}`,
+    subtitle: "",
+    url: `https://example.com/${n}`,
+    icon: "",
+    iconLight: "",
+    iconDark: "",
+    iconSvg: "",
+    iconSvgLight: "",
+    iconSvgDark: "",
+    order: null,
+  }));
+
   const markup = renderAlsoSeeMarkup([
     {
-      topic: "Database",
-      items: [
-        {
-          label: "CS Builder",
-          subtitle: "",
-          url: "https://example.com/cs",
-          icon: "",
-          iconLight: "",
-          iconDark: "",
-        },
-      ],
+      topic: "Power BI",
+      order: 10,
+      items: fourLinks,
     },
     {
       topic: null,
+      order: null,
       items: [
         {
           label: "Profile",
@@ -399,6 +414,10 @@ test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
           icon: "",
           iconLight: "",
           iconDark: "",
+          iconSvg: "",
+          iconSvgLight: "",
+          iconSvgDark: "",
+          order: null,
         },
       ],
     },
@@ -406,8 +425,14 @@ test("renderAlsoSeeMarkup adds a separator before ungrouped links", () => {
 
   assert.match(
     markup,
-    /dropdown-menu-group">Database[\s\S]*dropdown-menu-separator[\s\S]*Profile/
+    /footer-also-see-topic(?!--)[^>]*--also-see-span:\s*3/
   );
+  assert.match(
+    markup,
+    /footer-also-see-topic--ungrouped[^>]*--also-see-span:\s*1[\s\S]*Profile/
+  );
+  assert.doesNotMatch(markup, /dropdown-menu-separator/);
+  assert.doesNotMatch(markup, /dropdown-menu-group/);
 });
 
 test("normalizeAlsoSee keeps a single icon without inventing a theme pair", () => {

@@ -580,6 +580,42 @@ function renderAlsoSeeLinkItem(link, index) {
         </li>`;
 }
 
+/** Max columns a topic block may span in the also-see grid. */
+const ALSO_SEE_TOPIC_SPAN_MAX = 3;
+
+/**
+ * @param {AlsoSeeSection} section
+ * @param {number} startIndex
+ * @returns {{ markup: string, nextIndex: number }}
+ */
+function renderAlsoSeeTopic(section, startIndex) {
+  let index = startIndex;
+  const linksMarkup = section.items
+    .map((link) => renderAlsoSeeLinkItem(link, index++))
+    .join("");
+  const span = Math.min(
+    Math.max(section.items.length, 1),
+    ALSO_SEE_TOPIC_SPAN_MAX
+  );
+
+  if (!section.topic) {
+    return {
+      markup: `<li class="footer-also-see-topic footer-also-see-topic--ungrouped" role="presentation" style="--also-see-span: ${span}">
+          <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
+        </li>`,
+      nextIndex: index,
+    };
+  }
+
+  return {
+    markup: `<li class="footer-also-see-topic" role="group" aria-label="${escapeAttr(section.topic)}" style="--also-see-span: ${span}">
+          <div class="footer-also-see-topic-label">${escapeText(section.topic)}</div>
+          <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
+        </li>`,
+    nextIndex: index,
+  };
+}
+
 /**
  * @param {AlsoSeeSection[]} sections
  * @returns {string}
@@ -588,21 +624,12 @@ export function renderAlsoSeeMarkup(sections) {
   if (!alsoSeeHasItems(sections)) return "";
 
   let index = 0;
-  const items = sections
-    .map((section, sectionIndex) => {
-      const linksMarkup = section.items
-        .map((link) => renderAlsoSeeLinkItem(link, index++))
-        .join("");
-      if (!section.topic) {
-        const divider =
-          sectionIndex > 0
-            ? `<li role="separator" class="dropdown-menu-separator"></li>`
-            : "";
-        return `${divider}${linksMarkup}`;
-      }
-      return `<li role="presentation">
-          <div class="dropdown-menu-group">${escapeText(section.topic)}</div>
-        </li>${linksMarkup}`;
+  const topicsMarkup = sections
+    .filter((section) => section.items.length > 0)
+    .map((section) => {
+      const rendered = renderAlsoSeeTopic(section, index);
+      index = rendered.nextIndex;
+      return rendered.markup;
     })
     .join("");
 
@@ -611,7 +638,7 @@ export function renderAlsoSeeMarkup(sections) {
           <span class="footer-also-see dropdown" id="footer-also-see">
             <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">see links</button>
             <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
-              ${items}
+              ${topicsMarkup}
             </ul>
           </span></span>`;
 }
