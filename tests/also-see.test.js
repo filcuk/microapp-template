@@ -641,3 +641,53 @@ test("mergeAlsoSeeSections keeps lower topic order and re-sorts links", () => {
     ["Local early", "Remote late"]
   );
 });
+
+test("normalizeAlsoSee prefers iconSvg over URL icons", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        label: "Sponsor",
+        url: "https://github.com/sponsors/filcuk",
+        icon: "https://example.com/ignored.svg",
+        iconSvg:
+          '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14"/></svg>',
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  const item = sections[0].items[0];
+  assert.match(item.iconSvg, /viewBox="0 0 16 16"/);
+  assert.equal(item.icon, "");
+  assert.equal(item.iconLight, "");
+  assert.equal(item.iconDark, "");
+});
+
+test("renderAlsoSeeMarkup emits sanitized inline SVG icons", () => {
+  const markup = renderAlsoSeeMarkup([
+    {
+      topic: null,
+      order: null,
+      items: [
+        {
+          label: "Sponsor",
+          subtitle: "",
+          url: "https://github.com/sponsors/filcuk",
+          icon: "",
+          iconLight: "",
+          iconDark: "",
+          iconSvg:
+            '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14"/></svg>',
+          iconSvgLight: "",
+          iconSvgDark: "",
+          order: null,
+        },
+      ],
+    },
+  ]);
+
+  assert.match(markup, /<svg\b[^>]*class="dropdown-menu-item-icon"/);
+  assert.match(markup, /viewBox="0 0 16 16"/);
+  assert.doesNotMatch(markup, /<img\b/);
+});

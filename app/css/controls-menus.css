@@ -119,6 +119,12 @@
   height: 1.5rem;
 }
 
+svg.dropdown-menu-item-icon {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
 .combo-menu-item:hover,
 .combo-menu-item:focus-visible,
 .dropdown-menu-item:hover,

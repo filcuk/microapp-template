@@ -44,15 +44,15 @@ body > footer {
   color: var(--accent);
 }
 
-img.brand-icon--dark {
+.brand-icon--dark {
   display: none;
 }
 
-:root[data-theme="dark"] img.brand-icon--light {
+:root[data-theme="dark"] .brand-icon--light {
   display: none;
 }
 
-:root[data-theme="dark"] img.brand-icon--dark {
+:root[data-theme="dark"] .brand-icon--dark {
   display: block;
 }
 

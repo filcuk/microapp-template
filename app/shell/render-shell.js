@@ -1,5 +1,6 @@
 import { APP_CONFIG } from "../config.js";
 import { APP_VERSION, TEMPLATE_VERSION } from "../version.js";
+import { sanitizeAlsoSeeSvg } from "../utils/also-see-svg.js";
 
 const DEFAULTS = {
   repoUrl: APP_CONFIG.repoUrl,
@@ -87,6 +88,9 @@ export function normalizeSiteUrl(value) {
  *   icon: string,
  *   iconLight: string,
  *   iconDark: string,
+ *   iconSvg: string,
+ *   iconSvgLight: string,
+ *   iconSvgDark: string,
  *   order: number | null,
  * }} AlsoSeeLink
  * @typedef {{
@@ -95,6 +99,14 @@ export function normalizeSiteUrl(value) {
  *   items: AlsoSeeLink[],
  * }} AlsoSeeSection
  */
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
+function trimAlsoSeeString(value) {
+  return typeof value === "string" && value.trim() ? value.trim() : "";
+}
 
 /**
  * Parse an optional numeric `order` from JSON / config.
@@ -168,17 +180,55 @@ function normalizeAlsoSeeLink(link, exclude) {
 
   const subtitle =
     typeof link.subtitle === "string" ? link.subtitle.trim() : "";
-  const icon =
-    typeof link.icon === "string" && link.icon.trim() ? link.icon.trim() : "";
-  const iconLight =
-    typeof link.iconLight === "string" && link.iconLight.trim()
-      ? link.iconLight.trim()
-      : "";
-  const iconDark =
-    typeof link.iconDark === "string" && link.iconDark.trim()
-      ? link.iconDark.trim()
-      : "";
   const order = parseAlsoSeeOrder(/** @type {{ order?: unknown }} */ (link).order);
+  const iconSvg = trimAlsoSeeString(
+    /** @type {{ iconSvg?: unknown }} */ (link).iconSvg
+  );
+  const iconSvgLight = trimAlsoSeeString(
+    /** @type {{ iconSvgLight?: unknown }} */ (link).iconSvgLight
+  );
+  const iconSvgDark = trimAlsoSeeString(
+    /** @type {{ iconSvgDark?: unknown }} */ (link).iconSvgDark
+  );
+
+  // Embedded SVG wins over URL icons (same pair / single precedence).
+  if (iconSvgLight || iconSvgDark) {
+    return {
+      label,
+      subtitle,
+      url,
+      icon: "",
+      iconLight: "",
+      iconDark: "",
+      iconSvg: "",
+      iconSvgLight: iconSvgLight || iconSvgDark,
+      iconSvgDark: iconSvgDark || iconSvgLight,
+      order,
+    };
+  }
+
+  if (iconSvg) {
+    return {
+      label,
+      subtitle,
+      url,
+      icon: "",
+      iconLight: "",
+      iconDark: "",
+      iconSvg,
+      iconSvgLight: "",
+      iconSvgDark: "",
+      order,
+    };
+  }
+
+  const icon = trimAlsoSeeString(/** @type {{ icon?: unknown }} */ (link).icon);
+  const iconLight = trimAlsoSeeString(
+    /** @type {{ iconLight?: unknown }} */ (link).iconLight
+  );
+  const iconDark = trimAlsoSeeString(
+    /** @type {{ iconDark?: unknown }} */ (link).iconDark
+  );
 
   // Theme pair when either light/dark is set; otherwise a single always-visible icon.
   if (iconLight || iconDark) {
@@ -189,11 +239,25 @@ function normalizeAlsoSeeLink(link, exclude) {
       icon: "",
       iconLight: iconLight || iconDark,
       iconDark: iconDark || iconLight,
+      iconSvg: "",
+      iconSvgLight: "",
+      iconSvgDark: "",
       order,
     };
   }
 
-  return { label, subtitle, url, icon, iconLight: "", iconDark: "", order };
+  return {
+    label,
+    subtitle,
+    url,
+    icon,
+    iconLight: "",
+    iconDark: "",
+    iconSvg: "",
+    iconSvgLight: "",
+    iconSvgDark: "",
+    order,
+  };
 }
 
 /**
@@ -459,6 +523,27 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
  * @returns {string}
  */
 function renderAlsoSeeIconMarkup(link) {
+  if (link.iconSvgLight || link.iconSvgDark) {
+    const light = sanitizeAlsoSeeSvg(
+      link.iconSvgLight,
+      "dropdown-menu-item-icon brand-icon--light"
+    );
+    const dark = sanitizeAlsoSeeSvg(
+      link.iconSvgDark,
+      "dropdown-menu-item-icon brand-icon--dark"
+    );
+    if (!light && !dark) return "";
+    return `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+              ${light}${dark}
+            </span>`;
+  }
+  if (link.iconSvg) {
+    const svg = sanitizeAlsoSeeSvg(link.iconSvg, "dropdown-menu-item-icon");
+    if (!svg) return "";
+    return `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+              ${svg}
+            </span>`;
+  }
   if (link.iconLight || link.iconDark) {
     return `<span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
               <img class="dropdown-menu-item-icon brand-icon--light" src="${escapeAttr(link.iconLight)}" alt="" width="24" height="24" />
