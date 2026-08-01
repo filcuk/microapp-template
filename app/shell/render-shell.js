@@ -669,7 +669,7 @@ export function renderAlsoSeeMarkup(sections) {
         <span>also
           <span class="footer-also-see dropdown" id="footer-also-see">
             <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">see links</button>
-            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden style="--also-see-columns: ${columns}">
+            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden data-also-see-columns="${columns}" style="--also-see-columns: ${columns}">
               ${topicsMarkup}
             </ul>
           </span></span>`;
