@@ -283,6 +283,16 @@ main {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr));
 }
 
+.demo-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .demo-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .demo-card {
   display: flex;
   flex-direction: column;

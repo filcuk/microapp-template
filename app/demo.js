@@ -539,12 +539,6 @@ document.getElementById("demo-spinner-load")?.addEventListener("click", () => {
   }, 2000);
 });
 
-const comboResultEl = document.getElementById("demo-combo-result");
-const comboboxResultEl = document.getElementById("demo-combobox-result");
-const dropdownResultEl = document.getElementById("demo-dropdown-result");
-const dropdownIconsResultEl = document.getElementById("demo-dropdown-icons-result");
-const toggleDropdownResultEl = document.getElementById("demo-toggle-dropdown-result");
-
 const comboOptions = [
   { value: "example-1", label: "Example 1" },
   { value: "example-2", label: "Example 2" },
@@ -561,58 +555,21 @@ function pickRandomOption(options, excludeValue) {
 
 let lastComboValue = null;
 
-initCombobox(document.getElementById("demo-combobox"), {
-  onSelect: ({ value, label }) => {
-    if (comboboxResultEl) {
-      comboboxResultEl.textContent = `Selected: ${label} (${value})`;
-    }
-  },
-  onChange: ({ value, label }) => {
-    if (!comboboxResultEl) return;
-    comboboxResultEl.textContent = value ? `Selected: ${label} (${value})` : "No city selected.";
-  },
-});
+initCombobox(document.getElementById("demo-combobox"));
 
 initCombo(document.getElementById("demo-combo"), {
   onMainClick: () => {
     const picked = pickRandomOption(comboOptions, lastComboValue);
     lastComboValue = picked.value;
-    if (comboResultEl) {
-      comboResultEl.textContent = `Main action picked: ${picked.label}`;
-    }
   },
-  onSelect: ({ label, value }) => {
+  onSelect: ({ value }) => {
     lastComboValue = value;
-    if (comboResultEl) {
-      comboResultEl.textContent = `Menu selected: ${label}`;
-    }
   },
 });
 
-initDropdown(document.getElementById("demo-dropdown"), {
-  onSelect: ({ label }) => {
-    if (dropdownResultEl) {
-      dropdownResultEl.textContent = `Selected: ${label}`;
-    }
-  },
-});
-
-initDropdown(document.getElementById("demo-dropdown-icons"), {
-  onSelect: ({ label }) => {
-    if (dropdownIconsResultEl) {
-      dropdownIconsResultEl.textContent = `Selected: ${label}`;
-    }
-  },
-});
-
-initToggleDropdown(document.getElementById("demo-toggle-dropdown"), {
-  onToggle: ({ label, selected, labels }) => {
-    if (!toggleDropdownResultEl) return;
-    const state = selected ? "on" : "off";
-    const summary = labels.length ? labels.join(", ") : "none";
-    toggleDropdownResultEl.textContent = `Toggled ${label} ${state}. Selected: ${summary}`;
-  },
-});
+initDropdown(document.getElementById("demo-dropdown"));
+initDropdown(document.getElementById("demo-dropdown-icons"));
+initToggleDropdown(document.getElementById("demo-toggle-dropdown"));
 
 const iconToggleBtn = document.getElementById("icon-toggle-btn");
 if (iconToggleBtn) {

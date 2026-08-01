@@ -283,6 +283,10 @@
               </div>
             </div>
           </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="demo-sliders">
+          <h2 id="demo-sliders" class="section-heading">Sliders &amp; steppers</h2>
           <div class="demo-card">
             <h3 class="demo-card-title">Slider</h3>
             <div class="demo-fields">
@@ -366,6 +370,224 @@
             </div>
             <p id="demo-stepper-result" class="demo-hint" aria-live="polite">Integer: 2 · Decimal: 1.5</p>
           </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="demo-menus">
+          <h2 id="demo-menus" class="section-heading">Menus &amp; pickers</h2>
+          <div class="demo-card">
+            <div class="demo-grid demo-grid-3">
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Combobox</h3>
+                <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
+                <div class="combobox" id="demo-combobox" style="max-width: 14rem">
+                  <label class="field-label" for="demo-combobox-input">City</label>
+                  <div class="combobox-control">
+                    <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
+                      aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
+                      placeholder="Search cities…" />
+                    <ul id="demo-combobox-list" class="combobox-list hidden" role="listbox" hidden>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
+                      </li>
+                      <li role="presentation">
+                        <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Combo button</h3>
+                <p class="demo-hint">Primary action plus a chevron menu.</p>
+                <div class="combo-btn" id="demo-combo">
+                  <button type="button" class="btn combo-btn-main" id="demo-combo-main">
+                    Pick random
+                  </button>
+                  <button type="button" class="btn combo-btn-toggle" id="demo-combo-toggle" aria-haspopup="menu"
+                    aria-expanded="false" aria-controls="demo-combo-menu" aria-label="Choose option">
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-combo-menu" class="combo-menu hidden" role="menu">
+                    <li role="none">
+                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-1">
+                        Example 1
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-2">
+                        Example 2
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-3">
+                        Example 3
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Dropdown</h3>
+                <p class="demo-hint">Single-select; optional headers and context lines.</p>
+                <div class="dropdown" id="demo-dropdown">
+                  <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
+                    aria-expanded="false" aria-controls="demo-dropdown-menu">
+                    Choose item
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
+                    <li role="presentation">
+                      <div class="dropdown-menu-group">Group A</div>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example 1</span>
+                          <span class="dropdown-menu-item-subtitle">Short description for this option</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example 2</span>
+                          <span class="dropdown-menu-item-subtitle">Another bit of helpful context</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="presentation">
+                      <div class="dropdown-menu-group">Group B</div>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example 3</span>
+                          <span class="dropdown-menu-item-subtitle">Grouped with Example 4</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-4">
+                        Example 4
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Dropdown with icons</h3>
+                <p class="demo-hint">Optional light/dark mode icons and subtitles.</p>
+                <div class="dropdown" id="demo-dropdown-icons">
+                  <button type="button" class="btn dropdown-trigger" id="demo-dropdown-icons-trigger" aria-haspopup="menu"
+                    aria-expanded="false" aria-controls="demo-dropdown-icons-menu">
+                    Choose app
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-dropdown-icons-menu" class="dropdown-menu hidden" role="menu">
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-a">
+                        <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+                          <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+                          <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+                        </span>
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example App A</span>
+                          <span class="dropdown-menu-item-subtitle">Sample related microapp</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-b">
+                        <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+                          <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+                          <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+                        </span>
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example App B</span>
+                          <span class="dropdown-menu-item-subtitle">Another demo destination</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-c">
+                        <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
+                          <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
+                          <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
+                        </span>
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example App C</span>
+                          <span class="dropdown-menu-item-subtitle">Third related project</span>
+                        </span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Toggle dropdown</h3>
+                <p class="demo-hint">Multi-select; menu stays open while toggling items.</p>
+                <div class="dropdown" id="demo-toggle-dropdown">
+                  <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
+                    aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
+                    <span class="dropdown-trigger-label">Toggle items</span>
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+                        data-value="alpha">
+                        Alpha
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+                        data-value="beta">
+                        Beta
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
+                        data-value="gamma">
+                        Gamma
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="demo-navigation">
+          <h2 id="demo-navigation" class="section-heading">Navigation</h2>
           <div class="demo-card">
             <h3 class="demo-card-title">Segmented control</h3>
             <div class="demo-grid demo-grid-2">
@@ -416,226 +638,6 @@
                 </div>
                 <p id="demo-segmented-panels-result" class="demo-hint" aria-live="polite">Range: week</p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="content-section" aria-labelledby="demo-menus">
-          <h2 id="demo-menus" class="section-heading">Menus &amp; pickers</h2>
-          <div class="demo-grid demo-grid-2">
-            <div class="demo-card">
-              <h3 class="demo-card-title">Combobox</h3>
-              <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
-              <div class="combobox" id="demo-combobox">
-                <label class="field-label" for="demo-combobox-input">City</label>
-                <div class="combobox-control">
-                  <input type="text" id="demo-combobox-input" class="input combobox-input" role="combobox"
-                    aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-list" autocomplete="off"
-                    placeholder="Search cities…" />
-                  <ul id="demo-combobox-list" class="combobox-list hidden" role="listbox" hidden>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="nyc">New York</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
-                    </li>
-                    <li role="presentation">
-                      <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <p id="demo-combobox-result" class="demo-hint" aria-live="polite">No city selected.</p>
-            </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Combo button</h3>
-              <p class="demo-hint">Primary action plus a chevron menu.</p>
-              <div class="combo-btn" id="demo-combo">
-                <button type="button" class="btn combo-btn-main" id="demo-combo-main">
-                  Pick random
-                </button>
-                <button type="button" class="btn combo-btn-toggle" id="demo-combo-toggle" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-combo-menu" aria-label="Choose option">
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-combo-menu" class="combo-menu hidden" role="menu">
-                  <li role="none">
-                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-1">
-                      Example 1
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-2">
-                      Example 2
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="combo-menu-item" role="menuitem" data-value="example-3">
-                      Example 3
-                    </button>
-                  </li>
-                </ul>
-              </div>
-              <p id="demo-combo-result" class="demo-hint" aria-live="polite"></p>
-            </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Dropdown</h3>
-              <p class="demo-hint">Single-select menu; closes after a choice. Optional
-                <code>.dropdown-menu-group</code> headers and
-                <code>.dropdown-menu-item-subtitle</code> context lines.</p>
-              <div class="dropdown" id="demo-dropdown">
-                <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-dropdown-menu">
-                  Choose item
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
-                  <li role="presentation">
-                    <div class="dropdown-menu-group">Group A</div>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
-                      <span class="dropdown-menu-item-text">
-                        <span class="dropdown-menu-item-label">Example 1</span>
-                        <span class="dropdown-menu-item-subtitle">Short description for this option</span>
-                      </span>
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
-                      <span class="dropdown-menu-item-text">
-                        <span class="dropdown-menu-item-label">Example 2</span>
-                        <span class="dropdown-menu-item-subtitle">Another bit of helpful context</span>
-                      </span>
-                    </button>
-                  </li>
-                  <li role="presentation">
-                    <div class="dropdown-menu-group">Group B</div>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
-                      <span class="dropdown-menu-item-text">
-                        <span class="dropdown-menu-item-label">Example 3</span>
-                        <span class="dropdown-menu-item-subtitle">Grouped with Example 4</span>
-                      </span>
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-4">
-                      Example 4
-                    </button>
-                  </li>
-                </ul>
-              </div>
-              <p id="demo-dropdown-result" class="demo-hint" aria-live="polite"></p>
-            </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Dropdown with icons</h3>
-              <p class="demo-hint">Items can include a leading icon (light/dark pair) plus a
-                <code>.dropdown-menu-item-subtitle</code>.</p>
-              <div class="dropdown" id="demo-dropdown-icons">
-                <button type="button" class="btn dropdown-trigger" id="demo-dropdown-icons-trigger" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-dropdown-icons-menu">
-                  Choose app
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-dropdown-icons-menu" class="dropdown-menu hidden" role="menu">
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-a">
-                      <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
-                        <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
-                        <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
-                      </span>
-                      <span class="dropdown-menu-item-text">
-                        <span class="dropdown-menu-item-label">Example App A</span>
-                        <span class="dropdown-menu-item-subtitle">Sample related microapp</span>
-                      </span>
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-b">
-                      <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
-                        <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
-                        <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
-                      </span>
-                      <span class="dropdown-menu-item-text">
-                        <span class="dropdown-menu-item-label">Example App B</span>
-                        <span class="dropdown-menu-item-subtitle">Another demo destination</span>
-                      </span>
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitem" data-value="app-c">
-                      <span class="dropdown-menu-item-icon-wrap" aria-hidden="true">
-                        <img class="dropdown-menu-item-icon brand-icon--light" src="app/res/app-light.svg" alt="" width="20" height="20" />
-                        <img class="dropdown-menu-item-icon brand-icon--dark" src="app/res/app-dark.svg" alt="" width="20" height="20" />
-                      </span>
-                      <span class="dropdown-menu-item-text">
-                        <span class="dropdown-menu-item-label">Example App C</span>
-                        <span class="dropdown-menu-item-subtitle">Third related project</span>
-                      </span>
-                    </button>
-                  </li>
-                </ul>
-              </div>
-              <p id="demo-dropdown-icons-result" class="demo-hint" aria-live="polite"></p>
-            </div>
-
-            <div class="demo-card">
-              <h3 class="demo-card-title">Toggle dropdown</h3>
-              <p class="demo-hint">Multi-select; menu stays open while toggling items.</p>
-              <div class="dropdown" id="demo-toggle-dropdown">
-                <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
-                  aria-expanded="false" aria-controls="demo-toggle-dropdown-menu">
-                  <span class="dropdown-trigger-label">Toggle items</span>
-                  <span class="combo-btn-chevron" aria-hidden="true"></span>
-                </button>
-                <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
-                      data-value="alpha">
-                      Alpha
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
-                      data-value="beta">
-                      Beta
-                    </button>
-                  </li>
-                  <li role="none">
-                    <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
-                      data-value="gamma">
-                      Gamma
-                    </button>
-                  </li>
-                </ul>
-              </div>
-              <p id="demo-toggle-dropdown-result" class="demo-hint" aria-live="polite"></p>
             </div>
           </div>
         </section>
