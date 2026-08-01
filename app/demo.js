@@ -671,21 +671,12 @@ document.getElementById("confirm-dialog-ok")?.addEventListener("click", () => {
 });
 
 const bannerIds = [
-  "demo-important-banner",
+  "demo-note-banner",
   "demo-info-banner",
   "demo-success-banner",
-  "demo-note-banner",
+  "demo-important-banner",
   "demo-warning-banner",
   "demo-error-banner",
-];
-
-const bannerToggles = [
-  ["toggle-important-banner", "demo-important-banner"],
-  ["toggle-info-banner", "demo-info-banner"],
-  ["toggle-success-banner", "demo-success-banner"],
-  ["toggle-note-banner", "demo-note-banner"],
-  ["toggle-warning-banner", "demo-warning-banner"],
-  ["toggle-error-banner", "demo-error-banner"],
 ];
 
 const bannerTriggers = [
@@ -699,46 +690,36 @@ const bannerTriggers = [
 
 const BANNER_TRIGGER_EXPIRE_MS = 3000;
 
-function isBannerHidden(bannerEl) {
-  return bannerEl.classList.contains("hidden") || bannerEl.hidden;
-}
-
 function getBannerElements() {
   return bannerIds
     .map((id) => document.getElementById(id))
     .filter(Boolean);
 }
 
-for (const [buttonId, bannerId] of bannerToggles) {
-  document.getElementById(buttonId)?.addEventListener("click", () => {
-    const bannerEl = document.getElementById(bannerId);
-    if (!bannerEl) return;
-    if (isBannerHidden(bannerEl)) {
-      showBanner(bannerEl);
-    } else {
-      hideBanner(bannerEl);
-    }
-  });
+function dismissBanner(bannerEl) {
+  showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
+}
+
+function resetBanners() {
+  for (const banner of getBannerElements()) {
+    showBanner(banner);
+  }
 }
 
 for (const [buttonId, bannerId] of bannerTriggers) {
   document.getElementById(buttonId)?.addEventListener("click", () => {
     const bannerEl = document.getElementById(bannerId);
     if (!bannerEl) return;
-    showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
+    dismissBanner(bannerEl);
   });
 }
 
-document.getElementById("toggle-all-banners")?.addEventListener("click", () => {
-  const banners = getBannerElements();
-  const anyVisible = banners.some((banner) => !isBannerHidden(banner));
-  const hideAll = anyVisible;
-
-  for (const banner of banners) {
-    if (hideAll) {
-      hideBanner(banner);
-    } else {
-      showBanner(banner);
-    }
+document.getElementById("trigger-all-banners")?.addEventListener("click", () => {
+  for (const banner of getBannerElements()) {
+    dismissBanner(banner);
   }
+});
+
+document.getElementById("reset-banners")?.addEventListener("click", () => {
+  resetBanners();
 });

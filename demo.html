@@ -635,23 +635,10 @@
             </div>
             <h3 class="demo-card-title">Banners</h3>
             <p class="demo-hint">
-              Inline feedback below the trigger row. Toggle to show or hide; trigger to flash with auto-dismiss.
+              All variants shown by default. Trigger auto-dismiss on one banner or all; reset restores the static set.
             </p>
             <div class="demo-banner-controls">
               <div class="demo-banner-group">
-                <p class="demo-banner-group-label">Toggle visibility</p>
-                <div class="demo-row">
-                  <button type="button" class="btn" id="toggle-note-banner">Note</button>
-                  <button type="button" class="btn" id="toggle-info-banner">Info</button>
-                  <button type="button" class="btn" id="toggle-success-banner">Success</button>
-                  <button type="button" class="btn" id="toggle-important-banner">Important</button>
-                  <button type="button" class="btn" id="toggle-warning-banner">Warning</button>
-                  <button type="button" class="btn" id="toggle-error-banner">Error</button>
-                  <button type="button" class="btn btn-primary" id="toggle-all-banners">All</button>
-                </div>
-              </div>
-              <div class="demo-banner-group">
-                <p class="demo-banner-group-label">Auto-dismiss (3 s)</p>
                 <div class="demo-row">
                   <button type="button" class="btn" id="trigger-note-banner">Note</button>
                   <button type="button" class="btn" id="trigger-info-banner">Info</button>
@@ -659,31 +646,33 @@
                   <button type="button" class="btn" id="trigger-important-banner">Important</button>
                   <button type="button" class="btn" id="trigger-warning-banner">Warning</button>
                   <button type="button" class="btn" id="trigger-error-banner">Error</button>
+                  <button type="button" class="btn btn-primary" id="trigger-all-banners">All</button>
+                  <button type="button" class="btn" id="reset-banners">Reset</button>
                 </div>
               </div>
             </div>
             <div class="demo-banner-stack">
-              <div id="demo-note-banner" class="banner banner-note hidden" role="note" hidden>
+              <div id="demo-note-banner" class="banner banner-note" role="note">
                 <span class="banner-icon" data-icon="note" data-icon-class="banner-icon-svg"></span>
                 <span class="banner-body">Note — supplementary detail that is easy to skim past.</span>
               </div>
-              <div id="demo-info-banner" class="banner banner-info hidden" role="status" hidden>
+              <div id="demo-info-banner" class="banner banner-info" role="status">
                 <span class="banner-icon" data-icon="info" data-icon-class="banner-icon-svg"></span>
                 <span class="banner-body">Info — neutral guidance or context.</span>
               </div>
-              <div id="demo-success-banner" class="banner banner-success hidden" role="status" hidden>
+              <div id="demo-success-banner" class="banner banner-success" role="status">
                 <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
                 <span class="banner-body">Success — completed actions or positive outcomes.</span>
               </div>
-              <div id="demo-important-banner" class="banner banner-important hidden" role="status" hidden>
+              <div id="demo-important-banner" class="banner banner-important" role="status">
                 <span class="banner-icon" data-icon="important" data-icon-class="banner-icon-svg"></span>
                 <span class="banner-body">Important — high-priority messages.</span>
               </div>
-              <div id="demo-warning-banner" class="banner banner-warning hidden" role="status" hidden>
+              <div id="demo-warning-banner" class="banner banner-warning" role="status">
                 <span class="banner-icon" data-icon="warning" data-icon-class="banner-icon-svg"></span>
                 <span class="banner-body">Warning — non-blocking notices.</span>
               </div>
-              <div id="demo-error-banner" class="banner banner-error hidden" role="alert" hidden>
+              <div id="demo-error-banner" class="banner banner-error" role="alert">
                 <span class="banner-icon" data-icon="error" data-icon-class="banner-icon-svg"></span>
                 <span class="banner-body">Error — something that needs attention.</span>
               </div>
