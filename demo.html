@@ -814,6 +814,7 @@
                 </div>
               </div>
             </div>
+            <hr class="demo-divider" />
             <div class="demo-grid demo-grid-2">
               <div class="demo-fields">
                 <h3 class="demo-card-title">Tabs</h3>
@@ -905,6 +906,90 @@
                   </nav>
                   <input type="hidden" class="pagination-value" value="1" />
                 </div>
+              </div>
+            </div>
+            <hr class="demo-divider" />
+            <div class="demo-grid demo-grid-2">
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Expand</h3>
+                <p class="demo-hint">Single disclosure - one trigger, one panel.</p>
+                <div class="expand" id="demo-expand">
+                  <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="demo-expand-panel">
+                    <span class="expand-notch" aria-hidden="true"></span>
+                    <span class="expand-label">Reveal more content</span>
+                  </button>
+                  <div id="demo-expand-panel" class="expand-panel hidden" hidden>
+                    <div class="expand-body">
+                      <p>
+                        Extra settings or detail live here. Wire up with <code>initExpand()</code> or
+                        <code>initExpands()</code> for every <code>.expand</code> block.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Accordion</h3>
+                <p class="demo-hint">
+                  Stack of headings with panels below - only one section open at a time. Arrow keys move between headers.
+                </p>
+                <div class="accordion" id="demo-accordion" data-accordion-default-open="1">
+                  <div class="accordion-item">
+                    <h3 class="accordion-heading">
+                      <button type="button" class="accordion-trigger" id="demo-accordion-trigger-1" aria-expanded="false"
+                        aria-controls="demo-accordion-panel-1">
+                        <span class="accordion-notch" aria-hidden="true"></span>
+                        <span class="accordion-label">What is this template?</span>
+                      </button>
+                    </h3>
+                    <div id="demo-accordion-panel-1" class="accordion-panel hidden" role="region"
+                      aria-labelledby="demo-accordion-trigger-1" hidden>
+                      <div class="accordion-body">
+                        <p>
+                          A vanilla HTML, CSS, and JavaScript starter for small static apps deployed to GitHub Pages.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h3 class="accordion-heading">
+                      <button type="button" class="accordion-trigger" id="demo-accordion-trigger-2" aria-expanded="false"
+                        aria-controls="demo-accordion-panel-2">
+                        <span class="accordion-notch" aria-hidden="true"></span>
+                        <span class="accordion-label">How do I use components?</span>
+                      </button>
+                    </h3>
+                    <div id="demo-accordion-panel-2" class="accordion-panel hidden" role="region"
+                      aria-labelledby="demo-accordion-trigger-2" hidden>
+                      <div class="accordion-body">
+                        <p>
+                          Copy markup from <code>demo.html</code>, import the matching module from
+                          <code>app/</code>, and call its <code>init</code> helper. See
+                          <code>USAGE.md</code> for the full catalogue.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h3 class="accordion-heading">
+                      <button type="button" class="accordion-trigger" id="demo-accordion-trigger-3" aria-expanded="false"
+                        aria-controls="demo-accordion-panel-3">
+                        <span class="accordion-notch" aria-hidden="true"></span>
+                        <span class="accordion-label">Accordion vs expand?</span>
+                      </button>
+                    </h3>
+                    <div id="demo-accordion-panel-3" class="accordion-panel hidden" role="region"
+                      aria-labelledby="demo-accordion-trigger-3" hidden>
+                      <div class="accordion-body">
+                        <p>
+                          Use <code>.expand</code> for a single disclosure. Use <code>.accordion</code> when you have
+                          several related sections and want one open panel at a time.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p id="demo-accordion-result" class="demo-hint" aria-live="polite">Open: How do I use components?</p>
               </div>
             </div>
           </div>
@@ -1186,25 +1271,6 @@
           </div>
 
           <div class="demo-card">
-            <h3 class="demo-card-title">Expand</h3>
-            <p class="demo-hint">Single disclosure - one trigger, one panel.</p>
-            <div class="expand" id="demo-expand">
-              <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="demo-expand-panel">
-                <span class="expand-notch" aria-hidden="true"></span>
-                <span class="expand-label">Reveal more content</span>
-              </button>
-              <div id="demo-expand-panel" class="expand-panel hidden" hidden>
-                <div class="expand-body">
-                  <p>
-                    Extra settings or detail live here. Wire up with <code>initExpand()</code> or
-                    <code>initExpands()</code> for every <code>.expand</code> block.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="demo-card">
             <h3 class="demo-card-title">Data table</h3>
             <p class="demo-hint">Sortable columns and row selection — click a row (or its checkbox) to select. Numeric columns use <code>.table-num</code>.</p>
             <div class="table-block table-block--wide" id="demo-table" data-table-sortable data-table-selectable>
@@ -1296,70 +1362,6 @@
             </p>
             <div class="tabular-input" id="demo-tabular-input" aria-label="Sample inventory"></div>
             <p id="demo-tabular-input-result" class="demo-hint" aria-live="polite">8 columns · 5 rows</p>
-          </div>
-
-          <div class="demo-card">
-            <h3 class="demo-card-title">Accordion</h3>
-            <p class="demo-hint">
-              Stack of headings with panels below - only one section open at a time. Arrow keys move between headers.
-            </p>
-            <div class="accordion" id="demo-accordion" data-accordion-default-open="1">
-              <div class="accordion-item">
-                <h3 class="accordion-heading">
-                  <button type="button" class="accordion-trigger" id="demo-accordion-trigger-1" aria-expanded="false"
-                    aria-controls="demo-accordion-panel-1">
-                    <span class="accordion-notch" aria-hidden="true"></span>
-                    <span class="accordion-label">What is this template?</span>
-                  </button>
-                </h3>
-                <div id="demo-accordion-panel-1" class="accordion-panel hidden" role="region"
-                  aria-labelledby="demo-accordion-trigger-1" hidden>
-                  <div class="accordion-body">
-                    <p>
-                      A vanilla HTML, CSS, and JavaScript starter for small static apps deployed to GitHub Pages.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h3 class="accordion-heading">
-                  <button type="button" class="accordion-trigger" id="demo-accordion-trigger-2" aria-expanded="false"
-                    aria-controls="demo-accordion-panel-2">
-                    <span class="accordion-notch" aria-hidden="true"></span>
-                    <span class="accordion-label">How do I use components?</span>
-                  </button>
-                </h3>
-                <div id="demo-accordion-panel-2" class="accordion-panel hidden" role="region"
-                  aria-labelledby="demo-accordion-trigger-2" hidden>
-                  <div class="accordion-body">
-                    <p>
-                      Copy markup from <code>demo.html</code>, import the matching module from
-                      <code>app/</code>, and call its <code>init</code> helper. See
-                      <code>USAGE.md</code> for the full catalogue.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="accordion-item">
-                <h3 class="accordion-heading">
-                  <button type="button" class="accordion-trigger" id="demo-accordion-trigger-3" aria-expanded="false"
-                    aria-controls="demo-accordion-panel-3">
-                    <span class="accordion-notch" aria-hidden="true"></span>
-                    <span class="accordion-label">Accordion vs expand?</span>
-                  </button>
-                </h3>
-                <div id="demo-accordion-panel-3" class="accordion-panel hidden" role="region"
-                  aria-labelledby="demo-accordion-trigger-3" hidden>
-                  <div class="accordion-body">
-                    <p>
-                      Use <code>.expand</code> for a single disclosure. Use <code>.accordion</code> when you have
-                      several related sections and want one open panel at a time.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p id="demo-accordion-result" class="demo-hint" aria-live="polite">Open: How do I use components?</p>
           </div>
         </section>
       </div>
