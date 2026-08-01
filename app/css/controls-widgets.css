@@ -389,6 +389,12 @@
   animation: progress-bar-indeterminate 1.2s ease-in-out infinite;
 }
 
+/* Bounce mode: the segment travels edge to edge and back inside the track */
+.progress-bar--indeterminate.progress-bar--bounce .progress-bar-fill {
+  width: 30%;
+  animation: progress-bar-bounce 1.1s ease-in-out infinite alternate;
+}
+
 .progress-bar--error .progress-bar-fill {
   background: var(--banner-error-border);
   animation: progress-bar-error-pulse 1.4s ease-in-out infinite;
@@ -397,6 +403,11 @@
 .progress-bar--disabled .progress-bar-fill {
   background: var(--muted);
   animation: none;
+}
+
+.progress-bar--indeterminate.progress-bar--bounce.progress-bar--disabled .progress-bar-fill {
+  animation: none;
+  transform: none;
 }
 
 .progress-bar--disabled[data-progress-bar-shine] .progress-bar-fill::after {
@@ -432,6 +443,17 @@
   }
 }
 
+/* Travel distance is (track - fill) / fill, i.e. (100% - 30%) / 30% */
+@keyframes progress-bar-bounce {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(233.3333%);
+  }
+}
+
 @keyframes progress-bar-shine {
   0% {
     transform: translateX(-100%);
@@ -460,6 +482,12 @@
 
   .progress-bar--indeterminate .progress-bar-fill {
     animation: none;
+    width: 50%;
+  }
+
+  .progress-bar--indeterminate.progress-bar--bounce .progress-bar-fill {
+    animation: none;
+    transform: none;
     width: 50%;
   }
 

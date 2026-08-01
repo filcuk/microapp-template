@@ -562,6 +562,8 @@ demoProgressBarError = initProgressBar(document.getElementById("demo-progress-ba
 demoProgressBarDisabled = initProgressBar(document.getElementById("demo-progress-bar-disabled"), {
   onChange: progressBarOnChange,
 });
+initProgressBar(document.getElementById("demo-progress-bar-indeterminate"));
+initProgressBar(document.getElementById("demo-progress-bar-bounce"));
 updateProgressBarResult();
 
 document.getElementById("demo-progress-bar-advance")?.addEventListener("click", () => {
