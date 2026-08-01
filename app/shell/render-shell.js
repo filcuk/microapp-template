@@ -87,9 +87,71 @@ export function normalizeSiteUrl(value) {
  *   icon: string,
  *   iconLight: string,
  *   iconDark: string,
+ *   order: number | null,
  * }} AlsoSeeLink
- * @typedef {{ topic: string | null, items: AlsoSeeLink[] }} AlsoSeeSection
+ * @typedef {{
+ *   topic: string | null,
+ *   order: number | null,
+ *   items: AlsoSeeLink[],
+ * }} AlsoSeeSection
  */
+
+/**
+ * Parse an optional numeric `order` from JSON / config.
+ * Non-finite values are treated as missing (`null` → sort after numbered).
+ *
+ * @param {unknown} value
+ * @returns {number | null}
+ */
+export function parseAlsoSeeOrder(value) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  return value;
+}
+
+/**
+ * Sort key: finite orders ascending; missing orders after all finite ones.
+ *
+ * @param {number | null | undefined} order
+ * @returns {number}
+ */
+function alsoSeeOrderKey(order) {
+  return typeof order === "number" && Number.isFinite(order)
+    ? order
+    : Number.POSITIVE_INFINITY;
+}
+
+/**
+ * Stable sort by `order`, then original index.
+ *
+ * @template {{ order?: number | null }} T
+ * @param {T[]} items
+ * @returns {T[]}
+ */
+function sortByAlsoSeeOrder(items) {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => {
+      const byOrder = alsoSeeOrderKey(a.item.order) - alsoSeeOrderKey(b.item.order);
+      if (byOrder !== 0) return byOrder;
+      return a.index - b.index;
+    })
+    .map(({ item }) => item);
+}
+
+/**
+ * Prefer the lower finite `order` when merging sections; otherwise keep primary.
+ *
+ * @param {number | null | undefined} primary
+ * @param {number | null | undefined} secondary
+ * @returns {number | null}
+ */
+function mergeAlsoSeeOrder(primary, secondary) {
+  const a = parseAlsoSeeOrder(primary);
+  const b = parseAlsoSeeOrder(secondary);
+  if (a === null) return b;
+  if (b === null) return a;
+  return Math.min(a, b);
+}
 
 /**
  * @param {unknown} link
@@ -116,6 +178,7 @@ function normalizeAlsoSeeLink(link, exclude) {
     typeof link.iconDark === "string" && link.iconDark.trim()
       ? link.iconDark.trim()
       : "";
+  const order = parseAlsoSeeOrder(/** @type {{ order?: unknown }} */ (link).order);
 
   // Theme pair when either light/dark is set; otherwise a single always-visible icon.
   if (iconLight || iconDark) {
@@ -126,10 +189,11 @@ function normalizeAlsoSeeLink(link, exclude) {
       icon: "",
       iconLight: iconLight || iconDark,
       iconDark: iconDark || iconLight,
+      order,
     };
   }
 
-  return { label, subtitle, url, icon, iconLight: "", iconDark: "" };
+  return { label, subtitle, url, icon, iconLight: "", iconDark: "", order };
 }
 
 /**
@@ -221,7 +285,8 @@ export function alsoSeeHasItems(sections) {
 }
 
 /**
- * Keep named topics in encounter order; always place the ungrouped section last.
+ * Sort named topics by `order` (then encounter index); always place ungrouped
+ * last. Items within each section are also sorted by link `order`.
  *
  * @param {AlsoSeeSection[]} sections
  * @returns {AlsoSeeSection[]}
@@ -234,22 +299,45 @@ function orderAlsoSeeSections(sections) {
   for (const section of sections) {
     if (section.topic === null || section.topic === undefined) {
       if (!ungrouped) {
-        ungrouped = section;
+        ungrouped = {
+          topic: null,
+          order: null,
+          items: [...section.items],
+        };
       } else {
         ungrouped.items.push(...section.items);
       }
       continue;
     }
-    named.push(section);
+    named.push({
+      topic: section.topic,
+      order: section.order ?? null,
+      items: [...section.items],
+    });
   }
-  return ungrouped ? [...named, ungrouped] : named;
+
+  const sortedNamed = sortByAlsoSeeOrder(named).map((section) => ({
+    ...section,
+    items: sortByAlsoSeeOrder(section.items),
+  }));
+
+  if (!ungrouped) return sortedNamed;
+  return [
+    ...sortedNamed,
+    {
+      topic: null,
+      order: null,
+      items: sortByAlsoSeeOrder(ungrouped.items),
+    },
+  ];
 }
 
 /**
  * Merge also-see sections by topic (case-insensitive). Matching topics share one
- * section; items are appended and de-duplicated by normalized URL. Primary
- * section order and topic casing win; new topics from secondary are appended.
- * Ungrouped (no topic) sections are always last.
+ * section; items are appended and de-duplicated by normalized URL. On merge,
+ * the lower finite topic `order` wins. Named topics are sorted by `order`;
+ * ungrouped (no topic) sections are always last. Link `order` is applied within
+ * each section after merge.
  *
  * @param {AlsoSeeSection[]} primary
  * @param {AlsoSeeSection[]} secondary
@@ -280,6 +368,7 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
       if (!existing) {
         const copy = {
           topic: section.topic,
+          order: section.order ?? null,
           items: [...section.items],
         };
         byKey.set(key, copy);
@@ -287,6 +376,7 @@ export function mergeAlsoSeeSections(primary = [], secondary = []) {
         continue;
       }
 
+      existing.order = mergeAlsoSeeOrder(existing.order, section.order);
       const seen = new Set(
         existing.items.map((item) => normalizeSiteUrl(item.url)).filter(Boolean)
       );
@@ -340,7 +430,11 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
         .filter(Boolean);
       if (!items.length) continue;
 
-      sections.push({ topic: topic || null, items });
+      sections.push({
+        topic: topic || null,
+        order: topic ? parseAlsoSeeOrder(entry.order) : null,
+        items,
+      });
       continue;
     }
 
@@ -353,7 +447,7 @@ export function normalizeAlsoSee(alsoSee, excludeUrl = "", topics) {
     if (last && last.topic === null) {
       last.items.push(link);
     } else {
-      sections.push({ topic: null, items: [link] });
+      sections.push({ topic: null, order: null, items: [link] });
     }
   }
 

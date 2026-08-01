@@ -496,3 +496,148 @@ test("renderAlsoSeeMarkup uses one img for icon and a pair for light/dark", () =
     /brand-icon--dark" src="https:\/\/example\.com\/app-dark\.svg"/
   );
 });
+
+test("normalizeAlsoSee sorts topics and links by order", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "Later",
+        order: 20,
+        items: [
+          { label: "B", url: "https://example.com/b", order: 20 },
+          { label: "A", url: "https://example.com/a", order: 10 },
+        ],
+      },
+      {
+        topic: "Earlier",
+        order: 10,
+        items: [{ label: "C", url: "https://example.com/c", order: 5 }],
+      },
+      {
+        label: "Ungrouped high",
+        url: "https://example.com/u2",
+        order: 20,
+      },
+      {
+        label: "Ungrouped low",
+        url: "https://example.com/u1",
+        order: 10,
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  assert.deepEqual(
+    sections.map((section) => section.topic),
+    ["Earlier", "Later", null]
+  );
+  assert.deepEqual(
+    sections[1].items.map((item) => item.label),
+    ["A", "B"]
+  );
+  assert.deepEqual(
+    sections[2].items.map((item) => item.label),
+    ["Ungrouped low", "Ungrouped high"]
+  );
+});
+
+test("normalizeAlsoSee puts missing order after numbered entries", () => {
+  const sections = normalizeAlsoSee(
+    [
+      {
+        topic: "No order",
+        items: [
+          { label: "Missing", url: "https://example.com/m" },
+          { label: "First", url: "https://example.com/f", order: 1 },
+        ],
+      },
+      {
+        topic: "Numbered",
+        order: 5,
+        items: [{ label: "N", url: "https://example.com/n" }],
+      },
+    ],
+    "",
+    ["*"]
+  );
+
+  assert.deepEqual(
+    sections.map((section) => section.topic),
+    ["Numbered", "No order"]
+  );
+  assert.deepEqual(
+    sections[1].items.map((item) => item.label),
+    ["First", "Missing"]
+  );
+  assert.equal(sections[0].order, 5);
+  assert.equal(sections[1].order, null);
+  assert.equal(sections[1].items[0].order, 1);
+  assert.equal(sections[1].items[1].order, null);
+});
+
+test("mergeAlsoSeeSections keeps lower topic order and re-sorts links", () => {
+  const merged = mergeAlsoSeeSections(
+    [
+      {
+        topic: "Embedded",
+        order: 30,
+        items: [
+          {
+            label: "Remote late",
+            subtitle: "",
+            url: "https://example.com/a",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+            order: 20,
+          },
+        ],
+      },
+    ],
+    [
+      {
+        topic: "embedded",
+        order: 10,
+        items: [
+          {
+            label: "Local early",
+            subtitle: "",
+            url: "https://example.com/b",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+            order: 5,
+          },
+        ],
+      },
+      {
+        topic: "Examples",
+        order: 20,
+        items: [
+          {
+            label: "Local C",
+            subtitle: "",
+            url: "https://example.com/c",
+            icon: "",
+            iconLight: "",
+            iconDark: "",
+            order: 1,
+          },
+        ],
+      },
+    ]
+  );
+
+  assert.deepEqual(
+    merged.map((section) => [section.topic, section.order]),
+    [
+      ["Embedded", 10],
+      ["Examples", 20],
+    ]
+  );
+  assert.deepEqual(
+    merged[0].items.map((item) => item.label),
+    ["Local early", "Remote late"]
+  );
+});
