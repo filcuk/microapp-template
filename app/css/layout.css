@@ -683,7 +683,97 @@ body > footer {
 .footer-also-see .footer-also-see-menu {
   top: auto;
   bottom: calc(100% + 4px);
-  min-width: 12rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  align-items: start;
+  gap: 0.35rem 0.5rem;
+  box-sizing: border-box;
+  width: min(100vw - 2rem, 40rem);
+  min-width: min(100vw - 2rem, 12rem);
+  max-width: min(100vw - 2rem, 40rem);
+  padding: 0.5rem;
+}
+
+@supports (display: grid-lanes) {
+  .footer-also-see .footer-also-see-menu {
+    display: grid-lanes;
+  }
+}
+
+.footer-also-see-topic {
+  display: grid;
+  /* Equal columns matching --also-see-span; upgraded to subgrid when supported. */
+  grid-template-columns: repeat(var(--also-see-span, 1), minmax(0, 1fr));
+  grid-column: span var(--also-see-span, 1);
+  align-content: start;
+  gap: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@supports (grid-template-columns: subgrid) {
+  .footer-also-see-topic {
+    grid-template-columns: subgrid;
+  }
+}
+
+.footer-also-see-topic-label {
+  grid-column: 1 / -1;
+  padding: 0.35rem 0.5rem 0.25rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: normal;
+  user-select: none;
+  pointer-events: none;
+}
+
+.footer-also-see-topic:not(:first-child) > .footer-also-see-topic-label {
+  margin-top: 0.15rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-also-see-topic--ungrouped:not(:first-child) {
+  margin-top: 0.15rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-also-see-topic-links {
+  display: contents;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-also-see-topic-links > li {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-also-see-topic-links .dropdown-menu-item {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.5rem;
+  white-space: normal;
+}
+
+/* Nested-grid fallback when `display: contents` is unavailable. */
+@supports not (display: contents) {
+  .footer-also-see-topic-links {
+    display: grid;
+    grid-template-columns: repeat(var(--also-see-span, 1), minmax(0, 1fr));
+    grid-column: 1 / -1;
+  }
 }
 
 body > footer a {
