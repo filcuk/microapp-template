@@ -353,6 +353,7 @@
 }
 
 .progress-bar-track {
+  position: relative;
   flex: 1;
   min-width: 0;
   height: 0.5rem;
@@ -362,10 +363,14 @@
   overflow: hidden;
 }
 
+/* Anchored to both edges rather than height: 100%, which fractional display
+   scaling can round shorter than the track and leave a hairline gap. */
 .progress-bar-fill {
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
   display: block;
-  height: 100%;
   width: 0%;
   overflow: hidden;
   border-radius: inherit;
@@ -384,9 +389,12 @@
   text-align: right;
 }
 
+/* will-change promotes the moving segment to its own layer, so the transform
+   runs on the compositor instead of repainting through the rounded clip. */
 .progress-bar--indeterminate .progress-bar-fill {
   width: 35%;
   animation: progress-bar-indeterminate 1.2s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Bounce mode: the segment travels edge to edge and back inside the track */
@@ -403,6 +411,7 @@
 .progress-bar--disabled .progress-bar-fill {
   background: var(--muted);
   animation: none;
+  will-change: auto;
 }
 
 .progress-bar--indeterminate.progress-bar--bounce.progress-bar--disabled .progress-bar-fill {
@@ -431,6 +440,7 @@
   );
   transform: translateX(-100%);
   animation: progress-bar-shine 1.75s ease-in-out infinite;
+  will-change: transform;
 }
 
 @keyframes progress-bar-indeterminate {
@@ -483,6 +493,7 @@
   .progress-bar--indeterminate .progress-bar-fill {
     animation: none;
     width: 50%;
+    will-change: auto;
   }
 
   .progress-bar--indeterminate.progress-bar--bounce .progress-bar-fill {
@@ -501,6 +512,7 @@
     .progress-bar-fill::after {
     content: none;
     animation: none;
+    will-change: auto;
   }
 }
 
