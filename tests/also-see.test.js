@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   alsoSeeHasItems,
-  alsoSeeTopicSpan,
+  alsoSeeMenuColumns,
   mergeAlsoSeeSections,
   normalizeAlsoSee,
   normalizeSiteUrl,
@@ -348,7 +348,7 @@ test("normalizeAlsoSee places ungrouped section last", () => {
   );
 });
 
-test("renderAlsoSeeMarkup emits nested topic groups with span", () => {
+test("renderAlsoSeeMarkup emits nested topic groups with shared columns", () => {
   const markup = renderAlsoSeeMarkup([
     {
       topic: "Database",
@@ -373,8 +373,7 @@ test("renderAlsoSeeMarkup emits nested topic groups with span", () => {
   assert.match(markup, /footer-also-see-topic/);
   assert.match(markup, /footer-also-see-topic-label">Database</);
   assert.match(markup, /aria-label="Database"/);
-  assert.match(markup, /--also-see-span:\s*1/);
-  assert.match(markup, /--also-see-rows:\s*2/);
+  assert.match(markup, /--also-see-columns:\s*1/);
   assert.match(markup, /footer-also-see-topic-links/);
   assert.match(markup, /href="https:\/\/example\.com\/cs"/);
   assert.match(markup, /CS Builder/);
@@ -385,14 +384,24 @@ test("renderAlsoSeeMarkup emits nested topic groups with span", () => {
   );
 });
 
-test("alsoSeeTopicSpan keeps topic blocks squarish", () => {
-  assert.equal(alsoSeeTopicSpan(1), 1);
-  assert.equal(alsoSeeTopicSpan(2), 2);
-  assert.equal(alsoSeeTopicSpan(4), 2);
-  assert.equal(alsoSeeTopicSpan(9), 2);
+test("alsoSeeMenuColumns picks the grid with fewest trailing gaps", () => {
+  const section = (count) => ({
+    topic: `T${count}`,
+    order: null,
+    items: Array.from({ length: count }, () => ({ label: "x", url: "y" })),
+  });
+
+  assert.equal(alsoSeeMenuColumns([]), 1);
+  assert.equal(alsoSeeMenuColumns([section(1), section(1)]), 1);
+  // 4 + 1 + 1 + 2 links: two columns beat three (fewer holes) and one (taller).
+  assert.equal(
+    alsoSeeMenuColumns([section(4), section(1), section(1), section(2)]),
+    2
+  );
+  assert.equal(alsoSeeMenuColumns([section(6), section(3)]), 3);
 });
 
-test("renderAlsoSeeMarkup packs topics into square blocks", () => {
+test("renderAlsoSeeMarkup makes every topic full width", () => {
   const fourLinks = [1, 2, 3, 4].map((n) => ({
     label: `App ${n}`,
     subtitle: "",
@@ -432,15 +441,10 @@ test("renderAlsoSeeMarkup packs topics into square blocks", () => {
     },
   ]);
 
-  // 4 links -> 2 columns x 2 link rows (+1 label row).
-  assert.match(
-    markup,
-    /footer-also-see-topic(?!--)[^>]*--also-see-span:\s*2;\s*--also-see-rows:\s*3/
-  );
-  assert.match(
-    markup,
-    /footer-also-see-topic--ungrouped[^>]*--also-see-span:\s*1;\s*--also-see-rows:\s*1[\s\S]*Profile/
-  );
+  // 4 links + 1 ungrouped link: two columns leave the fewest holes.
+  assert.match(markup, /--also-see-columns:\s*2/);
+  assert.match(markup, /footer-also-see-topic--ungrouped[\s\S]*Profile/);
+  assert.doesNotMatch(markup, /--also-see-span/);
   assert.doesNotMatch(markup, /dropdown-menu-separator/);
   assert.doesNotMatch(markup, /dropdown-menu-group/);
 });

@@ -680,35 +680,33 @@ body > footer {
   outline: none;
 }
 
+/* Column count is chosen per menu in render-shell.js to minimise trailing gaps. */
 .footer-also-see .footer-also-see-menu {
+  --also-see-column-width: 13rem;
+
   top: auto;
   bottom: calc(100% + 4px);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  grid-auto-rows: min-content;
-  /* Dense flow lets one-link topics backfill holes left by wider blocks. */
-  grid-auto-flow: row dense;
+  grid-template-columns: repeat(var(--also-see-columns, 1), minmax(0, 1fr));
   align-content: start;
   gap: 0.35rem 0.5rem;
   box-sizing: border-box;
-  width: min(100vw - 2rem, 40rem);
-  min-width: min(100vw - 2rem, 12rem);
+  width: min(
+    100vw - 2rem,
+    calc(var(--also-see-columns, 1) * var(--also-see-column-width))
+  );
+  /* `.dropdown-menu` sets `min-width: 100%`, which is the viewport once fixed. */
+  min-width: 0;
   max-width: min(100vw - 2rem, 40rem);
-  padding: 0.5rem;
-}
-
-@supports (display: grid-lanes) {
-  .footer-also-see .footer-also-see-menu {
-    display: grid-lanes;
-  }
+  /* No inline padding so topic separators run edge to edge; items pad their own text. */
+  padding: 0.5rem 0;
 }
 
 .footer-also-see-topic {
   display: grid;
-  /* Equal columns matching --also-see-span; upgraded to subgrid when supported. */
-  grid-template-columns: repeat(var(--also-see-span, 1), minmax(0, 1fr));
-  grid-column: span var(--also-see-span, 1);
-  grid-row: span var(--also-see-rows, 1);
+  /* Same columns as the menu; upgraded to subgrid when supported. */
+  grid-template-columns: repeat(var(--also-see-columns, 1), minmax(0, 1fr));
+  grid-column: 1 / -1;
   align-content: start;
   gap: 0;
   min-width: 0;
@@ -717,11 +715,9 @@ body > footer {
   list-style: none;
 }
 
-/* Shared tracks keep labels and link rows aligned across neighbouring topics. */
 @supports (grid-template-columns: subgrid) {
   .footer-also-see-topic {
     grid-template-columns: subgrid;
-    grid-template-rows: subgrid;
   }
 }
 
@@ -758,7 +754,9 @@ body > footer {
   list-style: none;
 }
 
+/* Stretch each cell so links sharing a row match the tallest one. */
 .footer-also-see-topic-links > li {
+  display: flex;
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -766,6 +764,9 @@ body > footer {
 }
 
 .footer-also-see-topic-links .dropdown-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -777,23 +778,17 @@ body > footer {
 @supports not (display: contents) {
   .footer-also-see-topic-links {
     display: grid;
-    grid-template-columns: repeat(var(--also-see-span, 1), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--also-see-columns, 1), minmax(0, 1fr));
     grid-column: 1 / -1;
   }
 }
 
-/* Too narrow for a two-column block: stack every topic in one column. */
+/* Too narrow for side-by-side cells: stack every link in one column. */
 @media (max-width: 25rem) {
-  .footer-also-see .footer-also-see-menu {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
+  .footer-also-see .footer-also-see-menu,
   .footer-also-see-topic,
   .footer-also-see-topic-links {
-    grid-column: 1 / -1;
-    grid-row: auto;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
   }
 }
 

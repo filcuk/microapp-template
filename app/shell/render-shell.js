@@ -580,19 +580,42 @@ function renderAlsoSeeLinkItem(link, index) {
         </li>`;
 }
 
-/** Max columns a topic block may span in the also-see grid. */
-const ALSO_SEE_TOPIC_SPAN_MAX = 2;
+/** Column counts the also-see menu may use. */
+const ALSO_SEE_MENU_COLUMNS = [1, 2, 3];
 
 /**
- * Column span for a topic block. Squarish blocks leave fewer holes than one
- * long row (4 links → 2×2, 1 link → 1×1).
+ * Pick one column count for the whole menu. Every topic spans the full width,
+ * so the best count is the one that leaves the fewest trailing holes without
+ * making the menu unnecessarily tall.
  *
- * @param {number} count
+ * @param {AlsoSeeSection[]} sections
  * @returns {number}
  */
-export function alsoSeeTopicSpan(count) {
-  if (!Number.isFinite(count) || count <= 1) return 1;
-  return Math.min(Math.ceil(Math.sqrt(count)), ALSO_SEE_TOPIC_SPAN_MAX);
+export function alsoSeeMenuColumns(sections) {
+  const counts = (Array.isArray(sections) ? sections : [])
+    .map((section) => section?.items?.length ?? 0)
+    .filter((count) => count > 0);
+  if (!counts.length) return 1;
+
+  const largest = Math.max(...counts);
+  let best = 1;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  for (const columns of ALSO_SEE_MENU_COLUMNS) {
+    if (columns > largest) break;
+    let score = 0;
+    for (const count of counts) {
+      const rows = Math.ceil(count / columns);
+      score += rows + (rows * columns - count);
+    }
+    // Ties favour the wider grid, which is the shorter menu.
+    if (score <= bestScore) {
+      bestScore = score;
+      best = columns;
+    }
+  }
+
+  return best;
 }
 
 /**
@@ -605,16 +628,10 @@ function renderAlsoSeeTopic(section, startIndex) {
   const linksMarkup = section.items
     .map((link) => renderAlsoSeeLinkItem(link, index++))
     .join("");
-  const count = Math.max(section.items.length, 1);
-  const span = alsoSeeTopicSpan(count);
-  // Row span keeps blocks on shared tracks so short topics fill the leftovers.
-  const linkRows = Math.ceil(count / span);
-  const rows = section.topic ? linkRows + 1 : linkRows;
-  const style = `--also-see-span: ${span}; --also-see-rows: ${rows}`;
 
   if (!section.topic) {
     return {
-      markup: `<li class="footer-also-see-topic footer-also-see-topic--ungrouped" role="presentation" style="${style}">
+      markup: `<li class="footer-also-see-topic footer-also-see-topic--ungrouped" role="presentation">
           <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
         </li>`,
       nextIndex: index,
@@ -622,7 +639,7 @@ function renderAlsoSeeTopic(section, startIndex) {
   }
 
   return {
-    markup: `<li class="footer-also-see-topic" role="group" aria-label="${escapeAttr(section.topic)}" style="${style}">
+    markup: `<li class="footer-also-see-topic" role="group" aria-label="${escapeAttr(section.topic)}">
           <div class="footer-also-see-topic-label">${escapeText(section.topic)}</div>
           <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
         </li>`,
@@ -638,8 +655,9 @@ export function renderAlsoSeeMarkup(sections) {
   if (!alsoSeeHasItems(sections)) return "";
 
   let index = 0;
-  const topicsMarkup = sections
-    .filter((section) => section.items.length > 0)
+  const filled = sections.filter((section) => section.items.length > 0);
+  const columns = alsoSeeMenuColumns(filled);
+  const topicsMarkup = filled
     .map((section) => {
       const rendered = renderAlsoSeeTopic(section, index);
       index = rendered.nextIndex;
@@ -651,7 +669,7 @@ export function renderAlsoSeeMarkup(sections) {
         <span>also
           <span class="footer-also-see dropdown" id="footer-also-see">
             <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu">see links</button>
-            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden>
+            <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden style="--also-see-columns: ${columns}">
               ${topicsMarkup}
             </ul>
           </span></span>`;
