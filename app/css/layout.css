@@ -682,7 +682,9 @@ body > footer {
 
 /* Column count is chosen per menu in render-shell.js to minimise trailing gaps. */
 .footer-also-see .footer-also-see-menu {
-  --also-see-column-width: 13rem;
+  --also-see-column-width: 13.5rem;
+  /* Text inset lives on the items so topic separators can still run edge to edge. */
+  --also-see-item-inset: 1rem;
 
   top: auto;
   bottom: calc(100% + 4px);
@@ -723,7 +725,7 @@ body > footer {
 
 .footer-also-see-topic-label {
   grid-column: 1 / -1;
-  padding: 0.35rem 0.5rem 0.25rem;
+  padding: 0.35rem var(--also-see-item-inset) 0.25rem;
   color: var(--muted);
   font-size: 0.75rem;
   font-weight: 600;
@@ -770,7 +772,7 @@ body > footer {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 0.4rem 0.5rem;
+  padding: 0.4rem var(--also-see-item-inset);
   white-space: normal;
 }
 
