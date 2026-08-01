@@ -183,22 +183,19 @@
         </section>
 
         <section class="content-section" aria-labelledby="demo-fields">
-          <h2 id="demo-fields" class="section-heading">Form fields</h2>
-          <p class="demo-hint">Standard inputs.</p>
-          <div class="demo-fields">
+          <h2 id="demo-fields" class="section-heading">Simple inputs</h2>
+          <div class="demo-card">
             <div class="demo-grid demo-grid-2">
-              <label class="field" for="demo-input-single">
-                <span class="field-label">Single line</span>
-                <input type="text" id="demo-input-single" class="input" placeholder="Enter text…" />
-              </label>
-              <label class="field" for="demo-input-multiline">
-                <span class="field-label">Multi-line</span>
-                <textarea id="demo-input-multiline" class="textarea" rows="3" placeholder="Enter longer text…"></textarea>
-              </label>
-            </div>
-            <div class="demo-grid demo-grid-2">
-              <div class="field">
-                <span class="field-label">Checkbox</span>
+              <div class="demo-fields">
+                <label class="field" for="demo-input-single">
+                  <span class="field-label">Single line</span>
+                  <input type="text" id="demo-input-single" class="input" placeholder="Enter text…" />
+                </label>
+                <label class="field" for="demo-input-multiline">
+                  <span class="field-label">Multi-line</span>
+                  <textarea id="demo-input-multiline" class="textarea" rows="3" placeholder="Enter longer text…"></textarea>
+                </label>
+                <h3 class="demo-card-title">Checkbox</h3>
                 <div class="checkbox-group" id="demo-checkbox-group">
                   <label class="checkbox" for="demo-checkbox-default">
                     <input type="checkbox" class="checkbox-input" id="demo-checkbox-default" />
@@ -218,10 +215,9 @@
                     <span>Option three (disabled)</span>
                   </label>
                 </div>
-                <p id="demo-checkbox-result" class="demo-hint" aria-live="polite">Selected: Option two (checked)</p>
               </div>
-              <div class="field">
-                <span class="field-label" id="demo-radio-label">Radio</span>
+              <div class="demo-fields">
+                <h3 class="demo-card-title" id="demo-radio-label">Radio</h3>
                 <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-labelledby="demo-radio-label">
                   <label class="radio" for="demo-radio-a">
                     <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-a" value="a" checked />
@@ -236,63 +232,62 @@
                     <span>Option C (disabled)</span>
                   </label>
                 </div>
-                <p id="demo-radio-result" class="demo-hint" aria-live="polite">Selected: Option A</p>
-              </div>
-            </div>
-            <div class="field">
-              <span class="field-label">Toggle</span>
-              <div class="toggle-group" id="demo-toggle-group">
-                <div class="toggle" id="demo-toggle-off" data-toggle-default="false">
-                  <button type="button" class="toggle-btn" role="switch" aria-checked="false">
-                    <span class="toggle-track" aria-hidden="true">
-                      <span class="toggle-thumb">
-                        <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                <h3 class="demo-card-title">Toggle</h3>
+                <div class="toggle-group" id="demo-toggle-group">
+                  <div class="toggle" id="demo-toggle-off" data-toggle-default="false">
+                    <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+                      <span class="toggle-track" aria-hidden="true">
+                        <span class="toggle-thumb">
+                          <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                        </span>
                       </span>
-                    </span>
-                    <span class="toggle-label">Notifications off by default</span>
-                  </button>
-                  <input type="hidden" class="toggle-value" value="false" />
-                </div>
-                <div class="toggle" id="demo-toggle-on" data-toggle-default="true">
-                  <button type="button" class="toggle-btn" role="switch" aria-checked="true">
-                    <span class="toggle-track" aria-hidden="true">
-                      <span class="toggle-thumb">
-                        <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                      <span class="toggle-label">Notifications off by default</span>
+                    </button>
+                    <input type="hidden" class="toggle-value" value="false" />
+                  </div>
+                  <div class="toggle" id="demo-toggle-on" data-toggle-default="true">
+                    <button type="button" class="toggle-btn" role="switch" aria-checked="true">
+                      <span class="toggle-track" aria-hidden="true">
+                        <span class="toggle-thumb">
+                          <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                        </span>
                       </span>
-                    </span>
-                    <span class="toggle-label">Dark mode preview on by default</span>
-                  </button>
-                  <input type="hidden" class="toggle-value" value="true" />
-                </div>
-                <div class="toggle" id="demo-toggle-tristate" data-toggle-tristate data-toggle-default="mixed">
-                  <button type="button" class="toggle-btn" role="checkbox" aria-checked="mixed">
-                    <span class="toggle-track" aria-hidden="true">
-                      <span class="toggle-thumb">
-                        <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
-                        <span data-icon="remove" data-icon-class="toggle-thumb-icon toggle-thumb-icon--mixed" aria-hidden="true"></span>
+                      <span class="toggle-label">Dark mode preview on by default</span>
+                    </button>
+                    <input type="hidden" class="toggle-value" value="true" />
+                  </div>
+                  <div class="toggle" id="demo-toggle-tristate" data-toggle-tristate data-toggle-default="mixed">
+                    <button type="button" class="toggle-btn" role="checkbox" aria-checked="mixed">
+                      <span class="toggle-track" aria-hidden="true">
+                        <span class="toggle-thumb">
+                          <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                          <span data-icon="remove" data-icon-class="toggle-thumb-icon toggle-thumb-icon--mixed" aria-hidden="true"></span>
+                        </span>
                       </span>
-                    </span>
-                    <span class="toggle-label">Tri-state (click to cycle)</span>
-                  </button>
-                  <input type="hidden" class="toggle-value" value="mixed" />
-                </div>
-                <div class="toggle" id="demo-toggle-disabled" data-toggle-default="true" data-toggle-disabled>
-                  <button type="button" class="toggle-btn" role="switch" aria-checked="true" disabled>
-                    <span class="toggle-track" aria-hidden="true">
-                      <span class="toggle-thumb">
-                        <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                      <span class="toggle-label">Tri-state (click to cycle)</span>
+                    </button>
+                    <input type="hidden" class="toggle-value" value="mixed" />
+                  </div>
+                  <div class="toggle" id="demo-toggle-disabled" data-toggle-default="true" data-toggle-disabled>
+                    <button type="button" class="toggle-btn" role="switch" aria-checked="true" disabled>
+                      <span class="toggle-track" aria-hidden="true">
+                        <span class="toggle-thumb">
+                          <span data-icon="check" data-icon-class="toggle-thumb-icon toggle-thumb-icon--on" aria-hidden="true"></span>
+                        </span>
                       </span>
-                    </span>
-                    <span class="toggle-label">Disabled (on)</span>
-                  </button>
-                  <input type="hidden" class="toggle-value" value="true" />
+                      <span class="toggle-label">Disabled (on)</span>
+                    </button>
+                    <input type="hidden" class="toggle-value" value="true" />
+                  </div>
                 </div>
               </div>
-              <p id="demo-toggle-result" class="demo-hint" aria-live="polite">Notifications: off · Preview: on · Tri-state: mixed</p>
             </div>
+          </div>
+          <div class="demo-card">
+            <h3 class="demo-card-title">Segmented control</h3>
             <div class="demo-grid demo-grid-2">
               <div class="field">
-                <span class="field-label" id="demo-segmented-view-label">Segmented control</span>
+                <span class="field-label" id="demo-segmented-view-label">View mode</span>
                 <div class="segmented-control segmented-control--full" id="demo-segmented-view"
                   data-segmented-control-default="list" aria-labelledby="demo-segmented-view-label">
                   <div class="segmented-control-list" role="radiogroup" aria-label="View mode">
@@ -308,7 +303,7 @@
                 <p id="demo-segmented-view-result" class="demo-hint" aria-live="polite">View: list</p>
               </div>
               <div class="field">
-                <span class="field-label" id="demo-segmented-panels-label">Segmented control (with panels)</span>
+                <span class="field-label" id="demo-segmented-panels-label">With panels</span>
                 <div class="segmented-control segmented-control--full" id="demo-segmented-panels" data-segmented-control-default="week"
                   aria-labelledby="demo-segmented-panels-label">
                   <div class="segmented-control-list" role="radiogroup" aria-label="Time range">
@@ -339,61 +334,66 @@
                 <p id="demo-segmented-panels-result" class="demo-hint" aria-live="polite">Range: week</p>
               </div>
             </div>
-            <div class="demo-grid demo-grid-2">
-              <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
-                <label class="field-label" for="demo-slider-integer-range">Slider (integer)</label>
-                <div class="slider-row">
-                  <input type="range" id="demo-slider-integer-range" class="slider-range" />
-                  <div class="slider-input-wrap">
-                    <input type="text" class="input slider-input" inputmode="numeric" aria-label="Integer value" />
-                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+          </div>
+          <div class="demo-card">
+            <h3 class="demo-card-title">Slider</h3>
+            <div class="demo-fields">
+              <div class="demo-grid demo-grid-2">
+                <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
+                  <label class="field-label" for="demo-slider-integer-range">Integer</label>
+                  <div class="slider-row">
+                    <input type="range" id="demo-slider-integer-range" class="slider-range" />
+                    <div class="slider-input-wrap">
+                      <input type="text" class="input slider-input" inputmode="numeric" aria-label="Integer value" />
+                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                    </div>
+                    <input type="hidden" class="slider-value" />
                   </div>
-                  <input type="hidden" class="slider-value" />
+                </div>
+                <div class="slider" id="demo-slider-decimal" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-default="0.5" data-slider-format="decimal">
+                  <label class="field-label" for="demo-slider-decimal-range">Decimal</label>
+                  <div class="slider-row">
+                    <input type="range" id="demo-slider-decimal-range" class="slider-range" />
+                    <div class="slider-input-wrap">
+                      <input type="text" class="input slider-input" inputmode="decimal" aria-label="Decimal value" />
+                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                    </div>
+                    <input type="hidden" class="slider-value" />
+                  </div>
                 </div>
               </div>
-              <div class="slider" id="demo-slider-decimal" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-default="0.5" data-slider-format="decimal">
-                <label class="field-label" for="demo-slider-decimal-range">Slider (decimal)</label>
-                <div class="slider-row">
-                  <input type="range" id="demo-slider-decimal-range" class="slider-range" />
-                  <div class="slider-input-wrap">
-                    <input type="text" class="input slider-input" inputmode="decimal" aria-label="Decimal value" />
-                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
+              <div class="demo-grid demo-grid-2">
+                <div class="slider" id="demo-slider-percentage" data-slider-min="0" data-slider-max="100" data-slider-default="75" data-slider-format="percentage">
+                  <label class="field-label" for="demo-slider-percentage-range">Percentage</label>
+                  <div class="slider-row">
+                    <input type="range" id="demo-slider-percentage-range" class="slider-range" />
+                    <div class="slider-input-wrap">
+                      <input type="text" class="input slider-input" inputmode="decimal" aria-label="Percentage value" />
+                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                    </div>
+                    <input type="hidden" class="slider-value" />
                   </div>
-                  <input type="hidden" class="slider-value" />
+                </div>
+                <div class="slider" id="demo-slider-disabled" data-slider-min="0" data-slider-max="10" data-slider-default="6" data-slider-format="integer" data-slider-disabled>
+                  <label class="field-label" for="demo-slider-disabled-range">Disabled</label>
+                  <div class="slider-row">
+                    <input type="range" id="demo-slider-disabled-range" class="slider-range" disabled />
+                    <div class="slider-input-wrap">
+                      <input type="text" class="input slider-input" inputmode="numeric" aria-label="Disabled value" disabled />
+                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
+                    </div>
+                    <input type="hidden" class="slider-value" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="demo-grid demo-grid-2">
-              <div class="slider" id="demo-slider-percentage" data-slider-min="0" data-slider-max="100" data-slider-default="75" data-slider-format="percentage">
-                <label class="field-label" for="demo-slider-percentage-range">Slider (percentage)</label>
-                <div class="slider-row">
-                  <input type="range" id="demo-slider-percentage-range" class="slider-range" />
-                  <div class="slider-input-wrap">
-                    <input type="text" class="input slider-input" inputmode="decimal" aria-label="Percentage value" />
-                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
-                  </div>
-                  <input type="hidden" class="slider-value" />
-                </div>
-              </div>
-              <div class="slider" id="demo-slider-disabled" data-slider-min="0" data-slider-max="10" data-slider-default="6" data-slider-format="integer" data-slider-disabled>
-                <label class="field-label" for="demo-slider-disabled-range">Slider (disabled)</label>
-                <div class="slider-row">
-                  <input type="range" id="demo-slider-disabled-range" class="slider-range" disabled />
-                  <div class="slider-input-wrap">
-                    <input type="text" class="input slider-input" inputmode="numeric" aria-label="Disabled value" disabled />
-                    <span class="slider-suffix hidden" aria-hidden="true">%</span>
-                  </div>
-                  <input type="hidden" class="slider-value" />
-                </div>
-              </div>
-            </div>
-            <div class="field">
-              <span class="field-label">Slider result</span>
               <p id="demo-slider-result" class="demo-hint" aria-live="polite">Integer: 4</p>
             </div>
+          </div>
+          <div class="demo-card">
+            <h3 class="demo-card-title">Stepper</h3>
             <div class="demo-grid demo-grid-2">
               <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
-                <label class="field-label" for="demo-stepper-input">Stepper (integer)</label>
+                <label class="field-label" for="demo-stepper-input">Integer</label>
                 <div class="stepper-control">
                   <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
                     aria-label="Decrease">−</button>
@@ -406,7 +406,7 @@
               </div>
               <div class="stepper" id="demo-stepper-decimal" data-stepper-min="0" data-stepper-max="5"
                 data-stepper-step="0.5" data-stepper-default="1.5" data-stepper-format="decimal">
-                <label class="field-label" for="demo-stepper-decimal-input">Stepper (decimal)</label>
+                <label class="field-label" for="demo-stepper-decimal-input">Decimal</label>
                 <div class="stepper-control">
                   <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
                     aria-label="Decrease">−</button>

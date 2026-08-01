@@ -57,17 +57,12 @@ initSegmentedControl(document.getElementById("demo-code-toolbar"), {
 
 const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-single-result");
 const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");
-const demoRadioGroup = document.getElementById("demo-radio-group");
-const demoRadioResult = document.getElementById("demo-radio-result");
-const demoCheckboxGroup = document.getElementById("demo-checkbox-group");
-const demoCheckboxResult = document.getElementById("demo-checkbox-result");
 const fileDownloadResult = document.getElementById("demo-file-download-result");
 const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoToggleResult = document.getElementById("demo-toggle-result");
 const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
 const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
 const demoPaginationResult = document.getElementById("demo-pagination-result");
@@ -271,75 +266,12 @@ initAccordion(document.getElementById("demo-accordion"), {
   },
 });
 
-demoRadioGroup?.addEventListener("change", (event) => {
-  const input = event.target;
-  if (!(input instanceof HTMLInputElement) || input.type !== "radio") return;
+initTriStateCheckbox(document.getElementById("demo-checkbox-tristate"));
 
-  const label = input.closest("label")?.querySelector("span")?.textContent?.trim();
-  if (demoRadioResult) {
-    demoRadioResult.textContent = label ? `Selected: ${label}` : `Selected: ${input.value}`;
-  }
-});
-
-function checkboxStateLabel(input) {
-  const label =
-    input.closest("label")?.querySelector("span")?.textContent?.trim() || input.value;
-  if (input.indeterminate || input.getAttribute("aria-checked") === "mixed") {
-    return `${label} (mixed)`;
-  }
-  if (input.checked) return label;
-  return null;
-}
-
-function updateCheckboxResult() {
-  if (!demoCheckboxGroup || !demoCheckboxResult) return;
-
-  const selected = [...demoCheckboxGroup.querySelectorAll(".checkbox-input:not(:disabled)")]
-    .map(checkboxStateLabel)
-    .filter(Boolean);
-
-  demoCheckboxResult.textContent = selected.length
-    ? `Selected: ${selected.join(", ")}`
-    : "Selected: none";
-}
-
-demoCheckboxGroup?.addEventListener("change", (event) => {
-  const input = event.target;
-  if (!(input instanceof HTMLInputElement) || input.type !== "checkbox") return;
-  updateCheckboxResult();
-});
-
-initTriStateCheckbox(document.getElementById("demo-checkbox-tristate"), {
-  onChange: () => updateCheckboxResult(),
-});
-updateCheckboxResult();
-
-function toggleValueLabel(value) {
-  if (value === "true") return "on";
-  if (value === "mixed") return "mixed";
-  return "off";
-}
-
-function updateToggleResult() {
-  if (!demoToggleResult) return;
-  const off = document.getElementById("demo-toggle-off");
-  const on = document.getElementById("demo-toggle-on");
-  const tri = document.getElementById("demo-toggle-tristate");
-  const parts = [
-    off ? `Notifications: ${toggleValueLabel(off.querySelector(".toggle-value")?.value)}` : null,
-    on ? `Preview: ${toggleValueLabel(on.querySelector(".toggle-value")?.value)}` : null,
-    tri ? `Tri-state: ${toggleValueLabel(tri.querySelector(".toggle-value")?.value)}` : null,
-  ].filter(Boolean);
-  demoToggleResult.textContent = parts.join(" · ");
-}
-
-const toggleOnChange = () => updateToggleResult();
-
-initToggle(document.getElementById("demo-toggle-off"), { onChange: toggleOnChange });
-initToggle(document.getElementById("demo-toggle-on"), { onChange: toggleOnChange });
-initToggle(document.getElementById("demo-toggle-tristate"), { onChange: toggleOnChange });
+initToggle(document.getElementById("demo-toggle-off"));
+initToggle(document.getElementById("demo-toggle-on"));
+initToggle(document.getElementById("demo-toggle-tristate"));
 initToggle(document.getElementById("demo-toggle-disabled"));
-updateToggleResult();
 
 initSegmentedControl(document.getElementById("demo-segmented-view"), {
   onChange: ({ value }) => {
