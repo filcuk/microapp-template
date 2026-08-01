@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   alsoSeeHasItems,
+  alsoSeeTopicSpan,
   mergeAlsoSeeSections,
   normalizeAlsoSee,
   normalizeSiteUrl,
@@ -373,6 +374,7 @@ test("renderAlsoSeeMarkup emits nested topic groups with span", () => {
   assert.match(markup, /footer-also-see-topic-label">Database</);
   assert.match(markup, /aria-label="Database"/);
   assert.match(markup, /--also-see-span:\s*1/);
+  assert.match(markup, /--also-see-rows:\s*2/);
   assert.match(markup, /footer-also-see-topic-links/);
   assert.match(markup, /href="https:\/\/example\.com\/cs"/);
   assert.match(markup, /CS Builder/);
@@ -383,7 +385,14 @@ test("renderAlsoSeeMarkup emits nested topic groups with span", () => {
   );
 });
 
-test("renderAlsoSeeMarkup caps topic span and marks ungrouped", () => {
+test("alsoSeeTopicSpan keeps topic blocks squarish", () => {
+  assert.equal(alsoSeeTopicSpan(1), 1);
+  assert.equal(alsoSeeTopicSpan(2), 2);
+  assert.equal(alsoSeeTopicSpan(4), 2);
+  assert.equal(alsoSeeTopicSpan(9), 2);
+});
+
+test("renderAlsoSeeMarkup packs topics into square blocks", () => {
   const fourLinks = [1, 2, 3, 4].map((n) => ({
     label: `App ${n}`,
     subtitle: "",
@@ -423,13 +432,14 @@ test("renderAlsoSeeMarkup caps topic span and marks ungrouped", () => {
     },
   ]);
 
+  // 4 links -> 2 columns x 2 link rows (+1 label row).
   assert.match(
     markup,
-    /footer-also-see-topic(?!--)[^>]*--also-see-span:\s*3/
+    /footer-also-see-topic(?!--)[^>]*--also-see-span:\s*2;\s*--also-see-rows:\s*3/
   );
   assert.match(
     markup,
-    /footer-also-see-topic--ungrouped[^>]*--also-see-span:\s*1[\s\S]*Profile/
+    /footer-also-see-topic--ungrouped[^>]*--also-see-span:\s*1;\s*--also-see-rows:\s*1[\s\S]*Profile/
   );
   assert.doesNotMatch(markup, /dropdown-menu-separator/);
   assert.doesNotMatch(markup, /dropdown-menu-group/);

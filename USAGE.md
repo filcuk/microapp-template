@@ -472,7 +472,7 @@ Enabled by `initShell()`. Any `http(s)` link to another origin gets an arrow-out
 
 ### Also see (related apps)
 
-Footer control after the GitHub link. The menu lays topics out in a responsive CSS grid (masonry / `grid-lanes` when supported; equal-width link cells). Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal` to `initShell()` / `renderPageShell()`):
+Footer control after the GitHub link. The menu lays topics out in a responsive CSS grid with equal-width link cells. Each topic forms a squarish block (four links become 2×2) and spans the rows it needs, so single-link topics backfill the gaps; masonry (`grid-lanes`) packs them further where supported. Configure in [`app/config.js`](app/config.js) (or pass `alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal` to `initShell()` / `renderPageShell()`):
 
 ```javascript
 alsoSeeUrl: "https://raw.githubusercontent.com/you/shared/main/apps/links.json", // optional

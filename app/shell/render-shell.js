@@ -581,7 +581,19 @@ function renderAlsoSeeLinkItem(link, index) {
 }
 
 /** Max columns a topic block may span in the also-see grid. */
-const ALSO_SEE_TOPIC_SPAN_MAX = 3;
+const ALSO_SEE_TOPIC_SPAN_MAX = 2;
+
+/**
+ * Column span for a topic block. Squarish blocks leave fewer holes than one
+ * long row (4 links → 2×2, 1 link → 1×1).
+ *
+ * @param {number} count
+ * @returns {number}
+ */
+export function alsoSeeTopicSpan(count) {
+  if (!Number.isFinite(count) || count <= 1) return 1;
+  return Math.min(Math.ceil(Math.sqrt(count)), ALSO_SEE_TOPIC_SPAN_MAX);
+}
 
 /**
  * @param {AlsoSeeSection} section
@@ -593,14 +605,16 @@ function renderAlsoSeeTopic(section, startIndex) {
   const linksMarkup = section.items
     .map((link) => renderAlsoSeeLinkItem(link, index++))
     .join("");
-  const span = Math.min(
-    Math.max(section.items.length, 1),
-    ALSO_SEE_TOPIC_SPAN_MAX
-  );
+  const count = Math.max(section.items.length, 1);
+  const span = alsoSeeTopicSpan(count);
+  // Row span keeps blocks on shared tracks so short topics fill the leftovers.
+  const linkRows = Math.ceil(count / span);
+  const rows = section.topic ? linkRows + 1 : linkRows;
+  const style = `--also-see-span: ${span}; --also-see-rows: ${rows}`;
 
   if (!section.topic) {
     return {
-      markup: `<li class="footer-also-see-topic footer-also-see-topic--ungrouped" role="presentation" style="--also-see-span: ${span}">
+      markup: `<li class="footer-also-see-topic footer-also-see-topic--ungrouped" role="presentation" style="${style}">
           <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
         </li>`,
       nextIndex: index,
@@ -608,7 +622,7 @@ function renderAlsoSeeTopic(section, startIndex) {
   }
 
   return {
-    markup: `<li class="footer-also-see-topic" role="group" aria-label="${escapeAttr(section.topic)}" style="--also-see-span: ${span}">
+    markup: `<li class="footer-also-see-topic" role="group" aria-label="${escapeAttr(section.topic)}" style="${style}">
           <div class="footer-also-see-topic-label">${escapeText(section.topic)}</div>
           <ul class="footer-also-see-topic-links">${linksMarkup}</ul>
         </li>`,

@@ -685,7 +685,10 @@ body > footer {
   bottom: calc(100% + 4px);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  align-items: start;
+  grid-auto-rows: min-content;
+  /* Dense flow lets one-link topics backfill holes left by wider blocks. */
+  grid-auto-flow: row dense;
+  align-content: start;
   gap: 0.35rem 0.5rem;
   box-sizing: border-box;
   width: min(100vw - 2rem, 40rem);
@@ -705,6 +708,7 @@ body > footer {
   /* Equal columns matching --also-see-span; upgraded to subgrid when supported. */
   grid-template-columns: repeat(var(--also-see-span, 1), minmax(0, 1fr));
   grid-column: span var(--also-see-span, 1);
+  grid-row: span var(--also-see-rows, 1);
   align-content: start;
   gap: 0;
   min-width: 0;
@@ -713,9 +717,11 @@ body > footer {
   list-style: none;
 }
 
+/* Shared tracks keep labels and link rows aligned across neighbouring topics. */
 @supports (grid-template-columns: subgrid) {
   .footer-also-see-topic {
     grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
   }
 }
 
@@ -773,6 +779,21 @@ body > footer {
     display: grid;
     grid-template-columns: repeat(var(--also-see-span, 1), minmax(0, 1fr));
     grid-column: 1 / -1;
+  }
+}
+
+/* Too narrow for a two-column block: stack every topic in one column. */
+@media (max-width: 25rem) {
+  .footer-also-see .footer-also-see-menu {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .footer-also-see-topic,
+  .footer-also-see-topic-links {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
   }
 }
 
