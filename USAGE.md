@@ -293,7 +293,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.time-picker`, `.duration-input`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
@@ -304,6 +304,9 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Colour input** | Hex text input with inline swatch preview; optional alpha (`#RRGGBBAA`). [`app/components/color-input.js`](app/components/color-input.js). |
+| **Date picker** | Calendar popup with optional time field. [`app/components/date-picker/`](app/components/date-picker/). |
+| **Time picker** | Time-of-day field (no date) via native `<input type="time">`. [`app/components/time-picker.js`](app/components/time-picker.js). |
+| **Duration input** | Segmented hours:minutes (optional seconds) duration field. [`app/components/duration-input.js`](app/components/duration-input.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. Optional tri-state (`data-toggle-tristate`) cycles off → on → mixed. [`app/components/toggle.js`](app/components/toggle.js). |
 | **Tri-state checkbox** | Checkbox that cycles unchecked → checked → mixed (`indeterminate`). [`app/components/checkbox.js`](app/components/checkbox.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
@@ -830,6 +833,74 @@ The date field accepts typed or pasted values (for example `2026-06-20` or `Jun 
 The calendar grid starts weeks on Monday. Weekday labels in markup are optional — `initDatePicker()` fills `.date-picker-weekdays` when missing or out of date.
 
 The day view includes quick actions below the calendar: **Today** (date-only pickers) or **Today** and **Now** when `data-date-picker-time` is set. Today selects the current date and sets time to `00:00`; Now selects the current date and time.
+
+#### Time picker
+
+Time of day without a date — styled wrapper around a native `<input type="time">`.
+
+```html
+<div class="time-picker" id="my-time-picker" data-time-picker-default="14:30">
+  <label class="field-label" for="my-time-picker-input">Time</label>
+  <input type="time" id="my-time-picker-input" class="input date-picker-time" />
+  <input type="hidden" class="time-picker-value" name="time" />
+</div>
+```
+
+```javascript
+import { initTimePicker, initTimePickers } from "./components/time-picker.js";
+
+const timePicker = initTimePicker(document.getElementById("my-time-picker"), {
+  onChange: ({ value }) => { /* HH:MM or HH:MM:SS */ },
+  // defaultValue: "14:30",
+  // min: "09:00",
+  // max: "17:00",
+  // step: 60,
+});
+
+timePicker?.getValue();
+timePicker?.setValue("09:15");
+
+initTimePickers(document);
+```
+
+`data-time-picker-default`, `data-time-picker-min`, `data-time-picker-max`, `data-time-picker-step`, and `data-time-picker-disabled` mirror the JS options.
+
+#### Duration input
+
+Segmented hours and minutes (optional seconds). Stores `H:MM` or `H:MM:SS` in `.duration-input-value`. Arrow Up/Down nudges the focused segment; `:` or Arrow Right moves to the next field.
+
+```html
+<div class="duration-input" id="my-duration" data-duration-default="1:30">
+  <span class="field-label" id="my-duration-label">Duration</span>
+  <div class="duration-input-control" role="group" aria-labelledby="my-duration-label">
+    <input type="text" class="input duration-input-hours" inputmode="numeric" aria-label="Hours" />
+    <span class="duration-input-sep" aria-hidden="true">:</span>
+    <input type="text" class="input duration-input-minutes" inputmode="numeric" aria-label="Minutes"
+      maxlength="2" />
+  </div>
+  <input type="hidden" class="duration-input-value" name="duration" />
+</div>
+```
+
+Include seconds with a `.duration-input-seconds` field or `data-duration-seconds` (init will append the seconds segment when the attribute is set).
+
+```javascript
+import { initDurationInput, initDurationInputs } from "./components/duration-input.js";
+
+const duration = initDurationInput(document.getElementById("my-duration"), {
+  onChange: ({ value, totalSeconds }) => { /* e.g. "1:30", 5400 */ },
+  // defaultValue: "1:30",
+  // maxHours: 24,
+  // showSeconds: true,
+});
+
+duration?.getValue();
+duration?.getSeconds();
+duration?.setValue("2:05");
+duration?.setSeconds(90);
+
+initDurationInputs(document);
+```
 
 ### File dropzone
 

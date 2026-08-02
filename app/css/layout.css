@@ -222,6 +222,10 @@ main {
   gap: 0.75rem;
 }
 
+.demo-row--top {
+  align-items: flex-start;
+}
+
 .demo-inline {
   display: inline-flex;
   flex-wrap: wrap;
@@ -287,8 +291,22 @@ main {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.demo-grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .demo-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 900px) {
   .demo-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-grid-4 {
     grid-template-columns: 1fr;
   }
 }

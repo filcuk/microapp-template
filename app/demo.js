@@ -19,6 +19,8 @@ import {
 import { initFileDropzone } from "./components/file-dropzone.js";
 import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
+import { initTimePicker } from "./components/time-picker.js";
+import { initDurationInput } from "./components/duration-input.js";
 import { initSlider } from "./components/slider.js";
 import { initStepper } from "./components/stepper.js";
 import { initColorInput } from "./components/color-input.js";
@@ -61,6 +63,8 @@ const fileDownloadResult = document.getElementById("demo-file-download-result");
 const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
+const demoTimePickerResult = document.getElementById("demo-time-picker-result");
+const demoDurationInputResult = document.getElementById("demo-duration-input-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
 const demoTableResult = document.getElementById("demo-table-result");
@@ -174,6 +178,22 @@ initDatePicker(document.getElementById("demo-date-picker-time"), {
   onChange: ({ display }) => {
     if (demoDatePickerTimeResult) {
       demoDatePickerTimeResult.textContent = display || "No date or time selected.";
+    }
+  },
+});
+
+initTimePicker(document.getElementById("demo-time-picker"), {
+  onChange: ({ value }) => {
+    if (demoTimePickerResult) {
+      demoTimePickerResult.textContent = value || "No time selected.";
+    }
+  },
+});
+
+initDurationInput(document.getElementById("demo-duration-input"), {
+  onChange: ({ value }) => {
+    if (demoDurationInputResult) {
+      demoDurationInputResult.textContent = value || "0:00";
     }
   },
 });

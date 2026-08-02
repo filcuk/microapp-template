@@ -27,7 +27,7 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | `code-block.css` | code-block, expandable-surface |
 | `controls-badges.css` | badge |
 | `controls-chips.css` | chip |
-| `controls-fields.css` | field/input (CSS-only), combobox, date-picker |
+| `controls-fields.css` | field/input (CSS-only), combobox, date-picker, time-picker, duration-input |
 | `controls-widgets.css` | toggle, checkbox, segmented-control, pagination, progress-bar, spinner, slider, stepper, color-input |
 | `controls-section-panel.css` | section-panel (CSS-only pattern) |
 | `controls-menus.css` | combo, dropdown, dropdown-toggle |
@@ -52,6 +52,8 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | chip | `app/components/chip.js` | `controls-chips.css` | — | `error` (remove) | `dom`, `icons` | |
 | combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |
 | date-picker | `app/components/date-picker/` (`index.js`, `calendar.js`, `parse.js`) | `controls-fields.css` | — | Markup: `calendar` | `dom`, `document-listeners` | |
+| time-picker | `app/components/time-picker.js` | `controls-fields.css` | — | — | `dom` | Native `type="time"` |
+| duration-input | `app/components/duration-input.js` | `controls-fields.css` | — | — | `dom` | Hours:minutes; optional seconds |
 | color-input | `app/components/color-input.js` | `controls-widgets.css` | — | — | `dom` | Hex field + swatch; optional alpha; not a spectrum picker |
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |
 | checkbox | `app/components/checkbox.js` | `controls-widgets.css` | — | — | `dom` | Tri-state checkbox |

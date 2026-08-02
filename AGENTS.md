@@ -88,6 +88,8 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
+| `initTimePicker()` / `initTimePickers()` | Time-of-day field (native `type="time"`) |
+| `initDurationInput()` / `initDurationInputs()` | Segmented hours:minutes (optional seconds) duration |
 | `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
 | `initProgressBar()` / `initProgressBars()` | Progress bar with optional percent or fraction label |
 | `initSpinner()` / `initSpinners()` | Loading spinner; optional blocking overlay on a host |

@@ -15,6 +15,8 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 - Colour input alpha variant (`data-color-input-alpha` / `alpha: true`) for `#RGBA` / `#RRGGBBAA`.
 - Also-see `order` on topics and links; embedded `iconSvg` / `iconSvgLight` / `iconSvgDark` (sanitized inline SVG).
 - Combobox multi-select variant (`data-combobox-multi` / `multi: true`): comma-separated labels in the input and a selection-count badge.
+- Time picker (`initTimePicker`) — time of day without a date.
+- Duration input (`initDurationInput`) — segmented hours:minutes (optional seconds).
 
 ### Changed
 
