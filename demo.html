@@ -47,38 +47,87 @@
         <section class="content-section" aria-labelledby="demo-colours">
           <h2 id="demo-colours" class="section-heading">Colours</h2>
           <p class="demo-hint">
-            Box and surface fills from <code>app/tokens.css</code>. Swatches follow the active theme.
+            Core fills and chrome from <code>app/tokens.css</code>. Swatches follow the active theme.
           </p>
-          <div class="demo-grid demo-grid-2">
-            <div class="demo-card">
-              <div class="demo-colour-swatch" style="background: var(--bg)" aria-hidden="true"></div>
-              <h3 class="demo-card-title"><code>--bg</code></h3>
-              <p class="demo-hint">Page background behind chrome and content.</p>
-            </div>
-            <div class="demo-card">
-              <div class="demo-colour-swatch" style="background: var(--surface)" aria-hidden="true"></div>
-              <h3 class="demo-card-title"><code>--surface</code></h3>
-              <p class="demo-hint">Elevated panels — buttons, menus, modals, tables, and disclosure bodies.</p>
-            </div>
-            <div class="demo-card">
-              <div class="demo-colour-swatch" style="background: var(--section-bg)" aria-hidden="true"></div>
-              <h3 class="demo-card-title"><code>--section-bg</code></h3>
-              <p class="demo-hint">Section panels and demo cards — recessed against the page.</p>
-            </div>
-            <div class="demo-card">
-              <div class="demo-colour-swatch" style="background: var(--input-bg)" aria-hidden="true"></div>
-              <h3 class="demo-card-title"><code>--input-bg</code></h3>
-              <p class="demo-hint">Form fields and editable controls — reads clearly on panels.</p>
-            </div>
-            <div class="demo-card">
-              <div class="demo-colour-swatch" style="background: var(--table-header-bg)" aria-hidden="true"></div>
-              <h3 class="demo-card-title"><code>--table-header-bg</code></h3>
-              <p class="demo-hint">Data table column headers.</p>
-            </div>
-            <div class="demo-card">
-              <div class="demo-colour-swatch" style="background: var(--code-bg)" aria-hidden="true"></div>
-              <h3 class="demo-card-title"><code>--code-bg</code></h3>
-              <p class="demo-hint">Inline code, code blocks, and muted control chrome.</p>
+          <div class="demo-card">
+            <div class="demo-colour-grid">
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--accent)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--accent</code></h3>
+                  <p class="demo-hint">Primary accent — buttons, links, and focus.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--accent-hover)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--accent-hover</code></h3>
+                  <p class="demo-hint">Hover / pressed state for the primary accent.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--bg)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--bg</code></h3>
+                  <p class="demo-hint">Page background behind chrome and content.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--surface)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--surface</code></h3>
+                  <p class="demo-hint">Elevated panels — buttons, menus, modals, tables.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--section-bg)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--section-bg</code></h3>
+                  <p class="demo-hint">Section panels and demo cards.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--input-bg)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--input-bg</code></h3>
+                  <p class="demo-hint">Form fields and editable controls.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--table-header-bg)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--table-header-bg</code></h3>
+                  <p class="demo-hint">Data table column headers.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--code-bg)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--code-bg</code></h3>
+                  <p class="demo-hint">Inline code, code blocks, and muted chrome.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--text)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--text</code></h3>
+                  <p class="demo-hint">Primary body and control text.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--muted)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--muted</code></h3>
+                  <p class="demo-hint">Secondary labels and hints.</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div class="demo-colour-swatch" style="background: var(--border)" aria-hidden="true"></div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--border</code></h3>
+                  <p class="demo-hint">Dividers, field outlines, and card edges.</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
