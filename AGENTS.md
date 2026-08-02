@@ -84,7 +84,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `setHidden()` / `parseBooleanAttr()` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute; parse HTML boolean `data-*` values |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
 | `initDropdown()` / `initToggleDropdown()` | Single-select vs multi-select toggle dropdown menus |
-| `initCombobox()` / `initComboboxes()` | Text input with filterable autocomplete list |
+| `initCombobox()` / `initComboboxes()` | Text input with filterable autocomplete list; `data-combobox-multi` for multi-select (comma summary + badge) |
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |

@@ -50,7 +50,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | dialog | `app/components/dialog.js` | `overlays.css` | — | — | `dom`, `document-listeners` | |
 | badge | `app/components/badge.js` | `controls-badges.css` | — | — | `dom` | |
 | chip | `app/components/chip.js` | `controls-chips.css` | — | `error` (remove) | `dom`, `icons` | |
-| combobox | `app/components/combobox.js` | `controls-fields.css` | — | — | `dom`, `document-listeners` | |
+| combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |
 | date-picker | `app/components/date-picker/` (`index.js`, `calendar.js`, `parse.js`) | `controls-fields.css` | — | Markup: `calendar` | `dom`, `document-listeners` | |
 | color-input | `app/components/color-input.js` | `controls-widgets.css` | — | — | `dom` | Hex field + swatch; optional alpha; not a spectrum picker |
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |

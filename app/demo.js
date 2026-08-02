@@ -534,6 +534,7 @@ function pickRandomOption(options, excludeValue) {
 let lastComboValue = null;
 
 initCombobox(document.getElementById("demo-combobox"));
+initCombobox(document.getElementById("demo-combobox-multi"));
 
 initCombo(document.getElementById("demo-combo"), {
   onMainClick: () => {

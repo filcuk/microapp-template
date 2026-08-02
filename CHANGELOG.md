@@ -14,6 +14,7 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 - Shared `.cursor/skills/_shared/component-map.md` and `invariants.md` for trim/restore/migrate.
 - Colour input alpha variant (`data-color-input-alpha` / `alpha: true`) for `#RGBA` / `#RRGGBBAA`.
 - Also-see `order` on topics and links; embedded `iconSvg` / `iconSvgLight` / `iconSvgDark` (sanitized inline SVG).
+- Combobox multi-select variant (`data-combobox-multi` / `multi: true`): comma-separated labels in the input and a selection-count badge.
 
 ### Changed
 

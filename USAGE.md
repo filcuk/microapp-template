@@ -298,7 +298,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
-| **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
+| **Combobox** | Text input with filterable suggestion list; optional multi-select (`data-combobox-multi`) with comma-separated summary and selection badge. [`app/components/combobox.js`](app/components/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
 | **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine; indeterminate (sweep or bounce), error (stuck) and disabled states. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
@@ -1023,7 +1023,47 @@ initComboboxes(document); // all `.combobox` blocks
 
 Keyboard: ArrowDown / ArrowUp navigate suggestions, Enter selects, Escape closes and restores the last committed value.
 
-See the interactive example on [`demo.html`](demo.html).
+#### Multi-select
+
+Set `data-combobox-multi` (or `multi: true`) to toggle multiple options. Behaviour matches single-select (filter, arrows, Enter, Escape, list closes after a pick); the input shows selected labels as a comma-separated list. Selection count uses a [Badge](#badge) on the control (wrap `.combobox-control` in `.badge-host` with a `.badge`, or omit that markup and let `initCombobox` create it). Initial selection: `aria-selected="true"` on options, a comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+
+```html
+<div class="combobox" id="my-combobox-multi" data-combobox-multi>
+  <label class="field-label" for="my-combobox-multi-input">Cities</label>
+  <span class="badge-host" data-badge-label="Cities">
+    <div class="combobox-control">
+      <input type="text" id="my-combobox-multi-input" class="input combobox-input" role="combobox"
+        aria-expanded="false" aria-autocomplete="list" aria-controls="my-combobox-multi-list"
+        autocomplete="off" placeholder="Search cities…" data-badge-control />
+      <ul id="my-combobox-multi-list" class="combobox-list hidden" role="listbox" aria-multiselectable="true" hidden>
+        <li role="presentation">
+          <button type="button" class="combobox-option" role="option" data-value="nyc"
+            aria-selected="true">New York</button>
+        </li>
+        <li role="presentation">
+          <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
+        </li>
+      </ul>
+    </div>
+    <span class="badge" aria-hidden="true">1</span>
+  </span>
+  <input type="hidden" class="combobox-value" value="nyc" />
+</div>
+```
+
+```javascript
+const multi = initCombobox(document.getElementById("my-combobox-multi"), {
+  onToggle: ({ value, selected, values }) => { /* option toggled */ },
+  onChange: ({ values, labels }) => { /* selection changed */ },
+  // defaultValues: ["nyc", "chi"],
+});
+
+multi?.getValues(); // ["nyc", …]
+multi?.setValues(["nyc", "chi"]);
+multi?.getSelected(); // [{ value, label, item }, …]
+```
+
+Start the badge with the initial count (or `hidden` when zero) so it does not flash before `initCombobox` runs. See the interactive example on [`demo.html`](demo.html).
 
 ### Slider
 

@@ -124,6 +124,13 @@
   font-size: 0.875rem;
 }
 
+/* Multi-select: badge wraps the control; input shows a comma-separated summary */
+.combobox--multi .badge-host {
+  display: block;
+  width: 100%;
+  max-width: inherit;
+}
+
 .field.date-picker {
   width: fit-content;
   max-width: 100%;

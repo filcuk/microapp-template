@@ -501,6 +501,57 @@
               </div>
 
               <div class="demo-fields">
+                <h3 class="demo-card-title">Multi-select combobox</h3>
+                <p class="demo-hint">Same as combobox; selected labels show as a comma-separated list. Badge shows count.</p>
+                <div class="combobox" id="demo-combobox-multi" data-combobox-multi data-badge-label="Cities"
+                  style="max-width: 14rem">
+                  <span class="badge-host" data-badge-label="Cities">
+                    <div class="combobox-control">
+                      <input type="text" id="demo-combobox-multi-input" class="input combobox-input" role="combobox"
+                        aria-expanded="false" aria-autocomplete="list" aria-controls="demo-combobox-multi-list"
+                        autocomplete="off" placeholder="Search cities…" data-badge-control />
+                      <ul id="demo-combobox-multi-list" class="combobox-list hidden" role="listbox"
+                        aria-multiselectable="true" hidden>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="nyc"
+                            aria-selected="true">New York</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="la">Los Angeles</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="chi"
+                            aria-selected="true">Chicago</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="phl">Philadelphia</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="sa">San Antonio</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="sd">San Diego</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="dal">Dallas</button>
+                        </li>
+                        <li role="presentation">
+                          <button type="button" class="combobox-option" role="option" data-value="sj">San Jose</button>
+                        </li>
+                      </ul>
+                    </div>
+                    <span class="badge" aria-hidden="true">2</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="demo-fields">
                 <h3 class="demo-card-title">Dropdown with icons</h3>
                 <p class="demo-hint">Optional light/dark mode icons and subtitles.</p>
                 <div class="dropdown" id="demo-dropdown-icons">
@@ -560,7 +611,7 @@
                       <span class="dropdown-trigger-label">Toggle items</span>
                       <span class="combo-btn-chevron" aria-hidden="true"></span>
                     </button>
-                    <span class="badge hidden" aria-hidden="true" hidden></span>
+                    <span class="badge" aria-hidden="true">1</span>
                   </span>
                   <ul id="demo-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
                     <li role="none">

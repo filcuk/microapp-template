@@ -1,4 +1,5 @@
-import { setHidden } from "../utils/dom.js";
+import { initBadge } from "./badge.js";
+import { parseBooleanAttr, setHidden } from "../utils/dom.js";
 import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-listeners.js";
 
 /**
@@ -19,7 +20,15 @@ import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-list
  *     </div>
  *   </div>
  *
- * data-combobox-allow-custom — accept free text on blur (default: list values only)
+ * Multi-select (`data-combobox-multi` / `multi: true`):
+ *   Same control as single-select; selected labels show as a comma-separated list in the
+ *   input. Selection count uses a badge (wrap `.combobox-control` in `.badge-host` with a
+ *   `.badge`, or let this init create that markup). Options toggle; list closes after
+ *   each pick like single-select. Initial selection: `aria-selected="true"` on options,
+ *   comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+ *
+ * data-combobox-allow-custom — accept free text on blur/commit (default: list values only)
+ * data-combobox-multi — multi-select mode
  */
 
 function readOptionsFromMarkup(listEl) {
@@ -30,6 +39,7 @@ function readOptionsFromMarkup(listEl) {
     label: optionEl.textContent.trim(),
     element: optionEl,
     itemEl: optionEl.closest("li"),
+    selected: optionEl.getAttribute("aria-selected") === "true",
   }));
 }
 
@@ -46,7 +56,7 @@ function buildOptionElement({ value, label }, listId, index) {
   button.textContent = label;
 
   item.append(button);
-  return { value, label, element: button, itemEl: item };
+  return { value, label, element: button, itemEl: item, selected: false };
 }
 
 function defaultFilter(query, option) {
@@ -66,21 +76,86 @@ function findOptionByLabel(options, text) {
   );
 }
 
+function parseValueList(raw) {
+  if (Array.isArray(raw)) {
+    return raw.map((value) => String(value).trim()).filter(Boolean);
+  }
+  if (raw === null || raw === undefined || raw === "") return [];
+  return String(raw)
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Prefer an existing `.badge-host` around the control; otherwise wrap it and add a badge.
+ */
+function ensureSelectionBadgeHost(comboboxEl, control, input) {
+  if (!control) return null;
+
+  let host = control.closest(".badge-host");
+  if (!host || !comboboxEl.contains(host)) {
+    host = document.createElement("span");
+    host.className = "badge-host";
+    control.parentNode?.insertBefore(host, control);
+    host.appendChild(control);
+  }
+
+  if (!host.dataset.badgeLabel) {
+    const fromRoot = comboboxEl.dataset.badgeLabel?.trim();
+    const fromLabel = comboboxEl.querySelector(`label[for="${input.id}"]`);
+    const labelText = fromRoot || fromLabel?.textContent?.trim();
+    if (labelText) host.dataset.badgeLabel = labelText;
+  }
+
+  if (!input.hasAttribute("data-badge-control")) {
+    input.setAttribute("data-badge-control", "");
+  }
+
+  let badgeEl = host.querySelector(".badge");
+  if (!badgeEl) {
+    badgeEl = document.createElement("span");
+    badgeEl.className = "badge";
+    badgeEl.setAttribute("aria-hidden", "true");
+    setHidden(badgeEl, true);
+    host.appendChild(badgeEl);
+  }
+
+  return host;
+}
+
 export function initCombobox(
   comboboxEl,
-  { options, filter, allowCustom, defaultValue, onSelect, onChange, onInput } = {}
+  {
+    options,
+    filter,
+    allowCustom,
+    multi,
+    defaultValue,
+    defaultValues,
+    onSelect,
+    onToggle,
+    onChange,
+    onInput,
+  } = {}
 ) {
   if (!comboboxEl) return null;
 
   const input = comboboxEl.querySelector(".combobox-input");
   const list = comboboxEl.querySelector(".combobox-list");
   const valueInput = comboboxEl.querySelector(".combobox-value");
+  const control = comboboxEl.querySelector(".combobox-control");
 
   if (!input || !list) return null;
 
   const listId = list.id || `combobox-list-${Math.random().toString(36).slice(2, 9)}`;
   if (!list.id) list.id = listId;
   input.setAttribute("aria-controls", listId);
+
+  const isMulti =
+    multi ??
+    parseBooleanAttr(comboboxEl.dataset.comboboxMulti) ??
+    comboboxEl.hasAttribute("data-combobox-multi");
 
   const allowFreeText =
     allowCustom ??
@@ -93,6 +168,27 @@ export function initCombobox(
       : defaultFilter;
 
   let optionRecords = [];
+  let emptyEl = list.querySelector(".combobox-empty");
+  let isOpen = false;
+  let activeIndex = -1;
+
+  /** @type {string} */
+  let selectedValue = "";
+  /** @type {string} */
+  let selectedLabel = "";
+  /** @type {Map<string, string>} value → label */
+  const selectedMap = new Map();
+
+  /** @type {ReturnType<typeof initBadge> | null} */
+  let selectionBadge = null;
+
+  if (isMulti) {
+    comboboxEl.classList.add("combobox--multi");
+    list.setAttribute("aria-multiselectable", "true");
+    comboboxEl.querySelector(".combobox-chips")?.remove();
+    const badgeHost = ensureSelectionBadgeHost(comboboxEl, control, input);
+    selectionBadge = initBadge(badgeHost, { value: 0 });
+  }
 
   function applyOptions(nextOptions) {
     list.replaceChildren();
@@ -115,20 +211,55 @@ export function initCombobox(
     });
   }
 
-  let selectedValue = defaultValue ?? valueInput?.value ?? "";
-  let selectedLabel = "";
-  let isOpen = false;
-  let activeIndex = -1;
-  let emptyEl = list.querySelector(".combobox-empty");
-
   function syncSelectedLabel() {
     const match = optionRecords.find((option) => option.value === selectedValue);
     selectedLabel = match?.label ?? (allowFreeText ? selectedValue : "");
   }
 
-  syncSelectedLabel();
+  function selectedEntries() {
+    return [...selectedMap.entries()].map(([value, label]) => ({ value, label }));
+  }
+
+  function selectedValues() {
+    return [...selectedMap.keys()];
+  }
+
+  function selectedLabels() {
+    return [...selectedMap.values()];
+  }
+
+  function multiSummary() {
+    return selectedLabels().join(", ");
+  }
+
+  function setValueInputFromState() {
+    if (!valueInput) return;
+    valueInput.value = isMulti ? selectedValues().join(",") : selectedValue;
+  }
+
+  function updateSelectionBadge() {
+    if (!isMulti) return;
+    selectionBadge?.setValue(selectedMap.size);
+  }
+
+  function syncMultiInputDisplay() {
+    if (!isMulti) return;
+    input.value = multiSummary();
+  }
 
   function emitChange(extra = {}) {
+    if (isMulti) {
+      onChange?.({
+        comboboxEl,
+        values: selectedValues(),
+        labels: selectedLabels(),
+        selected: selectedEntries(),
+        input: input.value,
+        ...extra,
+      });
+      return;
+    }
+
     onChange?.({
       comboboxEl,
       value: selectedValue,
@@ -142,15 +273,25 @@ export function initCombobox(
     if (valueInput) valueInput.value = value;
   }
 
+  function getFilterQuery() {
+    const text = input.value.trim();
+    if (!isMulti) return text;
+    // While the committed summary is still showing, do not filter the list away.
+    if (text === multiSummary()) return "";
+    return text;
+  }
+
   function getVisibleOptions() {
-    const query = input.value.trim();
+    const query = getFilterQuery();
     return optionRecords.filter((option) => matchOption(query, option));
   }
 
   function clearActiveOption() {
     for (const option of optionRecords) {
       option.element.classList.remove("is-active");
-      option.element.removeAttribute("aria-selected");
+      if (!isMulti) {
+        option.element.removeAttribute("aria-selected");
+      }
     }
     activeIndex = -1;
     input.removeAttribute("aria-activedescendant");
@@ -165,7 +306,9 @@ export function initCombobox(
     const option = visible[clamped];
     activeIndex = optionRecords.indexOf(option);
     option.element.classList.add("is-active");
-    option.element.setAttribute("aria-selected", "true");
+    if (!isMulti) {
+      option.element.setAttribute("aria-selected", "true");
+    }
     input.setAttribute("aria-activedescendant", option.element.id);
     option.element.scrollIntoView({ block: "nearest" });
   }
@@ -189,18 +332,27 @@ export function initCombobox(
     setHidden(emptyEl, false);
   }
 
+  function syncOptionSelectedState() {
+    for (const option of optionRecords) {
+      const selected = isMulti
+        ? selectedMap.has(option.value)
+        : option.value === selectedValue;
+      option.element.classList.toggle("is-selected", selected);
+      option.element.setAttribute("aria-selected", selected ? "true" : "false");
+    }
+  }
+
   function renderList() {
-    const query = input.value.trim();
+    const query = getFilterQuery();
     const visible = getVisibleOptions();
     const visibleSet = new Set(visible);
 
     for (const option of optionRecords) {
       const show = visibleSet.has(option);
       setHidden(option.itemEl ?? option.element.closest("li"), !show);
-      option.element.classList.toggle("is-selected", option.value === selectedValue);
-      option.element.setAttribute("aria-selected", option.value === selectedValue ? "true" : "false");
     }
 
+    syncOptionSelectedState();
     ensureEmptyState(visible.length);
 
     if (isOpen && visible.length) {
@@ -212,6 +364,7 @@ export function initCombobox(
       }
     } else {
       clearActiveOption();
+      if (isMulti) syncOptionSelectedState();
     }
 
     onInput?.({ comboboxEl, query, matches: visible.map(({ value, label }) => ({ value, label })) });
@@ -236,14 +389,63 @@ export function initCombobox(
     setHidden(list, true);
     input.setAttribute("aria-expanded", "false");
     clearActiveOption();
+    if (isMulti) syncOptionSelectedState();
 
     if (restoreInput) {
-      input.value = selectedLabel;
+      if (isMulti) syncMultiInputDisplay();
+      else input.value = selectedLabel;
+    }
+  }
+
+  function setMultiSelected(value, selected, { source = "api", emitEvent = true } = {}) {
+    const option = optionRecords.find((record) => record.value === value);
+    const label = option?.label ?? String(value);
+
+    if (selected) {
+      selectedMap.set(value, label);
+    } else {
+      selectedMap.delete(value);
+    }
+
+    setValueInputFromState();
+    syncMultiInputDisplay();
+    updateSelectionBadge();
+    syncOptionSelectedState();
+    input.removeAttribute("aria-invalid");
+
+    if (emitEvent) {
+      onToggle?.({
+        comboboxEl,
+        value,
+        label,
+        selected,
+        values: selectedValues(),
+        labels: selectedLabels(),
+        source,
+      });
+      emitChange({ toggled: true, source });
     }
   }
 
   function selectOption(option, { close = true } = {}) {
     if (!option) return;
+
+    if (isMulti) {
+      const next = !selectedMap.has(option.value);
+      setMultiSelected(option.value, next, { source: "select" });
+      onSelect?.({
+        comboboxEl,
+        value: option.value,
+        label: option.label,
+        selected: next,
+        values: selectedValues(),
+        labels: selectedLabels(),
+        option: option.element,
+      });
+      if (close) closeList();
+      else renderList();
+      return;
+    }
 
     selectedValue = option.value;
     selectedLabel = option.label;
@@ -263,6 +465,47 @@ export function initCombobox(
   }
 
   function commitInput({ close = true } = {}) {
+    if (isMulti) {
+      const text = input.value.trim();
+      const summary = multiSummary();
+
+      if (!text) {
+        selectedMap.clear();
+        setValueInputFromState();
+        syncMultiInputDisplay();
+        updateSelectionBadge();
+        syncOptionSelectedState();
+        input.removeAttribute("aria-invalid");
+        emitChange({ committed: true, cleared: true });
+        if (close) closeList();
+        return true;
+      }
+
+      if (text === summary) {
+        input.removeAttribute("aria-invalid");
+        if (close) closeList({ restoreInput: true });
+        return true;
+      }
+
+      const matched = findOptionByLabel(optionRecords, text);
+      if (matched) {
+        selectOption(matched, { close });
+        return true;
+      }
+
+      if (allowFreeText) {
+        setMultiSelected(text, true, { source: "custom" });
+        if (close) closeList();
+        return true;
+      }
+
+      syncMultiInputDisplay();
+      input.setAttribute("aria-invalid", "true");
+      emitChange({ committed: true, valid: false });
+      if (close) closeList({ restoreInput: true });
+      return false;
+    }
+
     const text = input.value.trim();
 
     if (!text) {
@@ -368,6 +611,48 @@ export function initCombobox(
     }
   }
 
+  // Initial selection
+  if (isMulti) {
+    const fromOption =
+      Array.isArray(defaultValues) && defaultValues.length
+        ? defaultValues
+        : defaultValue !== null && defaultValue !== undefined && defaultValue !== ""
+          ? parseValueList(defaultValue)
+          : parseValueList(valueInput?.value);
+
+    const initial = fromOption.length
+      ? fromOption
+      : optionRecords.filter((option) => option.selected).map((option) => option.value);
+
+    for (const value of initial) {
+      const match = optionRecords.find((option) => option.value === value);
+      if (match) {
+        selectedMap.set(match.value, match.label);
+      } else if (allowFreeText) {
+        selectedMap.set(value, value);
+      }
+    }
+
+    setValueInputFromState();
+    syncMultiInputDisplay();
+    updateSelectionBadge();
+  } else {
+    selectedValue = defaultValue ?? valueInput?.value ?? "";
+    syncSelectedLabel();
+
+    if (selectedValue) {
+      const match = optionRecords.find((option) => option.value === selectedValue);
+      if (match) {
+        input.value = match.label;
+        setValueInput(selectedValue);
+      } else if (allowFreeText) {
+        input.value = selectedValue;
+        selectedLabel = selectedValue;
+        setValueInput(selectedValue);
+      }
+    }
+  }
+
   input.addEventListener("input", onInputEvent);
   input.addEventListener("focus", onInputFocus);
   input.addEventListener("blur", onInputBlur);
@@ -388,32 +673,44 @@ export function initCombobox(
     return true;
   }, { priority: 50 });
 
-  if (selectedValue) {
-    const match = optionRecords.find((option) => option.value === selectedValue);
-    if (match) {
-      input.value = match.label;
-      setValueInput(selectedValue);
-    } else if (allowFreeText) {
-      input.value = selectedValue;
-      selectedLabel = selectedValue;
-      setValueInput(selectedValue);
-    }
-  }
-
   renderList();
   emitChange();
 
-  return {
+  const api = {
     openList,
     closeList,
     commitInput,
     getValue() {
-      return selectedValue;
+      return isMulti ? selectedValues().join(",") : selectedValue;
+    },
+    getValues() {
+      return isMulti ? selectedValues() : selectedValue ? [selectedValue] : [];
     },
     getLabel() {
-      return selectedLabel || input.value.trim();
+      return isMulti ? multiSummary() : selectedLabel || input.value.trim();
+    },
+    getSelected() {
+      return selectedEntries().map((entry) => ({
+        ...entry,
+        item: optionRecords.find((option) => option.value === entry.value)?.element,
+      }));
     },
     setValue(value) {
+      if (isMulti) {
+        selectedMap.clear();
+        for (const next of parseValueList(value)) {
+          const match = optionRecords.find((option) => option.value === next);
+          if (match) selectedMap.set(match.value, match.label);
+          else if (allowFreeText) selectedMap.set(next, next);
+        }
+        setValueInputFromState();
+        syncMultiInputDisplay();
+        updateSelectionBadge();
+        renderList();
+        emitChange();
+        return;
+      }
+
       const match = optionRecords.find((option) => option.value === value);
       if (match) {
         selectOption(match, { close: false });
@@ -438,7 +735,26 @@ export function initCombobox(
       renderList();
       emitChange();
     },
+    setValues(values) {
+      api.setValue(isMulti ? values : parseValueList(values)[0] ?? "");
+    },
     setOptions(nextOptions) {
+      if (isMulti) {
+        const previous = selectedValues();
+        applyOptions(nextOptions);
+        selectedMap.clear();
+        for (const value of previous) {
+          const match = optionRecords.find((option) => option.value === value);
+          if (match) selectedMap.set(match.value, match.label);
+          else if (allowFreeText) selectedMap.set(value, value);
+        }
+        setValueInputFromState();
+        syncMultiInputDisplay();
+        updateSelectionBadge();
+        renderList();
+        return;
+      }
+
       const previousValue = selectedValue;
       applyOptions(nextOptions);
       syncSelectedLabel();
@@ -461,6 +777,8 @@ export function initCombobox(
       removeEscape();
     },
   };
+
+  return api;
 }
 
 /** Wire every `.combobox` block in `root`. */
