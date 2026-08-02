@@ -82,37 +82,40 @@
 .banner-warning {
   background: var(--banner-warn-bg);
   color: var(--banner-warn-text);
-  border-color: currentColor;
 }
 
 .banner-error {
   background: var(--banner-error-bg);
   color: var(--banner-error-text);
-  border-color: currentColor;
 }
 
 .banner-info {
   background: var(--banner-info-bg);
   color: var(--banner-info-text);
-  border-color: currentColor;
 }
 
 .banner-success {
   background: var(--banner-success-bg);
   color: var(--banner-success-text);
-  border-color: currentColor;
 }
 
 .banner-note {
   background: var(--banner-note-bg);
   color: var(--banner-note-text);
-  border-color: currentColor;
 }
 
 .banner-important {
   background: var(--banner-important-bg);
   color: var(--banner-important-text);
-  border-color: currentColor;
+}
+
+.banner-warning,
+.banner-error,
+.banner-info,
+.banner-success,
+.banner-note,
+.banner-important {
+  border-color: color-mix(in srgb, currentColor 72%, black);
 }
 
 /* Tooltips */
