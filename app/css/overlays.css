@@ -82,37 +82,37 @@
 .banner-warning {
   background: var(--banner-warn-bg);
   color: var(--banner-warn-text);
-  border-color: var(--banner-warn-border);
+  border-color: currentColor;
 }
 
 .banner-error {
   background: var(--banner-error-bg);
   color: var(--banner-error-text);
-  border-color: var(--banner-error-border);
+  border-color: currentColor;
 }
 
 .banner-info {
   background: var(--banner-info-bg);
   color: var(--banner-info-text);
-  border-color: var(--banner-info-border);
+  border-color: currentColor;
 }
 
 .banner-success {
   background: var(--banner-success-bg);
   color: var(--banner-success-text);
-  border-color: var(--banner-success-border);
+  border-color: currentColor;
 }
 
 .banner-note {
   background: var(--banner-note-bg);
   color: var(--banner-note-text);
-  border-color: var(--banner-note-border);
+  border-color: currentColor;
 }
 
 .banner-important {
   background: var(--banner-important-bg);
   color: var(--banner-important-text);
-  border-color: var(--banner-important-border);
+  border-color: currentColor;
 }
 
 /* Tooltips */
