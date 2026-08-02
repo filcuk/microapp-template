@@ -315,7 +315,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  padding: 1rem;
+  --panel-padding: 1rem;
+  padding: var(--panel-padding);
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--section-bg);
@@ -328,10 +329,19 @@ main {
   font-weight: 600;
 }
 
-.demo-divider {
-  margin: 0.35rem 0;
+/* Full-bleed rule inside padded panels (`.demo-card`, `.section-panel`, …). */
+.demo-divider,
+.section-panel__divider,
+.divider {
+  align-self: stretch;
+  margin-block: 0.35rem;
+  margin-inline: calc(-1 * var(--panel-padding, 1rem));
   border: none;
   border-top: 1px solid var(--border);
+}
+
+.section-panel__divider {
+  margin-block: 0;
 }
 
 .demo-colour-swatch {
@@ -373,7 +383,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem;
+  --panel-padding: 1rem;
+  padding: var(--panel-padding);
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--section-bg);
@@ -419,12 +430,6 @@ main {
 
 .section-panel__checkbox {
   justify-self: start;
-}
-
-.section-panel__divider {
-  margin: 0;
-  border: none;
-  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 640px) {
