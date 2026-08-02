@@ -1111,40 +1111,9 @@
 
 
         <section class="content-section" aria-labelledby="demo-feedback">
-          <h2 id="demo-feedback" class="section-heading">Colour, progress &amp; spinner</h2>
+          <h2 id="demo-feedback" class="section-heading">Progress &amp; spinner</h2>
           <p class="demo-hint">Status and loading indicators.</p>
           <div class="demo-fields">
-            <div class="demo-row">
-              <div class="color-input" id="demo-color-input" data-color-input-default="#0969da">
-                <label class="field-label" for="demo-color-input-field">Simple</label>
-                <div class="color-input-control">
-                  <input type="text" id="demo-color-input-field" class="input color-input-field"
-                    placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-                  <span class="color-input-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-input-value" />
-                </div>
-              </div>
-              <div class="color-input" id="demo-color-input-empty">
-                <label class="field-label" for="demo-color-input-empty-field">Empty</label>
-                <div class="color-input-control">
-                  <input type="text" id="demo-color-input-empty-field" class="input color-input-field"
-                    placeholder="#RRGGBB" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
-                  <span class="color-input-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-input-value" />
-                </div>
-              </div>
-              <div class="color-input" id="demo-color-input-alpha" data-color-input-alpha
-                data-color-input-default="#ff338855">
-                <label class="field-label" for="demo-color-input-alpha-field">Alpha</label>
-                <div class="color-input-control">
-                  <input type="text" id="demo-color-input-alpha-field" class="input color-input-field"
-                    placeholder="#RRGGBBAA" autocomplete="off" spellcheck="false"
-                    aria-label="Hex colour with alpha" />
-                  <span class="color-input-swatch" aria-hidden="true"></span>
-                  <input type="hidden" class="color-input-value" />
-                </div>
-              </div>
-            </div>
             <div class="demo-grid demo-grid-2">
               <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
                 data-progress-bar-shine aria-labelledby="demo-progress-bar-label">
@@ -1449,6 +1418,45 @@
       </header>
 
       <div class="content-tier-body">
+        <section class="content-section" aria-labelledby="demo-specialised-inputs">
+          <h2 id="demo-specialised-inputs" class="section-heading">Specialised inputs</h2>
+          <div class="demo-card">
+            <h3 class="demo-card-title">Colour</h3>
+            <p class="demo-hint">Hex colour field with swatch preview; optional alpha channel.</p>
+            <div class="demo-row">
+              <div class="color-input" id="demo-color-input" data-color-input-default="#0969da">
+                <label class="field-label" for="demo-color-input-field">Simple</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-field" class="input color-input-field"
+                    placeholder="#0969DA" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
+                </div>
+              </div>
+              <div class="color-input" id="demo-color-input-empty">
+                <label class="field-label" for="demo-color-input-empty-field">Empty</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-empty-field" class="input color-input-field"
+                    placeholder="#RRGGBB" autocomplete="off" spellcheck="false" aria-label="Hex colour" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
+                </div>
+              </div>
+              <div class="color-input" id="demo-color-input-alpha" data-color-input-alpha
+                data-color-input-default="#ff338855">
+                <label class="field-label" for="demo-color-input-alpha-field">Alpha</label>
+                <div class="color-input-control">
+                  <input type="text" id="demo-color-input-alpha-field" class="input color-input-field"
+                    placeholder="#RRGGBBAA" autocomplete="off" spellcheck="false"
+                    aria-label="Hex colour with alpha" />
+                  <span class="color-input-swatch" aria-hidden="true"></span>
+                  <input type="hidden" class="color-input-value" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="content-section" aria-labelledby="demo-specialised-components">
           <h2 id="demo-specialised-components" class="section-heading">Specialised components</h2>
           <p class="demo-hint">Multi-step flows, drag-and-drop uploads, and client-side file downloads.</p>
