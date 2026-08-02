@@ -550,16 +550,6 @@ document.getElementById("demo-badge-dot-btn")?.addEventListener("click", () => {
   demoBadgeDot?.setValue(!on);
 });
 
-const sectionToggleBtn = document.getElementById("demo-section-toggle");
-if (sectionToggleBtn) {
-  sectionToggleBtn.addEventListener("click", () => {
-    const pressed = sectionToggleBtn.getAttribute("aria-pressed") === "true";
-    sectionToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
-  });
-}
-
-initToggle(document.getElementById("demo-section-switch"));
-
 const demoStickyChromeResult = document.getElementById("demo-sticky-chrome-result");
 
 function updateStickyChromeResult() {
@@ -583,23 +573,6 @@ initToggle(document.getElementById("demo-sticky-section-headings"), {
     setStickySectionHeadings(checked);
     updateStickyChromeResult();
   },
-});
-
-const sectionInput = document.getElementById("demo-section-input");
-const sectionSuccessBanner = document.getElementById("demo-section-success");
-const sectionErrorBanner = document.getElementById("demo-section-error");
-
-document.getElementById("demo-section-submit")?.addEventListener("click", () => {
-  const hasText = Boolean(sectionInput?.value.trim());
-
-  hideBanner(sectionSuccessBanner);
-  hideBanner(sectionErrorBanner);
-
-  if (hasText) {
-    showBanner(sectionSuccessBanner);
-  } else {
-    showBanner(sectionErrorBanner);
-  }
 });
 
 initDialog({
