@@ -69,7 +69,6 @@ const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
 const demoTableResult = document.getElementById("demo-table-result");
 const demoTabularInputResult = document.getElementById("demo-tabular-input-result");
-const demoProgressBarResult = document.getElementById("demo-progress-bar-result");
 const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
@@ -445,72 +444,14 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
   },
 });
 
-let demoProgressBar;
-let demoProgressBarPercent;
-let demoProgressBarFraction;
-let demoProgressBarError;
-let demoProgressBarDisabled;
-
-function updateProgressBarResult() {
-  if (!demoProgressBarResult) return;
-  const bar = demoProgressBar?.getPercent();
-  const percent = demoProgressBarPercent?.getPercent();
-  const fractionValue = demoProgressBarFraction?.getValue();
-  const fractionMax = demoProgressBarFraction?.getMax();
-  const errorPercent = demoProgressBarError?.getPercent();
-  const errorStuck = demoProgressBarError?.isError();
-  const disabledPercent = demoProgressBarDisabled?.getPercent();
-  demoProgressBarResult.textContent = [
-    bar !== undefined ? `Bar: ${Math.round(bar)}%` : null,
-    percent !== undefined ? `Percent: ${Math.round(percent)}%` : null,
-    fractionValue !== undefined && fractionMax !== undefined
-      ? `Fraction: ${Math.round(fractionValue)}/${Math.round(fractionMax)}`
-      : null,
-    errorPercent !== undefined
-      ? `Error: ${Math.round(errorPercent)}%${errorStuck ? " (stuck)" : ""}`
-      : null,
-    disabledPercent !== undefined ? `Disabled: ${Math.round(disabledPercent)}%` : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}
-
-const progressBarOnChange = () => updateProgressBarResult();
-
-demoProgressBar = initProgressBar(document.getElementById("demo-progress-bar"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarPercent = initProgressBar(document.getElementById("demo-progress-bar-percent"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarFraction = initProgressBar(document.getElementById("demo-progress-bar-fraction"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarError = initProgressBar(document.getElementById("demo-progress-bar-error"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarDisabled = initProgressBar(document.getElementById("demo-progress-bar-disabled"), {
-  onChange: progressBarOnChange,
-});
+initSegmentedControl(document.getElementById("demo-progress-bar-variants"));
+initProgressBar(document.getElementById("demo-progress-bar"));
+initProgressBar(document.getElementById("demo-progress-bar-percent"));
+initProgressBar(document.getElementById("demo-progress-bar-fraction"));
+initProgressBar(document.getElementById("demo-progress-bar-error"));
+initProgressBar(document.getElementById("demo-progress-bar-disabled"));
 initProgressBar(document.getElementById("demo-progress-bar-indeterminate"));
 initProgressBar(document.getElementById("demo-progress-bar-bounce"));
-updateProgressBarResult();
-
-document.getElementById("demo-progress-bar-advance")?.addEventListener("click", () => {
-  demoProgressBar?.setValue(Math.min(100, (demoProgressBar.getValue() ?? 0) + 10));
-  demoProgressBarPercent?.setValue(Math.min(100, (demoProgressBarPercent.getValue() ?? 0) + 8));
-  demoProgressBarFraction?.setValue(Math.min(12, (demoProgressBarFraction.getValue() ?? 0) + 1));
-});
-
-document.getElementById("demo-progress-bar-reset")?.addEventListener("click", () => {
-  demoProgressBar?.setValue(40);
-  demoProgressBarPercent?.setValue(75);
-  demoProgressBarFraction?.setValue(7);
-  demoProgressBarError?.setValue(55);
-  demoProgressBarError?.setError(true);
-  demoProgressBarDisabled?.setValue(30);
-  demoProgressBarDisabled?.setDisabled(true);
-});
 
 let demoSpinnerInline;
 const demoSpinnerHost = initSpinner(document.getElementById("demo-spinner-host"), {
