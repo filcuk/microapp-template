@@ -1667,55 +1667,57 @@
           </div>
         </section>
 
-        <section class="content-section" aria-labelledby="demo-code">
-          <h2 id="demo-code" class="section-heading">Code highlighting</h2>
-          <p class="demo-hint">
-            Syntax highlighting via
-            <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
-            Use the controls below to switch interaction mode and toolbar position.
-            Toolbar actions and hover copy/maximise are configured with data attributes.
-          </p>
-          <div class="demo-code-controls">
-            <div class="field">
-              <span class="field-label" id="demo-code-mode-label">Mode</span>
-              <div class="segmented-control" id="demo-code-mode"
-                data-segmented-control-default="edit" aria-labelledby="demo-code-mode-label">
-                <div class="segmented-control-list" role="radiogroup" aria-label="Code block mode">
-                  <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
-                    data-segmented-control-value="view">View</button>
-                  <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
-                    data-segmented-control-value="select">Select</button>
-                  <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
-                    data-segmented-control-value="edit">Edit</button>
+        <section class="content-section" aria-labelledby="demo-editors">
+          <h2 id="demo-editors" class="section-heading">Editors</h2>
+          <div class="demo-card">
+            <h3 class="demo-card-title">Code block</h3>
+            <p class="demo-hint">
+              Syntax highlighting via
+              <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
+              Use the controls below to switch interaction mode and toolbar position.
+              Toolbar actions and hover copy/maximise are configured with data attributes.
+            </p>
+            <div class="demo-code-controls">
+              <div class="field">
+                <span class="field-label" id="demo-code-mode-label">Mode</span>
+                <div class="segmented-control" id="demo-code-mode"
+                  data-segmented-control-default="edit" aria-labelledby="demo-code-mode-label">
+                  <div class="segmented-control-list" role="radiogroup" aria-label="Code block mode">
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                      data-segmented-control-value="view">View</button>
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                      data-segmented-control-value="select">Select</button>
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
+                      data-segmented-control-value="edit">Edit</button>
+                  </div>
+                  <input type="hidden" class="segmented-control-value" value="edit" />
                 </div>
-                <input type="hidden" class="segmented-control-value" value="edit" />
+              </div>
+              <div class="field">
+                <span class="field-label" id="demo-code-toolbar-label">Control bar</span>
+                <div class="segmented-control" id="demo-code-toolbar"
+                  data-segmented-control-default="top" aria-labelledby="demo-code-toolbar-label">
+                  <div class="segmented-control-list" role="radiogroup" aria-label="Toolbar position">
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
+                      data-segmented-control-value="top">Top</button>
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                      data-segmented-control-value="bottom">Bottom</button>
+                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                      data-segmented-control-value="none">None</button>
+                  </div>
+                  <input type="hidden" class="segmented-control-value" value="top" />
+                </div>
               </div>
             </div>
-            <div class="field">
-              <span class="field-label" id="demo-code-toolbar-label">Control bar</span>
-              <div class="segmented-control" id="demo-code-toolbar"
-                data-segmented-control-default="top" aria-labelledby="demo-code-toolbar-label">
-                <div class="segmented-control-list" role="radiogroup" aria-label="Toolbar position">
-                  <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
-                    data-segmented-control-value="top">Top</button>
-                  <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
-                    data-segmented-control-value="bottom">Bottom</button>
-                  <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
-                    data-segmented-control-value="none">None</button>
-                </div>
-                <input type="hidden" class="segmented-control-value" value="top" />
-              </div>
-            </div>
-          </div>
-          <div class="code-block code-block--full" id="demo-code-block"
-            data-code-mode="edit"
-            data-code-toolbar="top"
-            data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
-            data-code-surface-actions="copy,maximize"
-            data-expandable-surface
-            data-expandable-surface-label="Python sample">
-            <div class="code-block-body" data-expandable-surface-trigger>
-              <pre class="line-numbers language-python"><code class="language-python">def fibonacci(n: int) -> list[int]:
+            <div class="code-block code-block--full" id="demo-code-block"
+              data-code-mode="edit"
+              data-code-toolbar="top"
+              data-code-toolbar-actions="clear,copy,paste,maximize,highlight,line-numbers"
+              data-code-surface-actions="copy,maximize"
+              data-expandable-surface
+              data-expandable-surface-label="Python sample">
+              <div class="code-block-body" data-expandable-surface-trigger>
+                <pre class="line-numbers language-python"><code class="language-python">def fibonacci(n: int) -> list[int]:
     """Return the Fibonacci sequence up to n terms."""
     if n &lt;= 0:
         return []
@@ -1738,30 +1740,29 @@ def main() -> None:
 if __name__ == "__main__":
     main()
 </code></pre>
+              </div>
             </div>
+            <hr class="demo-divider" />
+            <h3 class="demo-card-title">Rich text editor</h3>
+            <p class="demo-hint">
+              Markdown and WYSIWYG via
+              <a href="https://github.com/nhn/tui.editor" target="_blank" rel="noopener noreferrer">Toast UI Editor</a>.
+              Switch modes with the editor toolbar. Pasted images are stored as base64 data URLs.
+            </p>
+            <div class="field rich-text-editor rich-text-editor--wide" id="demo-rich-text-editor-block"
+              data-rich-text-editor-height="320px"
+              data-rich-text-editor-preview="vertical"
+              data-rich-text-editor-placeholder="Write something…"
+              data-rich-text-editor-value="## Hello&#10;&#10;Edit in **Markdown** or switch to WYSIWYG. Tables support merged cells.">
+              <span class="field-label">Body</span>
+              <div class="rich-text-editor-mount" aria-label="Rich text editor"></div>
+            </div>
+            <div class="demo-row">
+              <button type="button" class="btn" id="demo-rich-text-get-markdown">Get Markdown</button>
+              <button type="button" class="btn" id="demo-rich-text-get-html">Get HTML</button>
+            </div>
+            <p id="demo-rich-text-result" class="demo-hint" aria-live="polite">Use the buttons to read the current content.</p>
           </div>
-        </section>
-
-        <section class="content-section" aria-labelledby="demo-rich-text-editor">
-          <h2 id="demo-rich-text-editor" class="section-heading">Rich text editor</h2>
-          <p class="demo-hint">
-            Markdown and WYSIWYG via
-            <a href="https://github.com/nhn/tui.editor" target="_blank" rel="noopener noreferrer">Toast UI Editor</a>.
-            Switch modes with the editor toolbar. Pasted images are stored as base64 data URLs.
-          </p>
-          <div class="field rich-text-editor rich-text-editor--wide" id="demo-rich-text-editor-block"
-            data-rich-text-editor-height="320px"
-            data-rich-text-editor-preview="vertical"
-            data-rich-text-editor-placeholder="Write something…"
-            data-rich-text-editor-value="## Hello&#10;&#10;Edit in **Markdown** or switch to WYSIWYG. Tables support merged cells.">
-            <span class="field-label">Body</span>
-            <div class="rich-text-editor-mount" aria-label="Rich text editor"></div>
-          </div>
-          <div class="demo-row">
-            <button type="button" class="btn" id="demo-rich-text-get-markdown">Get Markdown</button>
-            <button type="button" class="btn" id="demo-rich-text-get-html">Get HTML</button>
-          </div>
-          <p id="demo-rich-text-result" class="demo-hint" aria-live="polite">Use the buttons to read the current content.</p>
         </section>
       </div>
     </section>
