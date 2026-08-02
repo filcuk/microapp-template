@@ -69,7 +69,6 @@ const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
 const demoTableResult = document.getElementById("demo-table-result");
 const demoTabularInputResult = document.getElementById("demo-tabular-input-result");
-const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 const demoRichTextResult = document.getElementById("demo-rich-text-result");
@@ -453,22 +452,7 @@ initProgressBar(document.getElementById("demo-progress-bar-disabled"));
 initProgressBar(document.getElementById("demo-progress-bar-indeterminate"));
 initProgressBar(document.getElementById("demo-progress-bar-bounce"));
 
-let demoSpinnerInline;
-const demoSpinnerHost = initSpinner(document.getElementById("demo-spinner-host"), {
-  onChange: ({ visible }) => {
-    if (demoSpinnerResult) {
-      demoSpinnerResult.textContent = visible ? "Loading panel…" : "Panel ready.";
-    }
-  },
-});
-
-demoSpinnerInline = initSpinner(document.getElementById("demo-spinner-inline"), {
-  visible: false,
-});
-
-document.getElementById("demo-spinner-toggle")?.addEventListener("click", () => {
-  demoSpinnerInline?.toggle();
-});
+const demoSpinnerHost = initSpinner(document.getElementById("demo-spinner-host"));
 
 document.getElementById("demo-spinner-load")?.addEventListener("click", () => {
   if (demoSpinnerHost?.isVisible()) return;

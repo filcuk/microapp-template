@@ -577,17 +577,6 @@
   pointer-events: auto;
 }
 
-.spinner-demo-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-height: 7rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface);
-}
-
 @keyframes spinner-rotate {
   to {
     transform: rotate(360deg);
