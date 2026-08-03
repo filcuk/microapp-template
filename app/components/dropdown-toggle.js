@@ -19,23 +19,24 @@ function getSelectedItems(menu, itemSelector) {
   return getMenuItems(menu, itemSelector).filter(isItemSelected);
 }
 
-/** Strip a legacy trailing “ (n)” count from older trigger labels. */
-function normalizeBaseLabel(label) {
+/** Strip a legacy trailing “ (n)” count from scraped trigger text only. */
+function stripLegacySelectionCount(label) {
   return label.replace(/\s*\(\d+\)\s*$/, "").trim();
 }
 
 function readBaseLabel(dropdownEl, trigger) {
   const fromData = dropdownEl.dataset.toggleDropdownLabel?.trim();
-  if (fromData) return normalizeBaseLabel(fromData);
+  if (fromData) return fromData;
 
   const labelEl = trigger?.querySelector(".dropdown-trigger-label");
-  if (labelEl) return normalizeBaseLabel(labelEl.textContent);
+  if (labelEl) return labelEl.textContent.trim();
 
   if (!trigger) return "";
 
   const clone = trigger.cloneNode(true);
   clone.querySelector(".combo-btn-chevron")?.remove();
-  return normalizeBaseLabel(clone.textContent.replace(/\s+/g, " "));
+  // Legacy markup baked the selection count into the trigger text (e.g. "Items (3)").
+  return stripLegacySelectionCount(clone.textContent.replace(/\s+/g, " "));
 }
 
 function ensureTriggerLabelEl(trigger, baseLabel) {

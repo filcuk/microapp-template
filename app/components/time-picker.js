@@ -41,6 +41,19 @@ function resolveDisabled(pickerEl, disabledOption) {
 }
 
 /**
+ * Lexicographic compare works for zero-padded `HH:MM` / `HH:MM:SS`.
+ * @param {string} value
+ * @param {string | null} min
+ * @param {string | null} max
+ */
+export function isTimeWithinBounds(value, min, max) {
+  if (!value) return true;
+  if (min && value < min) return false;
+  if (max && value > max) return false;
+  return true;
+}
+
+/**
  * @param {HTMLElement | null} pickerEl
  * @param {{
  *   defaultValue?: string,
@@ -81,11 +94,20 @@ export function initTimePicker(
     if (valueInput) valueInput.value = value ?? "";
   }
 
+  function syncValidity() {
+    const value = input.value || "";
+    const valid = isTimeWithinBounds(value, resolvedMin, resolvedMax);
+    if (valid) input.removeAttribute("aria-invalid");
+    else input.setAttribute("aria-invalid", "true");
+    return valid;
+  }
+
   function emit(handler, source) {
     handler?.({
       pickerEl,
       value: input.value || "",
       input: input.value,
+      valid: isTimeWithinBounds(input.value || "", resolvedMin, resolvedMax),
       source,
     });
   }
@@ -101,19 +123,19 @@ export function initTimePicker(
     const parsed = parseTimeValue(next);
     input.value = parsed ?? "";
     syncHidden(input.value);
-    input.removeAttribute("aria-invalid");
+    syncValidity();
     if (emitEvent) emit(onChange, source);
   }
 
   function onInputEvent() {
     syncHidden(input.value);
-    input.removeAttribute("aria-invalid");
+    syncValidity();
     emit(onInput, "input");
   }
 
   function onChangeEvent() {
     syncHidden(input.value);
-    input.removeAttribute("aria-invalid");
+    syncValidity();
     emit(onChange, "change");
   }
 
@@ -125,10 +147,9 @@ export function initTimePicker(
 
   if (initial) {
     input.value = initial;
-    syncHidden(initial);
-  } else {
-    syncHidden(input.value);
   }
+  syncHidden(input.value);
+  syncValidity();
 
   setDisabled(isDisabled);
 

@@ -615,30 +615,26 @@ function getBannerElements() {
     .filter(Boolean);
 }
 
-function dismissBanner(bannerEl) {
+function showBannerBriefly(bannerEl) {
   showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
-}
-
-function resetBanners() {
-  for (const banner of getBannerElements()) {
-    showBanner(banner);
-  }
 }
 
 for (const [buttonId, bannerId] of bannerTriggers) {
   document.getElementById(buttonId)?.addEventListener("click", () => {
     const bannerEl = document.getElementById(bannerId);
     if (!bannerEl) return;
-    dismissBanner(bannerEl);
+    showBannerBriefly(bannerEl);
   });
 }
 
 document.getElementById("trigger-all-banners")?.addEventListener("click", () => {
   for (const banner of getBannerElements()) {
-    dismissBanner(banner);
+    showBannerBriefly(banner);
   }
 });
 
 document.getElementById("reset-banners")?.addEventListener("click", () => {
-  resetBanners();
+  for (const banner of getBannerElements()) {
+    showBanner(banner);
+  }
 });
