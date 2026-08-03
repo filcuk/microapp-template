@@ -79,7 +79,7 @@ function findOptionByLabel(options, text) {
   );
 }
 
-function parseValueList(raw) {
+export function parseValueList(raw) {
   if (Array.isArray(raw)) {
     return raw.map((value) => String(value).trim()).filter(Boolean);
   }
