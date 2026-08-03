@@ -1096,7 +1096,7 @@ Keyboard: ArrowDown / ArrowUp navigate suggestions, Enter selects, Escape closes
 
 #### Multi-select
 
-Set `data-combobox-multi` (or `multi: true`) to toggle multiple options. Behaviour matches single-select (filter, arrows, Enter, Escape, list closes after a pick); the input shows selected labels as a comma-separated list. Selection count uses a [Badge](#badge) on the control (wrap `.combobox-control` in `.badge-host` with a `.badge`, or omit that markup and let `initCombobox` create it). Initial selection: `aria-selected="true"` on options, a comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+Set `data-combobox-multi` (or `multi: true`) to toggle multiple options. Behaviour matches single-select (filter, arrows, Enter, Escape, list closes after a pick); the input shows selected labels as a comma-separated list. Typing replaces that summary with a filter query; the summary is restored when the list closes. Selection count uses a [Badge](#badge) on the control (wrap `.combobox-control` in `.badge-host` with a `.badge`, or omit that markup and let `initCombobox` create it). Initial selection: `aria-selected="true"` on options, a comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
 
 ```html
 <div class="combobox" id="my-combobox-multi" data-combobox-multi>

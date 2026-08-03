@@ -22,10 +22,12 @@ import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-list
  *
  * Multi-select (`data-combobox-multi` / `multi: true`):
  *   Same control as single-select; selected labels show as a comma-separated list in the
- *   input. Selection count uses a badge (wrap `.combobox-control` in `.badge-host` with a
- *   `.badge`, or let this init create that markup). Options toggle; list closes after
- *   each pick like single-select. Initial selection: `aria-selected="true"` on options,
- *   comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+ *   input. Typing replaces that summary with a filter query (kept separate from the
+ *   selection); the summary is restored when the list closes. Selection count uses a
+ *   badge (wrap `.combobox-control` in `.badge-host` with a `.badge`, or let this init
+ *   create that markup). Options toggle; list closes after each pick like single-select.
+ *   Initial selection: `aria-selected="true"` on options, comma-separated `.combobox-value`,
+ *   or `defaultValues` / `defaultValue` in JS.
  *
  * data-combobox-allow-custom — accept free text on blur/commit (default: list values only)
  * data-combobox-multi — multi-select mode
@@ -178,6 +180,8 @@ export function initCombobox(
   let selectedLabel = "";
   /** @type {Map<string, string>} value → label */
   const selectedMap = new Map();
+  /** Multi-select filter text; kept separate from the comma summary in the input. */
+  let filterQuery = "";
 
   /** @type {ReturnType<typeof initBadge> | null} */
   let selectionBadge = null;
@@ -244,6 +248,7 @@ export function initCombobox(
 
   function syncMultiInputDisplay() {
     if (!isMulti) return;
+    filterQuery = "";
     input.value = multiSummary();
   }
 
@@ -274,11 +279,8 @@ export function initCombobox(
   }
 
   function getFilterQuery() {
-    const text = input.value.trim();
-    if (!isMulti) return text;
-    // While the committed summary is still showing, do not filter the list away.
-    if (text === multiSummary()) return "";
-    return text;
+    if (!isMulti) return input.value.trim();
+    return filterQuery.trim();
   }
 
   function getVisibleOptions() {
@@ -394,6 +396,9 @@ export function initCombobox(
     if (restoreInput) {
       if (isMulti) syncMultiInputDisplay();
       else input.value = selectedLabel;
+    } else if (isMulti && filterQuery) {
+      // Drop an in-progress filter query and show the committed summary again.
+      syncMultiInputDisplay();
     }
   }
 
@@ -466,8 +471,18 @@ export function initCombobox(
 
   function commitInput({ close = true } = {}) {
     if (isMulti) {
-      const text = input.value.trim();
+      const query = filterQuery.trim();
       const summary = multiSummary();
+      const inputText = input.value.trim();
+
+      // Committed summary is showing — nothing to commit.
+      if (!query && inputText === summary) {
+        input.removeAttribute("aria-invalid");
+        if (close) closeList({ restoreInput: true });
+        return true;
+      }
+
+      const text = query || inputText;
 
       if (!text) {
         selectedMap.clear();
@@ -478,12 +493,6 @@ export function initCombobox(
         input.removeAttribute("aria-invalid");
         emitChange({ committed: true, cleared: true });
         if (close) closeList();
-        return true;
-      }
-
-      if (text === summary) {
-        input.removeAttribute("aria-invalid");
-        if (close) closeList({ restoreInput: true });
         return true;
       }
 
@@ -542,11 +551,31 @@ export function initCombobox(
   }
 
   function onInputEvent() {
+    if (isMulti) {
+      const summary = multiSummary();
+      // Summary is the display value until the user starts filtering. Typing into
+      // the summary (cursor at end) would otherwise append into the labels string;
+      // peel off the suffix, or take the whole value when they replace/delete.
+      if (!filterQuery && summary && input.value.startsWith(summary)) {
+        filterQuery = input.value.slice(summary.length);
+        input.value = filterQuery;
+      } else if (!filterQuery && input.value === summary) {
+        filterQuery = "";
+      } else {
+        filterQuery = input.value;
+      }
+    }
     openList();
   }
 
   function onInputFocus() {
     input.removeAttribute("aria-invalid");
+    if (isMulti && !filterQuery) {
+      // Select the summary so the next keystroke replaces it with a filter query.
+      requestAnimationFrame(() => {
+        if (!filterQuery && input.value === multiSummary()) input.select();
+      });
+    }
     openList();
   }
 
