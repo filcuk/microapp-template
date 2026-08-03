@@ -31,9 +31,14 @@ Agree with the user:
 5. Docs same change:
    - `USAGE.md` — **Available features** row + **Using components** (markup + import)
    - `AGENTS.md` — module conventions table if a new `initX` pattern
-6. Update [../_shared/component-map.md](../_shared/component-map.md) (JS, CSS, vendor, icons, infra).
-7. Note a CHANGELOG bullet for the next `release-template` (do not bump `TEMPLATE_VERSION` here unless the user is releasing now).
+6. Update [../_shared/component-map.md](../_shared/component-map.md) **and** [`scripts/lib/template-catalogue.mjs`](../../../scripts/lib/template-catalogue.mjs) (JS, CSS, vendor, icons, infra).
+7. Regenerate the manifest: `npm run manifest:template` (and keep `template.lock.json` on `"*"` for this repo).
+8. Note a CHANGELOG bullet for the next `release-template` (do not bump `TEMPLATE_VERSION` here unless the user is releasing now).
 
 ## 3. Finish
+
+```bash
+npm run verify:template
+```
 
 Run **`health-check`**. Leave `APP_VERSION` at `0.0.0` on the template repo.

@@ -52,6 +52,8 @@ Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `render
 
 Do not bump the other constant unless the user asks.
 
+Forks pin `template.lock.json` (`templateVersion` + `components`) and use `npm run sync:template` / `npm run verify:template`. Template releases **must** create git tag `vX.Y.Z` so fetch-based sync can resolve the revision.
+
 ## GitHub Pages
 
 - Entry HTML at repo root; shared assets under `app/`.
@@ -61,7 +63,7 @@ Do not bump the other constant unless the user asks.
 ## Docs when changing the template catalogue
 
 - Reusable feature added/changed → update `USAGE.md` (and `AGENTS.md` / `demo.html` as needed) per `.cursor/rules/usage-docs.mdc`.
-- Update [component-map.md](component-map.md) in the same change.
+- Update [component-map.md](component-map.md) and `scripts/lib/template-catalogue.mjs` in the same change; run `npm run manifest:template`.
 - Fork app-only logic in `main.js` does not require USAGE updates.
 
 ## Confirm before complexity

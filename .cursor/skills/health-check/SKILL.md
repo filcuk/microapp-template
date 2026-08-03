@@ -2,9 +2,9 @@
 name: health-check
 description: >-
   Verify a microapp-template app or fork against boot conventions, Pages
-  deploy config, versions, icons/assets hygiene, and optional lint/test.
-  Use after init, migrate, sync, restore, finalize, or when the user asks to
-  health-check / verify / sanity-check the template or app.
+  deploy config, versions, icons/assets hygiene, template lock/verify, and
+  optional lint/test. Use after init, migrate, sync, restore, finalize, or
+  when the user asks to health-check / verify / sanity-check the template or app.
 ---
 
 # Health check
@@ -24,6 +24,7 @@ Health check:
 - [ ] Demo refs
 - [ ] config / version
 - [ ] Assets / icons
+- [ ] Template lock / verify
 - [ ] Lint / test (if node_modules)
 - [ ] Unused scan (optional)
 ```
@@ -35,7 +36,7 @@ Report each item as **pass**, **fail**, or **skip** with a one-line reason. Fix 
 For every root `*.html` entry:
 
 - [ ] `app/theme-init.js` in `<head>` (blocking)
-- [ ] `app/styles.css` linked
+- [ ] `app/styles.css` linked (fork entry → tokens → `css/template.css` → `css/app.css`)
 - [ ] Page module is `type="module"`
 - [ ] If theme/icon keys differ from defaults: `__MICROAPP__` bridge **before** theme-init
 - [ ] Page module calls `initShell()` first (before other inits)
@@ -69,7 +70,23 @@ Read `.github/workflows/pages.yml`:
 
 If assets are incomplete, point at the `handle-assets` skill.
 
-### 6. Lint / test
+### 6. Template lock / verify (hard gate when present)
+
+When `template.lock.json` and `template-manifest.json` exist (template repo and modern forks):
+
+```bash
+npm run verify:template
+```
+
+- [ ] Command exits 0
+- [ ] `lock.templateVersion` matches `TEMPLATE_VERSION` in `app/version.js` (warn if not)
+- [ ] No unresolved `modified` / `missing` / `unexpected` files the user did not accept as intentional drift
+
+**Fail** the health check if verify exits non-zero, unless the user explicitly waived drift. Prefer `migrate-template` / `restore-component` (sync) to repair rather than hand-editing hashed files.
+
+Skip with reason only on pre-manifest forks that have not adopted the lock yet — then recommend adding `template.lock.json` via migrate.
+
+### 7. Lint / test
 
 If `node_modules` exists (or after `npm ci` if the user wants a full check):
 
@@ -80,9 +97,9 @@ npm test
 
 Skip with reason if deps are not installed and the user did not ask to install.
 
-### 7. Optional unused scan
+### 8. Optional unused scan
 
-When finalizing or on request: compare entry import graphs + markup hooks to [component-map.md](../_shared/component-map.md). Report unused catalogue ids / CSS partials / vendor — do not delete unless the user asked (`finalize-app`).
+When finalizing or on request: compare entry import graphs + markup hooks to [component-map.md](../_shared/component-map.md) (and/or `template.lock.json` components). Report unused catalogue ids / CSS partials / vendor — do not delete unless the user asked (`finalize-app`).
 
 ## Output format
 
@@ -92,6 +109,7 @@ When finalizing or on request: compare entry import graphs + markup hooks to [co
 | Check | Status | Notes |
 | ----- | ------ | ----- |
 | Boot | pass / fail / skip | … |
+| Template verify | pass / fail / skip | … |
 | … | … | … |
 
 **Blockers:** …

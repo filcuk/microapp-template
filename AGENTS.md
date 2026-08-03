@@ -9,14 +9,14 @@ Multi-step workflows live under [`.cursor/skills/`](.cursor/skills/). Read the m
 | Skill | Use when |
 | ----- | -------- |
 | [`init-app`](.cursor/skills/init-app/SKILL.md) | Fork / scaffold a new app from this template |
-| [`migrate-template`](.cursor/skills/migrate-template/SKILL.md) | Upgrade a fork to a newer template (partial or full) |
+| [`migrate-template`](.cursor/skills/migrate-template/SKILL.md) | Upgrade a fork to a newer template (partial or full) via lock + sync |
 | [`sync-shell`](.cursor/skills/sync-shell/SKILL.md) | Pull shell/theme/tokens/infra only |
-| [`restore-component`](.cursor/skills/restore-component/SKILL.md) | Add a trimmed catalogue component back into a fork |
+| [`restore-component`](.cursor/skills/restore-component/SKILL.md) | Add a trimmed catalogue component back into a fork (lock + sync) |
 | [`finalize-app`](.cursor/skills/finalize-app/SKILL.md) | Remove unused components before shipping |
 | [`author-component`](.cursor/skills/author-component/SKILL.md) | Add a **new** reusable component to the template itself |
-| [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION` and update [`CHANGELOG.md`](CHANGELOG.md) |
+| [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION`, regenerate manifest, tag `vX.Y.Z` |
 | [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) | Wire logos/icons — never invent artwork; request files from the user |
-| [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets after any lifecycle step |
+| [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets, and `verify:template` |
 
 ## Confirm before complexity
 
