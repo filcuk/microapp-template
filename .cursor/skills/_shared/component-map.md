@@ -10,7 +10,7 @@ When trimming: delete a feature’s JS only if unused; remove a **shared** CSS p
 | ---- | ----- |
 | Entry | `app/theme-init.js`, `app/config.js`, `app/version.js`, `app/main.js` (or other page modules), `app/styles.css` |
 | Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, `also-see.js`, `external-link.js`, `heading-link.js` |
-| Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `brand-icon.js` |
+| Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `icons-template.js`, `icons-app.js`, `brand-icon.js` |
 | Shell-pulled components | `app/components/tooltip.js`, `app/components/banner.js` (imported by `shell.js`) |
 | Core CSS | `app/tokens.css`, `app/css/layout.css`, `app/css/controls-buttons.css`, `app/css/overlays.css` (tooltips + banners + modals styles) |
 | Brand | `app/res/` logos as wired in HTML / `__MICROAPP__` |
@@ -111,7 +111,7 @@ Do not remove these from `ICONS` while using `initShell`:
 | Old (USAGE / older forks) | Current |
 | ------------------------- | ------- |
 | `app/dialog.js`, `app/combo.js`, … | `app/components/<name>.js` |
-| `app/icons.js` | `app/utils/icons.js` |
+| `app/icons.js` | `app/utils/icons.js` (merge API; definitions in `icons-template.js` / `icons-app.js`) |
 | `app/page-nav.js`, `app/heading-link.js`, … | `app/shell/<name>.js` |
 | `app/file-dropzone.js` | `app/components/file-dropzone.js` |
 

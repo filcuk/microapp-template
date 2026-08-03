@@ -2173,7 +2173,7 @@ Add other language components under `app/vendor/prism/` as needed from [Prism](h
 
 ### Icons
 
-All inline UI icons live in [`app/icons.js`](app/icons.js). Edit paths there once; pages mount them at load via `initIcons()`.
+All inline UI icons are defined in [`app/utils/icons-template.js`](app/utils/icons-template.js) (template catalogue) and [`app/utils/icons-app.js`](app/utils/icons-app.js) (fork / app additions). [`app/utils/icons.js`](app/utils/icons.js) merges them (app wins on key clash) and mounts via `initIcons()`.
 
 Browse and copy SVG paths from [Icônes — Google Material Icons (Round variant)](https://icones.js.org/collection/ic?s=info&variant=Round) (`ic` collection, `variant=Round`).
 
@@ -2194,14 +2194,15 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Favicon syncs in `brand-icon.js`.
+Add fork / app icons to `APP_ICONS` in [`app/utils/icons-app.js`](app/utils/icons-app.js). Template catalogue changes go in `TEMPLATE_ICONS` in `icons-template.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Favicon syncs in `brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 
 ```javascript
 import { ICON_ATTRIBUTIONS } from "./utils/icons.js";
 
-export const ICONS = {
+// In icons-app.js:
+export const APP_ICONS = {
   info: {
     viewBox: "0 0 24 24",
     markup: `<path fill="currentColor" d="…"/>`,
@@ -2213,6 +2214,6 @@ export const ICONS = {
 
 - `name` — original icon name in the source collection (metadata only; not used at runtime)
 - `attribution` — license notice, inserted as an HTML comment inside the SVG
-- `ref` — alias to another `ICONS` key (e.g. `lines: { ref: "note" }`)
+- `ref` — alias to another icon key in the merged registry (e.g. `lines: { ref: "note" }`)
 
 Pass `includeAttribution: false` to `createIcon()` if you need the SVG without the comment.

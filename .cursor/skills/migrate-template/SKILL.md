@@ -37,7 +37,7 @@ Do not proceed until the user picks one.
 - `app/config.js` fork URLs / also-see / theme keys
 - `APP_VERSION` in `app/version.js`
 - Custom files under `app/res/` supplied by the app
-- Fork-added `ICONS` entries (merge; never invent SVG)
+- Fork-owned `app/utils/icons-app.js` (never overwrite; never invent SVG)
 
 **Do upgrade** (subject to style):
 
@@ -55,7 +55,7 @@ Map legacy flat paths to current layout (see component-map “Legacy path aliase
 
 1. Trace used features (same discovery as `finalize-app`).
 2. Pull upstream versions of Always keep + those features’ JS/CSS/vendor/infra.
-3. Merge `icons.js`: take upstream shell/component icons; keep fork-only ids; blanks → `handle-assets`.
+3. Icons: replace `icons-template.js` (+ `icons.js` if needed); keep `icons-app.js`; blanks → `handle-assets`.
 4. Skip unused catalogue files unless the user asks to add them (`restore-component`).
 
 ### Full

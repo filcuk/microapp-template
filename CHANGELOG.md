@@ -20,6 +20,7 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 
 ### Changed
 
+- Split inline icons into `icons-template.js` (catalogue), `icons-app.js` (fork-owned, empty here), and merging `icons.js` (public API unchanged).
 - Toggle dropdown selection count uses a **badge** on the trigger instead of appending `(n)` to the label text.
 - Renamed the hex colour field component from colour picker to **colour input** (`color-input` / `initColorInput`) so “colour picker” can mean a future spectrum selector.
 - Also-see menu lays topics out full width on a shared grid, choosing the column count that leaves the fewest empty cells.

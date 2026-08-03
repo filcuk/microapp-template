@@ -26,7 +26,7 @@ Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `render
 
 ## Icons and brand assets
 
-- Inline UI icons live only in `app/utils/icons.js` (`data-icon` / `createIcon()`).
+- Inline UI icons: template catalogue in `app/utils/icons-template.js`, fork additions in `app/utils/icons-app.js`, merged API in `app/utils/icons.js` (`data-icon` / `createIcon()`).
 - **Never invent or generate** SVG path data or image bytes. Use existing ids, `{ ref: "…" }` aliases, or blank stubs — then ask the user (see `handle-assets` skill).
 - Brand rasters/SVGs live under `app/res/`. Same rule: wire paths; do not invent artwork.
 - Source UI icons from [Icônes — Material Icons Round](https://icones.js.org/collection/ic?s=info&variant=Round) when the user supplies markup; set `name` / `attribution` when required.

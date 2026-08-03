@@ -62,10 +62,10 @@ Read `.github/workflows/pages.yml`:
 
 ### 5. Assets / icons
 
-- [ ] No invented SVG paths added in this session (paths only in `app/utils/icons.js`)
+- [ ] No invented SVG paths added in this session (paths only in `icons-template.js` / `icons-app.js`)
 - [ ] Shell-required icon ids present (see component-map)
 - [ ] Brand files referenced by HTML / `APP_ICON_SRC` / `__MICROAPP__` exist under `app/res/`
-- [ ] Blank `ICONS` stubs (`markup: \`\``) or missing brand files are listed as **fail** or explicit **TODO** agreed with the user — not silent
+- [ ] Blank `APP_ICONS` / `TEMPLATE_ICONS` stubs (`markup: \`\``) or missing brand files are listed as **fail** or explicit **TODO** agreed with the user — not silent
 
 If assets are incomplete, point at the `handle-assets` skill.
 
