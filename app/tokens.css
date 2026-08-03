@@ -138,7 +138,7 @@ a:hover {
     transition: none;
   }
 
-  .banner-is-expiring .banner-expire {
+  .banner-is-expiring::before {
     animation: none;
   }
 

@@ -15,7 +15,9 @@
   overflow: hidden;
 }
 
-.banner-expire {
+/* Always-on expire tint; shrinks while `.banner-is-expiring`. */
+.banner::before {
+  content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -25,11 +27,11 @@
   transform-origin: left center;
 }
 
-:root[data-theme="dark"] .banner-expire {
+:root[data-theme="dark"] .banner::before {
   background: rgba(255, 255, 255, 0.03);
 }
 
-.banner-is-expiring .banner-expire {
+.banner-is-expiring::before {
   animation: banner-expire-shrink var(--banner-expire-ms, 1ms) linear forwards;
 }
 
