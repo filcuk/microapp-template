@@ -2,15 +2,17 @@
 
 Authoritative inventory for lifecycle skills (`init-app`, `finalize-app`, `restore-component`, `migrate-template`, etc.). Paths are relative to the repo root. Prefer this file over stale flat-path examples in USAGE.md (`app/dialog.js` → `app/components/dialog.js`).
 
+Machine-readable twin: [`scripts/lib/template-catalogue.mjs`](../../scripts/lib/template-catalogue.mjs) → generated [`template-manifest.json`](../../template-manifest.json) via `npm run manifest:template`. When this map changes, update the catalogue module and regenerate the manifest.
+
 When trimming: delete a feature’s JS only if unused; remove a **shared** CSS partial only when **no** remaining feature in that partial’s group needs it; never delete [invariants](invariants.md).
 
 ## Always keep (with `initShell`)
 
 | Area | Paths |
 | ---- | ----- |
-| Entry | `app/theme-init.js`, `app/config.js`, `app/version.js`, `app/main.js` (or other page modules), `app/styles.css` |
+| Entry | `app/theme-init.js`, `app/config.js`, `app/version.js`, `app/main.js` (or other page modules), `app/styles.css` (fork entry), `app/css/template.css` (generated index), `app/css/app.css` (fork-owned) |
 | Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, `also-see.js`, `external-link.js`, `heading-link.js` |
-| Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `brand-icon.js` |
+| Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `icons-template.js`, `icons-app.js`, `brand-icon.js` |
 | Shell-pulled components | `app/components/tooltip.js`, `app/components/banner.js` (imported by `shell.js`) |
 | Core CSS | `app/tokens.css`, `app/css/layout.css`, `app/css/controls-buttons.css`, `app/css/overlays.css` (tooltips + banners + modals styles) |
 | Brand | `app/res/` logos as wired in HTML / `__MICROAPP__` |
@@ -27,7 +29,7 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | `code-block.css` | code-block, expandable-surface |
 | `controls-badges.css` | badge |
 | `controls-chips.css` | chip |
-| `controls-fields.css` | field/input (CSS-only), combobox, date-picker |
+| `controls-fields.css` | field/input (CSS-only), combobox, date-picker, time-picker, duration-input |
 | `controls-widgets.css` | toggle, checkbox, segmented-control, pagination, progress-bar, spinner, slider, stepper, color-input |
 | `controls-section-panel.css` | section-panel (CSS-only pattern) |
 | `controls-menus.css` | combo, dropdown, dropdown-toggle |
@@ -37,7 +39,7 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | `table.css` | table |
 | `controls-tabular-input.css` | tabular-input |
 
-Also wired from `styles.css`: every partial above is `@import`ed. When removing the last consumer of a partial, drop its `@import` from `app/styles.css`.
+Also wired from `app/css/template.css`: every partial above is `@import`ed there (and pulled in via `app/styles.css`). When removing the last consumer of a partial, drop its `@import` from `template.css` (sync regenerates this index from the lock/manifest).
 
 ## Feature catalogue
 
@@ -50,8 +52,10 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | dialog | `app/components/dialog.js` | `overlays.css` | — | — | `dom`, `document-listeners` | |
 | badge | `app/components/badge.js` | `controls-badges.css` | — | — | `dom` | |
 | chip | `app/components/chip.js` | `controls-chips.css` | — | `error` (remove) | `dom`, `icons` | |
-| combobox | `app/components/combobox.js` | `controls-fields.css` | — | — | `dom`, `document-listeners` | |
+| combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |
 | date-picker | `app/components/date-picker/` (`index.js`, `calendar.js`, `parse.js`) | `controls-fields.css` | — | Markup: `calendar` | `dom`, `document-listeners` | |
+| time-picker | `app/components/time-picker.js` | `controls-fields.css` | — | — | `dom` | Native `type="time"` |
+| duration-input | `app/components/duration-input.js` | `controls-fields.css` | — | — | `dom` | Hours:minutes; optional seconds |
 | color-input | `app/components/color-input.js` | `controls-widgets.css` | — | — | `dom` | Hex field + swatch; optional alpha; not a spectrum picker |
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |
 | checkbox | `app/components/checkbox.js` | `controls-widgets.css` | — | — | `dom` | Tri-state checkbox |
@@ -63,7 +67,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | stepper | `app/components/stepper.js` | `controls-widgets.css` | — | — | `dom` | |
 | combo | `app/components/combo.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
 | dropdown | `app/components/dropdown.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
-| dropdown-toggle | `app/components/dropdown-toggle.js` | `controls-menus.css` | — | — | `menu` | |
+| dropdown-toggle | `app/components/dropdown-toggle.js` | `controls-menus.css` | — | — | `menu`, badge | |
 | expand | `app/components/expand.js` | `controls-disclosure.css` | — | — | `dom` | |
 | accordion | `app/components/accordion.js` | `controls-disclosure.css` | — | — | `dom` | |
 | tabs | `app/components/tabs.js` | `controls-disclosure.css` | — | — | `dom` | |
@@ -109,7 +113,7 @@ Do not remove these from `ICONS` while using `initShell`:
 | Old (USAGE / older forks) | Current |
 | ------------------------- | ------- |
 | `app/dialog.js`, `app/combo.js`, … | `app/components/<name>.js` |
-| `app/icons.js` | `app/utils/icons.js` |
+| `app/icons.js` | `app/utils/icons.js` (merge API; definitions in `icons-template.js` / `icons-app.js`) |
 | `app/page-nav.js`, `app/heading-link.js`, … | `app/shell/<name>.js` |
 | `app/file-dropzone.js` | `app/components/file-dropzone.js` |
 
@@ -119,5 +123,5 @@ Do not remove these from `ICONS` while using `initShell`:
 2. Scan markup for feature hooks (`.tabs`, `.modal`, `data-expandable-surface`, `.file-dropzone`, etc.).
 3. Mark a catalogue `id` **used** if imported or markup-matched.
 4. Unused ids → candidates to delete (JS + exclusive vendor).
-5. For each CSS partial, if no remaining used feature maps to it → drop `@import` and file.
+5. For each CSS partial, if no remaining used feature maps to it → drop `@import` from `app/css/template.css` and delete the file.
 6. Never delete Always keep / shell-required icons / invariants.

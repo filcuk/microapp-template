@@ -9,14 +9,14 @@ Multi-step workflows live under [`.cursor/skills/`](.cursor/skills/). Read the m
 | Skill | Use when |
 | ----- | -------- |
 | [`init-app`](.cursor/skills/init-app/SKILL.md) | Fork / scaffold a new app from this template |
-| [`migrate-template`](.cursor/skills/migrate-template/SKILL.md) | Upgrade a fork to a newer template (partial or full) |
+| [`migrate-template`](.cursor/skills/migrate-template/SKILL.md) | Upgrade a fork to a newer template (partial or full) via lock + sync |
 | [`sync-shell`](.cursor/skills/sync-shell/SKILL.md) | Pull shell/theme/tokens/infra only |
-| [`restore-component`](.cursor/skills/restore-component/SKILL.md) | Add a trimmed catalogue component back into a fork |
+| [`restore-component`](.cursor/skills/restore-component/SKILL.md) | Add a trimmed catalogue component back into a fork (lock + sync) |
 | [`finalize-app`](.cursor/skills/finalize-app/SKILL.md) | Remove unused components before shipping |
 | [`author-component`](.cursor/skills/author-component/SKILL.md) | Add a **new** reusable component to the template itself |
-| [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION` and update [`CHANGELOG.md`](CHANGELOG.md) |
+| [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION`, regenerate manifest, tag `vX.Y.Z` |
 | [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) | Wire logos/icons — never invent artwork; request files from the user |
-| [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets after any lifecycle step |
+| [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets, and `verify:template` |
 
 ## Confirm before complexity
 
@@ -49,7 +49,7 @@ Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, de
 
 - Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, etc.)
 - Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.section-panel`, `.code-block`, `.theme-toggle`
-- Add or edit inline UI icons in `app/icons.js` only — do not duplicate SVG paths in HTML
+- Add or edit inline UI icons in `app/utils/icons-template.js` (catalogue) or `app/utils/icons-app.js` (fork) only — do not duplicate SVG paths in HTML
 - Do not introduce parallel styling systems (Tailwind, CSS-in-JS, component libraries)
 
 ## Page boot conventions
@@ -57,7 +57,7 @@ Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, de
 Every HTML entry point should:
 
 1. Include blocking `app/theme-init.js` in `<head>` (prevents theme flash)
-2. Link `app/styles.css` (imports `tokens.css` + `app/css/*.css` partials)
+2. Link `app/styles.css` (fork entry: `tokens.css` → `css/template.css` → `css/app.css`)
 3. Call `initShell()` from `app/shell/shell.js` as the first step in the page module
 
 `initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, sticky chrome offsets, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
@@ -84,10 +84,12 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `setHidden()` / `parseBooleanAttr()` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute; parse HTML boolean `data-*` values |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |
 | `initDropdown()` / `initToggleDropdown()` | Single-select vs multi-select toggle dropdown menus |
-| `initCombobox()` / `initComboboxes()` | Text input with filterable autocomplete list |
+| `initCombobox()` / `initComboboxes()` | Text input with filterable autocomplete list; `data-combobox-multi` for multi-select (comma summary + badge) |
 | `initFileDropzone()` / `initFileDropzones()` | Drag-and-drop / browse file picker |
 | `initFileDownload()` / `initFileDownloads()` | Click-to-download generated files |
 | `initDatePicker()` / `initDatePickers()` | Calendar popup with optional time input |
+| `initTimePicker()` / `initTimePickers()` | Time-of-day field (native `type="time"`) |
+| `initDurationInput()` / `initDurationInputs()` | Segmented hours:minutes (optional seconds) duration |
 | `initSlider()` / `initSliders()` | Range slider with editable value (integer, decimal, percentage) |
 | `initProgressBar()` / `initProgressBars()` | Progress bar with optional percent or fraction label |
 | `initSpinner()` / `initSpinners()` | Loading spinner; optional blocking overlay on a host |
@@ -123,10 +125,10 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 
 - Declare icons with `data-icon="name"` and optional `data-icon-class="…"` in HTML
 - Call `initIcons()` (via `initShell()`) to inject SVGs
-- **Agents must not invent or generate SVG paths** — see [`.cursor/rules/icons.mdc`](.cursor/rules/icons.mdc). If an icon is missing, ask the user to add it to `app/icons.js` (a blank template is documented in that file’s header). Reuse existing ids or `{ ref: "other-icon" }` when appropriate.
-- Users add new icon paths in `app/utils/icons.js` only — do not duplicate SVG paths in HTML
-- Source SVGs from [Icônes — Google Material Icons (Round variant)](https://icones.js.org/collection/ic?s=info&variant=Round); copy path markup into `ICONS` and set `attribution` when required
-- For sourced icons, set `name` to the original collection id (e.g. `round-info`) — metadata for traceability; omit for custom or in-house icons. The `ICONS` object key remains the app id used in `data-icon`
+- **Agents must not invent or generate SVG paths** — see [`.cursor/rules/icons.mdc`](.cursor/rules/icons.mdc). If an icon is missing, ask the user to add it to `app/utils/icons-app.js` (forks) or `icons-template.js` (template catalogue); blank stubs are documented in those headers. Reuse existing ids or `{ ref: "other-icon" }` when appropriate.
+- Users add new icon paths in `icons-app.js` / `icons-template.js` only — `icons.js` merges them; do not duplicate SVG paths in HTML
+- Source SVGs from [Icônes — Google Material Icons (Round variant)](https://icones.js.org/collection/ic?s=info&variant=Round); copy path markup into `TEMPLATE_ICONS` / `APP_ICONS` and set `attribution` when required
+- For sourced icons, set `name` to the original collection id (e.g. `round-info`) — metadata for traceability; omit for custom or in-house icons. The merged `ICONS` object key remains the app id used in `data-icon`
 - To alias one app id to another, use `{ ref: "other-icon" }` instead of duplicating markup (e.g. `lines: { ref: "note" }`)
 - Third-party icons that require a license notice: set `attribution` on the icon definition (use `ICON_ATTRIBUTIONS` for common sets). Rendered as an SVG comment via `createIcon()` / `initIcons()`
 
@@ -134,9 +136,11 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 
 | File | Contents |
 | ---- | -------- |
-| `app/styles.css` | Entry point — `@import` only |
+| `app/styles.css` | Fork-owned entry — `@import` tokens, `css/template.css`, `css/app.css` |
+| `app/css/template.css` | Template partial index (regenerated by sync; full catalogue here) |
+| `app/css/app.css` | Fork-owned app styles (empty in the template) |
 | `app/tokens.css` | Reset, `:root` tokens, dark theme, base typography, `.hidden`, reduced-motion |
-| `app/css/layout.css` | Page shell, sections, section panels, page nav, footer, theme toggle |
+| `app/css/layout.css` | Page shell, sections, content tiers, section panels, page nav, footer, theme toggle |
 | `app/css/code-block.css` | Code blocks and expandable surfaces |
 | `app/css/controls-buttons.css` | Toolbar, buttons |
 | `app/css/controls-badges.css` | Corner badges on controls and labels |
@@ -152,7 +156,13 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | `app/css/table.css` | Data table layout, sort controls, and selection column |
 | `app/css/controls-tabular-input.css` | Editable typed grid (tabular input) |
 
-Keep HTML linking only `styles.css`. Edit tokens or the relevant partial under `app/css/`; do not merge back into a monolith.
+Keep HTML linking only `styles.css`. Edit tokens, `app/css/app.css`, or the relevant partial under `app/css/`; do not merge back into a monolith. Trimming partials updates `template.css` (or sync regenerates it).
+
+### Demo vs shared layout
+
+- **Shared layout** (usable in forks): `.content-section`, `.content-tier` / `.content-tier-header` / `.content-tier-title` / `.content-tier-lead` / `.content-tier-body`, `.section-heading`, `.section-panel`, …
+- **Demo-only helpers** (showcase arrangement): `.demo-row`, `.demo-grid`, `.demo-card`, `.demo-hint`, … — fine in `demo.html` / `app/demo.js`
+- Shell and shared CSS/JS must **not** select `demo-*` classes. If sticky, page-nav, or other chrome depends on markup, use generic names and document them in `USAGE.md`. See [`.cursor/rules/demo-isolation.mdc`](.cursor/rules/demo-isolation.mdc).
 
 ## JS module layers
 
@@ -162,7 +172,7 @@ Modules live under `app/shell/`, `app/utils/`, and `app/components/` (no build s
 | ----- | -------- | ---- |
 | Entry | `main.js`, `demo.js`, `theme-init.js`, `config.js`, `version.js` | Loaded directly from HTML |
 | Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, … | Shared page chrome via `initShell()` |
-| Infrastructure | `app/utils/dom.js`, `document-listeners.js`, `clipboard.js`, `icons.js`, `menu.js`, `brand-icon.js` | Shared helpers and registries |
+| Infrastructure | `app/utils/dom.js`, `document-listeners.js`, `clipboard.js`, `icons.js` (+ `icons-template.js` / `icons-app.js`), `menu.js`, `brand-icon.js` | Shared helpers and registries |
 | Components | `app/components/dialog.js`, `dropdown.js`, `tabs.js`, `code-block.js`, … | One `initX` (or `initXs`) per feature — import only what you need |
 
 Respect `prefers-reduced-motion: reduce` — transitions live in components; global overrides are in `tokens.css`. JS scroll behaviour should use `prefersReducedMotion()` from `app/utils/dom.js`.
@@ -176,7 +186,7 @@ npm run lint
 npm test
 ```
 
-CI runs the same checks on push and pull requests (`.github/workflows/ci.yml`).
+CI runs the same checks on push and pull requests (`.github/workflows/ci.yml`). Template maintainers regenerate `template-manifest.json` with `npm run manifest:template` when the catalogue or hashed files change. Forks pin a revision in `template.lock.json` and use `npm run sync:template` / `npm run verify:template`.
 
 ## Keep GitHub Pages deployable
 

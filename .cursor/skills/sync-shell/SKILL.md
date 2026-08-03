@@ -20,12 +20,12 @@ Pull these from upstream (tag matching fork `TEMPLATE_VERSION`, or a newer revis
 | ---- | ----- |
 | Shell | `app/shell/**` |
 | Theme boot | `app/theme-init.js` |
-| Tokens / chrome CSS | `app/tokens.css`, `app/css/layout.css`, `app/css/controls-buttons.css` |
+| Tokens / chrome CSS | `app/tokens.css`, `app/css/layout.css`, `app/css/controls-buttons.css`; refresh `app/css/template.css` imports for those partials — never overwrite `app/styles.css` or `app/css/app.css` |
 | Overlays used by shell | `app/css/overlays.css` if tooltip/banner styles changed; `app/components/tooltip.js`, `banner.js` when shell depends on them |
 | Infra | `app/utils/dom.js`, `document-listeners.js`, `brand-icon.js` |
-| Icons | `app/utils/icons.js` — **merge only** (see below) |
+| Icons | `app/utils/icons-template.js` (replace from upstream); `icons.js` merge helpers if changed; **never** overwrite `icons-app.js` |
 
-Also update `TEMPLATE_VERSION` in `app/version.js` when the sync intentionally tracks a newer template release (ask if unclear). Do not change `APP_VERSION`.
+Also update `TEMPLATE_VERSION` in `app/version.js` when the sync intentionally tracks a newer template release (ask if unclear). Do not change `APP_VERSION`. Prefer full-catalogue upgrades via `migrate-template` (`sync:template`) when more than shell/tokens changed.
 
 ## Scope (out)
 
@@ -40,8 +40,8 @@ Do **not** replace unless the user explicitly expands scope:
 
 ## Icons merge
 
-1. Take upstream definitions for shell-required and shared ids.
-2. **Keep** fork-added `ICONS` keys the app still uses.
+1. Replace `icons-template.js` from upstream (and `icons.js` if the merge API changed).
+2. **Keep** `icons-app.js` entirely; fork icons live only there.
 3. Never invent path markup; missing needed icons → **`handle-assets`**.
 
 ## Workflow

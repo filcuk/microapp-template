@@ -199,6 +199,10 @@ Optional quality checks (requires `npm ci` once):
 ```bash
 npm run lint
 npm test
+npm run manifest:template   # regenerate template-manifest.json after catalogue changes
+npm run verify:template     # check tree vs template.lock.json + manifest hashes
+# npm run sync:template -- --from ../microapp-template
+# npm run sync:template -- --version 0.9.0
 ```
 
 Then open `http://localhost:3000` and, if kept, `http://localhost:3000/demo.html`.
@@ -221,10 +225,14 @@ The workflow copies only publishable files into `_site/` (`index.html`, optional
 index.html          # Your app homepage
 demo.html           # Component showcase (optional)
 .nojekyll           # Skip Jekyll on GitHub Pages
+template-manifest.json  # SHA-256 + component graph (npm run manifest:template)
+template.lock.json      # Fork pin: templateVersion + selected components
 app/
-  styles.css            # Imports tokens.css + app/css/*.css partials
+  styles.css            # Fork entry: tokens.css → css/template.css → css/app.css
   tokens.css            # Design tokens, base typography, reduced motion
   css/
+    template.css        # Template partial index (sync regenerates in forks)
+    app.css             # Fork-owned app styles (empty in the template)
     layout.css          # Page shell, sections, page nav, footer, theme toggle
     code-block.css      # Code blocks and expandable surfaces
     controls-buttons.css  # Toolbar, buttons
@@ -279,7 +287,7 @@ JS modules live under `app/shell/`, `app/utils/`, and `app/components/` — the 
 | **Infrastructure** | `app/utils/` | Keep if any popup menu, icons, or shared helpers remain |
 | **Components** | `app/components/` | Import and init only the features your page uses; delete unused files |
 
-Component CSS lives under `app/css/` (imported via `styles.css`). Match a component to its partial: form controls in `controls-fields.css`, menus in `controls-menus.css`, modals in `overlays.css`, and so on.
+Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via `styles.css`). Match a component to its partial: form controls in `controls-fields.css`, menus in `controls-menus.css`, modals in `overlays.css`, and so on. Put app-only rules in `css/app.css`.
 
 ---
 
@@ -287,29 +295,32 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-heading` — see **Sticky chrome**). App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
-| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
+| **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.time-picker`, `.duration-input`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
-| **Combobox** | Text input with filterable suggestion list. [`app/combobox.js`](app/combobox.js). |
+| **Combobox** | Text input with filterable suggestion list; optional multi-select (`data-combobox-multi`) with comma-separated summary and selection badge. [`app/components/combobox.js`](app/components/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
 | **Progress bar** | Horizontal fill for a value between min and max; optional % or x/y label; optional shine; indeterminate (sweep or bounce), error (stuck) and disabled states. [`app/progress-bar.js`](app/progress-bar.js). |
 | **Spinner** | Loading indicator; optional blocking overlay on a host region. [`app/spinner.js`](app/spinner.js). |
 | **Stepper** | Numeric nudger with − / + buttons and editable value; integer or decimal. [`app/stepper.js`](app/stepper.js). |
 | **Colour input** | Hex text input with inline swatch preview; optional alpha (`#RRGGBBAA`). [`app/components/color-input.js`](app/components/color-input.js). |
+| **Date picker** | Calendar popup with optional time field. [`app/components/date-picker/`](app/components/date-picker/). |
+| **Time picker** | Time-of-day field (no date) via native `<input type="time">`. [`app/components/time-picker.js`](app/components/time-picker.js). |
+| **Duration input** | Segmented hours:minutes (optional seconds) duration field. [`app/components/duration-input.js`](app/components/duration-input.js). |
 | **Toggle** | On/off switch with track and thumb; `role="switch"`. Optional tri-state (`data-toggle-tristate`) cycles off → on → mixed. [`app/components/toggle.js`](app/components/toggle.js). |
 | **Tri-state checkbox** | Checkbox that cycles unchecked → checked → mixed (`indeterminate`). [`app/components/checkbox.js`](app/components/checkbox.js). |
 | **Segmented control** | Toggle button group for single selection; optional linked panels. [`app/segmented-control.js`](app/segmented-control.js). |
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
-| **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open. [`app/dropdown-toggle.js`](app/dropdown-toggle.js). |
+| **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open; selection count via badge. [`app/components/dropdown-toggle.js`](app/components/dropdown-toggle.js). |
 | **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
@@ -364,10 +375,25 @@ Optional stickiness for the site `<header>` and section titles. Off by default. 
 | Opt-in | Effect |
 | ------ | ------ |
 | `data-sticky-header` | Sticky `body > header` |
-| `data-sticky-section-headings` | Sticky `.section-heading` and `.demo-tier-header` (so `.demo-tier-title` stays visible for the tier) |
+| `data-sticky-section-headings` | Sticky `.section-heading` and `.content-tier-header` (so `.content-tier-title` stays visible for the tier) |
 
 ```html
 <html lang="en" data-sticky-header data-sticky-section-headings>
+```
+
+```html
+<section class="content-tier">
+  <header class="content-tier-header">
+    <h2 class="content-tier-title" data-page-nav-tier>Tier title</h2>
+    <p class="content-tier-lead">Optional lead.</p>
+  </header>
+  <div class="content-tier-body">
+    <section class="content-section" aria-labelledby="example-heading">
+      <h2 id="example-heading" class="section-heading">Section</h2>
+      <!-- … -->
+    </section>
+  </div>
+</section>
 ```
 
 ```javascript
@@ -816,6 +842,75 @@ The calendar grid starts weeks on Monday. Weekday labels in markup are optional 
 
 The day view includes quick actions below the calendar: **Today** (date-only pickers) or **Today** and **Now** when `data-date-picker-time` is set. Today selects the current date and sets time to `00:00`; Now selects the current date and time.
 
+#### Time picker
+
+Time of day without a date — styled wrapper around a native `<input type="time">`.
+
+```html
+<div class="time-picker" id="my-time-picker" data-time-picker-default="14:30">
+  <label class="field-label" for="my-time-picker-input">Time</label>
+  <input type="time" id="my-time-picker-input" class="input date-picker-time" />
+  <input type="hidden" class="time-picker-value" name="time" />
+</div>
+```
+
+```javascript
+import { initTimePicker, initTimePickers } from "./components/time-picker.js";
+
+const timePicker = initTimePicker(document.getElementById("my-time-picker"), {
+  onChange: ({ value }) => { /* HH:MM or HH:MM:SS */ },
+  // defaultValue: "14:30",
+  // min: "09:00",
+  // max: "17:00",
+  // step: 60,
+});
+
+timePicker?.getValue();
+timePicker?.setValue("09:15");
+
+initTimePickers(document);
+```
+
+`data-time-picker-default`, `data-time-picker-min`, `data-time-picker-max`, `data-time-picker-step`, and `data-time-picker-disabled` mirror the JS options.
+
+#### Duration input
+
+Segmented hours and minutes (optional seconds). Stores `H:MM` or `H:MM:SS` in `.duration-input-value`. Arrow Up/Down nudges the focused segment (carries across fields; saturates at 0 and the max instead of wrapping); `:` or Arrow Right moves to the next field.
+
+```html
+<div class="duration-input" id="my-duration" data-duration-default="1:30">
+  <span class="field-label" id="my-duration-label">Duration</span>
+  <div class="duration-input-control" role="group" aria-labelledby="my-duration-label">
+    <input type="text" class="input duration-input-hours" inputmode="numeric" aria-label="Hours" />
+    <span class="duration-input-sep" aria-hidden="true">:</span>
+    <input type="text" class="input duration-input-minutes" inputmode="numeric" aria-label="Minutes"
+      maxlength="2" />
+  </div>
+  <input type="hidden" class="duration-input-value" name="duration" />
+</div>
+```
+
+Include seconds with a `.duration-input-seconds` field or `data-duration-seconds` (init will append the seconds segment when the attribute is set).
+
+```javascript
+import { initDurationInput, initDurationInputs } from "./components/duration-input.js";
+
+const duration = initDurationInput(document.getElementById("my-duration"), {
+  onChange: ({ value, totalSeconds }) => { /* committed — blur / Enter / nudge */ },
+  onInput: ({ value, totalSeconds }) => { /* live draft while typing; also syncs `.duration-input-value` */ },
+  // defaultValue: "1:30",
+  // maxHours: 24,
+  // showSeconds: true,
+});
+
+duration?.getValue(); // last committed value (not the in-progress draft)
+duration?.getSeconds();
+duration?.setValue("2:05");
+duration?.setSeconds(90);
+
+initDurationInputs(document);
+```
+
 ### File dropzone
 
 Drag-and-drop or click-to-browse file picker. Selected files appear in a list with remove buttons.
@@ -1008,7 +1103,47 @@ initComboboxes(document); // all `.combobox` blocks
 
 Keyboard: ArrowDown / ArrowUp navigate suggestions, Enter selects, Escape closes and restores the last committed value.
 
-See the interactive example on [`demo.html`](demo.html).
+#### Multi-select
+
+Set `data-combobox-multi` (or `multi: true`) to toggle multiple options. Behaviour matches single-select (filter, arrows, Enter, Escape, list closes after a pick); the input shows selected labels as a comma-separated list. Typing replaces that summary with a filter query; the summary is restored when the list closes (including when the filter is emptied — selection is not cleared by blur). Clear the selection with `setValues([])` / `setValue("")`. Option `data-value`s and custom free-text values must not contain commas (the `.combobox-value` / `getValue()` delimiter); comma-containing values are rejected. Selection count uses a [Badge](#badge) on the control (wrap `.combobox-control` in `.badge-host` with a `.badge`, or omit that markup and let `initCombobox` create it). Initial selection: `aria-selected="true"` on options, a comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+
+```html
+<div class="combobox" id="my-combobox-multi" data-combobox-multi>
+  <label class="field-label" for="my-combobox-multi-input">Cities</label>
+  <span class="badge-host" data-badge-label="Cities">
+    <div class="combobox-control">
+      <input type="text" id="my-combobox-multi-input" class="input combobox-input" role="combobox"
+        aria-expanded="false" aria-autocomplete="list" aria-controls="my-combobox-multi-list"
+        autocomplete="off" placeholder="Search cities…" data-badge-control />
+      <ul id="my-combobox-multi-list" class="combobox-list hidden" role="listbox" aria-multiselectable="true" hidden>
+        <li role="presentation">
+          <button type="button" class="combobox-option" role="option" data-value="nyc"
+            aria-selected="true">New York</button>
+        </li>
+        <li role="presentation">
+          <button type="button" class="combobox-option" role="option" data-value="chi">Chicago</button>
+        </li>
+      </ul>
+    </div>
+    <span class="badge" aria-hidden="true">1</span>
+  </span>
+  <input type="hidden" class="combobox-value" value="nyc" />
+</div>
+```
+
+```javascript
+const multi = initCombobox(document.getElementById("my-combobox-multi"), {
+  onToggle: ({ value, selected, values }) => { /* option toggled */ },
+  onChange: ({ values, labels }) => { /* selection changed */ },
+  // defaultValues: ["nyc", "chi"],
+});
+
+multi?.getValues(); // ["nyc", …]
+multi?.setValues(["nyc", "chi"]);
+multi?.getSelected(); // [{ value, label, item }, …]
+```
+
+Start the badge with the initial count (or `hidden` when zero) so it does not flash before `initCombobox` runs. See the interactive example on [`demo.html`](demo.html).
 
 ### Slider
 
@@ -1549,7 +1684,7 @@ Optional **icons** — leading light/dark image pair via `.dropdown-menu-item-ic
 
 ### Toggle dropdown
 
-Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. The trigger shows the selection count when any items are active (e.g. `Toggle items (3)`).
+Multi-select variant: clicking an item toggles it; the menu stays open until you click away or press Escape. Selection count is shown with a [Badge](#badge) on the trigger (hidden when none are selected). Wrap the trigger in `.badge-host` with a `.badge`, or omit that markup and let `initToggleDropdown` create it.
 
 ```javascript
 import { initToggleDropdown } from "./components/dropdown-toggle.js";
@@ -1566,11 +1701,14 @@ toggleDropdown?.setSelected(["alpha", "gamma"]);
 
 ```html
 <div class="dropdown" id="my-toggle-dropdown">
-  <button type="button" class="btn dropdown-trigger" aria-haspopup="menu" aria-expanded="false"
-    aria-controls="my-toggle-dropdown-menu">
-    <span class="dropdown-trigger-label">Toggle items</span>
-    <span class="combo-btn-chevron" aria-hidden="true"></span>
-  </button>
+  <span class="badge-host" data-badge-label="Toggle items">
+    <button type="button" class="btn dropdown-trigger" aria-haspopup="menu" aria-expanded="false"
+      aria-controls="my-toggle-dropdown-menu" aria-label="Toggle items">
+      <span class="dropdown-trigger-label">Toggle items</span>
+      <span class="combo-btn-chevron" aria-hidden="true"></span>
+    </button>
+    <span class="badge hidden" aria-hidden="true" hidden></span>
+  </span>
   <ul id="my-toggle-dropdown-menu" class="dropdown-menu hidden" role="menu">
     <li role="none">
       <button type="button" class="dropdown-menu-item" role="menuitemcheckbox" aria-checked="false"
@@ -1579,6 +1717,8 @@ toggleDropdown?.setSelected(["alpha", "gamma"]);
   </ul>
 </div>
 ```
+
+Start the badge as `hidden` when the initial selection count is zero so it does not flash before `initToggleDropdown` runs.
 
 ### Expand
 
@@ -2041,7 +2181,7 @@ Add other language components under `app/vendor/prism/` as needed from [Prism](h
 
 ### Icons
 
-All inline UI icons live in [`app/icons.js`](app/icons.js). Edit paths there once; pages mount them at load via `initIcons()`.
+All inline UI icons are defined in [`app/utils/icons-template.js`](app/utils/icons-template.js) (template catalogue) and [`app/utils/icons-app.js`](app/utils/icons-app.js) (fork / app additions). [`app/utils/icons.js`](app/utils/icons.js) merges them (app wins on key clash) and mounts via `initIcons()`.
 
 Browse and copy SVG paths from [Icônes — Google Material Icons (Round variant)](https://icones.js.org/collection/ic?s=info&variant=Round) (`ic` collection, `variant=Round`).
 
@@ -2062,14 +2202,15 @@ const svg = createIcon("lines", { className: "btn-icon-svg" });
 button.append(svg);
 ```
 
-Add new icons to the `ICONS` object in `app/icons.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Favicon syncs in `brand-icon.js`.
+Add fork / app icons to `APP_ICONS` in [`app/utils/icons-app.js`](app/utils/icons-app.js). Template catalogue changes go in `TEMPLATE_ICONS` in `icons-template.js`. App logo supports a light/dark pair (`app/res/app-light.svg`, `app/res/app-dark.svg`) or a single `app/res/app.svg` — see **Branding** and [`app/utils/brand-icon.js`](app/utils/brand-icon.js). Favicon syncs in `brand-icon.js`.
 
 Licensed icon sets (e.g. Material Icons) can use optional metadata on each entry:
 
 ```javascript
 import { ICON_ATTRIBUTIONS } from "./utils/icons.js";
 
-export const ICONS = {
+// In icons-app.js:
+export const APP_ICONS = {
   info: {
     viewBox: "0 0 24 24",
     markup: `<path fill="currentColor" d="…"/>`,
@@ -2081,6 +2222,6 @@ export const ICONS = {
 
 - `name` — original icon name in the source collection (metadata only; not used at runtime)
 - `attribution` — license notice, inserted as an HTML comment inside the SVG
-- `ref` — alias to another `ICONS` key (e.g. `lines: { ref: "note" }`)
+- `ref` — alias to another icon key in the merged registry (e.g. `lines: { ref: "note" }`)
 
 Pass `includeAttribution: false` to `createIcon()` if you need the SVG without the comment.

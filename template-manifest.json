@@ -1,0 +1,979 @@
+{
+  "schemaVersion": 1,
+  "templateVersion": "0.9.0",
+  "generatedAt": "2026-08-03T20:53:15.062Z",
+  "source": "filcuk/microapp-template",
+  "appOwned": [
+    "app/main.js",
+    "app/demo.js",
+    "app/config.js",
+    "app/styles.css",
+    "app/css/app.css",
+    "app/utils/icons-app.js",
+    "app/res/",
+    "index.html",
+    "demo.html"
+  ],
+  "appOwnedFields": {
+    "app/version.js": [
+      "APP_VERSION"
+    ]
+  },
+  "derived": {
+    "app/css/template.css": {
+      "generator": "css-index",
+      "sha256": "626327c36678fa966b1ad726990c0c6b0c057a381c530d1eb8b658fe0bda5a2d"
+    }
+  },
+  "files": {
+    "app/components/accordion.js": {
+      "sha256": "1a05954ae7c407d241d97e32ed7e139d73b3ae19565ec0b667c543e30abf6e86"
+    },
+    "app/components/badge.js": {
+      "sha256": "36218a2d66e83c93d26f9f3afbfec88ba36fb3c9ccd0fef8205c744ca505c654"
+    },
+    "app/components/banner.js": {
+      "sha256": "a11a7bc651367d4f4b430c8185c6cdb0da5d4475aaef97cd350a8eab4c8150e7"
+    },
+    "app/components/checkbox.js": {
+      "sha256": "40047d5bd7d8e87ee70f53217795d3a2fd3c4aeba0fc7e1681265a40469f9ce5"
+    },
+    "app/components/chip.js": {
+      "sha256": "16ed9f44e177021aefc641b2459bf3fc3809009a60d2973a16640e1f7d8e9a41"
+    },
+    "app/components/code-block.js": {
+      "sha256": "7b236f9e264b3879917f808cc1f38a2a8710fcb275d2adf89f6777b8b8e16240"
+    },
+    "app/components/color-input.js": {
+      "sha256": "04a5d41b23a678f7c5c75cdf0db05f424f9480f58cc391e9b4aca995d544aa0d"
+    },
+    "app/components/combo.js": {
+      "sha256": "c8b38f0641499ef73f52e1c864b85f807f8f0546ae1993848bc707de609bddc8"
+    },
+    "app/components/combobox.js": {
+      "sha256": "b549f69e7595e6cf8ba1843c630f95a4ad06e580f8a4452d768041dd2e4deda7"
+    },
+    "app/components/date-picker/calendar.js": {
+      "sha256": "39a0f96d3a07f2ca889339403da270ff30a5fffe1e265c839a225e7f451c911d"
+    },
+    "app/components/date-picker/index.js": {
+      "sha256": "3b74bb07d7e8d23f226573d4a6af683296ba8c6a919155c7e000274aef381c31"
+    },
+    "app/components/date-picker/parse.js": {
+      "sha256": "99aed0dd67c9bdfd689f65aa4a8c59653ddb3260a0e684d520137f5f9f8bb9ff"
+    },
+    "app/components/dialog.js": {
+      "sha256": "6954ded7645a7dd3bb208b764a641aff6bea2ac85fe70c95f37e8ab51f3f4428"
+    },
+    "app/components/dropdown-toggle.js": {
+      "sha256": "906ba05cc3f2f8d97b7be4b15b4e8a7b2bb6e754d81c2e272a55aaaa7024a06a"
+    },
+    "app/components/dropdown.js": {
+      "sha256": "132b30dc1573c45bd8041f19b0002e3fb7da7f79ad5ebe1a419b27430dd81fc8"
+    },
+    "app/components/duration-input.js": {
+      "sha256": "cb2a35878687556fd6c139145ff57839c33fec90e38d2df6b1ccc2fe2915caca"
+    },
+    "app/components/expand.js": {
+      "sha256": "d75d46ae79263945e4341c9e8dcec06aceb3b6ca313595626640edb8ed2bed0f"
+    },
+    "app/components/expandable-surface.js": {
+      "sha256": "26662e86a10c0985fec519fa950b9213abbad7669dd0f932ff790ebfc32c76ce"
+    },
+    "app/components/file-download.js": {
+      "sha256": "165e87adabda9511cc3e98ea604bee6b6e88e75cb963dcc54d9b5847128efdd3"
+    },
+    "app/components/file-dropzone.js": {
+      "sha256": "3153925d292f4f71796f76a9b6150883b806791d9c4ea989308856e3b23c4e27"
+    },
+    "app/components/pagination.js": {
+      "sha256": "2c4bfc5e1e76bdf7adbc1489d1297bf69873354541ce7716265e37a44f77bd2b"
+    },
+    "app/components/progress-bar.js": {
+      "sha256": "2d9a47f95b026119c0656d5c5d07b6d991fbd3d3a4f4f29a34f3047132837ed6"
+    },
+    "app/components/progress-indicator.js": {
+      "sha256": "1e779a8eae4ac798979b7deff0c56afba680e0f416133852317719d745d0b067"
+    },
+    "app/components/rich-text-editor.js": {
+      "sha256": "c8138c980efffb1712013b14dc9ec688b0f271b61631ab3650e3b15fd21ddb34"
+    },
+    "app/components/segmented-control.js": {
+      "sha256": "6219465137c80cf0fec7289a0e405fc584b5079fdbb1406f5e070a826777a0fd"
+    },
+    "app/components/slider.js": {
+      "sha256": "3cb5c5f66e14c1e297a03e1879b48f74a1ba4af8db62c984d9e2412a43450815"
+    },
+    "app/components/spinner.js": {
+      "sha256": "a5c8834b3c949499666c8f59302b3bc8f37e250953197d76a8a48ddcf9a164e8"
+    },
+    "app/components/stepper.js": {
+      "sha256": "d06a278dd365a13037bfb22dbbb4dfc0bd37b26b8c71865f527c767445cbc074"
+    },
+    "app/components/table.js": {
+      "sha256": "d10e340155a4733305ac5ab379cdf7581a9b3585c65f107993c3c3a65ef0c5a8"
+    },
+    "app/components/tabs.js": {
+      "sha256": "3408ade46f0e9850bcffec5760af7d910363381850923b6d1ae95927670f7511"
+    },
+    "app/components/tabular-input.js": {
+      "sha256": "a30d634f842bda4c8fb39bad72eeb1ae4325b638da86e25d785969b9e3f33ee4"
+    },
+    "app/components/time-picker.js": {
+      "sha256": "54beff4f2992d2127b23baaa04362d502a73c8f73b3983ae49188af107a7a1b2"
+    },
+    "app/components/toastui-editor.js": {
+      "sha256": "f4fd5cbc88a295ecc8a3f4cc9b9eec2cdcb4a6684ae54ef608be573f34924149"
+    },
+    "app/components/toggle.js": {
+      "sha256": "3cdd0a48a35874a08a58db2e63ed6c830ca7a04524aea65d6dacbf1311e54657"
+    },
+    "app/components/tooltip.js": {
+      "sha256": "2d6fa276e5bcf82422f2f5262e1180eb724ed1c42a3da397a817b956c067482d"
+    },
+    "app/css/code-block.css": {
+      "sha256": "17ae2e50315a33a58c40794ebb03fd0a9534cc38572905ca886e61ef042e2a0a"
+    },
+    "app/css/controls-badges.css": {
+      "sha256": "273ae927f1cabb287188a742ad1969aad38b3d91e2eec126678137bd0c469c21"
+    },
+    "app/css/controls-buttons.css": {
+      "sha256": "cceb95da2f40e250906c875fa80743f96421e34a0e6efca64aba8835a917631c"
+    },
+    "app/css/controls-chips.css": {
+      "sha256": "8a4f59d18be46030df62708724d79c67d01ec262a0db726f274581b151400a47"
+    },
+    "app/css/controls-disclosure.css": {
+      "sha256": "15b5d0d2f3e1c1cf2f00068cbc83f6c34db4f4d63390a271e98193b74925815b"
+    },
+    "app/css/controls-fields.css": {
+      "sha256": "a47815152460abd6987dd0f25d894d8a3e3c13c482fe663745d77d47cf2d53b6"
+    },
+    "app/css/controls-file.css": {
+      "sha256": "feda82905d0bbdddcaf4e9ab9ce1153431817b2da29277b28afde6d33ffac88e"
+    },
+    "app/css/controls-menus.css": {
+      "sha256": "629926b1e75a2272afa4397c9fa4204e87ae00d3f1b096871a8146f68cb68e5d"
+    },
+    "app/css/controls-section-panel.css": {
+      "sha256": "09791d0e10558bc8afe95e7fde737c99df75b0c31eca97b1f3fd87ba53827a82"
+    },
+    "app/css/controls-tabular-input.css": {
+      "sha256": "a8f16c999c2bb6b105cb5737d50ceb808c8dc8781857bdcf2bd8a1fe4e036d09"
+    },
+    "app/css/controls-widgets.css": {
+      "sha256": "4a1f20ef5f7f86f5c577325f51a426bf2cee1ebb79412851ea06dbbe5bf89078"
+    },
+    "app/css/layout.css": {
+      "sha256": "c9b6565be15e54509f4a85801b82ab0c48442ee528bb6fd910f2e047e5f1e2d1"
+    },
+    "app/css/overlays.css": {
+      "sha256": "bc54947533b644336b93e16b407c4b1e2070fd3322a5bce6b970815660c940c8"
+    },
+    "app/css/rich-text-editor.css": {
+      "sha256": "1693cadefaca6d5d627bb6bb35e33f2c7f5016d35965b9405f232e5a5e2b7439"
+    },
+    "app/css/table.css": {
+      "sha256": "93e50e650c092146638ed0aebbc9a914171a186a58fd53e80db33dcceac9f7ae"
+    },
+    "app/prism.css": {
+      "sha256": "67f59df44b8a4d804dff5dffc2b76f975f6a020e13fbc7b6af4ebf7e36921ba5"
+    },
+    "app/shell/also-see.js": {
+      "sha256": "bf380337c00528fcd0c1d0f744a70b339c45c8e648e19ec74caa056d66e1e2f5"
+    },
+    "app/shell/external-link.js": {
+      "sha256": "630779c3b5ee7a09a5545e9580f2363eae7df9bbc5430576092aa7f96392dc20"
+    },
+    "app/shell/heading-link.js": {
+      "sha256": "9ef2476320dfa944b8a8b9f201410ce068f16c4735e9a6fb0bb00215af28ddd3"
+    },
+    "app/shell/page-nav.js": {
+      "sha256": "f86e1f2c9b7e2de551965d39c80a95102158e524cafe8fc2064016999cae10ad"
+    },
+    "app/shell/render-shell.js": {
+      "sha256": "68081504f3600a723a3869cd85d4205f72a2f9ff586b92187bcc2dfa2fc22668"
+    },
+    "app/shell/shell.js": {
+      "sha256": "1fffc90d8220b6c7ca86a201cf739696301779e34a479a1796cee984097b6805"
+    },
+    "app/shell/sticky.js": {
+      "sha256": "939ea27aa72752a0287845f9d454f05b84e3b2a57c7145f412537a5e709c12a1"
+    },
+    "app/shell/theme.js": {
+      "sha256": "8bf6bc28788261244a3c1421d201d7fd1a695e18ae66e682e9af81905dc5de32"
+    },
+    "app/theme-init.js": {
+      "sha256": "f961a88279a5bbd295f2b2fa722f64f2d51d599df3770860cbb0ab8ecfa9e716"
+    },
+    "app/toastui-editor.css": {
+      "sha256": "ae0e459daf4a2d2e9be912e121c7d80060d21e6bf6f2e9e566ad7279de103527"
+    },
+    "app/tokens.css": {
+      "sha256": "a27080cfe5e1a855407b394d94e4a992771ee46d06d244137569e532ba993530"
+    },
+    "app/utils/also-see-svg.js": {
+      "sha256": "30ccf11f841c975740fd0f40c11de2e53aeed45c960d3b6ffac797bb5f109b94"
+    },
+    "app/utils/brand-icon.js": {
+      "sha256": "f238a9a1c69583d41262e004e0360aa826f27e5b69c70537f7ae0e50b1d1e12d"
+    },
+    "app/utils/clipboard.js": {
+      "sha256": "70831b29d52e0656af005a7dc026b76405ad8ecd8a73db0b01cb1d4d4f79ea45"
+    },
+    "app/utils/document-listeners.js": {
+      "sha256": "c4e4f86908831ee9d60346b257851b0c42950b09e198847878ea0bb2de9d4b60"
+    },
+    "app/utils/dom.js": {
+      "sha256": "e9abd9dc805e81451cec814daf3650e9d40286ddd3215a962b2d836a06848ede"
+    },
+    "app/utils/icons-template.js": {
+      "sha256": "3c753d7b926144a150f07a971a7d825b1cb685a7feec83b80b5d710252e44ae4"
+    },
+    "app/utils/icons.js": {
+      "sha256": "38586a2febcb2bfd12fee172d3299f287d5ebd412fc22c7d227d22b94fb37121"
+    },
+    "app/utils/menu.js": {
+      "sha256": "f6f5ff3541d1f40870ac90a265f4a8c4d07b299d8a9fbd15cdfb3f330338e763"
+    },
+    "app/vendor/prism/prism-line-numbers.min.js": {
+      "sha256": "f5c99feed70b757a4ab0f8bfd80584f773db6694e9e0ce2dab3164fa55a89a35"
+    },
+    "app/vendor/prism/prism-python.min.js": {
+      "sha256": "ed4385685bcf2d4935c8dbbab4bde16603da1329e092d2bf36c3dadd67e9a85c"
+    },
+    "app/vendor/prism/prism.min.js": {
+      "sha256": "b860f960223a2e10de9e6d55316c7c1abbb5fe3981ad34e9b8045c3285e7e471"
+    },
+    "app/vendor/toastui-editor-plugin-table-merged-cell/toastui-editor-plugin-table-merged-cell.min.css": {
+      "sha256": "f9e22de132b84d5547733353be9b7ea8bbc55c1afad1432a5745cccc50c76005"
+    },
+    "app/vendor/toastui-editor-plugin-table-merged-cell/toastui-editor-plugin-table-merged-cell.min.js": {
+      "sha256": "ac263df29380d0b05b8bae680ea9706ce40ea8d2e4fae4faa3eb1a2f602153b0"
+    },
+    "app/vendor/toastui-editor/theme/toastui-editor-dark.min.css": {
+      "sha256": "68d4eb725ef9040c9713a4b140a2bcbfd38a8aee91f1b476bb9c2425b02ccd15"
+    },
+    "app/vendor/toastui-editor/toastui-editor-all.min.js": {
+      "sha256": "f50e1b7c0fc4e5d9a1ccd0d8be78cb3a950ccb3bf676fbf1627810c76aeaedd8"
+    },
+    "app/vendor/toastui-editor/toastui-editor.min.css": {
+      "sha256": "c70e24c68fefc205e8e504edc07fd6a5efd3044a623b4be7e3ac16cc8a736ed9"
+    },
+    "app/version.js": {
+      "sha256": "eff61ed93d80518eec4734c100a475d6db41f44b286372a5477b43f28e29c6a5"
+    }
+  },
+  "core": {
+    "files": [
+      "app/theme-init.js",
+      "app/version.js",
+      "app/tokens.css",
+      "app/shell/shell.js",
+      "app/shell/render-shell.js",
+      "app/shell/theme.js",
+      "app/shell/page-nav.js",
+      "app/shell/sticky.js",
+      "app/shell/also-see.js",
+      "app/shell/external-link.js",
+      "app/shell/heading-link.js",
+      "app/utils/dom.js",
+      "app/utils/document-listeners.js",
+      "app/utils/clipboard.js",
+      "app/utils/icons.js",
+      "app/utils/icons-template.js",
+      "app/utils/brand-icon.js",
+      "app/utils/also-see-svg.js",
+      "app/utils/menu.js",
+      "app/components/tooltip.js",
+      "app/components/banner.js"
+    ],
+    "css": [
+      "layout.css",
+      "controls-buttons.css",
+      "overlays.css"
+    ],
+    "icons": [
+      "light-mode",
+      "dark-mode",
+      "auto-mode",
+      "chevron-up",
+      "chevron-down",
+      "arrow-outward",
+      "link"
+    ]
+  },
+  "infra": {
+    "dom": [
+      "app/utils/dom.js"
+    ],
+    "document-listeners": [
+      "app/utils/document-listeners.js"
+    ],
+    "clipboard": [
+      "app/utils/clipboard.js"
+    ],
+    "icons": [
+      "app/utils/icons.js",
+      "app/utils/icons-template.js"
+    ],
+    "menu": [
+      "app/utils/menu.js"
+    ],
+    "config": [
+      "app/config.js"
+    ],
+    "brand-icon": [
+      "app/utils/brand-icon.js"
+    ],
+    "also-see-svg": [
+      "app/utils/also-see-svg.js"
+    ]
+  },
+  "components": {
+    "tooltip": {
+      "files": [
+        "app/components/tooltip.js"
+      ],
+      "css": [
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [],
+      "always": true
+    },
+    "banner": {
+      "files": [
+        "app/components/banner.js"
+      ],
+      "css": [
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "note",
+        "info",
+        "success",
+        "important",
+        "warning",
+        "error"
+      ],
+      "infra": [
+        "dom"
+      ],
+      "always": true
+    },
+    "dialog": {
+      "files": [
+        "app/components/dialog.js"
+      ],
+      "css": [
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom",
+        "document-listeners"
+      ]
+    },
+    "badge": {
+      "files": [
+        "app/components/badge.js"
+      ],
+      "css": [
+        "controls-badges.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "chip": {
+      "files": [
+        "app/components/chip.js"
+      ],
+      "css": [
+        "controls-chips.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "error"
+      ],
+      "infra": [
+        "dom",
+        "icons"
+      ]
+    },
+    "combobox": {
+      "files": [
+        "app/components/combobox.js"
+      ],
+      "css": [
+        "controls-fields.css",
+        "controls-badges.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom",
+        "document-listeners"
+      ],
+      "notes": "Multi via data-combobox-multi; multi also uses badge"
+    },
+    "date-picker": {
+      "files": [
+        "app/components/date-picker/index.js",
+        "app/components/date-picker/calendar.js",
+        "app/components/date-picker/parse.js"
+      ],
+      "css": [
+        "controls-fields.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "calendar"
+      ],
+      "infra": [
+        "dom",
+        "document-listeners"
+      ]
+    },
+    "time-picker": {
+      "files": [
+        "app/components/time-picker.js"
+      ],
+      "css": [
+        "controls-fields.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "duration-input": {
+      "files": [
+        "app/components/duration-input.js"
+      ],
+      "css": [
+        "controls-fields.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "color-input": {
+      "files": [
+        "app/components/color-input.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "toggle": {
+      "files": [
+        "app/components/toggle.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "check",
+        "remove"
+      ],
+      "infra": [
+        "dom",
+        "icons"
+      ]
+    },
+    "checkbox": {
+      "files": [
+        "app/components/checkbox.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "segmented-control": {
+      "files": [
+        "app/components/segmented-control.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "pagination": {
+      "files": [
+        "app/components/pagination.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "progress-bar": {
+      "files": [
+        "app/components/progress-bar.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "spinner": {
+      "files": [
+        "app/components/spinner.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "slider": {
+      "files": [
+        "app/components/slider.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "stepper": {
+      "files": [
+        "app/components/stepper.js"
+      ],
+      "css": [
+        "controls-widgets.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "combo": {
+      "files": [
+        "app/components/combo.js"
+      ],
+      "css": [
+        "controls-menus.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "menu"
+      ]
+    },
+    "dropdown": {
+      "files": [
+        "app/components/dropdown.js"
+      ],
+      "css": [
+        "controls-menus.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "menu"
+      ]
+    },
+    "dropdown-toggle": {
+      "files": [
+        "app/components/dropdown-toggle.js"
+      ],
+      "css": [
+        "controls-menus.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "menu"
+      ],
+      "notes": "Uses badge for selection count"
+    },
+    "expand": {
+      "files": [
+        "app/components/expand.js"
+      ],
+      "css": [
+        "controls-disclosure.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "accordion": {
+      "files": [
+        "app/components/accordion.js"
+      ],
+      "css": [
+        "controls-disclosure.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "tabs": {
+      "files": [
+        "app/components/tabs.js"
+      ],
+      "css": [
+        "controls-disclosure.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "progress-indicator": {
+      "files": [
+        "app/components/progress-indicator.js"
+      ],
+      "css": [
+        "controls-disclosure.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom"
+      ]
+    },
+    "file-dropzone": {
+      "files": [
+        "app/components/file-dropzone.js"
+      ],
+      "css": [
+        "controls-file.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "upload",
+        "error"
+      ],
+      "infra": [
+        "dom",
+        "icons"
+      ]
+    },
+    "file-download": {
+      "files": [
+        "app/components/file-download.js"
+      ],
+      "css": [
+        "controls-file.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "upload"
+      ],
+      "infra": [
+        "icons"
+      ]
+    },
+    "code-block": {
+      "files": [
+        "app/components/code-block.js"
+      ],
+      "css": [
+        "code-block.css"
+      ],
+      "vendor": [
+        "app/vendor/prism/",
+        "app/prism.css"
+      ],
+      "vendorFiles": [
+        "app/vendor/prism/prism-line-numbers.min.js",
+        "app/vendor/prism/prism-python.min.js",
+        "app/vendor/prism/prism.min.js",
+        "app/prism.css"
+      ],
+      "icons": [
+        "clear",
+        "copy",
+        "paste",
+        "lines",
+        "highlight",
+        "fullscreen"
+      ],
+      "infra": [
+        "dom",
+        "clipboard",
+        "icons"
+      ]
+    },
+    "expandable-surface": {
+      "files": [
+        "app/components/expandable-surface.js"
+      ],
+      "css": [
+        "code-block.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "fullscreen",
+        "fullscreen-exit"
+      ],
+      "infra": [
+        "dom",
+        "document-listeners",
+        "icons"
+      ]
+    },
+    "table": {
+      "files": [
+        "app/components/table.js"
+      ],
+      "css": [
+        "table.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "chevron-up"
+      ],
+      "infra": [
+        "dom",
+        "icons"
+      ]
+    },
+    "tabular-input": {
+      "files": [
+        "app/components/tabular-input.js"
+      ],
+      "css": [
+        "controls-tabular-input.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "copy",
+        "paste",
+        "paste-special",
+        "plus",
+        "delete",
+        "remove",
+        "chevron-up",
+        "chevron-down"
+      ],
+      "infra": [
+        "dom",
+        "document-listeners",
+        "menu",
+        "icons",
+        "clipboard"
+      ]
+    },
+    "rich-text-editor": {
+      "files": [
+        "app/components/rich-text-editor.js",
+        "app/components/toastui-editor.js"
+      ],
+      "css": [
+        "rich-text-editor.css"
+      ],
+      "vendor": [
+        "app/vendor/toastui-editor/",
+        "app/vendor/toastui-editor-plugin-table-merged-cell/",
+        "app/toastui-editor.css"
+      ],
+      "vendorFiles": [
+        "app/vendor/toastui-editor/theme/toastui-editor-dark.min.css",
+        "app/vendor/toastui-editor/toastui-editor-all.min.js",
+        "app/vendor/toastui-editor/toastui-editor.min.css",
+        "app/vendor/toastui-editor-plugin-table-merged-cell/toastui-editor-plugin-table-merged-cell.min.css",
+        "app/vendor/toastui-editor-plugin-table-merged-cell/toastui-editor-plugin-table-merged-cell.min.js",
+        "app/toastui-editor.css"
+      ],
+      "icons": [],
+      "infra": [
+        "config",
+        "dom"
+      ]
+    }
+  },
+  "cssOnly": {
+    "buttons": {
+      "css": [
+        "controls-buttons.css"
+      ],
+      "always": true
+    },
+    "toolbar": {
+      "css": [
+        "controls-buttons.css"
+      ],
+      "always": true
+    },
+    "fields": {
+      "css": [
+        "controls-fields.css"
+      ]
+    },
+    "section-panel": {
+      "css": [
+        "controls-section-panel.css"
+      ]
+    }
+  },
+  "cssPartialFeatures": {
+    "layout.css": [
+      "shell",
+      "page-nav",
+      "sticky",
+      "theme-toggle"
+    ],
+    "controls-buttons.css": [
+      "buttons",
+      "toolbar"
+    ],
+    "overlays.css": [
+      "tooltip",
+      "banner",
+      "dialog"
+    ],
+    "code-block.css": [
+      "code-block",
+      "expandable-surface"
+    ],
+    "controls-badges.css": [
+      "badge",
+      "combobox",
+      "dropdown-toggle"
+    ],
+    "controls-chips.css": [
+      "chip"
+    ],
+    "controls-fields.css": [
+      "fields",
+      "combobox",
+      "date-picker",
+      "time-picker",
+      "duration-input"
+    ],
+    "controls-widgets.css": [
+      "toggle",
+      "checkbox",
+      "segmented-control",
+      "pagination",
+      "progress-bar",
+      "spinner",
+      "slider",
+      "stepper",
+      "color-input"
+    ],
+    "controls-section-panel.css": [
+      "section-panel"
+    ],
+    "controls-menus.css": [
+      "combo",
+      "dropdown",
+      "dropdown-toggle"
+    ],
+    "controls-disclosure.css": [
+      "expand",
+      "accordion",
+      "tabs",
+      "progress-indicator"
+    ],
+    "controls-file.css": [
+      "file-dropzone",
+      "file-download"
+    ],
+    "rich-text-editor.css": [
+      "rich-text-editor"
+    ],
+    "table.css": [
+      "table"
+    ],
+    "controls-tabular-input.css": [
+      "tabular-input"
+    ]
+  },
+  "cssIndexOrder": [
+    "layout.css",
+    "code-block.css",
+    "controls-buttons.css",
+    "controls-badges.css",
+    "controls-chips.css",
+    "controls-fields.css",
+    "controls-widgets.css",
+    "controls-section-panel.css",
+    "controls-menus.css",
+    "controls-disclosure.css",
+    "controls-file.css",
+    "overlays.css",
+    "rich-text-editor.css",
+    "table.css",
+    "controls-tabular-input.css"
+  ]
+}

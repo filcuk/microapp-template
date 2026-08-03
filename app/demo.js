@@ -10,7 +10,7 @@ import { initAccordion } from "./components/accordion.js";
 import { initTabs } from "./components/tabs.js";
 import { initCodeBlocks } from "./components/code-block.js";
 import { initExpandableSurfaces } from "./components/expandable-surface.js";
-import { showBanner, hideBanner } from "./components/banner.js";
+import { showBanner } from "./components/banner.js";
 import {
   flashTooltip,
   showPersistentTooltip,
@@ -19,6 +19,8 @@ import {
 import { initFileDropzone } from "./components/file-dropzone.js";
 import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
+import { initTimePicker } from "./components/time-picker.js";
+import { initDurationInput } from "./components/duration-input.js";
 import { initSlider } from "./components/slider.js";
 import { initStepper } from "./components/stepper.js";
 import { initColorInput } from "./components/color-input.js";
@@ -57,24 +59,16 @@ initSegmentedControl(document.getElementById("demo-code-toolbar"), {
 
 const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-single-result");
 const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");
-const demoRadioGroup = document.getElementById("demo-radio-group");
-const demoRadioResult = document.getElementById("demo-radio-result");
-const demoCheckboxGroup = document.getElementById("demo-checkbox-group");
-const demoCheckboxResult = document.getElementById("demo-checkbox-result");
 const fileDownloadResult = document.getElementById("demo-file-download-result");
 const demoAccordionResult = document.getElementById("demo-accordion-result");
 const demoDatePickerResult = document.getElementById("demo-date-picker-result");
 const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
+const demoTimePickerResult = document.getElementById("demo-time-picker-result");
+const demoDurationInputResult = document.getElementById("demo-duration-input-result");
 const demoSliderResult = document.getElementById("demo-slider-result");
 const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoToggleResult = document.getElementById("demo-toggle-result");
-const demoSegmentedViewResult = document.getElementById("demo-segmented-view-result");
-const demoSegmentedPanelsResult = document.getElementById("demo-segmented-panels-result");
-const demoPaginationResult = document.getElementById("demo-pagination-result");
 const demoTableResult = document.getElementById("demo-table-result");
 const demoTabularInputResult = document.getElementById("demo-tabular-input-result");
-const demoProgressBarResult = document.getElementById("demo-progress-bar-result");
-const demoSpinnerResult = document.getElementById("demo-spinner-result");
 const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
 const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
 const demoRichTextResult = document.getElementById("demo-rich-text-result");
@@ -186,6 +180,22 @@ initDatePicker(document.getElementById("demo-date-picker-time"), {
   },
 });
 
+initTimePicker(document.getElementById("demo-time-picker"), {
+  onChange: ({ value }) => {
+    if (demoTimePickerResult) {
+      demoTimePickerResult.textContent = value || "No time selected.";
+    }
+  },
+});
+
+initDurationInput(document.getElementById("demo-duration-input"), {
+  onChange: ({ value }) => {
+    if (demoDurationInputResult) {
+      demoDurationInputResult.textContent = value || "0:00";
+    }
+  },
+});
+
 function updateSliderResult() {
   if (!demoSliderResult) return;
   const integer = document.getElementById("demo-slider-integer");
@@ -271,83 +281,14 @@ initAccordion(document.getElementById("demo-accordion"), {
   },
 });
 
-demoRadioGroup?.addEventListener("change", (event) => {
-  const input = event.target;
-  if (!(input instanceof HTMLInputElement) || input.type !== "radio") return;
+initTriStateCheckbox(document.getElementById("demo-checkbox-tristate"));
 
-  const label = input.closest("label")?.querySelector("span")?.textContent?.trim();
-  if (demoRadioResult) {
-    demoRadioResult.textContent = label ? `Selected: ${label}` : `Selected: ${input.value}`;
-  }
-});
-
-function checkboxStateLabel(input) {
-  const label =
-    input.closest("label")?.querySelector("span")?.textContent?.trim() || input.value;
-  if (input.indeterminate || input.getAttribute("aria-checked") === "mixed") {
-    return `${label} (mixed)`;
-  }
-  if (input.checked) return label;
-  return null;
-}
-
-function updateCheckboxResult() {
-  if (!demoCheckboxGroup || !demoCheckboxResult) return;
-
-  const selected = [...demoCheckboxGroup.querySelectorAll(".checkbox-input:not(:disabled)")]
-    .map(checkboxStateLabel)
-    .filter(Boolean);
-
-  demoCheckboxResult.textContent = selected.length
-    ? `Selected: ${selected.join(", ")}`
-    : "Selected: none";
-}
-
-demoCheckboxGroup?.addEventListener("change", (event) => {
-  const input = event.target;
-  if (!(input instanceof HTMLInputElement) || input.type !== "checkbox") return;
-  updateCheckboxResult();
-});
-
-initTriStateCheckbox(document.getElementById("demo-checkbox-tristate"), {
-  onChange: () => updateCheckboxResult(),
-});
-updateCheckboxResult();
-
-function toggleValueLabel(value) {
-  if (value === "true") return "on";
-  if (value === "mixed") return "mixed";
-  return "off";
-}
-
-function updateToggleResult() {
-  if (!demoToggleResult) return;
-  const off = document.getElementById("demo-toggle-off");
-  const on = document.getElementById("demo-toggle-on");
-  const tri = document.getElementById("demo-toggle-tristate");
-  const parts = [
-    off ? `Notifications: ${toggleValueLabel(off.querySelector(".toggle-value")?.value)}` : null,
-    on ? `Preview: ${toggleValueLabel(on.querySelector(".toggle-value")?.value)}` : null,
-    tri ? `Tri-state: ${toggleValueLabel(tri.querySelector(".toggle-value")?.value)}` : null,
-  ].filter(Boolean);
-  demoToggleResult.textContent = parts.join(" · ");
-}
-
-const toggleOnChange = () => updateToggleResult();
-
-initToggle(document.getElementById("demo-toggle-off"), { onChange: toggleOnChange });
-initToggle(document.getElementById("demo-toggle-on"), { onChange: toggleOnChange });
-initToggle(document.getElementById("demo-toggle-tristate"), { onChange: toggleOnChange });
+initToggle(document.getElementById("demo-toggle-off"));
+initToggle(document.getElementById("demo-toggle-on"));
+initToggle(document.getElementById("demo-toggle-tristate"));
 initToggle(document.getElementById("demo-toggle-disabled"));
-updateToggleResult();
 
-initSegmentedControl(document.getElementById("demo-segmented-view"), {
-  onChange: ({ value }) => {
-    if (demoSegmentedViewResult) {
-      demoSegmentedViewResult.textContent = `View: ${value}`;
-    }
-  },
-});
+initSegmentedControl(document.getElementById("demo-segmented-view"));
 
 const demoChipFiltersResult = document.getElementById("demo-chip-filters-result");
 const demoChipFilterResults = document.getElementById("demo-chip-filter-results");
@@ -397,21 +338,8 @@ updateChipInputResult(
     .filter(Boolean)
 );
 
-initSegmentedControl(document.getElementById("demo-segmented-panels"), {
-  onChange: ({ value }) => {
-    if (demoSegmentedPanelsResult) {
-      demoSegmentedPanelsResult.textContent = `Range: ${value}`;
-    }
-  },
-});
-
-initPagination(document.getElementById("demo-pagination"), {
-  onChange: ({ page, pageCount }) => {
-    if (demoPaginationResult) {
-      demoPaginationResult.textContent = `Page ${page} of ${pageCount}`;
-    }
-  },
-});
+initSegmentedControl(document.getElementById("demo-segmented-panels"));
+initPagination(document.getElementById("demo-pagination"));
 
 initTable(document.getElementById("demo-table"), {
   onSort: ({ columnIndex, direction, sortType }) => {
@@ -515,89 +443,16 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
   },
 });
 
-let demoProgressBar;
-let demoProgressBarPercent;
-let demoProgressBarFraction;
-let demoProgressBarError;
-let demoProgressBarDisabled;
-
-function updateProgressBarResult() {
-  if (!demoProgressBarResult) return;
-  const bar = demoProgressBar?.getPercent();
-  const percent = demoProgressBarPercent?.getPercent();
-  const fractionValue = demoProgressBarFraction?.getValue();
-  const fractionMax = demoProgressBarFraction?.getMax();
-  const errorPercent = demoProgressBarError?.getPercent();
-  const errorStuck = demoProgressBarError?.isError();
-  const disabledPercent = demoProgressBarDisabled?.getPercent();
-  demoProgressBarResult.textContent = [
-    bar !== undefined ? `Bar: ${Math.round(bar)}%` : null,
-    percent !== undefined ? `Percent: ${Math.round(percent)}%` : null,
-    fractionValue !== undefined && fractionMax !== undefined
-      ? `Fraction: ${Math.round(fractionValue)}/${Math.round(fractionMax)}`
-      : null,
-    errorPercent !== undefined
-      ? `Error: ${Math.round(errorPercent)}%${errorStuck ? " (stuck)" : ""}`
-      : null,
-    disabledPercent !== undefined ? `Disabled: ${Math.round(disabledPercent)}%` : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-}
-
-const progressBarOnChange = () => updateProgressBarResult();
-
-demoProgressBar = initProgressBar(document.getElementById("demo-progress-bar"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarPercent = initProgressBar(document.getElementById("demo-progress-bar-percent"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarFraction = initProgressBar(document.getElementById("demo-progress-bar-fraction"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarError = initProgressBar(document.getElementById("demo-progress-bar-error"), {
-  onChange: progressBarOnChange,
-});
-demoProgressBarDisabled = initProgressBar(document.getElementById("demo-progress-bar-disabled"), {
-  onChange: progressBarOnChange,
-});
+initSegmentedControl(document.getElementById("demo-progress-bar-variants"));
+initProgressBar(document.getElementById("demo-progress-bar"));
+initProgressBar(document.getElementById("demo-progress-bar-percent"));
+initProgressBar(document.getElementById("demo-progress-bar-fraction"));
+initProgressBar(document.getElementById("demo-progress-bar-error"));
+initProgressBar(document.getElementById("demo-progress-bar-disabled"));
 initProgressBar(document.getElementById("demo-progress-bar-indeterminate"));
 initProgressBar(document.getElementById("demo-progress-bar-bounce"));
-updateProgressBarResult();
 
-document.getElementById("demo-progress-bar-advance")?.addEventListener("click", () => {
-  demoProgressBar?.setValue(Math.min(100, (demoProgressBar.getValue() ?? 0) + 10));
-  demoProgressBarPercent?.setValue(Math.min(100, (demoProgressBarPercent.getValue() ?? 0) + 8));
-  demoProgressBarFraction?.setValue(Math.min(12, (demoProgressBarFraction.getValue() ?? 0) + 1));
-});
-
-document.getElementById("demo-progress-bar-reset")?.addEventListener("click", () => {
-  demoProgressBar?.setValue(40);
-  demoProgressBarPercent?.setValue(75);
-  demoProgressBarFraction?.setValue(7);
-  demoProgressBarError?.setValue(55);
-  demoProgressBarError?.setError(true);
-  demoProgressBarDisabled?.setValue(30);
-  demoProgressBarDisabled?.setDisabled(true);
-});
-
-let demoSpinnerInline;
-const demoSpinnerHost = initSpinner(document.getElementById("demo-spinner-host"), {
-  onChange: ({ visible }) => {
-    if (demoSpinnerResult) {
-      demoSpinnerResult.textContent = visible ? "Loading panel…" : "Panel ready.";
-    }
-  },
-});
-
-demoSpinnerInline = initSpinner(document.getElementById("demo-spinner-inline"), {
-  visible: false,
-});
-
-document.getElementById("demo-spinner-toggle")?.addEventListener("click", () => {
-  demoSpinnerInline?.toggle();
-});
+const demoSpinnerHost = initSpinner(document.getElementById("demo-spinner-host"));
 
 document.getElementById("demo-spinner-load")?.addEventListener("click", () => {
   if (demoSpinnerHost?.isVisible()) return;
@@ -606,12 +461,6 @@ document.getElementById("demo-spinner-load")?.addEventListener("click", () => {
     demoSpinnerHost?.hide();
   }, 2000);
 });
-
-const comboResultEl = document.getElementById("demo-combo-result");
-const comboboxResultEl = document.getElementById("demo-combobox-result");
-const dropdownResultEl = document.getElementById("demo-dropdown-result");
-const dropdownIconsResultEl = document.getElementById("demo-dropdown-icons-result");
-const toggleDropdownResultEl = document.getElementById("demo-toggle-dropdown-result");
 
 const comboOptions = [
   { value: "example-1", label: "Example 1" },
@@ -629,58 +478,22 @@ function pickRandomOption(options, excludeValue) {
 
 let lastComboValue = null;
 
-initCombobox(document.getElementById("demo-combobox"), {
-  onSelect: ({ value, label }) => {
-    if (comboboxResultEl) {
-      comboboxResultEl.textContent = `Selected: ${label} (${value})`;
-    }
-  },
-  onChange: ({ value, label }) => {
-    if (!comboboxResultEl) return;
-    comboboxResultEl.textContent = value ? `Selected: ${label} (${value})` : "No city selected.";
-  },
-});
+initCombobox(document.getElementById("demo-combobox"));
+initCombobox(document.getElementById("demo-combobox-multi"));
 
 initCombo(document.getElementById("demo-combo"), {
   onMainClick: () => {
     const picked = pickRandomOption(comboOptions, lastComboValue);
     lastComboValue = picked.value;
-    if (comboResultEl) {
-      comboResultEl.textContent = `Main action picked: ${picked.label}`;
-    }
   },
-  onSelect: ({ label, value }) => {
+  onSelect: ({ value }) => {
     lastComboValue = value;
-    if (comboResultEl) {
-      comboResultEl.textContent = `Menu selected: ${label}`;
-    }
   },
 });
 
-initDropdown(document.getElementById("demo-dropdown"), {
-  onSelect: ({ label }) => {
-    if (dropdownResultEl) {
-      dropdownResultEl.textContent = `Selected: ${label}`;
-    }
-  },
-});
-
-initDropdown(document.getElementById("demo-dropdown-icons"), {
-  onSelect: ({ label }) => {
-    if (dropdownIconsResultEl) {
-      dropdownIconsResultEl.textContent = `Selected: ${label}`;
-    }
-  },
-});
-
-initToggleDropdown(document.getElementById("demo-toggle-dropdown"), {
-  onToggle: ({ label, selected, labels }) => {
-    if (!toggleDropdownResultEl) return;
-    const state = selected ? "on" : "off";
-    const summary = labels.length ? labels.join(", ") : "none";
-    toggleDropdownResultEl.textContent = `Toggled ${label} ${state}. Selected: ${summary}`;
-  },
-});
+initDropdown(document.getElementById("demo-dropdown"));
+initDropdown(document.getElementById("demo-dropdown-icons"));
+initToggleDropdown(document.getElementById("demo-toggle-dropdown"));
 
 const iconToggleBtn = document.getElementById("icon-toggle-btn");
 if (iconToggleBtn) {
@@ -737,16 +550,6 @@ document.getElementById("demo-badge-dot-btn")?.addEventListener("click", () => {
   demoBadgeDot?.setValue(!on);
 });
 
-const sectionToggleBtn = document.getElementById("demo-section-toggle");
-if (sectionToggleBtn) {
-  sectionToggleBtn.addEventListener("click", () => {
-    const pressed = sectionToggleBtn.getAttribute("aria-pressed") === "true";
-    sectionToggleBtn.setAttribute("aria-pressed", pressed ? "false" : "true");
-  });
-}
-
-initToggle(document.getElementById("demo-section-switch"));
-
 const demoStickyChromeResult = document.getElementById("demo-sticky-chrome-result");
 
 function updateStickyChromeResult() {
@@ -772,23 +575,6 @@ initToggle(document.getElementById("demo-sticky-section-headings"), {
   },
 });
 
-const sectionInput = document.getElementById("demo-section-input");
-const sectionSuccessBanner = document.getElementById("demo-section-success");
-const sectionErrorBanner = document.getElementById("demo-section-error");
-
-document.getElementById("demo-section-submit")?.addEventListener("click", () => {
-  const hasText = Boolean(sectionInput?.value.trim());
-
-  hideBanner(sectionSuccessBanner);
-  hideBanner(sectionErrorBanner);
-
-  if (hasText) {
-    showBanner(sectionSuccessBanner);
-  } else {
-    showBanner(sectionErrorBanner);
-  }
-});
-
 initDialog({
   dialogEl: document.getElementById("info-dialog"),
   openTriggers: "#open-info-dialog",
@@ -804,21 +590,12 @@ document.getElementById("confirm-dialog-ok")?.addEventListener("click", () => {
 });
 
 const bannerIds = [
-  "demo-important-banner",
+  "demo-note-banner",
   "demo-info-banner",
   "demo-success-banner",
-  "demo-note-banner",
+  "demo-important-banner",
   "demo-warning-banner",
   "demo-error-banner",
-];
-
-const bannerToggles = [
-  ["toggle-important-banner", "demo-important-banner"],
-  ["toggle-info-banner", "demo-info-banner"],
-  ["toggle-success-banner", "demo-success-banner"],
-  ["toggle-note-banner", "demo-note-banner"],
-  ["toggle-warning-banner", "demo-warning-banner"],
-  ["toggle-error-banner", "demo-error-banner"],
 ];
 
 const bannerTriggers = [
@@ -832,46 +609,32 @@ const bannerTriggers = [
 
 const BANNER_TRIGGER_EXPIRE_MS = 3000;
 
-function isBannerHidden(bannerEl) {
-  return bannerEl.classList.contains("hidden") || bannerEl.hidden;
-}
-
 function getBannerElements() {
   return bannerIds
     .map((id) => document.getElementById(id))
     .filter(Boolean);
 }
 
-for (const [buttonId, bannerId] of bannerToggles) {
-  document.getElementById(buttonId)?.addEventListener("click", () => {
-    const bannerEl = document.getElementById(bannerId);
-    if (!bannerEl) return;
-    if (isBannerHidden(bannerEl)) {
-      showBanner(bannerEl);
-    } else {
-      hideBanner(bannerEl);
-    }
-  });
+function showBannerBriefly(bannerEl) {
+  showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
 }
 
 for (const [buttonId, bannerId] of bannerTriggers) {
   document.getElementById(buttonId)?.addEventListener("click", () => {
     const bannerEl = document.getElementById(bannerId);
     if (!bannerEl) return;
-    showBanner(bannerEl, { expire: BANNER_TRIGGER_EXPIRE_MS });
+    showBannerBriefly(bannerEl);
   });
 }
 
-document.getElementById("toggle-all-banners")?.addEventListener("click", () => {
-  const banners = getBannerElements();
-  const anyVisible = banners.some((banner) => !isBannerHidden(banner));
-  const hideAll = anyVisible;
+document.getElementById("trigger-all-banners")?.addEventListener("click", () => {
+  for (const banner of getBannerElements()) {
+    showBannerBriefly(banner);
+  }
+});
 
-  for (const banner of banners) {
-    if (hideAll) {
-      hideBanner(banner);
-    } else {
-      showBanner(banner);
-    }
+document.getElementById("reset-banners")?.addEventListener("click", () => {
+  for (const banner of getBannerElements()) {
+    showBanner(banner);
   }
 });

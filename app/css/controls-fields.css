@@ -124,6 +124,13 @@
   font-size: 0.875rem;
 }
 
+/* Multi-select: badge wraps the control; input shows a comma-separated summary */
+.combobox--multi .badge-host {
+  display: block;
+  width: 100%;
+  max-width: inherit;
+}
+
 .field.date-picker {
   width: fit-content;
   max-width: 100%;
@@ -209,6 +216,7 @@
 }
 
 .date-picker-time {
+  box-sizing: border-box;
   min-height: var(--control-height);
   width: auto;
   color-scheme: light;
@@ -216,6 +224,108 @@
 
 :root[data-theme="dark"] .date-picker-time {
   color-scheme: dark;
+}
+
+.time-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: start;
+}
+
+.time-picker > .date-picker-time {
+  align-self: flex-start;
+}
+
+.time-picker--disabled {
+  opacity: 0.5;
+}
+
+.duration-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: start;
+}
+
+.duration-input-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: flex-start;
+  box-sizing: border-box;
+  min-height: var(--control-height);
+  width: auto;
+  max-width: 100%;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.duration-input-control:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: var(--accent);
+}
+
+.duration-input-control .input.duration-input-hours,
+.duration-input-control .input.duration-input-minutes,
+.duration-input-control .input.duration-input-seconds,
+.duration-input-hours,
+.duration-input-minutes,
+.duration-input-seconds {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 2ch;
+  min-width: 2ch;
+  min-height: 0;
+  height: 1.25rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  outline: none;
+}
+
+.duration-input-control .input.duration-input-hours,
+.duration-input-hours {
+  width: 2.5ch;
+  min-width: 2.5ch;
+  text-align: right;
+}
+
+.duration-input-hours[aria-invalid="true"],
+.duration-input-minutes[aria-invalid="true"],
+.duration-input-seconds[aria-invalid="true"] {
+  color: var(--banner-error-border);
+}
+
+.duration-input-sep {
+  flex: 0 0 auto;
+  padding: 0;
+  color: var(--muted);
+  line-height: 1;
+  user-select: none;
+}
+
+.duration-input--disabled {
+  opacity: 0.5;
+}
+
+.duration-input--disabled .duration-input-control {
+  cursor: not-allowed;
 }
 
 .date-picker-popup {

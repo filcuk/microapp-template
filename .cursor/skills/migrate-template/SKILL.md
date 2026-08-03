@@ -10,14 +10,14 @@ description: >-
 
 Bring a fork onto a newer template revision without clobbering app-specific work.
 
-Read [../_shared/invariants.md](../_shared/invariants.md) and [../_shared/component-map.md](../_shared/component-map.md). Prefer `CHANGELOG.md` on upstream for the version range when it exists.
+Prefer `npm run sync:template` + `npm run verify:template` over hand-merging template files. Read [../_shared/invariants.md](../_shared/invariants.md) and [../_shared/component-map.md](../_shared/component-map.md). Prefer upstream `CHANGELOG.md` for the version range when it exists.
 
 ## 1. Required ask — upgrade style
 
 Before changing files, ask:
 
 - **Partial** — upgrade shell/infra/tokens **and** only components the app already uses (or the user lists). Prefer for production forks.
-- **Full** — upgrade the entire template surface (all components, CSS, vendor, demo if present). Prefer when the fork still tracks the full catalogue.
+- **Full** — upgrade the entire template surface (`components: ["*"]`). Prefer when the fork still tracks the full catalogue.
 
 Do not proceed until the user picks one.
 
@@ -25,53 +25,68 @@ Do not proceed until the user picks one.
 
 1. Read fork `TEMPLATE_VERSION` and `APP_VERSION` from `app/version.js`.
 2. Identify upstream (default `filcuk/microapp-template`, or user-specified remote/path).
-3. Resolve target revision (tag, branch, or commit) and its `TEMPLATE_VERSION`.
+3. Resolve target **tag** `vX.Y.Z` (required for fetch-based sync). Local `--from` is allowed for unreleased checkouts.
 4. Read upstream `CHANGELOG.md` for entries between fork version and target (if present).
 
 ## 3. Protect app-owned files
 
-**Do not overwrite** with upstream copies wholesale:
+Sync already refuses to overwrite these (see `template-manifest.json` → `appOwned`):
 
-- `index.html` / other app HTML content (merge boot/chrome fixes carefully)
-- `app/main.js` (and other app page modules) business logic
-- `app/config.js` fork URLs / also-see / theme keys
-- `APP_VERSION` in `app/version.js`
-- Custom files under `app/res/` supplied by the app
-- Fork-added `ICONS` entries (merge; never invent SVG)
+- `index.html` / `demo.html`
+- `app/main.js`, `app/demo.js`
+- `app/config.js`
+- `app/styles.css`, `app/css/app.css`
+- `app/utils/icons-app.js`
+- `app/res/`
+- `APP_VERSION` inside `app/version.js` (merged; `TEMPLATE_VERSION` updates)
 
-**Do upgrade** (subject to style):
+Still merge carefully by hand when boot/chrome HTML in entry pages needs upstream fixes — sync does not rewrite entry HTML.
 
-- `app/shell/**`, `theme-init.js`, tokens, shared utils
-- Matched components / CSS / vendor per style
-- `TEMPLATE_VERSION` → set to upstream’s value when done
+## 4. Apply upgrade via lock + sync
 
-## 4. Apply upgrade
+### Path moves (legacy forks)
 
-### Path moves
-
-Map legacy flat paths to current layout (see component-map “Legacy path aliases”). Update imports in the fork when moving files.
+If the fork still uses flat `app/dialog.js`-style paths, map them with component-map “Legacy path aliases” **before** or immediately after the first sync so imports resolve.
 
 ### Partial
 
 1. Trace used features (same discovery as `finalize-app`).
-2. Pull upstream versions of Always keep + those features’ JS/CSS/vendor/infra.
-3. Merge `icons.js`: take upstream shell/component icons; keep fork-only ids; blanks → `handle-assets`.
-4. Skip unused catalogue files unless the user asks to add them (`restore-component`).
+2. Set `template.lock.json`:
+
+```json
+{
+  "schemaVersion": 1,
+  "templateVersion": "X.Y.Z",
+  "source": "filcuk/microapp-template",
+  "components": ["dialog", "combobox"]
+}
+```
+
+Always-on shell pieces (`tooltip`, `banner`, core CSS, etc.) are included automatically by sync.
+
+3. Run:
+
+```bash
+npm run sync:template -- --version X.Y.Z
+# or: npm run sync:template -- --from /path/to/microapp-template
+npm run verify:template
+```
+
+4. Reconcile verify drift (`modified` / `missing` / `unexpected`). Do not hand-edit hashed template files to “make verify pass” unless the drift is an intentional fork patch you will carry forward.
 
 ### Full
 
-1. Replace/upgrade full `app/components/`, `app/css/`, `app/vendor/`, shell, utils, tokens, `styles.css` imports from upstream.
-2. Still preserve app-owned files listed above.
-3. Reconcile demo: keep/update if the fork keeps demo; otherwise leave demo deleted.
+Same as partial, but `"components": ["*"]`.
 
-### Both styles
+### After sync
 
-- Re-wire broken imports after path moves.
+- Re-wire broken app imports if the fork still referenced old paths.
 - Preserve `__MICROAPP__` / theme key renames the fork already made.
 - Do **not** bump `APP_VERSION` unless the user asks.
+- Missing icon artwork → **`handle-assets`** (`icons-app.js` only).
 
 ## 5. Finish
 
-1. Set fork `TEMPLATE_VERSION` to match upstream target.
-2. Summarize what changed and any manual merge conflicts for the user.
+1. Confirm `TEMPLATE_VERSION` matches the target (sync merges this into `app/version.js`).
+2. Summarize what changed and any remaining manual conflicts for the user.
 3. Run **`health-check`**.

@@ -2,8 +2,9 @@
 name: release-template
 description: >-
   Release a microapp-template version: SemVer bump TEMPLATE_VERSION, update
-  CHANGELOG.md, verify component-map matches the tree. Use when cutting a
-  template release, bumping TEMPLATE_VERSION, or publishing changelog notes.
+  CHANGELOG.md, regenerate template-manifest.json, verify, and create git tag
+  vX.Y.Z. Use when cutting a template release, bumping TEMPLATE_VERSION, or
+  publishing changelog notes.
 ---
 
 # Release template
@@ -15,7 +16,7 @@ For **template maintainers** shipping a new `TEMPLATE_VERSION`. Forks bumping th
 | Bump | When |
 | ---- | ---- |
 | **MAJOR** | Breaking changes for forks (renamed APIs, removed features, mandatory path moves without aliases) |
-| **MINOR** | New backwards-compatible components or APIs |
+| **MINOR** | New backwards-compatible components, APIs, or distribution surface |
 | **PATCH** | Bug fixes, docs, non-breaking polish |
 
 Update `TEMPLATE_VERSION` in `app/version.js` to match. Keep `APP_VERSION` at `0.0.0` on this repo.
@@ -28,14 +29,47 @@ Maintain root `CHANGELOG.md` in [Keep a Changelog](https://keepachangelog.com/) 
 2. Group under Added / Changed / Fixed / Removed as needed.
 3. Leave an empty `[Unreleased]` section for the next cycle.
 
+## Manifest and lock
+
+1. Ensure [../_shared/component-map.md](../_shared/component-map.md) and [`scripts/lib/template-catalogue.mjs`](../../../scripts/lib/template-catalogue.mjs) match the tree.
+2. Regenerate and commit the manifest:
+
+```bash
+npm run manifest:template
+```
+
+3. Set `template.lock.json` `templateVersion` to `X.Y.Z` (this repo keeps `"components": ["*"]`).
+4. Run:
+
+```bash
+npm run verify:template
+npm run lint
+npm test
+```
+
 ## Checklist
 
 - [ ] `app/version.js` `TEMPLATE_VERSION` matches the new changelog section
 - [ ] `.cursor/skills/_shared/component-map.md` matches the current component tree
+- [ ] `scripts/lib/template-catalogue.mjs` matches the component map; `template-manifest.json` regenerated
+- [ ] `template.lock.json` `templateVersion` matches
+- [ ] `npm run verify:template` exits 0
 - [ ] USAGE / AGENTS / demo updated for any shipped API (see `usage-docs.mdc`)
 - [ ] `APP_VERSION` still `0.0.0`
-- [ ] Remind user to tag `vX.Y.Z` if they use git tags (do not push unless asked)
+- [ ] **Git tag `vX.Y.Z` created** on the release commit (mandatory — sync fetches by tag)
+
+## Tagging (mandatory)
+
+After the release commit exists locally:
+
+```bash
+git tag -a "vX.Y.Z" -m "microapp-template vX.Y.Z"
+```
+
+- Do **not** push the tag unless the user asks.
+- Do **not** skip the tag: untagged `TEMPLATE_VERSION` values break `npm run sync:template` fetch mode for forks.
+- If a version was published without a tag historically, create the annotated tag on the version-bump commit as soon as practical (example: `v0.9.0` → commit that set `TEMPLATE_VERSION` to `0.9.0`).
 
 ## Finish
 
-Run **`health-check`**. Summarize the release notes for the commit/PR body.
+Run **`health-check`**. Summarize the release notes for the commit/PR body. Remind the user that forks need the pushed tag before `--version` sync works against GitHub.

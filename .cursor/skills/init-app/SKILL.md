@@ -28,14 +28,14 @@ Ask for anything missing:
 
 ## 2. Component strategy
 
-- **Keep all** — leave the full catalogue; tell the user to run `finalize-app` before shipping.
-- **Selective** — user lists needed [component-map](../_shared/component-map.md) ids; delete the rest using the same rules as `finalize-app` (never delete Always keep / shell-required icons).
+- **Keep all** — leave the full catalogue; keep `template.lock.json` with `"components": ["*"]`; tell the user to run `finalize-app` before shipping.
+- **Selective** — user lists needed [component-map](../_shared/component-map.md) ids; set `template.lock.json` `components` to that list, then either delete unused files (same rules as `finalize-app`) or run `npm run sync:template -- --from <template>` after trimming the lock so the tree matches. Never delete Always keep / shell-required icons.
 
 ## 3. Apply config and chrome
 
 1. Update `index.html`: title, brand text, replace `<main>` with app UI (or a minimal placeholder the user will flesh out).
 2. Set `app/config.js` URLs and brand; remove template example `alsoSee` entries unless the user supplied replacements.
-3. Set `APP_VERSION` in `app/version.js`.
+3. Set `APP_VERSION` in `app/version.js` (leave `TEMPLATE_VERSION` as shipped). Ensure `template.lock.json` exists with matching `templateVersion` and the chosen `components` list.
 4. Ensure boot: `__MICROAPP__` (if needed) → `theme-init.js` → `styles.css` → `app/main.js` with `initShell()` first.
 5. Demo: keep, or delete `demo.html` + `app/demo.js` and drop `demo.html` from `.github/workflows/pages.yml`.
 6. Brand / new UI icons → follow **`handle-assets`** (wire only; request files; do not invent artwork).
@@ -43,7 +43,7 @@ Ask for anything missing:
 ## 4. Deploy checklist
 
 - [ ] Title, heading, tagline, main content updated
-- [ ] `APP_VERSION` set
+- [ ] `APP_VERSION` set; `template.lock.json` present
 - [ ] `app/main.js` is more than a bare `initShell()` when the app has UI logic
 - [ ] Demo decision reflected in files + `pages.yml`
 - [ ] Branding assets supplied or explicitly pending via `handle-assets`

@@ -1,16 +1,10 @@
-﻿@import url("tokens.css");
-@import url("css/layout.css");
-@import url("css/code-block.css");
-@import url("css/controls-buttons.css");
-@import url("css/controls-badges.css");
-@import url("css/controls-chips.css");
-@import url("css/controls-fields.css");
-@import url("css/controls-widgets.css");
-@import url("css/controls-section-panel.css");
-@import url("css/controls-menus.css");
-@import url("css/controls-disclosure.css");
-@import url("css/controls-file.css");
-@import url("css/overlays.css");
-@import url("css/rich-text-editor.css");
-@import url("css/table.css");
-@import url("css/controls-tabular-input.css");
+﻿/**
+ * Fork-owned stylesheet entry (linked from HTML).
+ * Keep this file: sync may regenerate `css/template.css` but will not
+ * overwrite `styles.css` or `css/app.css`.
+ *
+ * Order: design tokens → template partials → app overrides.
+ */
+@import url("tokens.css");
+@import url("css/template.css");
+@import url("css/app.css");

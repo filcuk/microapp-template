@@ -52,3 +52,8 @@
 .badge.hidden {
   display: none;
 }
+
+/* Avoid FOUC: empty normal badges paint a blank pill before JS hides them */
+.badge:not(.badge--sm):empty {
+  display: none;
+}
