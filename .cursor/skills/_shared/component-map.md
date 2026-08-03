@@ -2,6 +2,8 @@
 
 Authoritative inventory for lifecycle skills (`init-app`, `finalize-app`, `restore-component`, `migrate-template`, etc.). Paths are relative to the repo root. Prefer this file over stale flat-path examples in USAGE.md (`app/dialog.js` → `app/components/dialog.js`).
 
+Machine-readable twin: [`scripts/lib/template-catalogue.mjs`](../../scripts/lib/template-catalogue.mjs) → generated [`template-manifest.json`](../../template-manifest.json) via `npm run manifest:template`. When this map changes, update the catalogue module and regenerate the manifest.
+
 When trimming: delete a feature’s JS only if unused; remove a **shared** CSS partial only when **no** remaining feature in that partial’s group needs it; never delete [invariants](invariants.md).
 
 ## Always keep (with `initShell`)

@@ -32,6 +32,7 @@ Maintain root `CHANGELOG.md` in [Keep a Changelog](https://keepachangelog.com/) 
 
 - [ ] `app/version.js` `TEMPLATE_VERSION` matches the new changelog section
 - [ ] `.cursor/skills/_shared/component-map.md` matches the current component tree
+- [ ] `scripts/lib/template-catalogue.mjs` matches the component map; run `npm run manifest:template` and commit `template-manifest.json`
 - [ ] USAGE / AGENTS / demo updated for any shipped API (see `usage-docs.mdc`)
 - [ ] `APP_VERSION` still `0.0.0`
 - [ ] Remind user to tag `vX.Y.Z` if they use git tags (do not push unless asked)

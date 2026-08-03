@@ -186,7 +186,7 @@ npm run lint
 npm test
 ```
 
-CI runs the same checks on push and pull requests (`.github/workflows/ci.yml`).
+CI runs the same checks on push and pull requests (`.github/workflows/ci.yml`). Template maintainers regenerate `template-manifest.json` with `npm run manifest:template` when the catalogue or hashed files change.
 
 ## Keep GitHub Pages deployable
 

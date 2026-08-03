@@ -199,6 +199,7 @@ Optional quality checks (requires `npm ci` once):
 ```bash
 npm run lint
 npm test
+npm run manifest:template   # regenerate template-manifest.json after catalogue changes
 ```
 
 Then open `http://localhost:3000` and, if kept, `http://localhost:3000/demo.html`.
@@ -221,6 +222,7 @@ The workflow copies only publishable files into `_site/` (`index.html`, optional
 index.html          # Your app homepage
 demo.html           # Component showcase (optional)
 .nojekyll           # Skip Jekyll on GitHub Pages
+template-manifest.json  # SHA-256 + component graph (npm run manifest:template)
 app/
   styles.css            # Fork entry: tokens.css → css/template.css → css/app.css
   tokens.css            # Design tokens, base typography, reduced motion
