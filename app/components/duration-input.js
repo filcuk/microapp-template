@@ -88,6 +88,45 @@ function partsToSeconds(parts, showSeconds) {
   );
 }
 
+function secondsToParts(totalSeconds, showSeconds) {
+  const total = Math.max(0, Math.trunc(totalSeconds));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = showSeconds ? total % 60 : 0;
+  return { hours, minutes, seconds };
+}
+
+function maxDurationSeconds(maxHours, showSeconds) {
+  return Math.max(0, Math.trunc(maxHours)) * 3600 + 59 * 60 + (showSeconds ? 59 : 0);
+}
+
+/**
+ * Nudge one duration segment by `delta`, carrying across minutes/seconds and
+ * saturating at 0 and max (no wrap past the bounds).
+ *
+ * @param {DurationParts} parts
+ * @param {"hours" | "minutes" | "seconds"} segment
+ * @param {number} delta
+ * @param {{ maxHours?: number, showSeconds?: boolean }} [options]
+ * @returns {DurationParts}
+ */
+export function nudgeDuration(
+  parts,
+  segment,
+  delta,
+  { maxHours = 99, showSeconds = false } = {}
+) {
+  const step =
+    segment === "hours" ? 3600 : segment === "minutes" ? 60 : 1;
+  if (segment === "seconds" && !showSeconds) {
+    return secondsToParts(partsToSeconds(parts, false), false);
+  }
+
+  const maxTotal = maxDurationSeconds(maxHours, showSeconds);
+  const next = partsToSeconds(parts, showSeconds) + Math.trunc(delta || 0) * step;
+  return secondsToParts(Math.min(maxTotal, Math.max(0, next)), showSeconds);
+}
+
 function clampHours(hours, maxHours) {
   return Math.min(maxHours, Math.max(0, Math.trunc(hours || 0)));
 }
@@ -260,38 +299,22 @@ export function initDurationInput(
       event.preventDefault();
       commitFields({ emitEvent: false, source: "nudge" });
       const delta = event.key === "ArrowUp" ? 1 : -1;
-      if (target === hoursInput) {
-        applyParts({ ...parts, hours: parts.hours + delta }, { source: "nudge" });
-      } else if (target === minutesInput) {
-        let minutes = parts.minutes + delta;
-        let hours = parts.hours;
-        if (minutes > 59) {
-          minutes = 0;
-          hours += 1;
-        } else if (minutes < 0) {
-          minutes = 59;
-          hours -= 1;
-        }
-        applyParts({ ...parts, hours, minutes }, { source: "nudge" });
-      } else if (target === secondsInput) {
-        let seconds = parts.seconds + delta;
-        let minutes = parts.minutes;
-        let hours = parts.hours;
-        if (seconds > 59) {
-          seconds = 0;
-          minutes += 1;
-        } else if (seconds < 0) {
-          seconds = 59;
-          minutes -= 1;
-        }
-        if (minutes > 59) {
-          minutes = 0;
-          hours += 1;
-        } else if (minutes < 0) {
-          minutes = 59;
-          hours -= 1;
-        }
-        applyParts({ hours, minutes, seconds }, { source: "nudge" });
+      const segment =
+        target === hoursInput
+          ? "hours"
+          : target === minutesInput
+            ? "minutes"
+            : target === secondsInput
+              ? "seconds"
+              : null;
+      if (segment) {
+        applyParts(
+          nudgeDuration(parts, segment, delta, {
+            maxHours: resolvedMaxHours,
+            showSeconds: withSeconds,
+          }),
+          { source: "nudge" }
+        );
       }
       target.select();
       return;
