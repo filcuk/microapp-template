@@ -215,15 +215,17 @@ main {
   font-size: 0.875rem;
 }
 
+.demo-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .demo-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-}
-
-.demo-row--top {
-  align-items: flex-start;
 }
 
 .demo-inline {
@@ -330,10 +332,10 @@ main {
 }
 
 /* Full-bleed rule inside padded panels (`.demo-card`, …).
- * Requires `--panel-padding` on a direct ancestor; see `.section-panel__divider`
- * in controls-section-panel.css for the section-panel variant. */
-.demo-divider,
-.divider {
+ * Place the divider as a direct child of the padded panel so `--panel-padding`
+ * inherits; nested wrappers break the negative margin. Section panels use
+ * `.section-panel__divider` in controls-section-panel.css. */
+.demo-divider {
   align-self: stretch;
   margin-block: 0.35rem;
   margin-inline: calc(-1 * var(--panel-padding, 1rem));
@@ -390,15 +392,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-}
-
-.demo-banner-group-label {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 
 .demo-banner-stack {

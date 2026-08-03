@@ -810,9 +810,3 @@
   cursor: not-allowed;
 }
 
-.demo-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
