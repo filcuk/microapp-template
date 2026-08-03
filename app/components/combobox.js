@@ -23,11 +23,12 @@ import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-list
  * Multi-select (`data-combobox-multi` / `multi: true`):
  *   Same control as single-select; selected labels show as a comma-separated list in the
  *   input. Typing replaces that summary with a filter query (kept separate from the
- *   selection); the summary is restored when the list closes. Selection count uses a
- *   badge (wrap `.combobox-control` in `.badge-host` with a `.badge`, or let this init
- *   create that markup). Options toggle; list closes after each pick like single-select.
- *   Initial selection: `aria-selected="true"` on options, comma-separated `.combobox-value`,
- *   or `defaultValues` / `defaultValue` in JS.
+ *   selection); the summary is restored when the list closes (including when the filter
+ *   is emptied — clear selection with setValues([]) / setValue("")). Selection count
+ *   uses a badge (wrap `.combobox-control` in `.badge-host` with a `.badge`, or let this
+ *   init create that markup). Options toggle; list closes after each pick like
+ *   single-select. Initial selection: `aria-selected="true"` on options, comma-separated
+ *   `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
  *
  * data-combobox-allow-custom — accept free text on blur/commit (default: list values only)
  * data-combobox-multi — multi-select mode
@@ -484,15 +485,11 @@ export function initCombobox(
 
       const text = query || inputText;
 
+      // Empty filter / cleared field restores the summary — do not wipe selection.
+      // Clear via setValues([]) / setValue("").
       if (!text) {
-        selectedMap.clear();
-        setValueInputFromState();
-        syncMultiInputDisplay();
-        updateSelectionBadge();
-        syncOptionSelectedState();
         input.removeAttribute("aria-invalid");
-        emitChange({ committed: true, cleared: true });
-        if (close) closeList();
+        if (close) closeList({ restoreInput: true });
         return true;
       }
 
