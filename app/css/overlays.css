@@ -82,40 +82,37 @@
 .banner-warning {
   background: var(--banner-warn-bg);
   color: var(--banner-warn-text);
+  border-color: var(--banner-warn-border);
 }
 
 .banner-error {
   background: var(--banner-error-bg);
   color: var(--banner-error-text);
+  border-color: var(--banner-error-border);
 }
 
 .banner-info {
   background: var(--banner-info-bg);
   color: var(--banner-info-text);
+  border-color: var(--banner-info-border);
 }
 
 .banner-success {
   background: var(--banner-success-bg);
   color: var(--banner-success-text);
+  border-color: var(--banner-success-border);
 }
 
 .banner-note {
   background: var(--banner-note-bg);
   color: var(--banner-note-text);
+  border-color: var(--banner-note-border);
 }
 
 .banner-important {
   background: var(--banner-important-bg);
   color: var(--banner-important-text);
-}
-
-.banner-warning,
-.banner-error,
-.banner-info,
-.banner-success,
-.banner-note,
-.banner-important {
-  border-color: color-mix(in srgb, currentColor 72%, black);
+  border-color: var(--banner-important-border);
 }
 
 /* Tooltips */

@@ -23,6 +23,8 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 - Toggle dropdown selection count uses a **badge** on the trigger instead of appending `(n)` to the label text.
 - Renamed the hex colour field component from colour picker to **colour input** (`color-input` / `initColorInput`) so “colour picker” can mean a future spectrum selector.
 - Also-see menu lays topics out full width on a shared grid, choosing the column count that leaves the fewest empty cells.
+- Banner borders again use `--banner-*-border` tokens (no `color-mix`); warn / info / note / important / success borders align with their text colours in light and dark. `--banner-error-border` is unchanged (shared as the danger accent on buttons and invalid fields).
+- Success banner text/border retune (`#1f8c40` / `#4ac25c`) also affects `.tooltip--success`, which uses the same tokens.
 
 ## [0.9.0] - 2026-07-26
 
