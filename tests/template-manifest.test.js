@@ -10,12 +10,12 @@ import {
   CSS_INDEX_ORDER,
   DERIVED_FILES,
 } from "../scripts/lib/template-catalogue.mjs";
+import { renderTemplateCssIndex } from "../scripts/lib/template-catalogue.mjs";
 import {
   buildManifest,
   hashFile,
   isAppOwnedPath,
   readTemplateVersion,
-  renderTemplateCssIndex,
   sha256Hex,
 } from "../scripts/generate-template-manifest.mjs";
 

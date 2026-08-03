@@ -200,6 +200,9 @@ Optional quality checks (requires `npm ci` once):
 npm run lint
 npm test
 npm run manifest:template   # regenerate template-manifest.json after catalogue changes
+npm run verify:template     # check tree vs template.lock.json + manifest hashes
+# npm run sync:template -- --from ../microapp-template
+# npm run sync:template -- --version 0.9.0
 ```
 
 Then open `http://localhost:3000` and, if kept, `http://localhost:3000/demo.html`.
@@ -223,6 +226,7 @@ index.html          # Your app homepage
 demo.html           # Component showcase (optional)
 .nojekyll           # Skip Jekyll on GitHub Pages
 template-manifest.json  # SHA-256 + component graph (npm run manifest:template)
+template.lock.json      # Fork pin: templateVersion + selected components
 app/
   styles.css            # Fork entry: tokens.css → css/template.css → css/app.css
   tokens.css            # Design tokens, base typography, reduced motion
