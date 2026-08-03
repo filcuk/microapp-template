@@ -28,7 +28,8 @@ import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-list
  *   uses a badge (wrap `.combobox-control` in `.badge-host` with a `.badge`, or let this
  *   init create that markup). Options toggle; list closes after each pick like
  *   single-select. Initial selection: `aria-selected="true"` on options, comma-separated
- *   `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+ *   `.combobox-value`, or `defaultValues` / `defaultValue` in JS. Option and custom values
+ *   must not contain commas (the `.combobox-value` delimiter).
  *
  * data-combobox-allow-custom — accept free text on blur/commit (default: list values only)
  * data-combobox-multi — multi-select mode
@@ -88,6 +89,17 @@ export function parseValueList(raw) {
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
+}
+
+/**
+ * Multi-select values must not contain `,` — that character is the delimiter for
+ * `.combobox-value` / `getValue()` / `setValue()`.
+ *
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function isSafeMultiValue(value) {
+  return !String(value ?? "").includes(",");
 }
 
 /**
@@ -404,6 +416,11 @@ export function initCombobox(
   }
 
   function setMultiSelected(value, selected, { source = "api", emitEvent = true } = {}) {
+    if (selected && !isSafeMultiValue(value)) {
+      input.setAttribute("aria-invalid", "true");
+      return false;
+    }
+
     const option = optionRecords.find((record) => record.value === value);
     const label = option?.label ?? String(value);
 
@@ -431,6 +448,7 @@ export function initCombobox(
       });
       emitChange({ toggled: true, source });
     }
+    return true;
   }
 
   function selectOption(option, { close = true } = {}) {
@@ -438,7 +456,10 @@ export function initCombobox(
 
     if (isMulti) {
       const next = !selectedMap.has(option.value);
-      setMultiSelected(option.value, next, { source: "select" });
+      if (!setMultiSelected(option.value, next, { source: "select" })) {
+        if (close) closeList({ restoreInput: true });
+        return;
+      }
       onSelect?.({
         comboboxEl,
         value: option.value,
@@ -500,6 +521,13 @@ export function initCombobox(
       }
 
       if (allowFreeText) {
+        if (!isSafeMultiValue(text)) {
+          syncMultiInputDisplay();
+          input.setAttribute("aria-invalid", "true");
+          emitChange({ committed: true, valid: false, reason: "comma" });
+          if (close) closeList({ restoreInput: true });
+          return false;
+        }
         setMultiSelected(text, true, { source: "custom" });
         if (close) closeList();
         return true;
@@ -651,6 +679,7 @@ export function initCombobox(
       : optionRecords.filter((option) => option.selected).map((option) => option.value);
 
     for (const value of initial) {
+      if (!isSafeMultiValue(value)) continue;
       const match = optionRecords.find((option) => option.value === value);
       if (match) {
         selectedMap.set(match.value, match.label);
@@ -725,6 +754,7 @@ export function initCombobox(
       if (isMulti) {
         selectedMap.clear();
         for (const next of parseValueList(value)) {
+          if (!isSafeMultiValue(next)) continue;
           const match = optionRecords.find((option) => option.value === next);
           if (match) selectedMap.set(match.value, match.label);
           else if (allowFreeText) selectedMap.set(next, next);
@@ -770,6 +800,7 @@ export function initCombobox(
         applyOptions(nextOptions);
         selectedMap.clear();
         for (const value of previous) {
+          if (!isSafeMultiValue(value)) continue;
           const match = optionRecords.find((option) => option.value === value);
           if (match) selectedMap.set(match.value, match.label);
           else if (allowFreeText) selectedMap.set(value, value);
