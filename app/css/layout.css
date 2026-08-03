@@ -329,19 +329,16 @@ main {
   font-weight: 600;
 }
 
-/* Full-bleed rule inside padded panels (`.demo-card`, `.section-panel`, …). */
+/* Full-bleed rule inside padded panels (`.demo-card`, …).
+ * Requires `--panel-padding` on a direct ancestor; see `.section-panel__divider`
+ * in controls-section-panel.css for the section-panel variant. */
 .demo-divider,
-.section-panel__divider,
 .divider {
   align-self: stretch;
   margin-block: 0.35rem;
   margin-inline: calc(-1 * var(--panel-padding, 1rem));
   border: none;
   border-top: 1px solid var(--border);
-}
-
-.section-panel__divider {
-  margin-block: 0;
 }
 
 .demo-colour-grid {
@@ -408,75 +405,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-/* Section panel — 3-column grid rows */
-
-.section-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  --panel-padding: 1rem;
-  padding: var(--panel-padding);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--section-bg);
-  --badge-ring: var(--section-bg);
-}
-
-.section-panel__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  align-items: end;
-}
-
-.section-panel__row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.section-panel__feedback {
-  flex: 1;
-  min-width: 0;
-}
-
-.section-panel__feedback .banner {
-  width: 100%;
-}
-
-.section-panel__submit {
-  flex-shrink: 0;
-}
-
-.section-panel__field {
-  min-width: 0;
-  max-width: none;
-  width: 100%;
-}
-
-.section-panel__toggle {
-  justify-self: start;
-}
-
-.section-panel__checkbox {
-  justify-self: start;
-}
-
-@media (max-width: 640px) {
-  .section-panel__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .section-panel__row {
-    flex-wrap: wrap;
-  }
-
-  .section-panel__feedback {
-    flex-basis: 100%;
-  }
 }
 
 /* Page navigation (headings + jump up/down) */
