@@ -888,13 +888,14 @@ Include seconds with a `.duration-input-seconds` field or `data-duration-seconds
 import { initDurationInput, initDurationInputs } from "./components/duration-input.js";
 
 const duration = initDurationInput(document.getElementById("my-duration"), {
-  onChange: ({ value, totalSeconds }) => { /* e.g. "1:30", 5400 */ },
+  onChange: ({ value, totalSeconds }) => { /* committed — blur / Enter / nudge */ },
+  onInput: ({ value, totalSeconds }) => { /* live draft while typing; also syncs `.duration-input-value` */ },
   // defaultValue: "1:30",
   // maxHours: 24,
   // showSeconds: true,
 });
 
-duration?.getValue();
+duration?.getValue(); // last committed value (not the in-progress draft)
 duration?.getSeconds();
 duration?.setValue("2:05");
 duration?.setSeconds(90);

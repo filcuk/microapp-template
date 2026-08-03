@@ -273,11 +273,36 @@ export function initDurationInput(
     return true;
   }
 
+  function readDraftParts() {
+    return {
+      hours: readField(hoursInput, { max: resolvedMaxHours }) ?? 0,
+      minutes: readField(minutesInput, { max: 59 }) ?? 0,
+      seconds: withSeconds ? (readField(secondsInput, { max: 59 }) ?? 0) : 0,
+    };
+  }
+
+  function emitInput(source = "input") {
+    const draft = readDraftParts();
+    if (valueInput) {
+      valueInput.value = formatDurationValue(draft, { showSeconds: withSeconds });
+    }
+    onInput?.({
+      durationEl,
+      value: formatDurationValue(draft, { showSeconds: withSeconds }),
+      hours: draft.hours,
+      minutes: draft.minutes,
+      seconds: withSeconds ? draft.seconds : 0,
+      totalSeconds: partsToSeconds(draft, withSeconds),
+      source,
+      draft: true,
+    });
+  }
+
   function onFieldInput(event) {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) return;
     target.value = target.value.replace(/\D+/g, "");
-    emit(onInput, "input");
+    emitInput("input");
   }
 
   function onFieldBlur() {
