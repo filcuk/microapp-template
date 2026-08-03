@@ -10,7 +10,7 @@ import { initAccordion } from "./components/accordion.js";
 import { initTabs } from "./components/tabs.js";
 import { initCodeBlocks } from "./components/code-block.js";
 import { initExpandableSurfaces } from "./components/expandable-surface.js";
-import { showBanner, hideBanner } from "./components/banner.js";
+import { showBanner } from "./components/banner.js";
 import {
   flashTooltip,
   showPersistentTooltip,
