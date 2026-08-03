@@ -8,7 +8,7 @@ When trimming: delete a feature’s JS only if unused; remove a **shared** CSS p
 
 | Area | Paths |
 | ---- | ----- |
-| Entry | `app/theme-init.js`, `app/config.js`, `app/version.js`, `app/main.js` (or other page modules), `app/styles.css` |
+| Entry | `app/theme-init.js`, `app/config.js`, `app/version.js`, `app/main.js` (or other page modules), `app/styles.css` (fork entry), `app/css/template.css` (generated index), `app/css/app.css` (fork-owned) |
 | Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, `also-see.js`, `external-link.js`, `heading-link.js` |
 | Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `icons-template.js`, `icons-app.js`, `brand-icon.js` |
 | Shell-pulled components | `app/components/tooltip.js`, `app/components/banner.js` (imported by `shell.js`) |
@@ -37,7 +37,7 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | `table.css` | table |
 | `controls-tabular-input.css` | tabular-input |
 
-Also wired from `styles.css`: every partial above is `@import`ed. When removing the last consumer of a partial, drop its `@import` from `app/styles.css`.
+Also wired from `app/css/template.css`: every partial above is `@import`ed there (and pulled in via `app/styles.css`). When removing the last consumer of a partial, drop its `@import` from `template.css` (sync regenerates this index from the lock/manifest).
 
 ## Feature catalogue
 
@@ -121,5 +121,5 @@ Do not remove these from `ICONS` while using `initShell`:
 2. Scan markup for feature hooks (`.tabs`, `.modal`, `data-expandable-surface`, `.file-dropzone`, etc.).
 3. Mark a catalogue `id` **used** if imported or markup-matched.
 4. Unused ids → candidates to delete (JS + exclusive vendor).
-5. For each CSS partial, if no remaining used feature maps to it → drop `@import` and file.
+5. For each CSS partial, if no remaining used feature maps to it → drop `@import` from `app/css/template.css` and delete the file.
 6. Never delete Always keep / shell-required icons / invariants.

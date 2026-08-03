@@ -14,7 +14,7 @@ Every HTML entry point:
 
 1. Optional `window.__MICROAPP__` bridge **before** theme-init (theme key, app icons).
 2. Blocking `app/theme-init.js` in `<head>`.
-3. `app/styles.css` (imports `tokens.css` + `app/css/*.css` partials — edit partials, not a monolith).
+3. `app/styles.css` (fork entry: `tokens.css` → `css/template.css` → `css/app.css` — edit partials / `app.css`, not a monolith).
 4. Page module calls `initShell()` from `app/shell/shell.js` **first**, then app-specific inits.
 
 Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `renderPageShell()` owns that chrome.

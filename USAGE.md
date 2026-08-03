@@ -222,9 +222,11 @@ index.html          # Your app homepage
 demo.html           # Component showcase (optional)
 .nojekyll           # Skip Jekyll on GitHub Pages
 app/
-  styles.css            # Imports tokens.css + app/css/*.css partials
+  styles.css            # Fork entry: tokens.css → css/template.css → css/app.css
   tokens.css            # Design tokens, base typography, reduced motion
   css/
+    template.css        # Template partial index (sync regenerates in forks)
+    app.css             # Fork-owned app styles (empty in the template)
     layout.css          # Page shell, sections, page nav, footer, theme toggle
     code-block.css      # Code blocks and expandable surfaces
     controls-buttons.css  # Toolbar, buttons
@@ -279,7 +281,7 @@ JS modules live under `app/shell/`, `app/utils/`, and `app/components/` — the 
 | **Infrastructure** | `app/utils/` | Keep if any popup menu, icons, or shared helpers remain |
 | **Components** | `app/components/` | Import and init only the features your page uses; delete unused files |
 
-Component CSS lives under `app/css/` (imported via `styles.css`). Match a component to its partial: form controls in `controls-fields.css`, menus in `controls-menus.css`, modals in `overlays.css`, and so on.
+Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via `styles.css`). Match a component to its partial: form controls in `controls-fields.css`, menus in `controls-menus.css`, modals in `overlays.css`, and so on. Put app-only rules in `css/app.css`.
 
 ---
 
@@ -287,7 +289,7 @@ Component CSS lives under `app/css/` (imported via `styles.css`). Match a compon
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (imported by [`app/styles.css`](app/styles.css)). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-heading` — see **Sticky chrome**). App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |

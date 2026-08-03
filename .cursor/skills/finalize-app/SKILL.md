@@ -32,7 +32,7 @@ Also list:
 - CSS partials safe to drop (no remaining consumer in the map)
 - Vendor trees (`app/vendor/prism/`, Toast UI, …) if unused
 - Demo: `demo.html` / `app/demo.js` if not intentionally kept
-- `styles.css` `@import` lines to remove
+- `template.css` `@import` lines to remove
 - `pages.yml` updates
 
 **Never** remove Always keep paths, shell-required icons, or invariants.
@@ -42,7 +42,7 @@ Also list:
 Get explicit user approval. Then:
 
 1. Delete unused component JS (and exclusive vendor/CSS).
-2. Drop unused `@import`s from `app/styles.css`; delete orphaned partial files.
+2. Drop unused `@import`s from `app/css/template.css`; delete orphaned partial files.
 3. Update `pages.yml` if demo HTML was removed.
 4. Remove stale demo links from `index.html` / docs if present.
 5. Do not strip `ICONS` entries that shell or remaining features still need; optional cleanup of clearly unused icon ids is allowed if listed in the plan.

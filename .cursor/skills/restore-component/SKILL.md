@@ -26,7 +26,7 @@ For each id, from the chosen upstream revision:
 | Step | Action |
 | ---- | ------ |
 | JS | Copy `JS` paths from the map into the fork |
-| CSS | Ensure the listed partial exists; add `@import` in `app/styles.css` if missing |
+| CSS | Ensure the listed partial exists; add `@import` in `app/css/template.css` if missing |
 | Vendor | Copy vendor / extra CSS listed for that feature |
 | Infra | Ensure infra deps exist (`menu`, `dom`, …) — restore those modules if trimmed |
 | Icons | Required ids: reuse existing `ICONS` entries; missing artwork → **`handle-assets`** (stub + request; never invent paths) |

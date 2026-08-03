@@ -18,7 +18,7 @@ Agree with the user:
 
 - Feature id / public API (`initX` and/or `initXs(root)`)
 - Markup classes and `data-*` attributes
-- Which `app/css/` partial (existing vs new + `styles.css` `@import`)
+- Which `app/css/` partial (existing vs new + `template.css` `@import`)
 - Icons needed → **`handle-assets`** (never invent SVG)
 - Whether demo section is required (default: yes for user-facing controls)
 
@@ -26,7 +26,7 @@ Agree with the user:
 
 1. Add `app/components/<name>.js` (or a small folder if multi-file, like `date-picker/`).
 2. Match existing patterns: `parseBooleanAttr` / `setHidden` from `dom.js`; shared Escape/click-outside via `document-listeners.js`; menus via `menu.js`.
-3. Styles in the correct partial under `app/css/`; new partial only when no existing file fits — then `@import` it from `app/styles.css`.
+3. Styles in the correct partial under `app/css/`; new partial only when no existing file fits — then `@import` it from `app/css/template.css`.
 4. Wire demo: section in `demo.html` + init in `app/demo.js`.
 5. Docs same change:
    - `USAGE.md` — **Available features** row + **Using components** (markup + import)

@@ -38,6 +38,7 @@ Do not proceed until the user picks one.
 - `APP_VERSION` in `app/version.js`
 - Custom files under `app/res/` supplied by the app
 - Fork-owned `app/utils/icons-app.js` (never overwrite; never invent SVG)
+- Fork-owned `app/styles.css` and `app/css/app.css` (regenerate `app/css/template.css` from upstream instead)
 
 **Do upgrade** (subject to style):
 
@@ -60,7 +61,7 @@ Map legacy flat paths to current layout (see component-map “Legacy path aliase
 
 ### Full
 
-1. Replace/upgrade full `app/components/`, `app/css/`, `app/vendor/`, shell, utils, tokens, `styles.css` imports from upstream.
+1. Replace/upgrade full `app/components/`, `app/css/` partials (not fork-owned `app.css` / `styles.css`), `app/vendor/`, shell, utils, tokens, and regenerate `css/template.css` from upstream.
 2. Still preserve app-owned files listed above.
 3. Reconcile demo: keep/update if the fork keeps demo; otherwise leave demo deleted.
 
