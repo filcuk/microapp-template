@@ -22,6 +22,7 @@ import {
   INFRA,
   renderTemplateCssIndex,
 } from "./lib/template-catalogue.mjs";
+import { canonicalizeNewlines } from "./lib/template-resolve.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MANIFEST_PATH = path.join(ROOT, "template-manifest.json");
@@ -53,7 +54,7 @@ export function sha256Hex(data) {
  */
 export function hashFile(relativePosix) {
   const abs = resolveRepoPath(relativePosix);
-  return sha256Hex(fs.readFileSync(abs));
+  return sha256Hex(canonicalizeNewlines(fs.readFileSync(abs)));
 }
 
 /**

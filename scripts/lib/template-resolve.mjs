@@ -24,6 +24,15 @@ export function resolveUnder(root, relativePosix) {
 }
 
 /**
+ * Canonical LF text so hashes match across Windows (CRLF) and Unix checkouts.
+ * @param {Buffer | string} data
+ */
+export function canonicalizeNewlines(data) {
+  const text = Buffer.isBuffer(data) ? data.toString("utf8") : String(data);
+  return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+}
+
+/**
  * @param {Buffer | string} data
  */
 export function sha256Hex(data) {
@@ -35,7 +44,7 @@ export function sha256Hex(data) {
  * @param {string} relativePosix
  */
 export function hashFileUnder(root, relativePosix) {
-  return sha256Hex(fs.readFileSync(resolveUnder(root, relativePosix)));
+  return sha256Hex(canonicalizeNewlines(fs.readFileSync(resolveUnder(root, relativePosix))));
 }
 
 /**

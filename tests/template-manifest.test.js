@@ -18,6 +18,7 @@ import {
   readTemplateVersion,
   sha256Hex,
 } from "../scripts/generate-template-manifest.mjs";
+import { canonicalizeNewlines } from "../scripts/lib/template-resolve.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MANIFEST_PATH = path.join(ROOT, "template-manifest.json");
@@ -55,6 +56,15 @@ test("buildManifest hashes match on-disk bytes for every file entry", () => {
   for (const [rel, meta] of Object.entries(manifest.files)) {
     assert.equal(meta.sha256, hashFile(rel), rel);
   }
+});
+
+test("hashFile is stable across CRLF and LF line endings", () => {
+  const rel = "app/components/accordion.js";
+  const abs = path.join(ROOT, ...rel.split("/"));
+  const lf = canonicalizeNewlines(fs.readFileSync(abs));
+  const crlf = lf.replace(/\n/g, "\r\n");
+  assert.equal(sha256Hex(lf), sha256Hex(canonicalizeNewlines(crlf)));
+  assert.equal(sha256Hex(lf), hashFile(rel));
 });
 
 test("checked-in template-manifest.json matches a fresh build (stable fields)", () => {
