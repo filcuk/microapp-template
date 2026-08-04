@@ -575,6 +575,8 @@ initToggle(document.getElementById("demo-sticky-section-headings"), {
   },
 });
 
+updateStickyChromeResult();
+
 initDialog({
   dialogEl: document.getElementById("info-dialog"),
   openTriggers: "#open-info-dialog",

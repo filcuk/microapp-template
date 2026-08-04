@@ -41,7 +41,9 @@
   --page-padding-x: 1.5rem;
   --page-padding-y: 1rem;
   --sticky-header-offset: 0px;
-  --sticky-gap: 1.25rem;
+  --sticky-gap: 0.5rem;
+  /* Tighter space between pinned tier title and section heading */
+  --sticky-nest-gap: 0.15rem;
   --sticky-edge-pad: 0.5rem;
   --sticky-fade-ms: 150ms;
   --sticky-shadow: rgb(0 0 0 / 0.2);

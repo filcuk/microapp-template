@@ -449,7 +449,7 @@ syncStickyOffsets();
 
 While stickiness is enabled but nothing is pinned yet, appearance is unchanged. As each bar pins, it receives `data-sticky-stuck` (gap fill fades in above and below) and the bottom-most pinned element also gets `data-sticky-stuck-edge` (hairline + drop shadow).
 
-When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap) and per-tier `--sticky-tier-offset` (tier header height + `--sticky-gap`). CSS adds `--sticky-gap` between levels. Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
+When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap), `--sticky-gap` between site header and tier, and per-tier `--sticky-tier-offset` (pinned title height + `--sticky-nest-gap` under the tier; the `.content-tier-lead` is hidden while the tier is pinned). Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
 
 
 ### Dialog

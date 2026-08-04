@@ -35,9 +35,9 @@ function rootEl() {
   return document.documentElement;
 }
 
-/** Resolve `--sticky-gap` to CSS pixels. */
-function stickyGapPx(root) {
-  const raw = getComputedStyle(root).getPropertyValue("--sticky-gap").trim();
+/** Resolve a root CSS length custom property to CSS pixels. */
+function cssPx(root, prop) {
+  const raw = getComputedStyle(root).getPropertyValue(prop).trim();
   if (!raw) return 0;
   if (raw.endsWith("px")) return parseFloat(raw) || 0;
   if (raw.endsWith("rem")) {
@@ -68,8 +68,10 @@ let resizeObserver = null;
 
 let listenersBound = false;
 let scrollTicking = false;
-/** Cached gap in px; refreshed on collect / resize. */
+/** Cached `--sticky-gap` in px; refreshed on collect / resize. */
 let cachedGapPx = 0;
+/** Cached `--sticky-nest-gap` in px (tier → section). */
+let cachedNestGapPx = 0;
 
 function collectParticipants() {
   const root = rootEl();
@@ -88,7 +90,8 @@ function collectParticipants() {
     tiers: [...document.querySelectorAll(".content-tier")],
   };
 
-  cachedGapPx = stickyGapPx(root);
+  cachedGapPx = cssPx(root, "--sticky-gap");
+  cachedNestGapPx = cssPx(root, "--sticky-nest-gap");
   observeResizeTargets();
 }
 
@@ -125,26 +128,51 @@ function publishHeaderOffset() {
 }
 
 /**
- * Publish `--sticky-tier-offset` on each `.content-tier` (header height + gap).
- * Measured on collect / resize, not every scroll frame.
+ * Publish `--sticky-tier-offset` on each `.content-tier`.
+ * Value is pinned title height + `--sticky-nest-gap` (not the site `--sticky-gap`).
+ * Remeasured on collect / resize and after stuck-state changes.
  */
 function publishTierOffsets() {
   const root = rootEl();
   const sectionsOn = root.hasAttribute("data-sticky-section-headings");
   const shortViewport = window.innerHeight < SHORT_VIEWPORT_MAX;
-  const gap = cachedGapPx;
+  const nestGap = cachedNestGapPx;
 
   for (const tier of participants.tiers) {
     const header = tier.querySelector(":scope > .content-tier-header");
     let offset = 0;
     if (sectionsOn && header && !shortViewport) {
-      offset = header.offsetHeight + gap;
+      offset = measureTierPinnedHeight(header) + nestGap;
     }
     const next = `${Math.round(offset)}px`;
     if (tier.style.getPropertyValue("--sticky-tier-offset") !== next) {
       tier.style.setProperty("--sticky-tier-offset", next);
     }
   }
+}
+
+/**
+ * Height of a tier header as it appears while pinned (title + stuck padding/border,
+ * no lead). When already stuck the lead is `display: none`, so offsetHeight matches.
+ * @param {HTMLElement} header
+ * @returns {number}
+ */
+function measureTierPinnedHeight(header) {
+  if (header.hasAttribute(STUCK_ATTR)) {
+    return header.offsetHeight;
+  }
+
+  const title = header.querySelector(".content-tier-title");
+  if (!title) return header.offsetHeight;
+
+  const styles = getComputedStyle(header);
+  const border =
+    (parseFloat(styles.borderTopWidth) || 0) +
+    (parseFloat(styles.borderBottomWidth) || 0);
+  /* Match `.content-tier-header[data-sticky-stuck] { padding-bottom: 0.25rem }`. */
+  const fontSize = parseFloat(getComputedStyle(rootEl()).fontSize) || 16;
+  const stuckPadBottom = 0.25 * fontSize;
+  return title.offsetHeight + stuckPadBottom + border;
 }
 
 /**
@@ -164,12 +192,12 @@ function resolvedTopFor(el, headerOffset) {
     return headerOffset + gap;
   }
 
-  // .section-heading
+  // .section-heading — site gap + tier band (height + nest gap inside the var)
   const tier = el.closest(".content-tier");
   const tierOffset = tier
     ? parseFloat(tier.style.getPropertyValue("--sticky-tier-offset")) || 0
     : 0;
-  return headerOffset + tierOffset + gap;
+  return headerOffset + cachedGapPx + tierOffset;
 }
 
 /**
@@ -194,21 +222,12 @@ function syncStuckState(headerOffset) {
     active.push(...participants.sectionHeadings);
   }
 
-  /** @type {HTMLElement | null} */
-  let edgeEl = null;
-  let edgeBottom = -Infinity;
-
   for (const el of active) {
     const top = resolvedTopFor(el, headerOffset);
     const rect = el.getBoundingClientRect();
     const stuck = rect.top <= top + 0.5;
     el.toggleAttribute(STUCK_ATTR, stuck);
     el.removeAttribute(STUCK_EDGE_ATTR);
-
-    if (stuck && rect.bottom >= edgeBottom) {
-      edgeBottom = rect.bottom;
-      edgeEl = el;
-    }
   }
 
   // Clear attributes on participants that are no longer in the active set
@@ -222,6 +241,22 @@ function syncStuckState(headerOffset) {
     if (!el || activeSet.has(el)) continue;
     el.removeAttribute(STUCK_ATTR);
     el.removeAttribute(STUCK_EDGE_ATTR);
+  }
+
+  // Tier leads collapse while stuck — remasure clearance, then pick the edge
+  // from post-collapse geometry.
+  publishTierOffsets();
+
+  /** @type {HTMLElement | null} */
+  let edgeEl = null;
+  let edgeBottom = -Infinity;
+  for (const el of active) {
+    if (!el.hasAttribute(STUCK_ATTR)) continue;
+    const bottom = el.getBoundingClientRect().bottom;
+    if (bottom >= edgeBottom) {
+      edgeBottom = bottom;
+      edgeEl = el;
+    }
   }
 
   if (edgeEl) {

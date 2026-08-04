@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-sticky-section-headings>
 
 <head>
   <meta charset="UTF-8" />
@@ -137,8 +137,8 @@
           <p class="demo-hint">
             Optional stickiness for the site header and section titles
             (<code>.section-heading</code> and <code>.content-tier-title</code> via the tier header band).
-            A stuck tier header is pushed out when a subheading reaches it; subheadings
-            push each other the same way. Scroll with either toggle on to try it.
+            Section headings are on by default in this demo only; both opts stay off in the template
+            / new apps unless you set the <code>data-sticky-*</code> attributes. Scroll to try it.
           </p>
           <div class="demo-card">
             <div class="toggle-group" id="demo-sticky-chrome-toggles">
@@ -153,8 +153,8 @@
                 </button>
                 <input type="hidden" class="toggle-value" value="false" />
               </div>
-              <div class="toggle" id="demo-sticky-section-headings" data-toggle-default="false">
-                <button type="button" class="toggle-btn" role="switch" aria-checked="false">
+              <div class="toggle" id="demo-sticky-section-headings" data-toggle-default="true">
+                <button type="button" class="toggle-btn" role="switch" aria-checked="true">
                   <span class="toggle-track" aria-hidden="true">
                     <span class="toggle-thumb">
                       <span data-icon="check" data-icon-class="toggle-thumb-icon" aria-hidden="true"></span>
@@ -162,11 +162,11 @@
                   </span>
                   <span class="toggle-label">Sticky section headings</span>
                 </button>
-                <input type="hidden" class="toggle-value" value="false" />
+                <input type="hidden" class="toggle-value" value="true" />
               </div>
             </div>
             <p id="demo-sticky-chrome-result" class="demo-hint" aria-live="polite">
-              Header: off · Section headings: off
+              Header: off · Section headings: on
             </p>
           </div>
         </section>

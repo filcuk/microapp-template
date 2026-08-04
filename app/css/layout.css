@@ -103,12 +103,20 @@ body > footer {
   background: var(--bg);
   /* Stack edge hairline replaces the title rule while pinned. */
   border-bottom-color: transparent;
+  /* Tighter band under the title when stacked above a section heading. */
+  padding-bottom: 0.25rem;
+}
+
+/* Drop the lead while pinned so the sticky band stays title-height only. */
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] .content-tier-lead {
+  display: none;
 }
 
 :root[data-sticky-section-headings] .section-heading {
   position: sticky;
+  /* Site gap + tier band (height + nest gap). Nest gap is inside --sticky-tier-offset. */
   top: calc(
-    var(--sticky-header-offset) + var(--sticky-tier-offset, 0px) + var(--sticky-gap)
+    var(--sticky-header-offset) + var(--sticky-gap) + var(--sticky-tier-offset, 0px)
   );
   z-index: 20;
 }
@@ -116,6 +124,7 @@ body > footer {
 :root[data-sticky-section-headings] .section-heading[data-sticky-stuck] {
   z-index: 21;
   background: var(--bg);
+  padding-bottom: 0.5rem;
 }
 
 /* Gap fill above + full-bleed page-bg wings while stuck (center stays clear so
@@ -143,6 +152,17 @@ body > footer {
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--sticky-fade-ms, 150ms) ease;
+}
+
+/* Section headings nest under the tier with a tighter gap fill. */
+:root[data-sticky-section-headings] .section-heading::before {
+  top: calc(-1 * var(--sticky-nest-gap));
+  background: linear-gradient(
+    to bottom,
+    var(--bg) 0,
+    var(--bg) var(--sticky-nest-gap),
+    transparent var(--sticky-nest-gap)
+  );
 }
 
 :root[data-sticky-header] body > header::after,
@@ -206,7 +226,7 @@ main {
   font-size: 1.25rem;
   font-weight: 600;
   scroll-margin-top: calc(
-    var(--sticky-header-offset) + var(--sticky-tier-offset, 0px) + var(--sticky-gap) +
+    var(--sticky-header-offset) + var(--sticky-gap) + var(--sticky-tier-offset, 0px) +
       1rem
   );
 }
