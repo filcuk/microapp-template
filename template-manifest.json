@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-03T21:12:00.869Z",
+  "generatedAt": "2026-08-04T20:48:51.873Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -33,7 +33,7 @@
       "sha256": "ddbde42721c3f3f439c0e80493eb2857211c918249dd971149d8d10d3aea01d7"
     },
     "app/components/banner.js": {
-      "sha256": "e7865de4dfc1373725239e60705f997e953f569e7b9bfe8484c591b293a9078a"
+      "sha256": "715504dbfb0448c1a88d3752ef922ef8d818c0e722138d1a146b3ce85863dadc"
     },
     "app/components/checkbox.js": {
       "sha256": "9b982c2ac7f694df706189460ab2f780abfe7563d880e64c21d78622edfa24e3"
@@ -111,7 +111,7 @@
       "sha256": "0d3fcada4160cc4a912607b341d946bc18a02511dfcd9e47d478ac7cb28f22df"
     },
     "app/components/table.js": {
-      "sha256": "1c75486468043663a85e5b95db4b1e5ccf2ac6eb100348bc25411c32ef15098c"
+      "sha256": "df1fc6bfde2fb2184e646e4ab6d88e047001e10be769b154ba9cbb35202c91df"
     },
     "app/components/tabs.js": {
       "sha256": "43709468cd60d208a356de53347d85b6dbb2ca3caa9d2f7cfb75659f52c984e4"
@@ -165,10 +165,10 @@
       "sha256": "baa6d9f0053e7db8082d2f0cbc3c3be5e1d2b475c2cf11fc6389281d76e701be"
     },
     "app/css/layout.css": {
-      "sha256": "c649be2b61f96c7bb5531bc155c329e67da8bf568b3bb0325a6b82c64c2423f2"
+      "sha256": "d5eec3cb8990862df881ddd37885915dbc76869a81cfe49ddf07fed9d754bb4d"
     },
     "app/css/overlays.css": {
-      "sha256": "319104f74e721eea298c0b88338cdc86f8175d02070d83e884c45da042f51ca2"
+      "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
     },
     "app/css/rich-text-editor.css": {
       "sha256": "c35532f86573991144bf8d6813a75ff1732711690e496a6e0d143d0015272a2c"
@@ -186,10 +186,10 @@
       "sha256": "6a1e0d52b04d6f115419de2bac85b2e5581a7e0212fa6d6a32c64a8d0bb45fdc"
     },
     "app/shell/heading-link.js": {
-      "sha256": "3b216b3f3f6d1148be4de5a7881b7a0d54d0e41559739a366877594d59251fef"
+      "sha256": "656dd0292c1e551dded5afc6c93855ec332f3be49955c20db007954e1e453985"
     },
     "app/shell/page-nav.js": {
-      "sha256": "ca637def59462707cfd31ce93f7248feca08e8dcc7dfc22f1fdf357de8bb0341"
+      "sha256": "30c6b63de5263d873c71db4596e259ebf622ac5ce613fafb99433be0b2cc8ca6"
     },
     "app/shell/render-shell.js": {
       "sha256": "c9c2f5d6a50087483790d3463fd06d95715e9cf0a65719c32bcf1dc71ee94723"
@@ -198,7 +198,7 @@
       "sha256": "b5da67eae40806572a48c40a5b22062fdaea9c70de0163677c09c31f9dc5fb26"
     },
     "app/shell/sticky.js": {
-      "sha256": "51e8edb8c0443262fa79f01bbf259c0029265b972c02489af0cfac88aac0ed1a"
+      "sha256": "7f25141e789c5cdad12dbf0f125b0ebdb0f80aa740f0963d514a3cf3263e207b"
     },
     "app/shell/theme.js": {
       "sha256": "3b992e024cb2af8673730e9ab8cd8c100bd71fb7b4e6f549c0c8c161a8aee6aa"
@@ -210,7 +210,7 @@
       "sha256": "3f9f55c503dec155b391c71c7a3ab3ed5c659de5df5695084831155e51e95f0b"
     },
     "app/tokens.css": {
-      "sha256": "ee255d42751f166d66d2ff6de484f165a3ce50c1008ae6e422e06141929888f0"
+      "sha256": "f6058b72332d330a219039c83f5619178e1eb0b8186579b8717355bb45e59141"
     },
     "app/utils/also-see-svg.js": {
       "sha256": "af1ff194fde0ba9ffe09edf885fde4562bac5f14592fd2f348c366296447e854"
@@ -883,6 +883,11 @@
       "css": [
         "controls-section-panel.css"
       ]
+    },
+    "callout": {
+      "css": [
+        "overlays.css"
+      ]
     }
   },
   "cssPartialFeatures": {
@@ -899,7 +904,8 @@
     "overlays.css": [
       "tooltip",
       "banner",
-      "dialog"
+      "dialog",
+      "callout"
     ],
     "code-block.css": [
       "code-block",

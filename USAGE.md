@@ -1922,7 +1922,7 @@ initPaginations(document); // all `.pagination` blocks
 
 Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-block` and `.table-wrap`. Use `.table--striped` for alternating rows, `.table--compact` for tighter padding, and `.table-num` to right-align numeric columns.
 
-Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text.
+Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text. Set `data-table-sort-default="ascending"` or `"descending"` on one sortable `<th>` to sort that column on load (or pass `defaultSort: { columnIndex, direction }` to `initTable()`).
 
 Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks. Body rows highlight lightly on hover; when selectable, clicking anywhere on a row toggles that row (interactive controls inside the row are left alone).
 
@@ -1942,6 +1942,10 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
           <th scope="col" data-table-sort data-sort-type="text">
             <button type="button" class="table-sort-button">Title</button>
           </th>
+          <th scope="col" data-table-sort data-sort-type="date"
+            data-table-sort-default="descending" class="table-num">
+            <button type="button" class="table-sort-button">Updated</button>
+          </th>
           <th scope="col" data-table-sort data-sort-type="number" class="table-num">
             <button type="button" class="table-sort-button">Comments</button>
           </th>
@@ -1956,6 +1960,7 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
             </label>
           </td>
           <td>Fix nav overlap on mobile</td>
+          <td class="table-num">2026-03-01</td>
           <td class="table-num">3</td>
         </tr>
       </tbody>
@@ -1982,7 +1987,7 @@ table?.destroy();
 initTables(document);
 ```
 
-`data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. Add `.table-block--wide` to remove the default `40rem` max width.
+`data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. `data-table-sort-default` on a sortable `<th>` (or `defaultSort: { columnIndex, direction }`) sets the initial sort. Add `.table-block--wide` to remove the default `40rem` max width.
 
 ### Tabular input
 
