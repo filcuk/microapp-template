@@ -4,7 +4,7 @@ How to fork this template into your own app, deploy it, and use the design syste
 
 ## Creating a new app from this template
 
-Cursor agents can drive this with skills under [`.cursor/skills/`](.cursor/skills/): **`init-app`** (fork setup), **`handle-assets`** (logos/icons — user supplies files), **`finalize-app`** (trim unused components before ship), plus migrate/sync/restore helpers listed in [`AGENTS.md`](AGENTS.md#lifecycle-skills).
+Cursor agents can drive this with skills under [`.cursor/skills/`](.cursor/skills/): **`init-app`** (fork setup), **`handle-assets`** (logos/icons — user supplies files), **`finalize-app`** (trim unused components before ship), plus migrate/sync/restore helpers listed in [`AGENTS.md`](AGENTS.md#lifecycle-skills). Forks created before template lock/versioning should follow [How to bootstrap pre-v0.9.0 upgrades](#how-to-bootstrap-pre-v090-upgrades).
 
 ### 1. Create the repository
 
@@ -186,6 +186,41 @@ For pair-mode header logos, set a meaningful `alt` on the visible theme variant 
 
 ---
 
+## How to bootstrap pre-v0.9.0 upgrades
+
+Forks created before lock/versioning lack `template.lock.json`, the sync scripts, and `.cursor/skills/`. Copy those from a current [microapp-template](https://github.com/filcuk/microapp-template) checkout (or tagged release) into the fork:
+
+| Copy | Purpose |
+| ---- | ------- |
+| `.cursor/skills/` | Agent playbooks (`migrate-template`, `sync-shell`, `health-check`, …) |
+| `scripts/sync-template.mjs`, `scripts/verify-template.mjs`, `scripts/lib/` | Sync / verify tooling |
+
+Ensure `package.json` has `"type": "module"` and:
+
+```json
+{
+  "scripts": {
+    "sync:template": "node scripts/sync-template.mjs",
+    "verify:template": "node scripts/verify-template.mjs"
+  }
+}
+```
+
+Add `template.lock.json` (use `"components": ["*"]` for a full catalogue, or list only what the app uses):
+
+```json
+{
+  "schemaVersion": 1,
+  "templateVersion": "0.9.0",
+  "source": "filcuk/microapp-template",
+  "components": ["*"]
+}
+```
+
+Then run the **`migrate-template`** skill (or `npm run sync:template -- --version 0.9.0` + `npm run verify:template`) to pull the tagged template into the fork.
+
+---
+
 ## Local preview
 
 ES modules require a local server (opening `index.html` directly may block imports):
@@ -204,6 +239,8 @@ npm run verify:template     # check tree vs template.lock.json + manifest hashes
 # npm run sync:template -- --from ../microapp-template
 # npm run sync:template -- --version 0.9.0
 ```
+
+Forks that predate lock/sync should bootstrap first — see [How to bootstrap pre-v0.9.0 upgrades](#how-to-bootstrap-pre-v090-upgrades).
 
 Then open `http://localhost:3000` and, if kept, `http://localhost:3000/demo.html`.
 
