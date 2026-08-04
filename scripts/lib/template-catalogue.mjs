@@ -358,13 +358,14 @@ export const CSS_ONLY = {
   toolbar: { css: ["controls-buttons.css"], always: true },
   fields: { css: ["controls-fields.css"] },
   "section-panel": { css: ["controls-section-panel.css"] },
+  callout: { css: ["overlays.css"] },
 };
 
 /** Which features need each CSS partial (for trim / index generation). */
 export const CSS_PARTIAL_FEATURES = {
   "layout.css": ["shell", "page-nav", "sticky", "theme-toggle"],
   "controls-buttons.css": ["buttons", "toolbar"],
-  "overlays.css": ["tooltip", "banner", "dialog"],
+  "overlays.css": ["tooltip", "banner", "dialog", "callout"],
   "code-block.css": ["code-block", "expandable-surface"],
   "controls-badges.css": ["badge", "combobox", "dropdown-toggle"],
   "controls-chips.css": ["chip"],

@@ -370,6 +370,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
 | **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
+| **Callouts** | `.callout` accent-edged tip cards for standing information (CSS-only). See **Callouts** under Using components. |
 | **Code blocks** | `.code-block` with Prism highlighting, configurable toolbar (top/bottom/none), hover copy/maximise, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
 | **Expandable surface** | Maximize code blocks or textareas to page width. [`app/expandable-surface.js`](app/expandable-surface.js). |
 | **Icons** | Inline SVGs in [`app/icons.js`](app/icons.js); use `data-icon` in HTML or `createIcon()` in JS. Source from [Icônes — Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round). Logo files stay in `app/res/`. |
@@ -412,7 +413,7 @@ Optional stickiness for the site `<header>` and section titles. Off by default. 
 | Opt-in | Effect |
 | ------ | ------ |
 | `data-sticky-header` | Sticky `body > header` |
-| `data-sticky-section-headings` | Sticky `.section-heading` and `.content-tier-header` (so `.content-tier-title` stays visible for the tier) |
+| `data-sticky-section-headings` | Sticky `.section-heading` and `.content-tier-header` (plain tier titles) |
 
 ```html
 <html lang="en" data-sticky-header data-sticky-section-headings>
@@ -527,6 +528,19 @@ hideBanner(el);
 ```
 
 Always use `hideBanner()` / `showBanner()` for banners with expiry — do not toggle `.hidden` directly, or timers may keep running.
+
+### Callouts
+
+Accent-edged cards for durable tips and context that stay on the page. Prefer banners for transient status (save, error, auto-dismiss).
+
+```html
+<aside class="callout" role="note">
+  <h3 class="callout-title">Optional title</h3>
+  <p class="callout-body">Standing information the reader should keep in view.</p>
+</aside>
+```
+
+Styles live in [`app/css/overlays.css`](app/css/overlays.css). No JS init.
 
 ### External links
 

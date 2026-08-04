@@ -100,6 +100,9 @@ body > footer {
 
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] {
   z-index: 31;
+  background: var(--bg);
+  /* Stack edge hairline replaces the title rule while pinned. */
+  border-bottom-color: transparent;
 }
 
 :root[data-sticky-section-headings] .section-heading {
@@ -116,7 +119,7 @@ body > footer {
 }
 
 /* Gap fill above + full-bleed page-bg wings while stuck (center stays clear so
-   tier cards keep --section-bg). Edge pad below carries the stack hairline. */
+   the host background shows). Edge pad below carries the stack hairline. */
 :root[data-sticky-header] body > header::before,
 :root[data-sticky-section-headings] .content-tier-header::before,
 :root[data-sticky-section-headings] .section-heading::before {
@@ -286,19 +289,16 @@ main {
 .content-tier-header {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.25rem 1.5rem;
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--accent);
-  border-radius: 6px;
-  background: var(--section-bg);
+  gap: 0.35rem;
+  padding: 0 0 0.875rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .content-tier-title {
   margin: 0;
-  font-size: 1.625rem;
+  font-size: 1.875rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   scroll-margin-top: calc(var(--sticky-header-offset) + var(--sticky-gap) + 1.5rem);
 }
 
