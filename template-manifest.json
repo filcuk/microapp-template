@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-04T20:48:51.873Z",
+  "generatedAt": "2026-08-04T20:50:23.396Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -111,7 +111,7 @@
       "sha256": "0d3fcada4160cc4a912607b341d946bc18a02511dfcd9e47d478ac7cb28f22df"
     },
     "app/components/table.js": {
-      "sha256": "df1fc6bfde2fb2184e646e4ab6d88e047001e10be769b154ba9cbb35202c91df"
+      "sha256": "869eec9ff1cc209d2a470e0f80542ac147d53feb1de5ac0b9e8eafad0fec9277"
     },
     "app/components/tabs.js": {
       "sha256": "43709468cd60d208a356de53347d85b6dbb2ca3caa9d2f7cfb75659f52c984e4"

@@ -167,6 +167,7 @@ export function initTable(
   const rowInputs = () => [
     ...tbody.querySelectorAll("[data-table-row-select]"),
   ];
+  const originalRowOrder = isSortable ? [...tbody.querySelectorAll("tr")] : [];
 
   function syncDisabledClass() {
     blockEl.classList.toggle("table-block--disabled", isDisabled);
@@ -219,6 +220,16 @@ export function initTable(
     }
   }
 
+  function restoreOriginalOrder() {
+    const known = new Set(originalRowOrder);
+    for (const row of originalRowOrder) {
+      if (row.parentNode === tbody) tbody.append(row);
+    }
+    for (const row of [...tbody.querySelectorAll("tr")]) {
+      if (!known.has(row)) tbody.append(row);
+    }
+  }
+
   function clearOtherSortStates(activeButton) {
     for (const button of sortButtons) {
       if (button !== activeButton) {
@@ -237,12 +248,16 @@ export function initTable(
       current === "ascending"
         ? "descending"
         : current === "descending"
-          ? "ascending"
+          ? null
           : "ascending";
 
     clearOtherSortStates(button);
     setSortButtonState(button, next);
-    sortByColumn(columnIndex, next, sortType);
+    if (next) {
+      sortByColumn(columnIndex, next, sortType);
+    } else {
+      restoreOriginalOrder();
+    }
 
     onSort?.({
       columnIndex,
