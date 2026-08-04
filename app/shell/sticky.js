@@ -23,6 +23,10 @@
  *   --sticky-tier-offset    on each .content-tier — tier header height + gap
  *
  * Below SHORT_VIEWPORT_MAX, tier headers leave the stack (offset forced to 0).
+ *
+ * Page nav uses getHeadingScrollY() instead of scrollIntoView: sticky elements
+ * report visual offsets once pinned, and off-screen nodes must not keep
+ * data-sticky-stuck (that collapses leads and shifts document Y).
  */
 
 /** Match the short-viewport CSS guard that drops tier headers from the stack. */
@@ -225,7 +229,11 @@ function syncStuckState(headerOffset) {
   for (const el of active) {
     const top = resolvedTopFor(el, headerOffset);
     const rect = el.getBoundingClientRect();
-    const stuck = rect.top <= top + 0.5;
+    // Pin only while the box still sits on its sticky edge. Once the containing
+    // block carries it away above the viewport, rect.bottom drops through `top`
+    // — clearing stuck avoids collapsing off-screen tier leads / padding, which
+    // otherwise shifts document Y and makes upward page-nav jumps undershoot.
+    const stuck = rect.top <= top + 0.5 && rect.bottom > top + 0.5;
     el.toggleAttribute(STUCK_ATTR, stuck);
     el.removeAttribute(STUCK_EDGE_ATTR);
   }
@@ -357,6 +365,76 @@ export function isStickyHeader() {
 /** @returns {boolean} */
 export function isStickySectionHeadings() {
   return rootEl().hasAttribute("data-sticky-section-headings");
+}
+
+/**
+ * In-flow document Y of an element's border-box top.
+ * Sticky paint offsets are neutralized — `offsetTop` / live rects follow the
+ * visual sticky box once an element is pinned, which breaks upward scroll math.
+ * @param {HTMLElement} el
+ * @returns {number}
+ */
+function inFlowDocumentTop(el) {
+  /** @type {{ el: HTMLElement, position: string }[]} */
+  const touched = [];
+  let node = /** @type {HTMLElement | null} */ (el);
+  while (node && node !== document.body) {
+    if (getComputedStyle(node).position === "sticky") {
+      touched.push({ el: node, position: node.style.position });
+      node.style.position = "static";
+    }
+    node = node.parentElement;
+  }
+
+  const top = el.getBoundingClientRect().top + window.scrollY;
+
+  for (const { el: stickyEl, position } of touched) {
+    stickyEl.style.position = position;
+  }
+  return top;
+}
+
+/**
+ * Window `scrollY` that places `heading` under the sticky stack, matching
+ * `scroll-margin-top` after tier-lead collapse. Prefer this over `scrollIntoView`
+ * for sticky headings — otherwise navigating upward undershoots and nudges.
+ *
+ * @param {HTMLElement} heading
+ * @returns {number}
+ */
+export function getHeadingScrollY(heading) {
+  const root = rootEl();
+  /** @type {HTMLElement[]} */
+  const forcedStuck = [];
+
+  // Collapse the destination tier lead before measuring so Y matches the
+  // settled layout after that tier pins.
+  if (
+    root.hasAttribute("data-sticky-section-headings") &&
+    window.innerHeight >= SHORT_VIEWPORT_MAX
+  ) {
+    const tier = heading.closest(".content-tier");
+    const header = tier?.querySelector(":scope > .content-tier-header");
+    if (
+      header instanceof HTMLElement &&
+      !header.hasAttribute(STUCK_ATTR) &&
+      !header.contains(heading)
+    ) {
+      header.setAttribute(STUCK_ATTR, "");
+      forcedStuck.push(header);
+      publishTierOffsets();
+    }
+  }
+
+  const margin = parseFloat(getComputedStyle(heading).scrollMarginTop) || 0;
+  const top = inFlowDocumentTop(heading);
+
+  for (const header of forcedStuck) {
+    header.removeAttribute(STUCK_ATTR);
+  }
+  if (forcedStuck.length) publishTierOffsets();
+
+  return Math.max(0, top - margin);
 }
 
 /**

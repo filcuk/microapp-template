@@ -75,6 +75,12 @@ body > footer {
    Stack: site header → tier header → section heading.
    JS toggles data-sticky-stuck / data-sticky-stuck-edge while pinned. */
 
+/* Tier-lead collapse shifts layout above the viewport; disable scroll
+   anchoring so programmatic page-nav jumps keep their target Y. */
+:root[data-sticky-section-headings] {
+  overflow-anchor: none;
+}
+
 .content-tier {
   --sticky-tier-offset: 0px;
 }

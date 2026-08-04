@@ -1,4 +1,5 @@
 import { prefersReducedMotion } from "../utils/dom.js";
+import { getHeadingScrollY } from "./sticky.js";
 
 /** @type {WeakMap<HTMLElement, PageNavInstance>} */
 const instances = new WeakMap();
@@ -101,10 +102,9 @@ export function initPageNav(
     if (!heading) return;
 
     event.preventDefault();
-    heading.scrollIntoView({
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
-      block: "start",
-    });
+    // Manual Y (not scrollIntoView): sticky headings + collapsing tier leads
+    // otherwise undershoot when navigating upward, requiring repeated clicks.
+    scrollToY(getHeadingScrollY(heading));
     history.replaceState(null, "", `#${heading.id}`);
   }
 
