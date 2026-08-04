@@ -115,36 +115,47 @@ body > footer {
   background: var(--bg);
 }
 
-/* Gap band above + edge pad below; fade in only while stuck (no layout shift). */
+/* Gap fill above + full-bleed page-bg wings while stuck (center stays clear so
+   tier cards keep --section-bg). Edge pad below carries the stack hairline. */
 :root[data-sticky-header] body > header::before,
-:root[data-sticky-header] body > header::after,
 :root[data-sticky-section-headings] .content-tier-header::before,
+:root[data-sticky-section-headings] .section-heading::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--sticky-gap));
+  bottom: 0;
+  z-index: -1;
+  /* Gap strip opaque; element band transparent so the host background shows. */
+  background: linear-gradient(
+    to bottom,
+    var(--bg) 0,
+    var(--bg) var(--sticky-gap),
+    transparent var(--sticky-gap)
+  );
+  /* Side wings only — clip-path is on the pseudo, not the sticky host. */
+  box-shadow: 0 0 0 100vmax var(--bg);
+  clip-path: inset(0 -100vmax);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--sticky-fade-ms, 150ms) ease;
+}
+
+:root[data-sticky-header] body > header::after,
 :root[data-sticky-section-headings] .content-tier-header::after,
-:root[data-sticky-section-headings] .section-heading::before,
 :root[data-sticky-section-headings] .section-heading::after {
   content: "";
   position: absolute;
   left: 50%;
   width: 100vw;
   transform: translateX(-50%);
+  top: 100%;
+  height: var(--sticky-edge-pad, 0.5rem);
   background: var(--bg);
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--sticky-fade-ms, 150ms) ease;
-}
-
-:root[data-sticky-header] body > header::before,
-:root[data-sticky-section-headings] .content-tier-header::before,
-:root[data-sticky-section-headings] .section-heading::before {
-  bottom: 100%;
-  height: var(--sticky-gap);
-}
-
-:root[data-sticky-header] body > header::after,
-:root[data-sticky-section-headings] .content-tier-header::after,
-:root[data-sticky-section-headings] .section-heading::after {
-  top: 100%;
-  height: var(--sticky-edge-pad, 0.5rem);
 }
 
 :root[data-sticky-header] body > header[data-sticky-stuck]::before,
@@ -156,7 +167,7 @@ body > footer {
   opacity: 1;
 }
 
-/* Single hairline + drop shadow on the bottom-most pinned element only. */
+/* Full-viewport hairline + drop shadow on the bottom-most pinned element. */
 :root[data-sticky-header] body > header[data-sticky-stuck-edge]::after,
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck-edge]::after,
 :root[data-sticky-section-headings] .section-heading[data-sticky-stuck-edge]::after {
