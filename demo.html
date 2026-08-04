@@ -39,24 +39,24 @@
       <header class="content-tier-header">
         <h2 id="content-tier-theme-title" class="segment-title" data-page-nav-tier>Theme</h2>
         <p class="content-tier-lead">
-          Site chrome and appearance options.
+          Site chrome and appearance
         </p>
       </header>
 
       <div class="content-tier-body">
         <section class="content-section" aria-labelledby="demo-colours">
-          <h3 id="demo-colours" class="section-title">Colours &amp; sticky chrome</h3>
+          <h3 id="demo-colours" class="section-title">Properties</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">Colours</h3>
             <p class="demo-hint">
-              Core fills and chrome from <code>app/tokens.css</code>. Swatches follow the active theme.
+              Core fills and chrome with swatches following the active theme.
             </p>
             <div class="demo-colour-grid">
               <div class="demo-colour-item">
                 <div class="demo-colour-swatch" style="background: var(--accent)" aria-hidden="true"></div>
                 <div class="demo-colour-meta">
                   <h3 class="demo-colour-name"><code>--accent</code></h3>
-                  <p class="demo-hint">Primary accent — buttons, links, and focus.</p>
+                  <p class="demo-hint">Primary accent: buttons, links, and focus.</p>
                 </div>
               </div>
               <div class="demo-colour-item">
@@ -77,7 +77,7 @@
                 <div class="demo-colour-swatch" style="background: var(--surface)" aria-hidden="true"></div>
                 <div class="demo-colour-meta">
                   <h3 class="demo-colour-name"><code>--surface</code></h3>
-                  <p class="demo-hint">Elevated panels — buttons, menus, modals, tables.</p>
+                  <p class="demo-hint">Elevated panels: buttons, menus, modals, tables.</p>
                 </div>
               </div>
               <div class="demo-colour-item">
@@ -163,21 +163,21 @@
         </section>
       </div>
     </section>
-
+    
     <section class="content-tier" id="content-tier-basic" aria-labelledby="content-tier-basic-title">
       <header class="content-tier-header">
         <h2 id="content-tier-basic-title" class="segment-title" data-page-nav-tier>Basic</h2>
         <p class="content-tier-lead">
-          Simple common blocks & controls.
+          Common control components
         </p>
       </header>
-
+      
       <div class="content-tier-body">
         <section class="content-section" aria-labelledby="demo-actions">
           <h3 id="demo-actions" class="section-title">Actions</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">Buttons</h3>
-            <p class="demo-hint">Standard height by default. Normal badge counts up; small badge is a dot.</p>
+            <p class="demo-hint">Standard button size.</p>
             <div class="demo-row">
               <button type="button" class="btn">Default</button>
               <button type="button" class="btn btn-primary">Primary</button>
@@ -200,7 +200,7 @@
               <button type="button" class="btn-link">Link button</button>
             </div>
             <h3 class="demo-card-title">Slim buttons</h3>
-            <p class="demo-hint">Add <code>btn-slim</code> for compact controls.</p>
+            <p class="demo-hint">Typicall used for icon-only buttons or controls embedded in other elements.</p>
             <div class="demo-row">
               <button type="button" class="btn btn-slim">Slim</button>
               <button type="button" class="btn btn-primary btn-slim">Slim primary</button>
@@ -209,15 +209,6 @@
                 aria-label="Slim icon toggle" data-tooltip="Slim icon button" data-icon="lines"
                 data-icon-class="btn-icon-svg"></button>
               <button type="button" class="btn btn-slim btn-danger">Slim danger</button>
-            </div>
-            <h3 class="demo-card-title">Toolbar</h3>
-            <p class="demo-hint">Group of actions in a flex row.</p>
-            <div class="toolbar" role="toolbar" aria-label="Example actions">
-              <button type="button" class="btn">Undo</button>
-              <button type="button" class="btn">Redo</button>
-              <button type="button" class="btn btn-primary">Save</button>
-              <button type="button" class="btn btn-icon" aria-label="More options" data-tooltip="More options"
-                data-icon="lines" data-icon-class="btn-icon-svg"></button>
             </div>
           </div>
         </section>
@@ -328,7 +319,7 @@
         <section class="content-section" aria-labelledby="demo-sliders">
           <h3 id="demo-sliders" class="section-title">Sliders &amp; steppers</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Slider</h3>
+            <h3 class="demo-card-title">Sliders</h3>
             <div class="demo-fields">
               <div class="demo-grid demo-grid-2">
                 <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
@@ -379,7 +370,8 @@
                 </div>
               </div>
             </div>
-            <h3 class="demo-card-title">Stepper</h3>
+            <hr class="demo-divider" />
+            <h3 class="demo-card-title">Steppers</h3>
             <div class="demo-grid demo-grid-2">
               <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
                 <label class="field-label" for="demo-stepper-input">Integer</label>
@@ -491,7 +483,7 @@
 
               <div class="demo-fields">
                 <h3 class="demo-card-title">Dropdown</h3>
-                <p class="demo-hint">Single-select; optional headers and context lines.</p>
+                <p class="demo-hint">Optional headers and context lines.</p>
                 <div class="dropdown" id="demo-dropdown">
                   <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
                     aria-expanded="false" aria-controls="demo-dropdown-menu">
@@ -540,7 +532,7 @@
 
               <div class="demo-fields">
                 <h3 class="demo-card-title">Multi-select combobox</h3>
-                <p class="demo-hint">Same as combobox; selected labels show as a comma-separated list. Badge shows count.</p>
+                <p class="demo-hint">Selection as a comma-separated list with a count badge.</p>
                 <div class="combobox" id="demo-combobox-multi" data-combobox-multi
                   style="max-width: 14rem">
                   <span class="badge-host" data-badge-label="Cities">
@@ -642,7 +634,7 @@
 
               <div class="demo-fields">
                 <h3 class="demo-card-title">Toggle dropdown</h3>
-                <p class="demo-hint">Multi-select; menu stays open while toggling items. Selection count uses a badge.</p>
+                <p class="demo-hint">Multi-select with a selection count badge.</p>
                 <div class="dropdown" id="demo-toggle-dropdown">
                   <span class="badge-host" data-badge-label="Toggle items">
                     <button type="button" class="btn dropdown-trigger" id="demo-toggle-dropdown-trigger" aria-haspopup="menu"
@@ -755,11 +747,11 @@
         </section>
 
         <section class="content-section" aria-labelledby="demo-info-notifications">
-          <h3 id="demo-info-notifications" class="section-title">Info &amp; notifications</h3>
+          <h3 id="demo-info-notifications" class="section-title">Information & promts</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">Tooltips</h3>
             <p class="demo-hint">
-              Tooltips can use optional position, timer, persistence and success/error.
+              Tooltips can use optional position, timer, persistence and success/error state.
             </p>
             <div class="demo-row">
               <button type="button" class="btn" data-tooltip="Save your changes">
@@ -787,10 +779,10 @@
             </div>
             <div class="demo-row">
               <button type="button" class="btn" id="demo-tooltip-flash-success" data-tooltip="Copy">
-                Flash success
+                Success
               </button>
               <button type="button" class="btn" id="demo-tooltip-flash-error" data-tooltip="Copy">
-                Flash error
+                Error
               </button>
               <button type="button" class="btn" id="demo-tooltip-persistent" data-tooltip="Start tutorial tip">
                 Show persistent
@@ -801,20 +793,16 @@
             </div>
             <hr class="demo-divider" />
             <h3 class="demo-card-title">Callouts</h3>
-            <p class="demo-hint">
-              Accent-edged cards for durable tips and context (not status banners).
-            </p>
             <aside class="callout" role="note">
-              <h4 class="callout-title">Prefer callouts for standing info</h4>
+              <h4 class="callout-title">Relevant information</h4>
               <p class="callout-body">
-                Use a callout when the message should stay on the page. Reach for banners when
-                something just happened (save, error, expire) and may dismiss.
+                Use a callout to highlight important information that should stay on the page.
               </p>
             </aside>
             <hr class="demo-divider" />
             <h3 class="demo-card-title">Banners</h3>
             <p class="demo-hint">
-              All variants shown by default. Trigger auto-dismiss on one banner or all; reset restores the static set.
+              Static and timed notification banners.
             </p>
             <div class="demo-banner-controls">
               <div class="demo-banner-group">
@@ -833,27 +821,27 @@
             <div class="demo-banner-stack">
               <div id="demo-note-banner" class="banner banner-note" role="note">
                 <span class="banner-icon" data-icon="note" data-icon-class="banner-icon-svg"></span>
-                <span class="banner-body">Note — supplementary detail that is easy to skim past.</span>
+                <span class="banner-body"><strong class="banner-body-label">Note:</strong> supplementary detail that is easy to skim past.</span>
               </div>
               <div id="demo-info-banner" class="banner banner-info" role="status">
                 <span class="banner-icon" data-icon="info" data-icon-class="banner-icon-svg"></span>
-                <span class="banner-body">Info — neutral guidance or context.</span>
+                <span class="banner-body"><strong class="banner-body-label">Info:</strong> neutral guidance or context.</span>
               </div>
               <div id="demo-success-banner" class="banner banner-success" role="status">
                 <span class="banner-icon" data-icon="success" data-icon-class="banner-icon-svg"></span>
-                <span class="banner-body">Success — completed actions or positive outcomes.</span>
+                <span class="banner-body"><strong class="banner-body-label">Success:</strong> completed actions or positive outcomes.</span>
               </div>
               <div id="demo-important-banner" class="banner banner-important" role="status">
                 <span class="banner-icon" data-icon="important" data-icon-class="banner-icon-svg"></span>
-                <span class="banner-body">Important — high-priority messages.</span>
+                <span class="banner-body"><strong class="banner-body-label">Important:</strong> high-priority messages.</span>
               </div>
               <div id="demo-warning-banner" class="banner banner-warning" role="status">
                 <span class="banner-icon" data-icon="warning" data-icon-class="banner-icon-svg"></span>
-                <span class="banner-body">Warning — non-blocking notices.</span>
+                <span class="banner-body"><strong class="banner-body-label">Warning:</strong> non-blocking notices.</span>
               </div>
               <div id="demo-error-banner" class="banner banner-error" role="alert">
                 <span class="banner-icon" data-icon="error" data-icon-class="banner-icon-svg"></span>
-                <span class="banner-body">Error — something that needs attention.</span>
+                <span class="banner-body"><strong class="banner-body-label">Error:</strong> something that requires attention.</span>
               </div>
             </div>
             <hr class="demo-divider" />
@@ -876,7 +864,7 @@
       <header class="content-tier-header">
         <h2 id="content-tier-advanced-title" class="segment-title" data-page-nav-tier>Advanced</h2>
         <p class="content-tier-lead">
-          A set of more complex and interactive components.
+          More complex and interactive components
         </p>
       </header>
 
@@ -884,7 +872,7 @@
         <section class="content-section" aria-labelledby="demo-navigation">
           <h3 id="demo-navigation" class="section-title">Navigation</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Segmented control</h3>
+            <h3 class="demo-card-title">Segmented controls</h3>
             <div class="demo-grid demo-grid-2">
               <div class="field">
                 <span class="field-label" id="demo-segmented-view-label">View mode</span>
@@ -936,7 +924,7 @@
             <div class="demo-grid demo-grid-2">
               <div class="demo-fields">
                 <h3 class="demo-card-title">Tabs</h3>
-                <p class="demo-hint">Split related content without leaving the page.</p>
+                <p class="demo-hint">Arrow keys move between tabs when the tab list is focused.</p>
                 <div class="tabs" id="demo-tabs">
                   <div class="tabs-list" role="tablist" aria-label="Example sections">
                     <button type="button" class="tabs-tab" role="tab" id="demo-tab-overview" aria-selected="true"
@@ -960,20 +948,19 @@
                   <div id="demo-tab-panel-details" class="tabs-panel hidden" role="tabpanel" aria-labelledby="demo-tab-details"
                     hidden>
                     <div class="tabs-body">
-                      <p>Details — settings, parameters, or a deeper breakdown.</p>
+                      <p>Settings, parameters, or a deeper breakdown.</p>
                     </div>
                   </div>
                   <div id="demo-tab-panel-notes" class="tabs-panel hidden" role="tabpanel" aria-labelledby="demo-tab-notes"
                     hidden>
                     <div class="tabs-body">
-                      <p>Notes and supplementary text. Arrow keys move between tabs when the tab list is focused.</p>
+                      <p>Notes and supplementary text.</p>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="demo-fields">
                 <h3 class="demo-card-title">Pagination</h3>
-                <p class="demo-hint">Split content across pages and navigate in place.</p>
                 <div class="pagination" id="demo-pagination" data-pagination-default="1">
                   <div class="pagination-panels">
                     <div class="pagination-panel" data-pagination-panel="1" role="region" aria-label="Page 1">
@@ -1030,7 +1017,6 @@
             <div class="demo-grid demo-grid-2">
               <div class="demo-fields">
                 <h3 class="demo-card-title">Expand</h3>
-                <p class="demo-hint">Single disclosure - one trigger, one panel.</p>
                 <div class="expand" id="demo-expand">
                   <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="demo-expand-panel">
                     <span class="expand-notch" aria-hidden="true"></span>
@@ -1039,8 +1025,7 @@
                   <div id="demo-expand-panel" class="expand-panel hidden" hidden>
                     <div class="expand-body">
                       <p>
-                        Extra settings or detail live here. Wire up with <code>initExpand()</code> or
-                        <code>initExpands()</code> for every <code>.expand</code> block.
+                        Extra settings or detail live here.
                       </p>
                     </div>
                   </div>
@@ -1048,9 +1033,6 @@
               </div>
               <div class="demo-fields">
                 <h3 class="demo-card-title">Accordion</h3>
-                <p class="demo-hint">
-                  Stack of headings with panels below - only one section open at a time. Arrow keys move between headers.
-                </p>
                 <div class="accordion" id="demo-accordion" data-accordion-default-open="1">
                   <div class="accordion-item">
                     <h3 class="accordion-heading">
@@ -1114,12 +1096,12 @@
 
         <section class="content-section" aria-labelledby="demo-chips">
           <h3 id="demo-chips" class="section-title">Chips</h3>
-          <p class="demo-hint">Tags for filtering and multi-value input.</p>
+          <p class="demo-hint">Filtering and multi-value input</p>
           <div class="demo-card">
             <div class="demo-grid demo-grid-2">
               <div class="demo-fields">
                 <h3 class="demo-card-title">Filter categories</h3>
-                <p class="demo-hint">Static chips — select to filter the list. They cannot be removed.</p>
+                <p class="demo-hint">Static chips; select to filter.</p>
                 <div class="chip-group" id="demo-chip-filters" role="group" aria-label="Categories">
                   <button type="button" class="chip" aria-pressed="true" data-chip-value="docs">Docs</button>
                   <button type="button" class="chip" aria-pressed="false" data-chip-value="api">API</button>
@@ -1138,7 +1120,7 @@
               </div>
               <div class="demo-fields">
                 <h3 class="demo-card-title">Input filters</h3>
-                <p class="demo-hint">Type a filter and press Enter or comma. Remove with × or Backspace.</p>
+                <p class="demo-hint">Type a filter and press <kbd>Enter</kbd> or <kbd>,</kbd>. Remove with × or <kbd>Backspace</kbd>.</p>
                 <div class="chip-input" id="demo-chip-input">
                   <label class="field-label" for="demo-chip-input-field">Filters</label>
                   <div class="chip-input-control">
@@ -1155,11 +1137,10 @@
 
 
         <section class="content-section" aria-labelledby="demo-feedback">
-          <h3 id="demo-feedback" class="section-title">Progress &amp; spinner</h3>
-          <p class="demo-hint">Status and loading indicators.</p>
+          <h3 id="demo-feedback" class="section-title">Progress &amp; spinners</h3>
+          <p class="demo-hint">Loading indicators</p>
           <div class="demo-card spinner-host" id="demo-spinner-host">
-            <h3 class="demo-card-title">Progress bar</h3>
-            <p class="demo-hint">Determinate, labelled, error, disabled, and indeterminate variants.</p>
+            <h3 class="demo-card-title">Progress bars</h3>
             <div class="segmented-control segmented-control--full" id="demo-progress-bar-variants"
               data-segmented-control-default="simple" aria-label="Progress bar variant">
               <div class="segmented-control-list" role="radiogroup" aria-label="Progress bar variant">
@@ -1296,8 +1277,7 @@
               </div>
             </div>
             <hr class="demo-divider" />
-            <h3 class="demo-card-title">Spinner</h3>
-            <p class="demo-hint">Inline sizes, optional label, and a blocking overlay on this card.</p>
+            <h3 class="demo-card-title">Spinners</h3>
             <div class="demo-row">
               <div class="spinner spinner--sm" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
                 <span class="spinner-indicator" aria-hidden="true"></span>
@@ -1324,10 +1304,10 @@
         </section>
 
         <section class="content-section" aria-labelledby="demo-data-tables">
-          <h3 id="demo-data-tables" class="section-title">Data tables</h3>
+          <h3 id="demo-data-tables" class="section-title">Tables</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">Data table</h3>
-            <p class="demo-hint">Sortable columns and row selection — click a row (or its checkbox) to select. Numeric columns use <code>.table-num</code>.</p>
+            <p class="demo-hint">Sortable columns and selectable rows.</p>
             <div class="table-block table-block--wide" id="demo-table" data-table-sortable data-table-selectable>
               <div class="table-wrap">
                 <table class="table table--striped">
@@ -1406,11 +1386,9 @@
               </div>
             </div>
             <hr class="demo-divider" />
-            <h3 class="demo-card-title">Tabular input</h3>
+            <h3 class="demo-card-title">Input table</h3>
             <p class="demo-hint">
-              Typed columns (text, number, logical). Starts wide enough to demo Fit/Overflow.
-              Paste Excel/TSV from the focused cell (expands as needed; types auto-detect), or use
-              footer Copy / Paste / Paste with Headers. Header reset opens a size picker beside the button.
+              Typed columns, automatic type detection, tabular copy & paste, arrow key navigation and optional body overflow.
             </p>
             <div class="tabular-input" id="demo-tabular-input" aria-label="Sample inventory"></div>
           </div>
@@ -1422,7 +1400,7 @@
       <header class="content-tier-header">
         <h2 id="content-tier-specialised-title" class="segment-title" data-page-nav-tier>Specialised</h2>
         <p class="content-tier-lead">
-          Documentation-heavy patterns.
+          Advanced field and workflow components
         </p>
       </header>
 
@@ -1430,8 +1408,8 @@
         <section class="content-section" aria-labelledby="demo-specialised-inputs">
           <h3 id="demo-specialised-inputs" class="section-title">Specialised inputs</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Colour</h3>
-            <p class="demo-hint">Hex colour field with swatch preview; optional alpha channel.</p>
+            <h3 class="demo-card-title">Colour inputs</h3>
+            <p class="demo-hint">Hex colour fields with swatch preview and optional alpha channel.</p>
             <div class="demo-row">
               <div class="color-input" id="demo-color-input" data-color-input-default="#0969da">
                 <label class="field-label" for="demo-color-input-field">Simple</label>
@@ -1468,14 +1446,14 @@
 
         <section class="content-section" aria-labelledby="demo-specialised-components">
           <h3 id="demo-specialised-components" class="section-title">Specialised navigation</h3>
-          <p class="demo-hint">Multi-step flows and wizard-style navigation.</p>
+          <p class="demo-hint">Multi-step flows and wizard-style navigation</p>
 
           <div class="demo-card">
             <h3 class="demo-card-title">Progress indicator</h3>
-            <p class="demo-hint">Linear wizard flow — horizontal (default) or vertical step list.</p>
+            <p class="demo-hint">Linear wizard flow; horizontal and vertical variants.</p>
             <div class="demo-grid demo-grid-2">
               <div>
-                <p class="demo-hint">Horizontal</p>
+                <label class="field-label">Horizontal</label>
                 <div class="progress-indicator" id="demo-progress-indicator" data-progress-indicator-linear
                   data-progress-indicator-default="0">
                   <ol class="progress-indicator-list">
@@ -1526,7 +1504,7 @@
                 </div>
               </div>
               <div>
-                <p class="demo-hint">Vertical</p>
+                <label class="field-label">Vertical</label>
                 <div class="progress-indicator" id="demo-progress-indicator-vertical" data-progress-indicator-vertical
                   data-progress-indicator-linear data-progress-indicator-default="0">
                   <ol class="progress-indicator-list">
@@ -1585,10 +1563,10 @@
         <section class="content-section" aria-labelledby="demo-files">
           <h3 id="demo-files" class="section-title">Files</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">File dropzone</h3>
+            <h3 class="demo-card-title">File dropzones</h3>
             <div class="demo-grid demo-grid-2">
               <div class="field">
-                <span class="field-label">Single file</span>
+                <span class="field-label">Simple single file</span>
                 <div class="file-dropzone" id="demo-file-dropzone-single">
                   <input type="file" class="file-dropzone-input" hidden />
                   <button type="button" class="file-dropzone-prompt">
@@ -1602,7 +1580,7 @@
                 </div>
               </div>
               <div class="field">
-                <span class="field-label">Multiple images (up to 5)</span>
+                <span class="field-label">Typed multi-file</span>
                 <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
                   data-file-max="5">
                   <input type="file" class="file-dropzone-input" hidden />
@@ -1618,8 +1596,8 @@
               </div>
             </div>
             <hr class="demo-divider" />
-            <h3 class="demo-card-title">File download</h3>
-            <p class="demo-hint">Click a row to download generated file content in the browser.</p>
+            <h3 class="demo-card-title">File downloads</h3>
+            <p class="demo-hint">Sample files are generated in the browser.</p>
             <div class="field">
               <div class="file-download" id="demo-file-download">
                 <ul class="file-download-list">
@@ -1652,10 +1630,7 @@
           <div class="demo-card">
             <h3 class="demo-card-title">Code block</h3>
             <p class="demo-hint">
-              Syntax highlighting via
-              <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
-              Use the controls below to switch interaction mode and toolbar position.
-              Toolbar actions and hover copy/maximise are configured with data attributes.
+              Syntax highlighting with <a href="https://prismjs.com/" target="_blank" rel="noopener noreferrer">Prism</a>.
             </p>
             <div class="demo-code-controls">
               <div class="field">
@@ -1725,9 +1700,9 @@ if __name__ == "__main__":
             <hr class="demo-divider" />
             <h3 class="demo-card-title">Rich text editor</h3>
             <p class="demo-hint">
-              Markdown and WYSIWYG via
+              Markdown and WYSIWYG with
               <a href="https://github.com/nhn/tui.editor" target="_blank" rel="noopener noreferrer">Toast UI Editor</a>.
-              Switch modes with the editor toolbar. Pasted images are stored as base64 data URLs.
+              Pasted images are stored as base64 data URLs.
             </p>
             <div class="field rich-text-editor rich-text-editor--wide" id="demo-rich-text-editor-block"
               data-rich-text-editor-height="320px"
@@ -1754,8 +1729,7 @@ if __name__ == "__main__":
       </div>
       <div class="modal-body">
         <p>
-          Dialogs use focus trap, Escape to close, and backdrop click. Markup lives
-          in HTML; behaviour comes from <code>app/dialog.js</code>.
+          Dialogs use focus trap, <kbd>Escape</kbd> or backdrop click to close.
         </p>
       </div>
       <div class="modal-footer">
@@ -1779,7 +1753,7 @@ if __name__ == "__main__":
         </button>
       </div>
       <div class="modal-body">
-        <p>Are you sure? This demo does not change anything — it only closes the dialog.</p>
+        <p>Are you sure? This will not change anything.</p>
       </div>
       <div class="modal-footer">
         <div class="modal-footer-actions">
