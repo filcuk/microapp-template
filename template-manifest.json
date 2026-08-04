@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-04T21:02:57.137Z",
+  "generatedAt": "2026-08-04T21:05:58.959Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -63,7 +63,7 @@
       "sha256": "c070ae61a509bc2eab3601276790ac290fc93666c94269a2978740f2aca8cb9b"
     },
     "app/components/dialog.js": {
-      "sha256": "694355b84ad1ab31c316886a18cbfe7d5b551880a10ea9303d072c74f5f19155"
+      "sha256": "81103e0d8b908fc495a21f3a503a92c1f01f06a45460fcd4e9f0efe9519a4a33"
     },
     "app/components/dropdown-toggle.js": {
       "sha256": "83a1c4bb73cbe958b2db9f13a4913f4fe62a2449fb8a0f673b31303e78d44e94"
@@ -165,7 +165,7 @@
       "sha256": "baa6d9f0053e7db8082d2f0cbc3c3be5e1d2b475c2cf11fc6389281d76e701be"
     },
     "app/css/layout.css": {
-      "sha256": "d5eec3cb8990862df881ddd37885915dbc76869a81cfe49ddf07fed9d754bb4d"
+      "sha256": "9b875e3e81be8baca79d2c1c58da322103cb8af054bdffa8e635213b0107f353"
     },
     "app/css/overlays.css": {
       "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
@@ -198,7 +198,7 @@
       "sha256": "b5da67eae40806572a48c40a5b22062fdaea9c70de0163677c09c31f9dc5fb26"
     },
     "app/shell/sticky.js": {
-      "sha256": "8df0481ab57ede0fc91fc6e2e9dbb41810d9552ec82395111e591e1fdc8b7e2a"
+      "sha256": "536146e00c2c973503f99ddd2ba6290aa1c2ce0d37d4f55c533a9f1e4677db59"
     },
     "app/shell/theme.js": {
       "sha256": "3b992e024cb2af8673730e9ab8cd8c100bd71fb7b4e6f549c0c8c161a8aee6aa"

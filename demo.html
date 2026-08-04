@@ -857,13 +857,16 @@
             </div>
             <hr class="demo-divider" />
             <h3 class="demo-card-title">Dialogs</h3>
-            <p class="demo-hint">Modal overlays with focus trap.</p>
+            <p class="demo-hint">Modal overlays with focus trap. <kbd>Enter</kbd> activates the default action; destructive dialogs default to Cancel.</p>
             <div class="demo-row">
               <button type="button" class="btn" id="open-info-dialog">
                 Open info dialog
               </button>
               <button type="button" class="btn btn-primary" id="open-confirm-dialog">
                 Open confirm dialog
+              </button>
+              <button type="button" class="btn btn-danger" id="open-danger-dialog">
+                Open danger dialog
               </button>
             </div>
           </div>
@@ -1741,12 +1744,12 @@ if __name__ == "__main__":
       </div>
       <div class="modal-body">
         <p>
-          Dialogs use focus trap, <kbd>Escape</kbd> or backdrop click to close.
+          Dialogs use focus trap, <kbd>Enter</kbd> for the default action, and <kbd>Escape</kbd> or backdrop click to close.
         </p>
       </div>
       <div class="modal-footer">
         <div class="modal-footer-actions">
-          <button type="button" class="btn btn-primary" data-dialog-close>
+          <button type="button" class="btn btn-primary" data-dialog-close data-dialog-default>
             Got it
           </button>
         </div>
@@ -1770,8 +1773,32 @@ if __name__ == "__main__":
       <div class="modal-footer">
         <div class="modal-footer-actions">
           <button type="button" class="btn" data-dialog-close>Cancel</button>
-          <button type="button" class="btn btn-primary" id="confirm-dialog-ok">
+          <button type="button" class="btn btn-primary" id="confirm-dialog-ok" data-dialog-default>
             Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="danger-dialog" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="danger-dialog-title"
+    hidden>
+    <div class="modal-backdrop" data-dialog-close></div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="danger-dialog-title">Delete item?</h2>
+        <button type="button" class="modal-close" aria-label="Close" data-dialog-close>
+          ×
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>This cannot be undone. <kbd>Enter</kbd> defaults to Cancel.</p>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer-actions">
+          <button type="button" class="btn" data-dialog-close data-dialog-default>Cancel</button>
+          <button type="button" class="btn btn-danger" id="danger-dialog-ok">
+            Delete
           </button>
         </div>
       </div>

@@ -364,6 +364,15 @@ document.getElementById("confirm-dialog-ok")?.addEventListener("click", () => {
   confirmDialog?.closeDialog();
 });
 
+const dangerDialog = initDialog({
+  dialogEl: document.getElementById("danger-dialog"),
+  openTriggers: "#open-danger-dialog",
+});
+
+document.getElementById("danger-dialog-ok")?.addEventListener("click", () => {
+  dangerDialog?.closeDialog();
+});
+
 const bannerIds = [
   "demo-note-banner",
   "demo-info-banner",
