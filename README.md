@@ -23,6 +23,7 @@ Test all components: [demo](https://filcuk.github.io/microapp-template/demo.html
 | ----- | -------- |
 | **[demo.html](demo.html)** | Interactive showcase of all components |
 | **[USAGE.md](USAGE.md)** | Forking the template, project layout, local preview, GitHub Pages, component catalogue, and markup/JS examples |
+| **[DEVELOPMENT.md](DEVELOPMENT.md)** | Maintainer tooling: lint/test, README demo scroll capture |
 | **[DESIGN.md](DESIGN.md)** | Design philosophy: action feedback, tooltip modes, aesthetics |
 | **[DISCLAIMER.md](DISCLAIMER.md)** | LLM assistance, warranty, and third-party license notices |
 | **[AGENTS.md](AGENTS.md)** | Rules for AI assistants (LLM skills & workflow automation) working in this repo |
@@ -44,6 +45,8 @@ npm run lint    # Run linter
 npm test        # Run automated tests
 npx serve .     # Start a local server
 ```
+
+Maintainer notes (README scroll capture, etc.): **[DEVELOPMENT.md](DEVELOPMENT.md)**.
 
 ## License
 

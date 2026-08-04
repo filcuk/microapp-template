@@ -55,6 +55,7 @@ npm test
 - [ ] `template.lock.json` `templateVersion` matches
 - [ ] `npm run verify:template` exits 0
 - [ ] USAGE / AGENTS / demo updated for any shipped API (see `usage-docs.mdc`)
+- [ ] Optional: regenerate README scroll media with `npm run capture:demo` when the demo changed materially (see [DEVELOPMENT.md](../../../DEVELOPMENT.md))
 - [ ] `APP_VERSION` still `0.0.0`
 - [ ] **Git tag `vX.Y.Z` created** on the release commit (mandatory — sync fetches by tag)
 
