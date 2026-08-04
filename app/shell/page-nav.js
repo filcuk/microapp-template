@@ -40,7 +40,7 @@ function navOverlapsMain(navEl, mainEl) {
 
 /**
  * @typedef {Object} PageNavOptions
- * @property {string} [headingSelector="main h2[id]"] CSS selector for section headings (must have `id`)
+ * @property {string} [headingSelector="main :is(h2, h3)[id]"] CSS selector for headings (must have `id`)
  * @property {ParentNode} [headingRoot=document] Root to scan for headings
  */
 
@@ -64,7 +64,7 @@ function navOverlapsMain(navEl, mainEl) {
 export function initPageNav(
   navEl,
   {
-    headingSelector = "main h2[id]",
+    headingSelector = "main :is(h2, h3)[id]",
     headingRoot = document,
   } = {}
 ) {

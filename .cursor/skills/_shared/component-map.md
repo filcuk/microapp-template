@@ -25,7 +25,7 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | -------------------- | --------------------- |
 | `layout.css` | Shell, section layout, page nav, footer, theme toggle, sticky |
 | `controls-buttons.css` | Buttons, toolbar (always with shell) |
-| `overlays.css` | tooltip, banner, dialog |
+| `overlays.css` | tooltip, banner, dialog, callout |
 | `code-block.css` | code-block, expandable-surface |
 | `controls-badges.css` | badge |
 | `controls-chips.css` | chip |
@@ -88,6 +88,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | toolbar | `.toolbar` | Layout helper; no JS module |
 | fields | `.field`, `.input`, `.textarea`, … | Base field styles in `controls-fields.css` |
 | section-panel | `.section-panel`, `controls-section-panel.css` | Demo pattern; drop partial if unused |
+| callout | `.callout`, `overlays.css` | CSS-only tip card; keep `overlays.css` if banners/tooltips/dialogs remain |
 | page-nav | `app/shell/page-nav.js`, `layout.css` | Via `initShell` |
 | heading-link | `app/shell/heading-link.js` | Icon: `link` |
 | external-link | `app/shell/external-link.js` | Icon: `arrow-outward` |

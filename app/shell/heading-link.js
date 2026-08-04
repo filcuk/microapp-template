@@ -18,7 +18,7 @@ function headingUrl(heading) {
  */
 export function initHeadingLinks(
   root = document,
-  { selector = "main h2[id]" } = {}
+  { selector = "main :is(h2, h3)[id]" } = {}
 ) {
   for (const heading of root.querySelectorAll(selector)) {
     if (!(heading instanceof HTMLElement)) continue;

@@ -16,7 +16,7 @@ alwaysApply: false
 
 ## When demo needs layout that shell also uses
 
-1. Give it a **generic** name (e.g. `.content-section`, `.content-tier`, `.section-heading`)
+1. Give it a **generic** name (e.g. `.content-section`, `.content-tier`, `.section-title`)
 2. Document it in `USAGE.md` as a reusable layout pattern
 3. Use that generic name in both the demo and shared JS/CSS
 

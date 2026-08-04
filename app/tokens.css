@@ -20,28 +20,33 @@
   --accent-hover: #0550ae;
   --banner-warn-bg: #fff8c5;
   --banner-warn-text: #7d4e00;
-  --banner-warn-border: #7d4e00;
+  --banner-warn-border: #c37500;
   --banner-error-bg: #ffebe9;
   --banner-error-text: #82071e;
   --banner-error-border: #cf222e;
   --banner-info-bg: #ddf4ff;
   --banner-info-text: #0550ae;
-  --banner-info-border: #0550ae;
+  --banner-info-border: #157dff;
   --banner-success-bg: #dafbe1;
-  --banner-success-text: #1f8c40;
-  --banner-success-border: #1f8c40;
+  --banner-success-text: #0e8337;
+  --banner-success-border: #52b768;
   --banner-note-bg: #eaeef2;
-  --banner-note-text: #59636e;
-  --banner-note-border: #59636e;
+  --banner-note-text: #57606b;
+  --banner-note-border: #909aa5;
   --banner-important-bg: #fbefff;
   --banner-important-text: #6639ba;
-  --banner-important-border: #6639ba;
+  --banner-important-border: #995eff;
   --code-bg: #eff1f3;
   --page-width: 1200px;
   --page-padding-x: 1.5rem;
   --page-padding-y: 1rem;
   --sticky-header-offset: 0px;
-  --sticky-gap: 1.25rem;
+  --sticky-gap: 0.5rem;
+  /* Tighter space between pinned tier title and section heading */
+  --sticky-nest-gap: 0.15rem;
+  --sticky-edge-pad: 0.5rem;
+  --sticky-fade-ms: 150ms;
+  --sticky-shadow: rgb(0 0 0 / 0.2);
   --banner-fade-ms: 200ms;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
@@ -63,23 +68,24 @@
   --accent-hover: #79b8ff;
   --banner-warn-bg: #3d2e00;
   --banner-warn-text: #f0c040;
-  --banner-warn-border: #f0c040;
+  --banner-warn-border: #896800;
   --banner-error-bg: #3d1418;
   --banner-error-text: #ff7b72;
   --banner-error-border: #8b2e34;
   --banner-info-bg: #051d4d;
   --banner-info-text: #79c0ff;
-  --banner-info-border: #79c0ff;
+  --banner-info-border: #39658b;
   --banner-success-bg: #033a16;
   --banner-success-text: #4ac25c;
-  --banner-success-border: #4ac25c;
+  --banner-success-border: #23772b;
   --banner-note-bg: #21262d;
-  --banner-note-text: #8b949e;
-  --banner-note-border: #8b949e;
+  --banner-note-text: #a0aab4;
+  --banner-note-border: #565b60;
   --banner-important-bg: #2b1941;
   --banner-important-text: #d2a8ff;
-  --banner-important-border: #d2a8ff;
+  --banner-important-border: #72578e;
   --code-bg: #21262d;
+  --sticky-shadow: rgb(0 0 0 / 0.55);
 }
 
 body {
@@ -138,7 +144,7 @@ a:hover {
     transition: none;
   }
 
-  .banner-is-expiring .banner-expire {
+  .banner-is-expiring::before {
     animation: none;
   }
 

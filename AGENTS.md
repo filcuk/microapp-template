@@ -48,7 +48,7 @@ Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, de
 ## Reuse the design system
 
 - Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, etc.)
-- Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.section-panel`, `.code-block`, `.theme-toggle`
+- Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.callout`, `.section-panel`, `.code-block`, `.theme-toggle`
 - Add or edit inline UI icons in `app/utils/icons-template.js` (catalogue) or `app/utils/icons-app.js` (fork) only — do not duplicate SVG paths in HTML
 - Do not introduce parallel styling systems (Tailwind, CSS-in-JS, component libraries)
 
@@ -73,7 +73,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initShell()` | Standard page boot (footer, theme, page nav, tooltips, external links, heading links, also-see) |
 | `initAlsoSee(root)` | Footer “also see” related-apps menu — no-op when disabled |
 | `initExternalLinks(root)` | Append arrow-outward icon to external links |
-| `initHeadingLinks(root)` | Copy-link button on `main h2[id]` headings |
+| `initHeadingLinks(root)` | Copy-link button on `main :is(h2, h3)[id]` headings |
 | `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with toolbar/surface actions, modes, copy/paste |
 | `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
 | `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
@@ -160,7 +160,7 @@ Keep HTML linking only `styles.css`. Edit tokens, `app/css/app.css`, or the rele
 
 ### Demo vs shared layout
 
-- **Shared layout** (usable in forks): `.content-section`, `.content-tier` / `.content-tier-header` / `.content-tier-title` / `.content-tier-lead` / `.content-tier-body`, `.section-heading`, `.section-panel`, …
+- **Shared layout** (usable in forks): `.content-section`, `.content-tier` / `.content-tier-header` / `.segment-title` / `.content-tier-lead` / `.content-tier-body`, `.section-title`, `.section-panel`, `.callout`, …
 - **Demo-only helpers** (showcase arrangement): `.demo-row`, `.demo-grid`, `.demo-card`, `.demo-hint`, … — fine in `demo.html` / `app/demo.js`
 - Shell and shared CSS/JS must **not** select `demo-*` classes. If sticky, page-nav, or other chrome depends on markup, use generic names and document them in `USAGE.md`. See [`.cursor/rules/demo-isolation.mdc`](.cursor/rules/demo-isolation.mdc).
 

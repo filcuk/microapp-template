@@ -1,3 +1,39 @@
+/* Callouts — static tip / note cards (former tier-header card chrome). */
+
+.callout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  background: var(--section-bg);
+}
+
+.callout-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.callout-body {
+  margin: 0;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.callout-body + .callout-body {
+  margin-top: 0.15rem;
+}
+
+.callout + .callout {
+  margin-top: 0.75rem;
+}
+
 /* Banners */
 
 .banner {
@@ -15,7 +51,9 @@
   overflow: hidden;
 }
 
-.banner-expire {
+/* Always-on expire tint; shrinks while `.banner-is-expiring`. */
+.banner::before {
+  content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -25,11 +63,11 @@
   transform-origin: left center;
 }
 
-:root[data-theme="dark"] .banner-expire {
+:root[data-theme="dark"] .banner::before {
   background: rgba(255, 255, 255, 0.03);
 }
 
-.banner-is-expiring .banner-expire {
+.banner-is-expiring::before {
   animation: banner-expire-shrink var(--banner-expire-ms, 1ms) linear forwards;
 }
 
