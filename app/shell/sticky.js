@@ -9,8 +9,8 @@
  *
  * Stack model (top → bottom while pinned):
  *   site header (top: 0)
- *   → tier header (top: headerOffset + gap)
- *   → section heading (top: headerOffset + tierOffset + gap)
+ *   → tier header / .segment-title (top: headerOffset + gap)
+ *   → .section-title (top: headerOffset + sticky-gap + tierOffset)
  *
  * syncStickyOffsets() recollects participants, remasures offsets, and
  * refreshes stuck state. On scroll, only stuck state is updated (rAF-throttled).
@@ -85,7 +85,7 @@ function collectParticipants() {
       ? [...document.querySelectorAll(".content-tier-header")]
       : [],
     sectionHeadings: sectionsOn
-      ? [...document.querySelectorAll(".section-heading")]
+      ? [...document.querySelectorAll(".section-title")]
       : [],
     tiers: [...document.querySelectorAll(".content-tier")],
   };
@@ -162,7 +162,7 @@ function measureTierPinnedHeight(header) {
     return header.offsetHeight;
   }
 
-  const title = header.querySelector(".content-tier-title");
+  const title = header.querySelector(".segment-title");
   if (!title) return header.offsetHeight;
 
   const styles = getComputedStyle(header);
@@ -192,7 +192,7 @@ function resolvedTopFor(el, headerOffset) {
     return headerOffset + gap;
   }
 
-  // .section-heading — site gap + tier band (height + nest gap inside the var)
+  // .section-title — site gap + tier band (height + nest gap inside the var)
   const tier = el.closest(".content-tier");
   const tierOffset = tier
     ? parseFloat(tier.style.getPropertyValue("--sticky-tier-offset")) || 0

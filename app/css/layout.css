@@ -112,7 +112,7 @@ body > footer {
   display: none;
 }
 
-:root[data-sticky-section-headings] .section-heading {
+:root[data-sticky-section-headings] .section-title {
   position: sticky;
   /* Site gap + tier band (height + nest gap). Nest gap is inside --sticky-tier-offset. */
   top: calc(
@@ -121,7 +121,7 @@ body > footer {
   z-index: 20;
 }
 
-:root[data-sticky-section-headings] .section-heading[data-sticky-stuck] {
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck] {
   z-index: 21;
   background: var(--bg);
   padding-bottom: 0.5rem;
@@ -131,7 +131,7 @@ body > footer {
    the host background shows). Edge pad below carries the stack hairline. */
 :root[data-sticky-header] body > header::before,
 :root[data-sticky-section-headings] .content-tier-header::before,
-:root[data-sticky-section-headings] .section-heading::before {
+:root[data-sticky-section-headings] .section-title::before {
   content: "";
   position: absolute;
   left: 0;
@@ -155,7 +155,7 @@ body > footer {
 }
 
 /* Section headings nest under the tier with a tighter gap fill. */
-:root[data-sticky-section-headings] .section-heading::before {
+:root[data-sticky-section-headings] .section-title::before {
   top: calc(-1 * var(--sticky-nest-gap));
   background: linear-gradient(
     to bottom,
@@ -167,7 +167,7 @@ body > footer {
 
 :root[data-sticky-header] body > header::after,
 :root[data-sticky-section-headings] .content-tier-header::after,
-:root[data-sticky-section-headings] .section-heading::after {
+:root[data-sticky-section-headings] .section-title::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -185,15 +185,15 @@ body > footer {
 :root[data-sticky-header] body > header[data-sticky-stuck]::after,
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]::before,
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]::after,
-:root[data-sticky-section-headings] .section-heading[data-sticky-stuck]::before,
-:root[data-sticky-section-headings] .section-heading[data-sticky-stuck]::after {
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck]::before,
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck]::after {
   opacity: 1;
 }
 
 /* Full-viewport hairline + drop shadow on the bottom-most pinned element. */
 :root[data-sticky-header] body > header[data-sticky-stuck-edge]::after,
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck-edge]::after,
-:root[data-sticky-section-headings] .section-heading[data-sticky-stuck-edge]::after {
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck-edge]::after {
   box-shadow:
     0 1px 0 var(--border),
     0 8px 16px -2px var(--sticky-shadow),
@@ -221,7 +221,7 @@ main {
   gap: 0.75rem;
 }
 
-.section-heading {
+.section-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
@@ -315,7 +315,7 @@ main {
   border-bottom: 1px solid var(--border);
 }
 
-.content-tier-title {
+.segment-title {
   margin: 0;
   font-size: 1.875rem;
   font-weight: 600;

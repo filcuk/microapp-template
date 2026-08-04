@@ -24,6 +24,7 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 
 ### Changed
 
+- Heading outline: site `h1`, tier `h2.segment-title` (was `.content-tier-title`), section `h3.section-title` (was `h2.section-heading`). Page nav and heading links default to `main :is(h2, h3)[id]`.
 - Content tier headers are plain larger titles with an underline instead of accent-edged cards (card chrome moved to `.callout`).
 - Sticky chrome stacks site header, tier header, and section headings; pinned bars fade in gap fill and a single edge hairline/shadow (`data-sticky-stuck` / `data-sticky-stuck-edge`) instead of always-on cover strips.
 - Split inline icons into `icons-template.js` (catalogue), `icons-app.js` (fork-owned, empty here), and merging `icons.js` (public API unchanged).

@@ -46,7 +46,7 @@ initShell({
   alsoSeeUrl: "", // optional remote JSON (topics + links)
   alsoSeeTopics: ["*"], // remote filter: ["*"]=all; ["*","-Topic"]=all except; ["A",""]=whitelist
   alsoSeeIncludeLocal: false, // true = include local alsoSee in full (alone or merged with remote)
-  pageNav: { headingSelector: "main h2[id]" },
+  pageNav: { headingSelector: "main :is(h2, h3)[id]" },
 });
 ```
 
@@ -334,7 +334,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-heading` — see **Sticky chrome**). App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-title` / `.segment-title` — see **Sticky chrome**). Outline: site `h1`; with tiers use `h2.segment-title` then `h3.section-title`; without tiers, `h2.section-title` is fine. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -366,7 +366,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
-| **Heading links** | Hover a `main h2[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
+| **Heading links** | Hover a `main :is(h2, h3)[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
 | **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
@@ -413,7 +413,7 @@ Optional stickiness for the site `<header>` and section titles. Off by default. 
 | Opt-in | Effect |
 | ------ | ------ |
 | `data-sticky-header` | Sticky `body > header` |
-| `data-sticky-section-headings` | Sticky `.section-heading` and `.content-tier-header` (plain tier titles) |
+| `data-sticky-section-headings` | Sticky `.section-title` and `.content-tier-header` (so `.segment-title` stays visible for the tier) |
 
 ```html
 <html lang="en" data-sticky-header data-sticky-section-headings>
@@ -422,12 +422,12 @@ Optional stickiness for the site `<header>` and section titles. Off by default. 
 ```html
 <section class="content-tier">
   <header class="content-tier-header">
-    <h2 class="content-tier-title" data-page-nav-tier>Tier title</h2>
+    <h2 class="segment-title" data-page-nav-tier>Tier title</h2>
     <p class="content-tier-lead">Optional lead.</p>
   </header>
   <div class="content-tier-body">
     <section class="content-section" aria-labelledby="example-heading">
-      <h2 id="example-heading" class="section-heading">Section</h2>
+      <h3 id="example-heading" class="section-title">Section</h3>
       <!-- … -->
     </section>
   </div>
@@ -640,12 +640,13 @@ Embedded SVG should be a full `<svg viewBox="…">…</svg>` (or inner shape mar
 
 ### Heading links
 
-Enabled by `initShell()`. Section headings (`main h2[id]`) show a link icon on hover with a “Get link” tooltip; click copies the full section URL and shows a timer success (“Copied!”) or error tip (icon-only control).
+Enabled by `initShell()`. Headings matching `main :is(h2, h3)[id]` show a link icon on hover with a “Get link” tooltip; click copies the full section URL and shows a timer success (“Copied!”) or error tip (icon-only control).
 
 ```javascript
 import { initHeadingLinks } from "./shell/heading-link.js";
 
-initHeadingLinks(document, { selector: "main h3[id]" });
+initHeadingLinks(document); // default: main :is(h2, h3)[id]
+initHeadingLinks(document, { selector: "main h3[id]" }); // sections only
 ```
 
 ### Buttons
@@ -2064,12 +2065,12 @@ Icons used: `plus`, `delete` (reset), `remove` (row/column), `type-text`, `type-
 
 ### Page navigation
 
-Injected by `initShell()` via [`app/shell/render-shell.js`](app/shell/render-shell.js). Collects `main h2[id]` headings automatically and shows plain section-title links (same weight and colour as `.section-heading`). Give each section heading a unique `id` and optional `.section-heading` class (`scroll-margin-top` is included).
+Injected by `initShell()` via [`app/shell/render-shell.js`](app/shell/render-shell.js). Collects `main :is(h2, h3)[id]` headings automatically and shows plain title links (tier links match `.segment-title` weight; nested section links match `.section-title`). Give each heading a unique `id` and use `h2.segment-title` / `h3.section-title` (`scroll-margin-top` is included).
 
 ```javascript
 import { initShell } from "./shell/shell.js";
 
-initShell(); // default: main h2[id]
+initShell(); // default: main :is(h2, h3)[id]
 
 // Custom heading scan (e.g. h3 under a docs root):
 initShell({
@@ -2092,7 +2093,7 @@ nav?.destroy(); // remove listeners when tearing down
 
 Jump up scrolls to the top; jump down scrolls to the bottom. Jump buttons are always visible at the bottom-right. The section list opens on hover: when the right-edge strip sits in the gutter (clear of `main`), the full strip activates it; when the strip overlaps `main`, only hovering the jump buttons opens it (so page controls stay clickable). Focus inside the panel also keeps it open. The blue ring shows scroll progress. If no matching headings exist, the section list is hidden and only the jump buttons remain.
 
-Mark a top-level nav group by adding `data-page-nav-tier` to its `h2`. The next headings in document order nest under it until another tier heading appears. Tier links use full weight; nested section links are slightly smaller and muted.
+Mark a top-level nav group by adding `data-page-nav-tier` to its `h2.segment-title`. The next headings in document order nest under it until another tier heading appears. Tier links use full weight; nested section links are slightly smaller and muted.
 
 ### Rich text editor (Toast UI)
 
