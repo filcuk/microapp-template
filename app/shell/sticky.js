@@ -6,14 +6,30 @@
  *   data-sticky-section-headings
  *
  * Or call setStickyHeader() / setStickySectionHeadings().
- * syncStickyOffsets() keeps --sticky-header-offset in sync so section
- * headings clear a stuck site header (remeasured on scroll), and toggles
- * data-sticky-header-stuck for cover strips under the pinned site header.
  *
- * `.content-tier-header` and `.section-heading` share one sticky slot. Subheadings
- * in sibling `.content-section`s push each other out natively. Tier headers are
- * pushed out by the first `.section-heading` in that tier (JS adjusts `top`).
+ * Stack model (top → bottom while pinned):
+ *   site header (top: 0)
+ *   → tier header (top: headerOffset + gap)
+ *   → section heading (top: headerOffset + tierOffset + gap)
+ *
+ * syncStickyOffsets() recollects participants, remasures offsets, and
+ * refreshes stuck state. On scroll, only stuck state is updated (rAF-throttled).
+ *
+ * While pinned, each participant gets `data-sticky-stuck`; the bottom-most
+ * pinned element also gets `data-sticky-stuck-edge` (single hairline + shadow).
+ *
+ * CSS variables:
+ *   --sticky-header-offset  on :root — live bottom of the site header (no gap)
+ *   --sticky-tier-offset    on each .content-tier — tier header height + gap
+ *
+ * Below SHORT_VIEWPORT_MAX, tier headers leave the stack (offset forced to 0).
  */
+
+/** Match the short-viewport CSS guard that drops tier headers from the stack. */
+const SHORT_VIEWPORT_MAX = 700;
+
+const STUCK_ATTR = "data-sticky-stuck";
+const STUCK_EDGE_ATTR = "data-sticky-stuck-edge";
 
 function rootEl() {
   return document.documentElement;
@@ -32,94 +48,258 @@ function stickyGapPx(root) {
 }
 
 /**
- * Site header is at the document top, so `top: sticky-gap` would engage at
- * scroll 0. Stick flush (`top: 0`); toggle `data-sticky-header-stuck` so cover
- * strips only paint once the header is actually pinned.
+ * @typedef {Object} StickyParticipants
+ * @property {HTMLElement | null} siteHeader
+ * @property {HTMLElement[]} tierHeaders
+ * @property {HTMLElement[]} sectionHeadings
+ * @property {HTMLElement[]} tiers
  */
-function syncStickyHeaderStuck(root) {
-  const header =
-    root.hasAttribute("data-sticky-header") &&
-    document.querySelector("body > header");
-  const stuck =
-    Boolean(header) &&
-    window.scrollY > 0 &&
-    header.getBoundingClientRect().top <= 0.5;
-  root.toggleAttribute("data-sticky-header-stuck", stuck);
-}
 
-/**
- * Live clearance below the site header chrome (border box + below gap).
- * Remeasured on scroll because the header moves between in-flow and stuck.
- */
-function measureStickyHeaderOffset(root) {
-  if (!root.hasAttribute("data-sticky-header")) return 0;
-  const siteHeader = document.querySelector("body > header");
-  if (!siteHeader) return 0;
-  const gap = stickyGapPx(root);
-  return Math.max(0, siteHeader.getBoundingClientRect().bottom + gap);
-}
+/** @type {StickyParticipants} */
+let participants = {
+  siteHeader: null,
+  tierHeaders: [],
+  sectionHeadings: [],
+  tiers: [],
+};
 
-/** Sticky `top` used by section / tier headings, in CSS pixels. */
-function sectionStickY(root) {
-  const headerOffset =
-    parseFloat(root.style.getPropertyValue("--sticky-header-offset")) || 0;
-  return Math.max(headerOffset, stickyGapPx(root));
-}
+/** @type {ResizeObserver | null} */
+let resizeObserver = null;
 
-function clearTierHeaderPush() {
-  document.querySelectorAll(".content-tier-header").forEach((el) => {
-    el.style.top = "";
-  });
-}
+let listenersBound = false;
+let scrollTicking = false;
+/** Cached gap in px; refreshed on collect / resize. */
+let cachedGapPx = 0;
 
-/**
- * Measure sticky chrome and publish CSS offset variables.
- * Safe to call when stickiness is off (offsets reset to 0).
- */
-export function syncStickyOffsets() {
+function collectParticipants() {
   const root = rootEl();
-  syncStickyHeaderStuck(root);
-  const headerOffset = measureStickyHeaderOffset(root);
-  const next = `${Math.round(headerOffset)}px`;
+  const headerOn = root.hasAttribute("data-sticky-header");
+  const sectionsOn = root.hasAttribute("data-sticky-section-headings");
+
+  participants = {
+    siteHeader:
+      headerOn ? document.querySelector("body > header") : null,
+    tierHeaders: sectionsOn
+      ? [...document.querySelectorAll(".content-tier-header")]
+      : [],
+    sectionHeadings: sectionsOn
+      ? [...document.querySelectorAll(".section-heading")]
+      : [],
+    tiers: [...document.querySelectorAll(".content-tier")],
+  };
+
+  cachedGapPx = stickyGapPx(root);
+  observeResizeTargets();
+}
+
+function observeResizeTargets() {
+  if (!resizeObserver) return;
+
+  resizeObserver.disconnect();
+
+  const { siteHeader, tierHeaders } = participants;
+  if (siteHeader) resizeObserver.observe(siteHeader);
+  for (const el of tierHeaders) {
+    resizeObserver.observe(el);
+  }
+}
+
+/**
+ * Publish `--sticky-header-offset` (border-box bottom of the site header, no gap).
+ * @returns {number} offset in CSS pixels
+ */
+function publishHeaderOffset() {
+  const root = rootEl();
+  const { siteHeader } = participants;
+  let offset = 0;
+
+  if (siteHeader && root.hasAttribute("data-sticky-header")) {
+    offset = Math.max(0, siteHeader.getBoundingClientRect().bottom);
+  }
+
+  const next = `${Math.round(offset)}px`;
   if (root.style.getPropertyValue("--sticky-header-offset") !== next) {
     root.style.setProperty("--sticky-header-offset", next);
   }
-  syncStickyHeadingStack();
+  return offset;
 }
 
 /**
- * Push each tier header out of the sticky slot as its first subheading arrives.
- * Subheading-to-subheading handoff is native sticky (sibling sections).
+ * Publish `--sticky-tier-offset` on each `.content-tier` (header height + gap).
+ * Measured on collect / resize, not every scroll frame.
  */
-export function syncStickyHeadingStack() {
+function publishTierOffsets() {
   const root = rootEl();
+  const sectionsOn = root.hasAttribute("data-sticky-section-headings");
+  const shortViewport = window.innerHeight < SHORT_VIEWPORT_MAX;
+  const gap = cachedGapPx;
 
-  if (!root.hasAttribute("data-sticky-section-headings")) {
-    clearTierHeaderPush();
+  for (const tier of participants.tiers) {
+    const header = tier.querySelector(":scope > .content-tier-header");
+    let offset = 0;
+    if (sectionsOn && header && !shortViewport) {
+      offset = header.offsetHeight + gap;
+    }
+    const next = `${Math.round(offset)}px`;
+    if (tier.style.getPropertyValue("--sticky-tier-offset") !== next) {
+      tier.style.setProperty("--sticky-tier-offset", next);
+    }
+  }
+}
+
+/**
+ * Resolved sticky `top` for a participant, matching the CSS stack.
+ * @param {HTMLElement} el
+ * @param {number} headerOffset
+ * @returns {number}
+ */
+function resolvedTopFor(el, headerOffset) {
+  const gap = cachedGapPx;
+
+  if (el === participants.siteHeader) {
+    return 0;
+  }
+
+  if (el.classList.contains("content-tier-header")) {
+    return headerOffset + gap;
+  }
+
+  // .section-heading
+  const tier = el.closest(".content-tier");
+  const tierOffset = tier
+    ? parseFloat(tier.style.getPropertyValue("--sticky-tier-offset")) || 0
+    : 0;
+  return headerOffset + tierOffset + gap;
+}
+
+/**
+ * Toggle stuck / stuck-edge attributes from live geometry.
+ * @param {number} headerOffset
+ */
+function syncStuckState(headerOffset) {
+  const root = rootEl();
+  const headerOn = root.hasAttribute("data-sticky-header");
+  const sectionsOn = root.hasAttribute("data-sticky-section-headings");
+  const shortViewport = window.innerHeight < SHORT_VIEWPORT_MAX;
+
+  /** @type {HTMLElement[]} */
+  const active = [];
+  if (headerOn && participants.siteHeader) {
+    active.push(participants.siteHeader);
+  }
+  if (sectionsOn) {
+    if (!shortViewport) {
+      active.push(...participants.tierHeaders);
+    }
+    active.push(...participants.sectionHeadings);
+  }
+
+  /** @type {HTMLElement | null} */
+  let edgeEl = null;
+  let edgeBottom = -Infinity;
+
+  for (const el of active) {
+    const top = resolvedTopFor(el, headerOffset);
+    const rect = el.getBoundingClientRect();
+    const stuck = rect.top <= top + 0.5;
+    el.toggleAttribute(STUCK_ATTR, stuck);
+    el.removeAttribute(STUCK_EDGE_ATTR);
+
+    if (stuck && rect.bottom >= edgeBottom) {
+      edgeBottom = rect.bottom;
+      edgeEl = el;
+    }
+  }
+
+  // Clear attributes on participants that are no longer in the active set
+  // (e.g. tier headers after a short-viewport transition).
+  const activeSet = new Set(active);
+  for (const el of [
+    participants.siteHeader,
+    ...participants.tierHeaders,
+    ...participants.sectionHeadings,
+  ]) {
+    if (!el || activeSet.has(el)) continue;
+    el.removeAttribute(STUCK_ATTR);
+    el.removeAttribute(STUCK_EDGE_ATTR);
+  }
+
+  if (edgeEl) {
+    edgeEl.setAttribute(STUCK_EDGE_ATTR, "");
+  }
+}
+
+/** Reset all sticky state and offset variables. */
+function clearStickyState() {
+  const root = rootEl();
+  root.removeAttribute("data-sticky-header-stuck");
+  root.style.setProperty("--sticky-header-offset", "0px");
+
+  for (const el of [
+    participants.siteHeader,
+    ...participants.tierHeaders,
+    ...participants.sectionHeadings,
+  ]) {
+    if (!el) continue;
+    el.removeAttribute(STUCK_ATTR);
+    el.removeAttribute(STUCK_EDGE_ATTR);
+    el.style.top = "";
+  }
+
+  for (const tier of participants.tiers) {
+    tier.style.setProperty("--sticky-tier-offset", "0px");
+  }
+}
+
+/**
+ * Full sync: recollect, remasure offsets, refresh stuck state.
+ * Safe to call when stickiness is off (offsets and attributes reset).
+ */
+export function syncStickyOffsets() {
+  collectParticipants();
+
+  const root = rootEl();
+  const anyOn =
+    root.hasAttribute("data-sticky-header") ||
+    root.hasAttribute("data-sticky-section-headings");
+
+  if (!anyOn) {
+    clearStickyState();
     return;
   }
 
-  const stickY = sectionStickY(root);
+  // Drop the legacy root attribute if a previous version left it behind.
+  root.removeAttribute("data-sticky-header-stuck");
 
-  document.querySelectorAll(".content-tier-header").forEach((tierHeader) => {
-    const tier = tierHeader.closest(".content-tier");
-    const sub = tier?.querySelector(".section-heading");
-    if (!sub) {
-      tierHeader.style.top = "";
-      return;
-    }
+  publishTierOffsets();
+  const headerOffset = publishHeaderOffset();
+  syncStuckState(headerOffset);
+}
 
-    const height = tierHeader.offsetHeight;
-    const subTop = sub.getBoundingClientRect().top;
-    const overlap = stickY + height - subTop;
-    if (overlap <= 0) {
-      tierHeader.style.top = "";
-      return;
-    }
+/** Scroll-path update: offsets that move with scroll + stuck flags. */
+function onScrollFrame() {
+  scrollTicking = false;
 
-    const push = Math.min(overlap, height);
-    tierHeader.style.top = `${Math.round(stickY - push)}px`;
-  });
+  const root = rootEl();
+  if (
+    !root.hasAttribute("data-sticky-header") &&
+    !root.hasAttribute("data-sticky-section-headings")
+  ) {
+    return;
+  }
+
+  const headerOffset = publishHeaderOffset();
+  syncStuckState(headerOffset);
+}
+
+function onScroll() {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(onScrollFrame);
+}
+
+function onResize() {
+  syncStickyOffsets();
 }
 
 /** @param {boolean} enabled */
@@ -144,15 +324,22 @@ export function isStickySectionHeadings() {
   return rootEl().hasAttribute("data-sticky-section-headings");
 }
 
-let listenersBound = false;
-
 /**
  * Sync offsets now and on resize/scroll. Call once from `initShell()`.
  */
 export function initStickyChrome() {
+  if (typeof ResizeObserver !== "undefined" && !resizeObserver) {
+    resizeObserver = new ResizeObserver(() => {
+      publishTierOffsets();
+      const headerOffset = publishHeaderOffset();
+      syncStuckState(headerOffset);
+    });
+  }
+
   syncStickyOffsets();
+
   if (listenersBound) return;
   listenersBound = true;
-  window.addEventListener("resize", syncStickyOffsets);
-  window.addEventListener("scroll", syncStickyOffsets, { passive: true });
+  window.addEventListener("resize", onResize);
+  window.addEventListener("scroll", onScroll, { passive: true });
 }
