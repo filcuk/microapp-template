@@ -87,10 +87,19 @@ body > footer {
   background: var(--bg);
 }
 
+:root[data-sticky-header] body > header[data-sticky-stuck] {
+  z-index: 41;
+}
+
 :root[data-sticky-section-headings] .content-tier-header {
   position: sticky;
   top: calc(var(--sticky-header-offset) + var(--sticky-gap));
+  /* Below site header; above section headings so rising sections slide underneath */
   z-index: 30;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] {
+  z-index: 31;
 }
 
 :root[data-sticky-section-headings] .section-heading {
@@ -98,10 +107,11 @@ body > footer {
   top: calc(
     var(--sticky-header-offset) + var(--sticky-tier-offset, 0px) + var(--sticky-gap)
   );
-  z-index: 31;
+  z-index: 20;
 }
 
 :root[data-sticky-section-headings] .section-heading[data-sticky-stuck] {
+  z-index: 21;
   background: var(--bg);
 }
 
