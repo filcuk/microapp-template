@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-04T21:13:17.175Z",
+  "generatedAt": "2026-08-04T21:19:03.510Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -165,7 +165,7 @@
       "sha256": "baa6d9f0053e7db8082d2f0cbc3c3be5e1d2b475c2cf11fc6389281d76e701be"
     },
     "app/css/layout.css": {
-      "sha256": "9b875e3e81be8baca79d2c1c58da322103cb8af054bdffa8e635213b0107f353"
+      "sha256": "85ad9ad51d8d95f1cfa055f4c7fa98a51764b15b53310b37a65cd7dc9bb9c894"
     },
     "app/css/overlays.css": {
       "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
@@ -195,13 +195,16 @@
       "sha256": "c9c2f5d6a50087483790d3463fd06d95715e9cf0a65719c32bcf1dc71ee94723"
     },
     "app/shell/shell.js": {
-      "sha256": "b5da67eae40806572a48c40a5b22062fdaea9c70de0163677c09c31f9dc5fb26"
+      "sha256": "7bc59c18faeecf7bcce15d586547c00c76fdc908a832c1206d9b4e4fdc2f165a"
     },
     "app/shell/sticky.js": {
       "sha256": "536146e00c2c973503f99ddd2ba6290aa1c2ce0d37d4f55c533a9f1e4677db59"
     },
     "app/shell/theme.js": {
       "sha256": "3b992e024cb2af8673730e9ab8cd8c100bd71fb7b4e6f549c0c8c161a8aee6aa"
+    },
+    "app/shell/title-numbering.js": {
+      "sha256": "71f81d3e79c02e755243aafedd79a05bcd369d74317739fdf412ca6dbe26320c"
     },
     "app/theme-init.js": {
       "sha256": "148c7609d71307e19f47b04282e196716f559033589cafb6563a79a784b7c606"
@@ -210,7 +213,7 @@
       "sha256": "3f9f55c503dec155b391c71c7a3ab3ed5c659de5df5695084831155e51e95f0b"
     },
     "app/tokens.css": {
-      "sha256": "f6058b72332d330a219039c83f5619178e1eb0b8186579b8717355bb45e59141"
+      "sha256": "f5af64936aa40fb6a09a02649bfde69c9bffbd983645854a469120aec0c0caa3"
     },
     "app/utils/also-see-svg.js": {
       "sha256": "af1ff194fde0ba9ffe09edf885fde4562bac5f14592fd2f348c366296447e854"
@@ -274,6 +277,7 @@
       "app/shell/theme.js",
       "app/shell/page-nav.js",
       "app/shell/sticky.js",
+      "app/shell/title-numbering.js",
       "app/shell/also-see.js",
       "app/shell/external-link.js",
       "app/shell/heading-link.js",
@@ -895,6 +899,7 @@
       "shell",
       "page-nav",
       "sticky",
+      "title-numbering",
       "theme-toggle"
     ],
     "controls-buttons.css": [

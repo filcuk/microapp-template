@@ -237,6 +237,13 @@ main {
   );
 }
 
+/* Optional outline prefixes — see app/shell/title-numbering.js */
+.title-number {
+  font-variant-numeric: tabular-nums;
+  /* Trailing nbsp is in the span text for page-nav labels; keep margin tight */
+  margin-inline-end: 0.1em;
+}
+
 .heading-anchor {
   display: inline-flex;
   align-items: center;

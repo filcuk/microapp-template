@@ -60,7 +60,7 @@ Every HTML entry point should:
 2. Link `app/styles.css` (fork entry: `tokens.css` → `css/template.css` → `css/app.css`)
 3. Call `initShell()` from `app/shell/shell.js` as the first step in the page module
 
-`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, theme toggle, sticky chrome offsets, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
+`initShell()` renders shared chrome via `renderPageShell()` (`app/render-shell.js`), then boots icons, external links, heading links, title numbering, theme toggle, sticky chrome offsets, tooltips, and page navigation. Do **not** duplicate footer, theme toggle, or `#page-nav` markup in HTML.
 
 Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })` overrides for forks. Pass `alsoSee: false` or `alsoSee: []` to contribute no local links. Set `alsoSeeUrl` to a JSON URL (topic sections and/or flat links) to load a shared live list. Optional `order` on topics/links sorts ascending (ungrouped flat links always last). Optional `iconSvg` / `iconSvgLight` / `iconSvgDark` embed sanitized inline SVG (wins over URL icons). Local `alsoSee` is included only when `alsoSeeIncludeLocal: true` (alone if there is no remote, or merged with remote — same topic names share one section); it is never used as a fallback and is not filtered by `alsoSeeTopics`. Set `alsoSeeTopics` to filter the **remote** list only: `["*"]` = all topics (only `"*"` means all); `"-Topic"` excludes; named strings whitelist; `""` includes ungrouped; `[]` (or no include entries) = none. Set `appUrl` to this app’s public site URL so a matching entry in the list is omitted.
 
@@ -80,6 +80,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer reaction when in-place is not possible; persistent tutorial tips — see [`DESIGN.md`](DESIGN.md) |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `app/shell/render-shell.js` |
 | `initStickyChrome()` / `setStickyHeader()` / `setStickySectionHeadings()` | Optional sticky site header and section headings (`data-sticky-header`, `data-sticky-section-headings`) |
+| `initTitleNumbering()` / `setTitleNumbering()` / `syncTitleNumbering()` | Optional hierarchical outline prefixes (`data-title-numbering`) |
 | `initTab()` / `initTabs()` | Single tabbed section vs every `.tabs` block |
 | `setHidden()` / `parseBooleanAttr()` | Toggle visibility — always sets **both** `.hidden` class and `hidden` attribute; parse HTML boolean `data-*` values |
 | `initPopupMenu()` | Anchored popup menus (combo chevron, dropdown) |

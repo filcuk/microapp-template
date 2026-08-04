@@ -1,5 +1,6 @@
 import { initShell } from "./shell/shell.js";
 import { setStickyHeader, setStickySectionHeadings } from "./shell/sticky.js";
+import { setTitleNumbering } from "./shell/title-numbering.js";
 import { initDialog } from "./components/dialog.js";
 import { initCombobox } from "./components/combobox.js";
 import { initCombo } from "./components/combo.js";
@@ -348,6 +349,12 @@ initToggle(document.getElementById("demo-sticky-header"), {
 initToggle(document.getElementById("demo-sticky-section-headings"), {
   onChange: ({ checked }) => {
     setStickySectionHeadings(checked);
+  },
+});
+
+initToggle(document.getElementById("demo-title-numbering"), {
+  onChange: ({ checked }) => {
+    setTitleNumbering(checked);
   },
 });
 

@@ -298,6 +298,7 @@ app/
     external-link.js    # Arrow icon on outgoing links
     heading-link.js     # Copy section link on heading hover
     sticky.js           # Optional sticky header / section headings
+    title-numbering.js  # Optional hierarchical outline title prefixes
   utils/
     dom.js              # setHidden(), parseBooleanAttr(), focus helpers
     document-listeners.js
@@ -334,7 +335,8 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-title` / `.segment-title` — see **Sticky chrome**). Outline: site `h1`; with tiers use `h2.segment-title` then `h3.section-title`; without tiers, `h2.section-title` is fine. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-title` / `.segment-title` — see **Sticky chrome**). Outline: site `h1`; with tiers use `h2.segment-title` then `h3.section-title`; without tiers, `h2.section-title` is fine. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. Optional hierarchical title numbering (`data-title-numbering`) — see **Title numbering**. |
+| **Title numbering** | Optional `1.` / `1.1.` / `1.2.1.` prefixes on outline headings (`main :is(h2, h3, h4)[id]`). Off by default. [`app/shell/title-numbering.js`](app/shell/title-numbering.js). |
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -451,6 +453,31 @@ While stickiness is enabled but nothing is pinned yet, appearance is unchanged. 
 
 When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap), `--sticky-gap` between site header and tier, and per-tier `--sticky-tier-offset` (pinned title height + `--sticky-nest-gap` under the tier; the `.content-tier-lead` is hidden while the tier is pinned). Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
 
+### Title numbering
+
+Optional hierarchical prefixes on outline headings (`1.`, `1.1.`, `1.2.1.`, …). Off by default. Opt in with `data-title-numbering` on `<html>`, or call `setTitleNumbering(true)`. `initShell()` applies numbering before page nav so nav labels include the prefixes.
+
+| Opt-in / opt-out | Effect |
+| ---------------- | ------ |
+| `data-title-numbering` on `<html>` | Number `main :is(h2, h3, h4)[id]` in document order |
+| `data-no-title-number` on a heading | Skip that heading |
+
+```html
+<html lang="en" data-title-numbering>
+```
+
+```javascript
+import {
+  setTitleNumbering,
+  syncTitleNumbering,
+} from "./shell/title-numbering.js";
+
+setTitleNumbering(true);
+// After DOM changes that add or remove outline headings:
+syncTitleNumbering();
+```
+
+Numbers are injected as a leading `.title-number` span (picked up by page nav `textContent`). Depth follows heading level relative to the shallowest matched tag (typically `h2` → `1.`, nested `h3` → `1.1.`). Skipped levels fill with `0` (e.g. `h2` then `h4` → `1.` then `1.0.1.`).
 
 ### Dialog
 
