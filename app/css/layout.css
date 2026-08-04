@@ -71,7 +71,13 @@ body > footer {
   color: var(--accent);
 }
 
-/* Optional sticky chrome — opt in via data-sticky-* on :root */
+/* Optional sticky chrome — opt in via data-sticky-* on :root.
+   Stack: site header → tier header → section heading.
+   JS toggles data-sticky-stuck / data-sticky-stuck-edge while pinned. */
+
+.content-tier {
+  --sticky-tier-offset: 0px;
+}
 
 :root[data-sticky-header] body > header {
   position: sticky;
@@ -79,75 +85,81 @@ body > footer {
   top: 0;
   z-index: 40;
   background: var(--bg);
-  border-bottom: 1px solid var(--border);
-}
-
-/* Cover strips only while stuck so they don’t hide in-flow content at rest */
-:root[data-sticky-header-stuck] body > header::before,
-:root[data-sticky-header-stuck] body > header::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  width: 100vw;
-  height: var(--sticky-gap);
-  transform: translateX(-50%);
-  background: var(--bg);
-  pointer-events: none;
-}
-
-:root[data-sticky-header-stuck] body > header::before {
-  bottom: 100%;
-}
-
-:root[data-sticky-header-stuck] body > header::after {
-  top: 100%;
-}
-
-:root[data-sticky-section-headings] .content-tier-header,
-:root[data-sticky-section-headings] .section-heading {
-  position: sticky;
-  top: max(var(--sticky-header-offset), var(--sticky-gap));
 }
 
 :root[data-sticky-section-headings] .content-tier-header {
+  position: sticky;
+  top: calc(var(--sticky-header-offset) + var(--sticky-gap));
   z-index: 30;
 }
 
 :root[data-sticky-section-headings] .section-heading {
+  position: sticky;
+  top: calc(
+    var(--sticky-header-offset) + var(--sticky-tier-offset, 0px) + var(--sticky-gap)
+  );
   z-index: 31;
-  background: var(--bg);
-  box-shadow: 0 1px 0 var(--border);
 }
 
+:root[data-sticky-section-headings] .section-heading[data-sticky-stuck] {
+  background: var(--bg);
+}
+
+/* Gap band above + edge pad below; fade in only while stuck (no layout shift). */
+:root[data-sticky-header] body > header::before,
+:root[data-sticky-header] body > header::after,
 :root[data-sticky-section-headings] .content-tier-header::before,
 :root[data-sticky-section-headings] .content-tier-header::after,
 :root[data-sticky-section-headings] .section-heading::before,
 :root[data-sticky-section-headings] .section-heading::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  height: var(--sticky-gap);
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
   background: var(--bg);
   pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--sticky-fade-ms, 150ms) ease;
 }
 
+:root[data-sticky-header] body > header::before,
 :root[data-sticky-section-headings] .content-tier-header::before,
 :root[data-sticky-section-headings] .section-heading::before {
   bottom: 100%;
+  height: var(--sticky-gap);
 }
 
+:root[data-sticky-header] body > header::after,
 :root[data-sticky-section-headings] .content-tier-header::after,
 :root[data-sticky-section-headings] .section-heading::after {
   top: 100%;
+  height: var(--sticky-edge-pad, 0.5rem);
 }
 
-:root[data-sticky-section-headings] .content-tier-header::before,
-:root[data-sticky-section-headings] .content-tier-header::after {
-  left: 50%;
-  right: auto;
-  width: 100vw;
-  transform: translateX(-50%);
+:root[data-sticky-header] body > header[data-sticky-stuck]::before,
+:root[data-sticky-header] body > header[data-sticky-stuck]::after,
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]::before,
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]::after,
+:root[data-sticky-section-headings] .section-heading[data-sticky-stuck]::before,
+:root[data-sticky-section-headings] .section-heading[data-sticky-stuck]::after {
+  opacity: 1;
+}
+
+/* Single hairline + drop shadow on the bottom-most pinned element only. */
+:root[data-sticky-header] body > header[data-sticky-stuck-edge]::after,
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck-edge]::after,
+:root[data-sticky-section-headings] .section-heading[data-sticky-stuck-edge]::after {
+  box-shadow:
+    0 1px 0 var(--border),
+    0 10px 14px -10px var(--sticky-shadow, rgb(0 0 0 / 0.12));
+}
+
+/* Short viewports: drop the middle stack level so content stays usable. */
+@media (max-height: 700px) {
+  :root[data-sticky-section-headings] .content-tier-header {
+    position: static;
+  }
 }
 
 main {
@@ -168,7 +180,10 @@ main {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  scroll-margin-top: calc(max(var(--sticky-header-offset), var(--sticky-gap)) + 1rem);
+  scroll-margin-top: calc(
+    var(--sticky-header-offset) + var(--sticky-tier-offset, 0px) + var(--sticky-gap) +
+      1rem
+  );
 }
 
 .heading-anchor {
@@ -263,7 +278,7 @@ main {
   font-size: 1.625rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  scroll-margin-top: calc(max(var(--sticky-header-offset), var(--sticky-gap)) + 1.5rem);
+  scroll-margin-top: calc(var(--sticky-header-offset) + var(--sticky-gap) + 1.5rem);
 }
 
 .content-tier-lead {
