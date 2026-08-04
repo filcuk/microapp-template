@@ -400,6 +400,52 @@ main {
   border-top: 1px solid var(--border);
 }
 
+.demo-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  column-gap: 1.25rem;
+  align-items: stretch;
+  /* Bleed into card padding (top) and flex gap + following hr margin (bottom)
+   * so the vertical rule can meet the card edge and the horizontal divider. */
+  margin-block: calc(-1 * var(--panel-padding, 1rem));
+}
+
+.demo-split > .demo-fields {
+  /* Keep content inset while the split box itself full-bleeds vertically. */
+  padding-block: var(--panel-padding, 1rem);
+}
+
+.demo-divider.demo-divider--vertical {
+  width: 1px;
+  height: auto;
+  align-self: stretch;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: var(--border);
+}
+
+@media (max-width: 900px) {
+  .demo-split {
+    grid-template-columns: 1fr;
+    margin-block: 0;
+  }
+
+  .demo-split > .demo-fields {
+    padding-block: 0;
+  }
+
+  .demo-divider.demo-divider--vertical {
+    width: auto;
+    height: 0;
+    align-self: stretch;
+    margin-block: 0.35rem;
+    margin-inline: calc(-1 * var(--panel-padding, 1rem));
+    background-color: transparent;
+    border-top: 1px solid var(--border);
+  }
+}
+
 .demo-colour-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));

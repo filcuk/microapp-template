@@ -185,18 +185,6 @@
               <button type="button" id="icon-toggle-btn" class="btn btn-icon btn-toggle" aria-pressed="false"
                 aria-label="Toggle feature" data-tooltip="Icon button with toggle state" data-icon="lines"
                 data-icon-class="btn-icon-svg"></button>
-              <span class="badge-host" id="demo-badge-host" data-badge-label="Notifications">
-                <button type="button" class="btn" id="demo-badge-btn" aria-label="Notifications, 3">
-                  Notifications
-                </button>
-                <span class="badge" aria-hidden="true">3</span>
-              </span>
-              <span class="badge-host" id="demo-badge-dot-host" data-badge-label="Updates">
-                <button type="button" class="btn" id="demo-badge-dot-btn" aria-label="Updates, updated">
-                  Updates
-                </button>
-                <span class="badge badge--sm" aria-hidden="true"></span>
-              </span>
               <button type="button" class="btn-link">Link button</button>
             </div>
             <h3 class="demo-card-title">Slim buttons</h3>
@@ -749,47 +737,70 @@
         <section class="content-section" aria-labelledby="demo-info-notifications">
           <h3 id="demo-info-notifications" class="section-title">Information & promts</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Tooltips</h3>
-            <p class="demo-hint">
-              Tooltips can use optional position, timer, persistence and success/error state.
-            </p>
-            <div class="demo-row">
-              <button type="button" class="btn" data-tooltip="Save your changes">
-                Hover me
-              </button>
-              <button type="button" class="btn btn-icon" aria-label="Help" data-tooltip="Inline help for this control"
-                data-tooltip-position="right">
-                <span class="help-icon" aria-hidden="true">?</span>
-              </button>
-              <span class="demo-inline">
-                Positions:
-                <button type="button" class="btn btn-link" data-tooltip="Above the trigger" data-tooltip-position="top">
-                  top
-                </button>
-                <button type="button" class="btn btn-link" data-tooltip="Below the trigger" data-tooltip-position="bottom">
-                  bottom
-                </button>
-                <button type="button" class="btn btn-link" data-tooltip="Left of the trigger" data-tooltip-position="left">
-                  left
-                </button>
-                <button type="button" class="btn btn-link" data-tooltip="Right of the trigger" data-tooltip-position="right">
-                  right
-                </button>
-              </span>
-            </div>
-            <div class="demo-row">
-              <button type="button" class="btn" id="demo-tooltip-flash-success" data-tooltip="Copy">
-                Success
-              </button>
-              <button type="button" class="btn" id="demo-tooltip-flash-error" data-tooltip="Copy">
-                Error
-              </button>
-              <button type="button" class="btn" id="demo-tooltip-persistent" data-tooltip="Start tutorial tip">
-                Show persistent
-              </button>
-              <button type="button" class="btn btn-primary" id="demo-tooltip-persistent-dismiss" data-tooltip="Click to dismiss the tip">
-                Dismiss target
-              </button>
+            <div class="demo-split">
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Tooltips</h3>
+                <p class="demo-hint">
+                  Tooltips can use optional position, timer, persistence and success/error state.
+                </p>
+                <div class="demo-row">
+                  <button type="button" class="btn" data-tooltip="Save your changes">
+                    Hover me
+                  </button>
+                  <button type="button" class="btn btn-icon" aria-label="Help" data-tooltip="Inline help for this control"
+                    data-tooltip-position="right">
+                    <span class="help-icon" aria-hidden="true">?</span>
+                  </button>
+                  <span class="demo-inline">
+                    Positions:
+                    <button type="button" class="btn btn-link" data-tooltip="Above the trigger" data-tooltip-position="top">
+                      top
+                    </button>
+                    <button type="button" class="btn btn-link" data-tooltip="Below the trigger" data-tooltip-position="bottom">
+                      bottom
+                    </button>
+                    <button type="button" class="btn btn-link" data-tooltip="Left of the trigger" data-tooltip-position="left">
+                      left
+                    </button>
+                    <button type="button" class="btn btn-link" data-tooltip="Right of the trigger" data-tooltip-position="right">
+                      right
+                    </button>
+                  </span>
+                </div>
+                <div class="demo-row">
+                  <button type="button" class="btn" id="demo-tooltip-flash-success" data-tooltip="Copy">
+                    Success
+                  </button>
+                  <button type="button" class="btn" id="demo-tooltip-flash-error" data-tooltip="Copy">
+                    Error
+                  </button>
+                  <button type="button" class="btn" id="demo-tooltip-persistent" data-tooltip="Start tutorial tip">
+                    Show persistent
+                  </button>
+                  <button type="button" class="btn btn-primary" id="demo-tooltip-persistent-dismiss" data-tooltip="Click to dismiss the tip">
+                    Dismiss target
+                  </button>
+                </div>
+              </div>
+              <hr class="demo-divider demo-divider--vertical" aria-hidden="true" />
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Badges</h3>
+                <p class="demo-hint">Normal badge counts up; small badge is a dot.</p>
+                <div class="demo-row">
+                  <span class="badge-host" id="demo-badge-host" data-badge-label="Notifications">
+                    <button type="button" class="btn" id="demo-badge-btn" aria-label="Notifications, 3">
+                      Notifications
+                    </button>
+                    <span class="badge" aria-hidden="true">3</span>
+                  </span>
+                  <span class="badge-host" id="demo-badge-dot-host" data-badge-label="Updates">
+                    <button type="button" class="btn" id="demo-badge-dot-btn" aria-label="Updates, updated">
+                      Updates
+                    </button>
+                    <span class="badge badge--sm" aria-hidden="true"></span>
+                  </span>
+                </div>
+              </div>
             </div>
             <hr class="demo-divider" />
             <h3 class="demo-card-title">Callouts</h3>
