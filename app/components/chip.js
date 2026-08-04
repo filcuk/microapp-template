@@ -6,21 +6,20 @@
  *     <button type="button" class="chip" aria-pressed="false" data-chip-value="docs">Docs</button>
  *   </div>
  *
- * Input chips (type to add; remove via ×):
+ * Input chips (type to add; click a chip to remove):
  *   <div class="chip-input">
  *     <label class="field-label" for="filters-input">Filters</label>
  *     <div class="chip-input-control">
- *       <div class="chip-input-list"></div>
  *       <input type="text" id="filters-input" class="input chip-input-field"
  *         placeholder="Add filter…" autocomplete="off" />
  *     </div>
+ *     <div class="chip-input-list"></div>
  *   </div>
  *
  * data-chip-input-disabled — disable the input chip field
  */
 
 import { parseBooleanAttr } from "../utils/dom.js";
-import { createIcon } from "../utils/icons.js";
 
 function readChipValue(chipEl) {
   return chipEl.dataset.chipValue ?? chipEl.textContent.trim();
@@ -121,7 +120,7 @@ function tokensFromInput(raw) {
 }
 
 /**
- * Chip input — add chips from text (Enter or comma); remove with × or Backspace.
+ * Chip input — add chips from text (Enter or comma); click a chip to remove.
  * @param {HTMLElement | null} inputEl
  */
 export function initChipInput(inputEl, { values, disabled, onChange } = {}) {
@@ -162,27 +161,23 @@ export function initChipInput(inputEl, { values, disabled, onChange } = {}) {
     listEl.replaceChildren();
 
     for (const item of items) {
-      const chip = document.createElement("span");
+      const chip = document.createElement("button");
+      chip.type = "button";
       chip.className = "chip chip--removable";
       chip.dataset.chipValue = item.value;
+      chip.setAttribute("aria-label", `Remove ${item.label}`);
+      chip.disabled = isDisabled;
 
       const label = document.createElement("span");
       label.className = "chip-label";
       label.textContent = item.label;
 
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "chip-remove";
-      removeBtn.setAttribute("aria-label", `Remove ${item.label}`);
-      removeBtn.disabled = isDisabled;
-      removeBtn.append(createIcon("error", { className: "chip-remove-icon" }));
-      removeBtn.addEventListener("click", (event) => {
+      chip.append(label);
+      chip.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopPropagation();
         removeValue(item.value, { source: "remove" });
       });
 
-      chip.append(label, removeBtn);
       listEl.append(chip);
     }
 
@@ -232,12 +227,6 @@ export function initChipInput(inputEl, { values, disabled, onChange } = {}) {
     if (event.key === "Enter" || event.key === ",") {
       event.preventDefault();
       commitField();
-      return;
-    }
-
-    if (event.key === "Backspace" && fieldEl.value === "" && items.length) {
-      event.preventDefault();
-      removeValue(items[items.length - 1].value, { source: "backspace" });
     }
   }
 
@@ -245,9 +234,8 @@ export function initChipInput(inputEl, { values, disabled, onChange } = {}) {
     commitField({ emitEvent: true });
   }
 
-  function onControlClick(event) {
+  function onControlClick() {
     if (isDisabled) return;
-    if (event.target.closest(".chip-remove")) return;
     fieldEl.focus();
   }
 

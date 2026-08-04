@@ -749,16 +749,16 @@ filters?.clear();
 initChipGroups(document);
 ```
 
-**Input chips** — type a value and press Enter or comma to add; remove with × or Backspace on an empty field.
+**Input chips** — type a value and press Enter or comma to add; chips render below the field. Click a chip to remove it.
 
 ```html
 <div class="chip-input" id="tag-input">
   <label class="field-label" for="tag-input-field">Tags</label>
   <div class="chip-input-control">
-    <div class="chip-input-list"></div>
     <input type="text" id="tag-input-field" class="input chip-input-field"
       placeholder="Add tag…" autocomplete="off" />
   </div>
+  <div class="chip-input-list"></div>
   <input type="hidden" class="chip-input-value" />
 </div>
 ```
@@ -779,7 +779,7 @@ tags?.clear();
 initChipInputs(document);
 ```
 
-`data-chip-value` on selectable chips sets the value (defaults to label text). `data-chip-input-disabled` disables the input field. Remove buttons reuse the existing `error` (cancel) icon.
+`data-chip-value` on selectable chips sets the value (defaults to label text). `data-chip-input-disabled` disables the input field.
 
 ### Inputs
 

@@ -51,7 +51,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | banner | `app/components/banner.js` | `overlays.css` | — | Markup: `note`, `info`, `success`, `important`, `warning`, `error` as used | `dom` | Always via `initShell` (error banner) |
 | dialog | `app/components/dialog.js` | `overlays.css` | — | — | `dom`, `document-listeners` | |
 | badge | `app/components/badge.js` | `controls-badges.css` | — | — | `dom` | |
-| chip | `app/components/chip.js` | `controls-chips.css` | — | `error` (remove) | `dom`, `icons` | |
+| chip | `app/components/chip.js` | `controls-chips.css` | — | — | `dom` | |
 | combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |
 | date-picker | `app/components/date-picker/` (`index.js`, `calendar.js`, `parse.js`) | `controls-fields.css` | — | Markup: `calendar` | `dom`, `document-listeners` | |
 | time-picker | `app/components/time-picker.js` | `controls-fields.css` | — | — | `dom` | Native `type="time"` |
