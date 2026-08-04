@@ -57,42 +57,6 @@ initSegmentedControl(document.getElementById("demo-code-toolbar"), {
   },
 });
 
-const fileDropzoneSingleResult = document.getElementById("demo-file-dropzone-single-result");
-const fileDropzoneMultiResult = document.getElementById("demo-file-dropzone-multi-result");
-const fileDownloadResult = document.getElementById("demo-file-download-result");
-const demoAccordionResult = document.getElementById("demo-accordion-result");
-const demoDatePickerResult = document.getElementById("demo-date-picker-result");
-const demoDatePickerTimeResult = document.getElementById("demo-date-picker-time-result");
-const demoTimePickerResult = document.getElementById("demo-time-picker-result");
-const demoDurationInputResult = document.getElementById("demo-duration-input-result");
-const demoSliderResult = document.getElementById("demo-slider-result");
-const demoStepperResult = document.getElementById("demo-stepper-result");
-const demoTableResult = document.getElementById("demo-table-result");
-const demoTabularInputResult = document.getElementById("demo-tabular-input-result");
-const demoProgressIndicatorResult = document.getElementById("demo-progress-indicator-result");
-const demoProgressIndicatorVerticalResult = document.getElementById("demo-progress-indicator-vertical-result");
-const demoRichTextResult = document.getElementById("demo-rich-text-result");
-
-const demoRichTextEditor = initRichTextEditor(
-  document.getElementById("demo-rich-text-editor-block")
-);
-
-document.getElementById("demo-rich-text-get-markdown")?.addEventListener("click", () => {
-  if (!demoRichTextResult || !demoRichTextEditor) return;
-  const markdown = demoRichTextEditor.getMarkdown();
-  demoRichTextResult.textContent = markdown
-    ? `Markdown (${markdown.length} chars): ${markdown.slice(0, 120)}${markdown.length > 120 ? "…" : ""}`
-    : "Markdown is empty.";
-});
-
-document.getElementById("demo-rich-text-get-html")?.addEventListener("click", () => {
-  if (!demoRichTextResult || !demoRichTextEditor) return;
-  const html = demoRichTextEditor.getHTML();
-  demoRichTextResult.textContent = html
-    ? `HTML (${html.length} chars): ${html.slice(0, 120)}${html.length > 120 ? "…" : ""}`
-    : "HTML is empty.";
-});
-
 function buildDemoTextFile(title) {
   return [
     title,
@@ -105,42 +69,11 @@ function buildDemoTextFile(title) {
   ].join("\n");
 }
 
-function formatFileDropzoneResult(files) {
-  if (!files.length) return "No files selected.";
-  return files.map((file) => file.name).join(", ");
-}
+initRichTextEditor(document.getElementById("demo-rich-text-editor-block"));
 
-initFileDropzone(document.getElementById("demo-file-dropzone-single"), {
-  onFiles: ({ files }) => {
-    if (!fileDropzoneSingleResult) return;
-    fileDropzoneSingleResult.textContent = files.length
-      ? `Selected: ${files[0].name}`
-      : "No file selected.";
-  },
-  onClear: () => {
-    if (fileDropzoneSingleResult) {
-      fileDropzoneSingleResult.textContent = "No file selected.";
-    }
-  },
-});
+initFileDropzone(document.getElementById("demo-file-dropzone-single"));
 
-initFileDropzone(document.getElementById("demo-file-dropzone-multi"), {
-  onFiles: ({ files }) => {
-    if (fileDropzoneMultiResult) {
-      fileDropzoneMultiResult.textContent = formatFileDropzoneResult(files);
-    }
-  },
-  onError: ({ message }) => {
-    if (fileDropzoneMultiResult) {
-      fileDropzoneMultiResult.textContent = message;
-    }
-  },
-  onClear: () => {
-    if (fileDropzoneMultiResult) {
-      fileDropzoneMultiResult.textContent = "No files selected.";
-    }
-  },
-});
+initFileDropzone(document.getElementById("demo-file-dropzone-multi"));
 
 initFileDownload(document.getElementById("demo-file-download"), {
   files: [
@@ -157,129 +90,29 @@ initFileDownload(document.getElementById("demo-file-download"), {
       getContent: () => buildDemoTextFile("Summary"),
     },
   ],
-  onDownload: ({ filename, size }) => {
-    if (fileDownloadResult) {
-      fileDownloadResult.textContent = `Downloaded ${filename} (${size} B).`;
-    }
-  },
 });
 
-initDatePicker(document.getElementById("demo-date-picker"), {
-  onChange: ({ display }) => {
-    if (demoDatePickerResult) {
-      demoDatePickerResult.textContent = display || "No date selected.";
-    }
-  },
-});
+initDatePicker(document.getElementById("demo-date-picker"));
+initDatePicker(document.getElementById("demo-date-picker-time"));
+initTimePicker(document.getElementById("demo-time-picker"));
+initDurationInput(document.getElementById("demo-duration-input"));
 
-initDatePicker(document.getElementById("demo-date-picker-time"), {
-  onChange: ({ display }) => {
-    if (demoDatePickerTimeResult) {
-      demoDatePickerTimeResult.textContent = display || "No date or time selected.";
-    }
-  },
-});
-
-initTimePicker(document.getElementById("demo-time-picker"), {
-  onChange: ({ value }) => {
-    if (demoTimePickerResult) {
-      demoTimePickerResult.textContent = value || "No time selected.";
-    }
-  },
-});
-
-initDurationInput(document.getElementById("demo-duration-input"), {
-  onChange: ({ value }) => {
-    if (demoDurationInputResult) {
-      demoDurationInputResult.textContent = value || "0:00";
-    }
-  },
-});
-
-function updateSliderResult() {
-  if (!demoSliderResult) return;
-  const integer = document.getElementById("demo-slider-integer");
-  const decimal = document.getElementById("demo-slider-decimal");
-  const percentage = document.getElementById("demo-slider-percentage");
-  const parts = [
-    integer ? `Integer: ${integer.querySelector(".slider-value")?.value ?? "—"}` : null,
-    decimal ? `Decimal: ${decimal.querySelector(".slider-value")?.value ?? "—"}` : null,
-    percentage ? `Percentage: ${percentage.querySelector(".slider-value")?.value ?? "—"}%` : null,
-  ].filter(Boolean);
-  demoSliderResult.textContent = parts.join(" · ");
-}
-
-const sliderOnChange = () => updateSliderResult();
-
-initSlider(document.getElementById("demo-slider-integer"), { onChange: sliderOnChange });
-initSlider(document.getElementById("demo-slider-decimal"), { onChange: sliderOnChange });
-initSlider(document.getElementById("demo-slider-percentage"), { onChange: sliderOnChange });
+initSlider(document.getElementById("demo-slider-integer"));
+initSlider(document.getElementById("demo-slider-decimal"));
+initSlider(document.getElementById("demo-slider-percentage"));
 initSlider(document.getElementById("demo-slider-disabled"));
-updateSliderResult();
 
-function updateStepperResult() {
-  if (!demoStepperResult) return;
-  const integer = document.getElementById("demo-stepper");
-  const decimal = document.getElementById("demo-stepper-decimal");
-  const parts = [
-    integer ? `Integer: ${integer.querySelector(".stepper-value")?.value ?? "—"}` : null,
-    decimal ? `Decimal: ${decimal.querySelector(".stepper-value")?.value ?? "—"}` : null,
-  ].filter(Boolean);
-  demoStepperResult.textContent = parts.join(" · ");
-}
-
-const stepperOnChange = () => updateStepperResult();
-
-initStepper(document.getElementById("demo-stepper"), { onChange: stepperOnChange });
-initStepper(document.getElementById("demo-stepper-decimal"), { onChange: stepperOnChange });
-updateStepperResult();
+initStepper(document.getElementById("demo-stepper"));
+initStepper(document.getElementById("demo-stepper-decimal"));
 
 initColorInput(document.getElementById("demo-color-input"));
 initColorInput(document.getElementById("demo-color-input-empty"));
 initColorInput(document.getElementById("demo-color-input-alpha"));
 
-const demoProgressIndicatorLabels = ["Account", "Settings", "Review"];
-const demoProgressIndicatorVerticalLabels = ["Details", "Options", "Confirm"];
+initProgressIndicator(document.getElementById("demo-progress-indicator"));
+initProgressIndicator(document.getElementById("demo-progress-indicator-vertical"));
 
-function wireProgressIndicatorDemo(el, resultEl, labels, finishMessage) {
-  initProgressIndicator(el, {
-    onChange: ({ index }) => {
-      if (!resultEl) return;
-      const label = labels[index] ?? `Step ${index + 1}`;
-      resultEl.textContent = `Step ${index + 1} of ${labels.length}: ${label}`;
-    },
-    onFinish: () => {
-      if (resultEl) resultEl.textContent = finishMessage;
-    },
-  });
-}
-
-wireProgressIndicatorDemo(
-  document.getElementById("demo-progress-indicator"),
-  demoProgressIndicatorResult,
-  demoProgressIndicatorLabels,
-  "Finished on Review."
-);
-wireProgressIndicatorDemo(
-  document.getElementById("demo-progress-indicator-vertical"),
-  demoProgressIndicatorVerticalResult,
-  demoProgressIndicatorVerticalLabels,
-  "Finished on Confirm."
-);
-
-initAccordion(document.getElementById("demo-accordion"), {
-  onToggle: ({ trigger, isOpen }) => {
-    if (!demoAccordionResult) return;
-    const label = trigger.querySelector(".accordion-label")?.textContent?.trim();
-    if (isOpen && label) {
-      demoAccordionResult.textContent = `Open: ${label}`;
-      return;
-    }
-    const accordion = document.getElementById("demo-accordion");
-    const openLabel = accordion?.querySelector(".accordion-item.is-open .accordion-label")?.textContent?.trim();
-    demoAccordionResult.textContent = openLabel ? `Open: ${openLabel}` : "All sections collapsed.";
-  },
-});
+initAccordion(document.getElementById("demo-accordion"));
 
 initTriStateCheckbox(document.getElementById("demo-checkbox-tristate"));
 
@@ -290,25 +123,15 @@ initToggle(document.getElementById("demo-toggle-disabled"));
 
 initSegmentedControl(document.getElementById("demo-segmented-view"));
 
-const demoChipFiltersResult = document.getElementById("demo-chip-filters-result");
 const demoChipFilterResults = document.getElementById("demo-chip-filter-results");
-const demoChipInputResult = document.getElementById("demo-chip-input-result");
 
 function syncChipFilterList(values) {
   if (!demoChipFilterResults) return;
   const selected = new Set(values);
   const items = [...demoChipFilterResults.querySelectorAll("[data-chip-category]")];
-  let visible = 0;
   for (const item of items) {
     const show = selected.size === 0 || selected.has(item.dataset.chipCategory);
     item.hidden = !show;
-    if (show) visible += 1;
-  }
-  if (demoChipFiltersResult) {
-    demoChipFiltersResult.textContent =
-      selected.size === 0
-        ? `Showing all ${items.length} items`
-        : `Showing ${visible} of ${items.length} · Filters: ${[...selected].join(", ")}`;
   }
 }
 
@@ -321,43 +144,12 @@ syncChipFilterList(
   )
 );
 
-function updateChipInputResult(values) {
-  if (!demoChipInputResult) return;
-  demoChipInputResult.textContent = values.length
-    ? `Active filters: ${values.join(", ")}`
-    : "Active filters: none";
-}
-
-initChipInput(document.getElementById("demo-chip-input"), {
-  onChange: ({ values }) => updateChipInputResult(values),
-});
-updateChipInputResult(
-  (document.querySelector("#demo-chip-input .chip-input-value")?.value || "")
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean)
-);
+initChipInput(document.getElementById("demo-chip-input"));
 
 initSegmentedControl(document.getElementById("demo-segmented-panels"));
 initPagination(document.getElementById("demo-pagination"));
 
-initTable(document.getElementById("demo-table"), {
-  onSort: ({ columnIndex, direction, sortType }) => {
-    if (!demoTableResult) return;
-    demoTableResult.textContent = `Sorted column ${columnIndex + 1} (${sortType}, ${direction}).`;
-  },
-  onSelectionChange: ({ selectedIds }) => {
-    if (!demoTableResult) return;
-    demoTableResult.textContent = selectedIds.length
-      ? `Selected: ${selectedIds.join(", ")}`
-      : "No rows selected.";
-  },
-});
-
-function formatTabularInputResult(columns, rows, source) {
-  const types = columns.map((col) => col.type).join(", ");
-  return `${columns.length} columns (${types}) · ${rows.length} rows · ${source}`;
-}
+initTable(document.getElementById("demo-table"));
 
 initTabularInput(document.getElementById("demo-tabular-input"), {
   columns: [
@@ -437,10 +229,6 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
       },
     },
   ],
-  onChange: ({ columns, rows, source }) => {
-    if (!demoTabularInputResult) return;
-    demoTabularInputResult.textContent = formatTabularInputResult(columns, rows, source);
-  },
 });
 
 initSegmentedControl(document.getElementById("demo-progress-bar-variants"));
@@ -550,32 +338,17 @@ document.getElementById("demo-badge-dot-btn")?.addEventListener("click", () => {
   demoBadgeDot?.setValue(!on);
 });
 
-const demoStickyChromeResult = document.getElementById("demo-sticky-chrome-result");
-
-function updateStickyChromeResult() {
-  if (!demoStickyChromeResult) return;
-  const headerOn = document.documentElement.hasAttribute("data-sticky-header");
-  const sectionsOn = document.documentElement.hasAttribute("data-sticky-section-headings");
-  demoStickyChromeResult.textContent = `Header: ${headerOn ? "on" : "off"} · Section headings: ${
-    sectionsOn ? "on" : "off"
-  }`;
-}
-
 initToggle(document.getElementById("demo-sticky-header"), {
   onChange: ({ checked }) => {
     setStickyHeader(checked);
-    updateStickyChromeResult();
   },
 });
 
 initToggle(document.getElementById("demo-sticky-section-headings"), {
   onChange: ({ checked }) => {
     setStickySectionHeadings(checked);
-    updateStickyChromeResult();
   },
 });
-
-updateStickyChromeResult();
 
 initDialog({
   dialogEl: document.getElementById("info-dialog"),
