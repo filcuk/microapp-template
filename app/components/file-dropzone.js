@@ -11,15 +11,17 @@ import { createIcon } from "../utils/icons.js";
  *       <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
  *       <span class="file-dropzone-text">
  *         <span class="file-dropzone-primary">Drop files here</span>
- *         <span class="file-dropzone-secondary">or browse</span>
+ *         <span class="file-dropzone-secondary">select to browse</span>
  *       </span>
  *     </button>
  *     <ul class="file-dropzone-list hidden" hidden></ul>
  *   </div>
  *
- * data-file-accept — passed to the hidden input's `accept`
+ * data-file-accept — passed to the hidden input's `accept`; also shown in the prompt meta line
  * data-file-multiple — presence or "true" for multiple files
- * data-file-max — optional maximum file count
+ * data-file-max — optional maximum file count; shown in the prompt meta line
+ *
+ * Init fills `.file-dropzone-meta` (created if missing) with allowed types and file count.
  */
 
 function formatFileSize(bytes) {
@@ -30,6 +32,56 @@ function formatFileSize(bytes) {
     return `${kb.toFixed(kb < 10 ? 1 : 0)} KB`;
   }
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/** Human-readable label for one `accept` token (e.g. `.json` → `JSON`, `image/*` → `Images`). */
+function formatAcceptToken(token) {
+  const value = token.trim();
+  if (!value) return "";
+
+  if (value.startsWith(".")) {
+    return value.slice(1).toUpperCase();
+  }
+
+  const slash = value.indexOf("/");
+  if (slash !== -1) {
+    const type = value.slice(0, slash);
+    const subtype = value.slice(slash + 1);
+    if (subtype === "*") {
+      if (type === "image") return "Images";
+      if (type === "audio") return "Audio";
+      if (type === "video") return "Videos";
+      return `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
+    }
+    return subtype.toUpperCase();
+  }
+
+  return value;
+}
+
+function formatAcceptLabel(accept) {
+  if (!accept?.trim()) return "";
+  return accept
+    .split(",")
+    .map(formatAcceptToken)
+    .filter(Boolean)
+    .join(", ");
+}
+
+function formatFilesLabel(max) {
+  if (max && Number.isFinite(max) && max > 0) {
+    return `Up to ${max} file${max === 1 ? "" : "s"}`;
+  }
+  return "Multiple files";
+}
+
+function formatConstraintsLabel(acceptTypes, isMultiple, max) {
+  const parts = [];
+  const acceptLabel = formatAcceptLabel(acceptTypes);
+  if (acceptLabel) parts.push(acceptLabel);
+  // Single + unrestricted is the default — no note needed.
+  if (isMultiple) parts.push(formatFilesLabel(max));
+  return parts.join(" · ");
 }
 
 function syncInputFiles(input, files) {
@@ -58,6 +110,22 @@ export function initFileDropzone(
 
   if (acceptTypes) input.accept = acceptTypes;
   input.multiple = isMultiple;
+
+  const constraintsLabel = formatConstraintsLabel(acceptTypes, isMultiple, max);
+  const text = prompt.querySelector(".file-dropzone-text") ?? prompt;
+  let meta = text.querySelector(".file-dropzone-meta");
+  if (constraintsLabel) {
+    if (!meta) {
+      meta = document.createElement("span");
+      meta.className = "file-dropzone-meta";
+      text.append(meta);
+    }
+    meta.textContent = constraintsLabel;
+    setHidden(meta, false);
+  } else if (meta) {
+    meta.textContent = "";
+    setHidden(meta, true);
+  }
 
   /** @type {File[]} */
   let files = [];

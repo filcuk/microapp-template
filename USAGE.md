@@ -977,7 +977,7 @@ Drag-and-drop or click-to-browse file picker. Selected files appear in a list wi
     <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
     <span class="file-dropzone-text">
       <span class="file-dropzone-primary">Drop files here</span>
-      <span class="file-dropzone-secondary">or browse</span>
+      <span class="file-dropzone-secondary">select to browse</span>
     </span>
   </button>
   <ul class="file-dropzone-list hidden" hidden></ul>
@@ -1001,6 +1001,8 @@ initFileDropzones(document); // wire every `.file-dropzone`
 ```
 
 `data-file-accept` maps to the hidden input's `accept`. `data-file-multiple` enables multi-select. `data-file-max` caps how many files can be added (extra files are trimmed; `onError` is called).
+
+On init, the prompt shows a `.file-dropzone-meta` line when there is something non-default to communicate: allowed types (from `accept`) and/or a multi-file count (`Up to N files` or `Multiple files`). A plain single-file dropzone with no `accept` shows no meta line. The element is created if missing.
 
 ### File download
 

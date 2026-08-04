@@ -58,6 +58,11 @@
   color: var(--muted);
 }
 
+.file-dropzone-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 .file-dropzone-list {
   list-style: none;
   margin: 0;

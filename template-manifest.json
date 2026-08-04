@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-04T20:50:23.396Z",
+  "generatedAt": "2026-08-04T21:02:57.137Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -39,7 +39,7 @@
       "sha256": "9b982c2ac7f694df706189460ab2f780abfe7563d880e64c21d78622edfa24e3"
     },
     "app/components/chip.js": {
-      "sha256": "aee9db97405994b75cb7ed24e4b63561119b9efaa351e35dcd3b9f8130013a73"
+      "sha256": "ea5960e31a19da5a29c99a93d8d8659e4d1b6f41dbc1b44159ccdb19b02c56fe"
     },
     "app/components/code-block.js": {
       "sha256": "007526ca24962ac1c5d71efef266b93841ce91b1e235b2bb6207d71637c1e024"
@@ -84,7 +84,7 @@
       "sha256": "c2530b73c16516bd4d1e785a96f66ca9db169afbf5a9ba4bae4310fec70641cd"
     },
     "app/components/file-dropzone.js": {
-      "sha256": "22d03366fb2fefdbf8bbdfa68ca9c1fec46516d4eef19428aec65033f71c2de5"
+      "sha256": "d397a2b989468b7bf91f49db3cabaa340ad3c9a2fede9f00cb9ed9aad6ee884d"
     },
     "app/components/pagination.js": {
       "sha256": "d0717ac330d8042264ac3c6913e3cfca1bc1dea9f18b80836e18a380eaa24e99"
@@ -141,7 +141,7 @@
       "sha256": "6ab1963647512862f430187e76cab5429d66718b1ad049f0573fdce1174545d1"
     },
     "app/css/controls-chips.css": {
-      "sha256": "1e3000417144db5c4f874b044cf2496a701549cf338ffe824b5bab0fae4c10e8"
+      "sha256": "6df72b7c841860121c30bc9ebb7f773871d2b45b2a42efe04a643b652ca9c87c"
     },
     "app/css/controls-disclosure.css": {
       "sha256": "004a7221835f092d451c0550de95e736989fb47ff3421ee4c1a2338893bbdb1c"
@@ -150,7 +150,7 @@
       "sha256": "34018d8c2ac7ff5c633f06d85e89a73486abfaf114b2b469c7f4219f4a3698ce"
     },
     "app/css/controls-file.css": {
-      "sha256": "6cbac29aa47ce8699f4b76fcb673b568c93500a0db444c7f5022c2a0c642f218"
+      "sha256": "9a82e4417c7aba5dc622a3c8c93ea2c96deda064f3fed2657240df6e35782a4e"
     },
     "app/css/controls-menus.css": {
       "sha256": "83c2f5fbd9e4164de0ea5d558b22cbfd03f7632df4d994583bac4279627e4844"
@@ -189,7 +189,7 @@
       "sha256": "656dd0292c1e551dded5afc6c93855ec332f3be49955c20db007954e1e453985"
     },
     "app/shell/page-nav.js": {
-      "sha256": "30c6b63de5263d873c71db4596e259ebf622ac5ce613fafb99433be0b2cc8ca6"
+      "sha256": "aef37fd63efd4589457bdbd1e859e980c73835dadcb4af752c99c4a8ea004ee9"
     },
     "app/shell/render-shell.js": {
       "sha256": "c9c2f5d6a50087483790d3463fd06d95715e9cf0a65719c32bcf1dc71ee94723"
@@ -198,7 +198,7 @@
       "sha256": "b5da67eae40806572a48c40a5b22062fdaea9c70de0163677c09c31f9dc5fb26"
     },
     "app/shell/sticky.js": {
-      "sha256": "7f25141e789c5cdad12dbf0f125b0ebdb0f80aa740f0963d514a3cf3263e207b"
+      "sha256": "8df0481ab57ede0fc91fc6e2e9dbb41810d9552ec82395111e591e1fdc8b7e2a"
     },
     "app/shell/theme.js": {
       "sha256": "3b992e024cb2af8673730e9ab8cd8c100bd71fb7b4e6f549c0c8c161a8aee6aa"
