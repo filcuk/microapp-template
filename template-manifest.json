@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-04T21:05:58.959Z",
+  "generatedAt": "2026-08-04T21:13:17.175Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -72,7 +72,7 @@
       "sha256": "10ea68596439e5598ed2b5a328f70709aa2c29c2442b49fd1829414cb3ff480f"
     },
     "app/components/duration-input.js": {
-      "sha256": "0ea58cf4524eba47cbacd953df3cf1eb9007133fa7368eb8930a8ddd856dab5b"
+      "sha256": "879d465a75f6e912dbfcabf0b4902c2ef96800c0b9b84259f98bcd87b90341f9"
     },
     "app/components/expand.js": {
       "sha256": "9b3f0ac0631f11ea21fd3b998de9bd1d33115e437860f3456171a3a070bde437"
@@ -129,7 +129,7 @@
       "sha256": "e2f9c98506e8fffe580f864ea12ca023cb8026bb24ec48578f2c948f793f124a"
     },
     "app/components/tooltip.js": {
-      "sha256": "444ad6884bc68a6de1ea7d72f17e812c5962f5fcd5c78851bb2623dace9f0297"
+      "sha256": "38a44fbab0bf598709a4539554a9b04435e490603da6ccdce78a8be9451cea3b"
     },
     "app/css/code-block.css": {
       "sha256": "437c4840d29c902948368a1cb7ddd68fe4be73ef3068fc2ccdae24d6c95a62ee"
@@ -147,7 +147,7 @@
       "sha256": "004a7221835f092d451c0550de95e736989fb47ff3421ee4c1a2338893bbdb1c"
     },
     "app/css/controls-fields.css": {
-      "sha256": "34018d8c2ac7ff5c633f06d85e89a73486abfaf114b2b469c7f4219f4a3698ce"
+      "sha256": "7a011a86a847bffa0f5814b9134135f01fa08793f518b72db83ece9abbdcc1bd"
     },
     "app/css/controls-file.css": {
       "sha256": "9a82e4417c7aba5dc622a3c8c93ea2c96deda064f3fed2657240df6e35782a4e"
