@@ -497,6 +497,9 @@ flashTooltip(copyBtn, {
 // Persistent mode — tutorial; dismiss only when intended
 const tipId = showPersistentTooltip(nextBtn, {
   text: "Click Next to continue",
+  // Optional: override data-tooltip-position so a hover tip on the same
+  // control can sit on another side (e.g. persistent top, hover bottom).
+  position: "top",
 });
 nextBtn.addEventListener(
   "click",

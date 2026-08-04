@@ -315,6 +315,7 @@ document.getElementById("demo-tooltip-persistent")?.addEventListener("click", ()
   demoPersistentTipId = showPersistentTooltip(demoPersistentTarget, {
     text: "Click this button to dismiss",
     tone: "info",
+    position: "top",
   });
 });
 
