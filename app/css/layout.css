@@ -176,7 +176,8 @@ body > footer {
 :root[data-sticky-section-headings] .section-heading[data-sticky-stuck-edge]::after {
   box-shadow:
     0 1px 0 var(--border),
-    0 10px 14px -10px var(--sticky-shadow, rgb(0 0 0 / 0.12));
+    0 8px 16px -2px var(--sticky-shadow),
+    0 18px 36px -10px var(--sticky-shadow);
 }
 
 /* Short viewports: drop the middle stack level so content stays usable. */

@@ -44,7 +44,7 @@
   --sticky-gap: 1.25rem;
   --sticky-edge-pad: 0.5rem;
   --sticky-fade-ms: 150ms;
-  --sticky-shadow: rgb(0 0 0 / 0.12);
+  --sticky-shadow: rgb(0 0 0 / 0.2);
   --banner-fade-ms: 200ms;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
@@ -83,7 +83,7 @@
   --banner-important-text: #d2a8ff;
   --banner-important-border: #72578e;
   --code-bg: #21262d;
-  --sticky-shadow: rgb(0 0 0 / 0.45);
+  --sticky-shadow: rgb(0 0 0 / 0.55);
 }
 
 body {
