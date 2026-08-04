@@ -23,6 +23,7 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 
 ### Changed
 
+- Sticky chrome stacks site header, tier header, and section headings; pinned bars fade in gap fill and a single edge hairline/shadow (`data-sticky-stuck` / `data-sticky-stuck-edge`) instead of always-on cover strips.
 - Split inline icons into `icons-template.js` (catalogue), `icons-app.js` (fork-owned, empty here), and merging `icons.js` (public API unchanged).
 - Split styles into fork-owned `styles.css` / `css/app.css` and template partial index `css/template.css`.
 - Toggle dropdown selection count uses a **badge** on the trigger instead of appending `(n)` to the label text.
@@ -30,6 +31,11 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 - Also-see menu lays topics out full width on a shared grid, choosing the column count that leaves the fewest empty cells.
 - Banner borders again use `--banner-*-border` tokens (no `color-mix`); warn / info / note / important / success borders align with their text colours in light and dark. `--banner-error-border` is unchanged (shared as the danger accent on buttons and invalid fields).
 - Success banner text/border retune (`#1f8c40` / `#4ac25c`) also affects `.tooltip--success`, which uses the same tokens.
+
+### Fixed
+
+- Sticky site-header border disappearing under the sticky cover strip once pinned.
+- Sticky section/tier cover strips masking content while headings were still in flow.
 
 ## [0.9.0] - 2026-07-26
 

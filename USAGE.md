@@ -407,7 +407,7 @@ initThemeToggle(document.getElementById("theme-toggle"));
 
 ### Sticky chrome
 
-Optional stickiness for the site `<header>` and section titles. Off by default. Opt in with attributes on `<html>` (or the JS helpers). `initShell()` syncs scroll offsets on load and resize.
+Optional stickiness for the site `<header>` and section titles. Off by default. Opt in with attributes on `<html>` (or the JS helpers). `initShell()` syncs offsets and stuck state on load, resize, and scroll.
 
 | Opt-in | Effect |
 | ------ | ------ |
@@ -446,7 +446,10 @@ setStickySectionHeadings(true);
 syncStickyOffsets();
 ```
 
-When both are on, section headings sit below the site header via `--sticky-header-offset`. The site header sticks flush to the top of the viewport; section and tier bands keep a `--sticky-gap` inset above and below (background extends into those gaps so content does not show through). Tier headers stick until a `.section-heading` reaches them and pushes them out the top; subheadings push each other the same way as you move between sections.
+While stickiness is enabled but nothing is pinned yet, appearance is unchanged. As each bar pins, it receives `data-sticky-stuck` (gap fill fades in above and below) and the bottom-most pinned element also gets `data-sticky-stuck-edge` (hairline + drop shadow).
+
+When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap) and per-tier `--sticky-tier-offset` (tier header height + `--sticky-gap`). CSS adds `--sticky-gap` between levels. Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
+
 
 ### Dialog
 
