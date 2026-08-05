@@ -244,6 +244,8 @@ Forks that predate lock/sync should bootstrap first — see [How to bootstrap pr
 
 Then open `http://localhost:3000` and, if kept, `http://localhost:3000/demo.html`.
 
+Maintainer tooling for regenerating README demo scroll media is documented in **[DEVELOPMENT.md](DEVELOPMENT.md)**.
+
 ---
 
 ## GitHub Pages deployment
