@@ -24,7 +24,13 @@ See [USAGE.md](USAGE.md) for forking, Pages deploy, and the component catalogue.
 
 Regenerate a looping scroll of [`demo.html`](demo.html) for README media. This is **dev-only** tooling under `scripts/` — it does not ship in `app/` or change the demo page for users.
 
-The Playwright script injects capture layout at runtime: hides site header / footer / page-nav, **always turns off sticky headers** (site + section/tier), and duplicates `#main` so one full scroll height loops seamlessly.
+Behaviour:
+
+- **Removes** site header, footer, and page-nav from the DOM (not just hidden)
+- Turns off sticky section headers
+- **Duplicates `#main`** so after the last section you overscroll into the first section again (infinite carousel)
+- Captures **screenshots only while scrolling** — no frozen lead-in at the top or hold on the footer
+- Encodes **animated WebP** by default (optional WebM / GIF via `--format`); looping the file should look endless
 
 ### Prerequisites
 
@@ -33,7 +39,7 @@ npm ci
 npx playwright install chromium   # once per machine
 ```
 
-Optional: install [ffmpeg](https://ffmpeg.org/) on `PATH` to also write a GIF (e.g. `winget install ffmpeg` on Windows). Without ffmpeg the script still writes WebM and prints a conversion command.
+Encoding uses system `ffmpeg` if on `PATH`, otherwise the bundled [`ffmpeg-static`](https://www.npmjs.com/package/ffmpeg-static) binary from `npm ci`.
 
 ### Record
 
@@ -41,32 +47,30 @@ Optional: install [ffmpeg](https://ffmpeg.org/) on `PATH` to also write a GIF (e
 npm run capture:demo
 ```
 
-Default output:
-
 | File | Notes |
 | ---- | ----- |
-| `res/demo-scroll.webm` | Always written |
-| `res/demo-scroll.gif` | When ffmpeg is available |
-
-Defaults: light theme, viewport **900×560**, **14s** scroll for one loop pass.
+| `res/demo-scroll.webp` | Default — animated WebP, infinite loop |
+| `res/demo-scroll.webm` | With `--format webm` |
+| `res/demo-scroll.gif` | With `--format gif` |
 
 ### Useful options
 
 ```bash
 npm run capture:demo -- --help
-npm run capture:demo -- --preview              # headed browser for OBS / manual capture
-npm run capture:demo -- --headed               # show Chromium while recording
+npm run capture:demo -- --preview              # headed browser; inspect the carousel seam
+npm run capture:demo -- --headed               # show Chromium while capturing frames
 npm run capture:demo -- --theme dark
-npm run capture:demo -- --duration 16000 --width 900 --height 560
-npm run capture:demo -- --no-loop              # skip duplicating #main
-npm run capture:demo -- --no-gif               # WebM only
+npm run capture:demo -- --format webm
+npm run capture:demo -- --format gif
+npm run capture:demo -- --format webp,gif      # several at once
+npm run capture:demo -- --duration 16000 --fps 20 --width 900 --height 560
 npm run capture:demo -- --basename demo-scroll-dark --theme dark
 ```
 
 | Path | Role |
 | ---- | ---- |
-| [`scripts/capture-demo-scroll.mjs`](scripts/capture-demo-scroll.mjs) | CLI, server, Playwright record, ffmpeg GIF |
-| [`scripts/lib/capture-demo-prepare.mjs`](scripts/lib/capture-demo-prepare.mjs) | Injected browser prep (hide chrome, clone `#main`) |
+| [`scripts/capture-demo-scroll.mjs`](scripts/capture-demo-scroll.mjs) | CLI, frame capture, ffmpeg encode |
+| [`scripts/lib/capture-demo-prepare.mjs`](scripts/lib/capture-demo-prepare.mjs) | Injected prep (strip chrome, clone `#main`) |
 
 ### Release habit
 
