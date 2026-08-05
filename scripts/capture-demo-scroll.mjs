@@ -66,9 +66,9 @@ function parseArgs(argv) {
   const out = {
     theme: "dark",
     width: "1400",
-    height: "1200",
+    height: "1100",
     duration: "50000",
-    fps: "24",
+    fps: "60",
     dpr: "1",
     outDir: DEFAULT_OUT_DIR,
     basename: "demo-scroll",
@@ -77,6 +77,12 @@ function parseArgs(argv) {
     headless: true,
     loop: true,
     settleMs: "800",
+    webpQuality: "85",
+    webpFps: "10",
+    webpMaxMb: "10",
+    webpWidth: "800",
+    reuseFrames: false,
+    cleanFrames: false,
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -84,6 +90,8 @@ function parseArgs(argv) {
     if (arg === "--preview") out.preview = true;
     else if (arg === "--no-loop") out.loop = false;
     else if (arg === "--headed") out.headless = false;
+    else if (arg === "--reuse-frames") out.reuseFrames = true;
+    else if (arg === "--clean-frames") out.cleanFrames = true;
     else if (arg === "--theme") out.theme = argv[++i] || "light";
     else if (arg === "--width") out.width = argv[++i] || out.width;
     else if (arg === "--height") out.height = argv[++i] || out.height;
@@ -93,6 +101,10 @@ function parseArgs(argv) {
     else if (arg === "--out-dir") out.outDir = path.resolve(argv[++i] || out.outDir);
     else if (arg === "--basename") out.basename = argv[++i] || out.basename;
     else if (arg === "--settle-ms") out.settleMs = argv[++i] || out.settleMs;
+    else if (arg === "--webp-quality") out.webpQuality = argv[++i] || out.webpQuality;
+    else if (arg === "--webp-fps") out.webpFps = argv[++i] || out.webpFps;
+    else if (arg === "--webp-max-mb") out.webpMaxMb = argv[++i] || out.webpMaxMb;
+    else if (arg === "--webp-width") out.webpWidth = argv[++i] || out.webpWidth;
     else if (arg === "--format" || arg === "--formats") {
       const raw = String(argv[++i] || "");
       out.formats = parseFormats(raw);
@@ -155,13 +167,22 @@ Options:
   --width <px>         Viewport width (default: 1400; px suffix ok)
   --height <px>        Viewport height (default: 1200; px suffix ok)
   --duration <ms>      Scroll duration for one loop (default: 50000)
-  --fps <n>            Capture / encode frame rate (default: 24)
-  --dpr <n>            Device scale factor (default: 1)
+  --fps <n>            Capture / encode frame rate (default: 60)
+  --dpr <n>            Device scale factor (default: 1) — sharper capture pixels,
+                       NOT output downscale (use --webp-width for that)
   --out-dir <path>     Output directory (default: res/)
   --basename <name>    File basename (default: demo-scroll)
   --settle-ms <ms>     Wait after load before capture (default: 800; not in video)
   --format <list>      Output format(s): webp (default), webm, gif
                        Comma-separated for several, e.g. webp,gif or webm
+  --webp-quality <n>   WebP -quality start (default: 50; 0–100)
+  --webp-fps <n>       WebP delivery fps (default: 5; capture can stay higher)
+  --webp-max-mb <n>    Re-encode WebP until under this size (default: 10; 0 = off)
+  --webp-width <px>    Encode width (default: same as --width). E.g. capture 1400,
+                       export 900: --width 1400 --webp-width 900
+  --reuse-frames       Skip browser capture; encode from existing
+                       res/.demo-scroll-frames (see --clean-frames)
+  --clean-frames       Delete the frames directory after encode (default: keep)
   --preview            Open prepared page (no recording)
   --headed             Show the browser while capturing frames
   --no-loop            Do not duplicate #main
@@ -323,88 +344,281 @@ async function openPreparedDemo(page, demoUrl, { loop, settleMs }) {
 }
 
 /**
- * Capture only in-motion frames. Uses N frames at y = (i/N)*scrollBy so the
- * last frame is just before the seam; looping back to frame 0 continues the
- * carousel without a frozen hold at the top or bottom.
+ * Capture only in-motion frames at exact scroll offsets (constant spatial
+ * sampling → constant playback speed). Uses CDP from-surface screenshots so
+ * each frame is a finished composite, not a mid-paint snapshot.
+ *
+ * Frame count is at least duration×fps, and also high enough that each step
+ * stays ≤ ~0.35% of the viewport height (avoids visible “choppy” jumps).
  *
  * @param {import("playwright").Page} page
  * @param {number} scrollBy
  * @param {number} durationMs
  * @param {number} fps
+ * @param {number} viewportHeight
  * @param {string} framesDir
- * @returns {Promise<number>} frame count
+ * @returns {Promise<{ frameCount: number, encodeFps: number }>}
  */
-async function captureScrollFrames(page, scrollBy, durationMs, fps, framesDir) {
+async function captureScrollFrames(
+  page,
+  scrollBy,
+  durationMs,
+  fps,
+  viewportHeight,
+  framesDir
+) {
   fs.rmSync(framesDir, { recursive: true, force: true });
   fs.mkdirSync(framesDir, { recursive: true });
 
-  const frameCount = Math.max(2, Math.round((durationMs / 1000) * fps));
-  await page.evaluate((y) => window.scrollTo(0, y), 0);
+  const maxStepPx = Math.max(1, viewportHeight * 0.0035);
+  const minFramesForSmoothness = Math.ceil(scrollBy / maxStepPx);
+  const framesForDuration = Math.round((durationMs / 1000) * fps);
+  const frameCount = Math.max(2, framesForDuration, minFramesForSmoothness);
+  const encodeFps = frameCount / (durationMs / 1000);
+
+  if (frameCount > framesForDuration) {
+    console.log(
+      `Boosting to ${frameCount} frames (~${encodeFps.toFixed(1)} fps) so each scroll step stays ≤ ${maxStepPx.toFixed(1)}px`
+    );
+  }
+
+  const client = await page.context().newCDPSession(page);
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.style.scrollBehavior = "auto";
+  });
 
   for (let i = 0; i < frameCount; i++) {
-    const y = (scrollBy * i) / frameCount;
-    await page.evaluate((scrollY) => window.scrollTo(0, scrollY), y);
-    // Let layout/paint settle for this scroll position.
-    await page.evaluate(
-      () =>
-        new Promise((resolve) => {
-          requestAnimationFrame(() => requestAnimationFrame(resolve));
-        })
-    );
+    const y = Math.round((scrollBy * i) / frameCount);
+    await page.evaluate(async (scrollY) => {
+      window.scrollTo(0, scrollY);
+      // Two frames: layout then paint. Retry scroll if the engine clamped late.
+      await new Promise((r) => requestAnimationFrame(r));
+      await new Promise((r) => requestAnimationFrame(r));
+      if (Math.abs(window.scrollY - scrollY) > 1) {
+        window.scrollTo(0, scrollY);
+        await new Promise((r) => requestAnimationFrame(r));
+      }
+    }, y);
+
+    const shot = await client.send("Page.captureScreenshot", {
+      format: "jpeg",
+      quality: 92,
+      fromSurface: true,
+      captureBeyondViewport: false,
+    });
     const file = path.join(
       framesDir,
-      `frame-${String(i).padStart(5, "0")}.png`
+      `frame-${String(i).padStart(5, "0")}.jpg`
     );
-    await page.screenshot({
-      path: file,
-      type: "png",
-      animations: "disabled",
-      caret: "hide",
-    });
-    if (i === 0 || i === frameCount - 1 || (i + 1) % Math.max(1, Math.round(fps)) === 0) {
-      console.log(`  frame ${i + 1}/${frameCount} @ y=${Math.round(y)}`);
+    fs.writeFileSync(file, Buffer.from(shot.data, "base64"));
+
+    if (
+      i === 0 ||
+      i === frameCount - 1 ||
+      (i + 1) % Math.max(1, Math.round(encodeFps)) === 0
+    ) {
+      console.log(`  frame ${i + 1}/${frameCount} @ y=${y}`);
     }
   }
 
-  return frameCount;
+  await client.detach().catch(() => {});
+  return { frameCount, encodeFps };
+}
+
+const FRAMES_META_NAME = "frames-meta.json";
+
+/**
+ * @param {string} framesDir
+ * @returns {string[]}
+ */
+function listFrameFiles(framesDir) {
+  if (!fs.existsSync(framesDir)) return [];
+  return fs
+    .readdirSync(framesDir)
+    .filter((name) => /^frame-\d{5}\.jpg$/i.test(name))
+    .sort();
+}
+
+/**
+ * @param {string} framesDir
+ * @param {object} meta
+ */
+function writeFramesMeta(framesDir, meta) {
+  fs.writeFileSync(
+    path.join(framesDir, FRAMES_META_NAME),
+    `${JSON.stringify(meta, null, 2)}\n`,
+    "utf8"
+  );
+}
+
+/**
+ * @param {string} framesDir
+ * @param {number} durationMsFallback
+ * @returns {{ frameCount: number, encodeFps: number, meta: object | null }}
+ */
+function loadExistingFrames(framesDir, durationMsFallback) {
+  const files = listFrameFiles(framesDir);
+  if (files.length < 2) {
+    throw new Error(
+      `No reusable frames in ${framesDir} (need frame-00000.jpg …).\n` +
+        `Run a full capture once first (frames are kept by default; use --clean-frames to delete).`
+    );
+  }
+
+  const metaPath = path.join(framesDir, FRAMES_META_NAME);
+  /** @type {object | null} */
+  let meta = null;
+  if (fs.existsSync(metaPath)) {
+    try {
+      meta = JSON.parse(fs.readFileSync(metaPath, "utf8"));
+    } catch {
+      meta = null;
+    }
+  }
+
+  const frameCount = files.length;
+  const durationMs =
+    meta && Number(meta.durationMs) > 0
+      ? Number(meta.durationMs)
+      : durationMsFallback;
+  const encodeFps =
+    meta && Number(meta.encodeFps) > 0
+      ? Number(meta.encodeFps)
+      : frameCount / (durationMs / 1000);
+
+  return { frameCount, encodeFps, meta };
 }
 
 /**
  * @param {string} ffmpegBin
+ * @param {string[]} args
+ * @param {string} label
+ */
+function runFfmpeg(ffmpegBin, args, label) {
+  const result = spawnSync(ffmpegBin, args, {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  if (result.status !== 0) {
+    throw new Error(result.stderr || `ffmpeg ${label} failed`);
+  }
+}
+
+/**
+ * Encode animated WebP sized for README (~10MB by default).
+ * Capture can stay at 60fps; delivery fps/quality/scale are reduced as needed.
+ *
+ * Note: libwebp takes `-quality` (not `-q:v`). Wrong flags were previously ignored,
+ * which produced huge near-default encodes.
+ *
+ * @param {string} ffmpegBin
  * @param {string} framesDir
  * @param {string} webpPath
- * @param {number} fps
- * @param {number} width
+ * @param {object} options
+ * @param {number} options.captureFps
+ * @param {number} options.width  Initial encode width (may shrink under maxMb)
+ * @param {number} options.quality
+ * @param {number} options.deliveryFps
+ * @param {number} options.maxMb  0 disables size targeting
  */
-function encodeWebpFromFrames(ffmpegBin, framesDir, webpPath, fps, width) {
-  const pattern = path.join(framesDir, "frame-%05d.png");
-  const result = spawnSync(
-    ffmpegBin,
-    [
-      "-y",
-      "-framerate",
-      String(fps),
-      "-i",
-      pattern,
-      "-vf",
-      `fps=${fps},scale=${width}:-1:flags=lanczos`,
-      "-an",
-      "-c:v",
-      "libwebp",
-      "-lossless",
-      "0",
-      "-compression_level",
-      "4",
-      "-q:v",
-      "75",
-      "-loop",
-      "0",
-      webpPath,
-    ],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+function encodeWebpFromFrames(ffmpegBin, framesDir, webpPath, options) {
+  const captureFps = Number(options.captureFps);
+  const width = Number(options.width);
+  let quality = Number(options.quality);
+  let deliveryFps = Math.min(Number(options.deliveryFps), captureFps);
+  let encodeWidth = width;
+  const maxMb = Number(options.maxMb);
+
+  if (!Number.isFinite(captureFps) || captureFps <= 0) {
+    throw new Error(`encodeWebpFromFrames: invalid captureFps ${options.captureFps}`);
+  }
+  if (!Number.isFinite(width) || width <= 0) {
+    throw new Error(`encodeWebpFromFrames: invalid width ${options.width}`);
+  }
+  if (!Number.isFinite(quality)) quality = 58;
+  if (!Number.isFinite(deliveryFps) || deliveryFps <= 0) deliveryFps = 30;
+
+  const pattern = path.join(framesDir, "frame-%05d.jpg");
+
+  /**
+   * @param {number} q
+   * @param {number} fpsOut
+   * @param {number} w
+   */
+  function encodeOnce(q, fpsOut, w) {
+    const evenWidth = w % 2 === 0 ? w : w - 1;
+    // libwebp: use -quality (global -q:v is ignored for this encoder).
+    // Do not use -cr_threshold: on scrolling UIs it encodes false "unchanged"
+    // blocks as transparency → white holes in many players.
+    runFfmpeg(
+      ffmpegBin,
+      [
+        "-y",
+        "-framerate",
+        String(captureFps),
+        "-i",
+        pattern,
+        "-vf",
+        `fps=${fpsOut},scale=${evenWidth}:-1:flags=lanczos,format=yuv420p`,
+        "-an",
+        "-c:v",
+        "libwebp_anim",
+        "-lossless",
+        "0",
+        "-preset",
+        "drawing",
+        "-quality",
+        String(q),
+        "-loop",
+        "0",
+        "-fps_mode",
+        "cfr",
+        webpPath,
+      ],
+      "webp encode"
+    );
+  }
+
+  encodeOnce(quality, deliveryFps, encodeWidth);
+  let sizeMb = fs.statSync(webpPath).size / (1024 * 1024);
+  console.log(
+    `  webp pass q=${quality} fps=${deliveryFps} w=${encodeWidth} → ${sizeMb.toFixed(2)} MB`
   );
-  if (result.status !== 0) {
-    throw new Error(result.stderr || "ffmpeg webp encode failed");
+
+  if (!(maxMb > 0)) return;
+
+  let guard = 0;
+  while (sizeMb > maxMb && guard < 16) {
+    guard += 1;
+    if (quality > 40) {
+      quality = Math.max(40, quality - 6);
+    } else if (deliveryFps > 18) {
+      deliveryFps = Math.max(18, deliveryFps - 4);
+    } else if (encodeWidth > 900) {
+      encodeWidth = Math.max(900, Math.round(encodeWidth * 0.88));
+    } else if (quality > 28) {
+      quality = Math.max(28, quality - 4);
+    } else if (deliveryFps > 12) {
+      deliveryFps = Math.max(12, deliveryFps - 3);
+    } else {
+      console.warn(
+        `  webp still ${sizeMb.toFixed(2)} MB after compression passes (target ${maxMb} MB)`
+      );
+      break;
+    }
+
+    encodeOnce(quality, deliveryFps, encodeWidth);
+    sizeMb = fs.statSync(webpPath).size / (1024 * 1024);
+    console.log(
+      `  webp pass q=${quality} fps=${deliveryFps} w=${encodeWidth} → ${sizeMb.toFixed(2)} MB`
+    );
+  }
+
+  if (maxMb > 0 && sizeMb > maxMb) {
+    console.warn(
+      `  warning: final webp is ${sizeMb.toFixed(2)} MB (over ${maxMb} MB budget)`
+    );
   }
 }
 
@@ -415,31 +629,35 @@ function encodeWebpFromFrames(ffmpegBin, framesDir, webpPath, fps, width) {
  * @param {number} fps
  */
 function encodeWebmFromFrames(ffmpegBin, framesDir, webmPath, fps) {
-  const pattern = path.join(framesDir, "frame-%05d.png");
-  const result = spawnSync(
-    ffmpegBin,
-    [
-      "-y",
-      "-framerate",
-      String(fps),
-      "-i",
-      pattern,
-      "-an",
-      "-c:v",
-      "libvpx-vp9",
-      "-b:v",
-      "0",
-      "-crf",
-      "32",
-      "-pix_fmt",
-      "yuv420p",
-      webmPath,
-    ],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
-  );
-  if (result.status !== 0) {
-    // Fallback if vp9 is unavailable.
-    const fallback = spawnSync(
+  const pattern = path.join(framesDir, "frame-%05d.jpg");
+  try {
+    runFfmpeg(
+      ffmpegBin,
+      [
+        "-y",
+        "-framerate",
+        String(fps),
+        "-i",
+        pattern,
+        "-an",
+        "-c:v",
+        "libvpx-vp9",
+        "-b:v",
+        "0",
+        "-crf",
+        "28",
+        "-pix_fmt",
+        "yuv420p",
+        "-vsync",
+        "cfr",
+        "-r",
+        String(fps),
+        webmPath,
+      ],
+      "webm vp9 encode"
+    );
+  } catch {
+    runFfmpeg(
       ffmpegBin,
       [
         "-y",
@@ -451,18 +669,17 @@ function encodeWebmFromFrames(ffmpegBin, framesDir, webmPath, fps) {
         "-c:v",
         "libvpx",
         "-b:v",
-        "1M",
+        "2M",
         "-pix_fmt",
         "yuv420p",
+        "-vsync",
+        "cfr",
+        "-r",
+        String(fps),
         webmPath,
       ],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+      "webm vp8 encode"
     );
-    if (fallback.status !== 0) {
-      throw new Error(
-        fallback.stderr || result.stderr || "ffmpeg webm encode failed"
-      );
-    }
   }
 }
 
@@ -474,34 +691,32 @@ function encodeWebmFromFrames(ffmpegBin, framesDir, webmPath, fps) {
  * @param {number} width
  */
 function encodeGifFromFrames(ffmpegBin, framesDir, gifPath, fps, width) {
-  const pattern = path.join(framesDir, "frame-%05d.png");
+  const pattern = path.join(framesDir, "frame-%05d.jpg");
   const palette = path.join(framesDir, "palette.png");
-  const gifFps = Math.min(fps, 12);
+  // GIF is heavy; cap display rate but keep motion sampling from source frames.
+  const gifFps = Math.min(Math.max(12, Math.round(fps / 2)), 24);
 
-  const paletteResult = spawnSync(
+  runFfmpeg(
     ffmpegBin,
     [
       "-y",
       "-framerate",
-      String(gifFps),
+      String(fps),
       "-i",
       pattern,
       "-vf",
       `fps=${gifFps},scale=${width}:-1:flags=lanczos,palettegen=max_colors=192:stats_mode=full`,
       palette,
     ],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+    "gif palettegen"
   );
-  if (paletteResult.status !== 0) {
-    throw new Error(paletteResult.stderr || "ffmpeg palettegen failed");
-  }
 
-  const gifResult = spawnSync(
+  runFfmpeg(
     ffmpegBin,
     [
       "-y",
       "-framerate",
-      String(gifFps),
+      String(fps),
       "-i",
       pattern,
       "-i",
@@ -512,11 +727,8 @@ function encodeGifFromFrames(ffmpegBin, framesDir, gifPath, fps, width) {
       "0",
       gifPath,
     ],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }
+    "gif encode"
   );
-  if (gifResult.status !== 0) {
-    throw new Error(gifResult.stderr || "ffmpeg gif encode failed");
-  }
 }
 
 /**
@@ -543,7 +755,8 @@ async function createCaptureContext(playwright, options) {
     viewport: { width, height },
     deviceScaleFactor: dpr,
     colorScheme: theme === "dark" ? "dark" : "light",
-    reducedMotion: "no-preference",
+    // Match tokens.css reduced-motion path so UI transitions cannot mid-frame.
+    reducedMotion: "reduce",
   });
   await installCaptureInit(context, theme);
   return { browser, context };
@@ -580,95 +793,154 @@ async function main() {
     );
   }
   const settleMs = parsePositiveInt(args.settleMs, "--settle-ms");
+  const webpQuality = parsePositiveInt(args.webpQuality, "--webp-quality");
+  if (webpQuality > 100) {
+    throw new Error("--webp-quality must be 0–100");
+  }
+  const webpFps = parsePositiveInt(args.webpFps, "--webp-fps");
+  const webpMaxMb = Number(String(args.webpMaxMb).trim());
+  if (!Number.isFinite(webpMaxMb) || webpMaxMb < 0) {
+    throw new Error("--webp-max-mb must be a number ≥ 0 (0 disables targeting)");
+  }
+  const webpWidthRaw = String(args.webpWidth ?? "").trim();
+  const webpWidth = webpWidthRaw
+    ? parsePositiveInt(webpWidthRaw, "--webp-width")
+    : width;
+  if (webpWidth > width) {
+    throw new Error(
+      `--webp-width (${webpWidth}) cannot exceed capture --width (${width})`
+    );
+  }
   const outDir = String(args.outDir);
   const basename = String(args.basename);
   const loop = Boolean(args.loop);
   const formats = Array.isArray(args.formats) ? args.formats : ["webp"];
+  const reuseFrames = Boolean(args.reuseFrames);
+  const cleanFrames = Boolean(args.cleanFrames);
 
   fs.mkdirSync(outDir, { recursive: true });
 
-  const staticServer = await startStaticServer(ROOT);
-  const demoUrl = `http://127.0.0.1:${staticServer.port}/demo.html`;
+  const framesDir = path.join(outDir, `.${basename}-frames`);
+  const ffmpegBin = resolveFfmpeg();
+  console.log(`Using ffmpeg: ${ffmpegBin}`);
+  console.log(`Formats: ${formats.join(", ")}`);
 
-  console.log(`Serving ${ROOT}`);
-  console.log(`Demo URL: ${demoUrl}`);
+  /** @type {number} */
+  let encodeFps = fps;
 
-  const playwright = await loadPlaywright();
+  if (reuseFrames) {
+    const existing = loadExistingFrames(framesDir, durationMs);
+    encodeFps = existing.encodeFps;
+    console.log(
+      `Reusing ${existing.frameCount} frames from ${path.relative(ROOT, framesDir)} @ ${encodeFps.toFixed(2)} fps`
+    );
+  } else {
+    const staticServer = await startStaticServer(ROOT);
+    const demoUrl = `http://127.0.0.1:${staticServer.port}/demo.html`;
 
-  if (args.preview) {
-    console.log(`
+    console.log(`Serving ${ROOT}`);
+    console.log(`Demo URL: ${demoUrl}`);
+
+    const playwright = await loadPlaywright();
+
+    if (args.preview) {
+      console.log(`
 Preview mode — chrome removed, #main duplicated for the carousel seam.
 Scroll one copy height to see the first section again after the last.
 Press Ctrl+C to stop.
 `);
+      const { browser, context } = await createCaptureContext(playwright, {
+        width,
+        height,
+        dpr,
+        theme,
+        headless: false,
+      });
+      const page = await context.newPage();
+      const scrollBy = await openPreparedDemo(page, demoUrl, { loop, settleMs });
+      console.log(`Loop scroll distance: ${Math.round(scrollBy)}px`);
+      await new Promise(() => {
+        /* keep server + browser until Ctrl+C */
+      });
+      await context.close();
+      await browser.close();
+      return;
+    }
+
     const { browser, context } = await createCaptureContext(playwright, {
       width,
       height,
       dpr,
       theme,
-      headless: false,
+      headless: Boolean(args.headless),
     });
+
     const page = await context.newPage();
-    const scrollBy = await openPreparedDemo(page, demoUrl, { loop, settleMs });
-    console.log(`Loop scroll distance: ${Math.round(scrollBy)}px`);
-    await new Promise(() => {
-      /* keep server + browser until Ctrl+C */
-    });
-    await context.close();
-    await browser.close();
-    return;
-  }
-
-  const ffmpegBin = resolveFfmpeg();
-  console.log(`Using ffmpeg: ${ffmpegBin}`);
-  console.log(`Formats: ${formats.join(", ")}`);
-
-  const framesDir = path.join(outDir, `.${basename}-frames`);
-
-  const { browser, context } = await createCaptureContext(playwright, {
-    width,
-    height,
-    dpr,
-    theme,
-    headless: Boolean(args.headless),
-  });
-
-  const page = await context.newPage();
-  try {
-    const scrollBy = await openPreparedDemo(page, demoUrl, { loop, settleMs });
-    console.log(
-      `Capturing ${Math.round(scrollBy)}px over ${durationMs}ms at ${fps} fps (scroll frames only)…`
-    );
-    const frameCount = await captureScrollFrames(
-      page,
-      scrollBy,
-      durationMs,
-      fps,
-      framesDir
-    );
-    console.log(`Captured ${frameCount} frames`);
-  } finally {
-    await context.close();
-    await browser.close();
-  }
-
-  try {
-    for (const fmt of formats) {
-      const outPath = path.join(outDir, `${basename}.${fmt}`);
-      if (fmt === "webp") {
-        encodeWebpFromFrames(ffmpegBin, framesDir, outPath, fps, width);
-      } else if (fmt === "webm") {
-        encodeWebmFromFrames(ffmpegBin, framesDir, outPath, fps);
-      } else if (fmt === "gif") {
-        encodeGifFromFrames(ffmpegBin, framesDir, outPath, fps, width);
-      }
-      logWrote(outPath);
+    try {
+      const scrollBy = await openPreparedDemo(page, demoUrl, {
+        loop,
+        settleMs,
+      });
+      console.log(
+        `Capturing ${Math.round(scrollBy)}px over ${durationMs}ms (target ${fps} fps, scroll frames only)…`
+      );
+      const captured = await captureScrollFrames(
+        page,
+        scrollBy,
+        durationMs,
+        fps,
+        height,
+        framesDir
+      );
+      encodeFps = captured.encodeFps;
+      writeFramesMeta(framesDir, {
+        basename,
+        frameCount: captured.frameCount,
+        encodeFps: captured.encodeFps,
+        durationMs,
+        fps,
+        width,
+        height,
+        dpr,
+        theme,
+        capturedAt: new Date().toISOString(),
+      });
+      console.log(
+        `Captured ${captured.frameCount} frames @ ${encodeFps.toFixed(2)} fps encode`
+      );
+      console.log(
+        `Frames kept in ${path.relative(ROOT, framesDir)} (pass --reuse-frames to re-encode; --clean-frames to delete)`
+      );
+    } finally {
+      await context.close();
+      await browser.close();
+      await staticServer.close();
     }
-  } finally {
-    fs.rmSync(framesDir, { recursive: true, force: true });
   }
 
-  await staticServer.close();
+  for (const fmt of formats) {
+    const outPath = path.join(outDir, `${basename}.${fmt}`);
+    if (fmt === "webp") {
+      encodeWebpFromFrames(ffmpegBin, framesDir, outPath, {
+        captureFps: encodeFps,
+        width: webpWidth,
+        quality: webpQuality,
+        deliveryFps: webpFps,
+        maxMb: webpMaxMb,
+      });
+    } else if (fmt === "webm") {
+      encodeWebmFromFrames(ffmpegBin, framesDir, outPath, encodeFps);
+    } else if (fmt === "gif") {
+      encodeGifFromFrames(ffmpegBin, framesDir, outPath, encodeFps, width);
+    }
+    logWrote(outPath);
+  }
+
+  if (cleanFrames) {
+    fs.rmSync(framesDir, { recursive: true, force: true });
+    console.log(`Removed ${path.relative(ROOT, framesDir)}`);
+  }
+
   console.log(
     "Done. Loop the output in a player — start and end form a continuous carousel."
   );

@@ -58,6 +58,19 @@ html[data-capture] #main-capture-clone {
 html[data-capture] #tooltip {
   display: none !important;
 }
+
+/* Freeze motion so frames are identical composites (no mid-transition shots). */
+html[data-capture],
+html[data-capture] * {
+  animation: none !important;
+  animation-delay: 0s !important;
+  animation-duration: 0s !important;
+  transition: none !important;
+  transition-delay: 0s !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+  caret-color: transparent !important;
+}
 `;
 
 /** Default matches `APP_CONFIG.themeStorageKey` / demo.html `__MICROAPP__`. */
