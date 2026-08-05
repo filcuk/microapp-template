@@ -267,6 +267,8 @@
   background: var(--input-bg);
   color: var(--text);
   font: inherit;
+  /* Match native `type="time"` — arrow, not I-beam */
+  cursor: default;
 }
 
 .duration-input-control:focus-within {
@@ -297,6 +299,7 @@
   font-variant-numeric: tabular-nums;
   text-align: left;
   outline: none;
+  cursor: default;
 }
 
 .duration-input-control .input.duration-input-hours,
@@ -318,6 +321,7 @@
   color: var(--muted);
   line-height: 1;
   user-select: none;
+  cursor: default;
 }
 
 .duration-input--disabled {

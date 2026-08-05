@@ -1,5 +1,6 @@
 /**
  * Duration input — hours / minutes (optional seconds) as a segmented control.
+ * Focus/click selects the whole segment (parity with native `type="time"`).
  *
  * Markup:
  *   <div class="duration-input" id="my-duration" data-duration-default="1:30">
@@ -298,6 +299,21 @@ export function initDurationInput(
     });
   }
 
+  function selectSegment(inputEl) {
+    if (!(inputEl instanceof HTMLInputElement) || isDisabled) return;
+    inputEl.select();
+  }
+
+  function onFieldFocus(event) {
+    selectSegment(event.target);
+  }
+
+  // Click re-selects after mouseup would otherwise collapse the focus selection
+  // (matches native `type="time"` segment highlight).
+  function onFieldClick(event) {
+    selectSegment(event.target);
+  }
+
   function onFieldInput(event) {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) return;
@@ -395,6 +411,8 @@ export function initDurationInput(
 
   const fields = [hoursInput, minutesInput, secondsInput].filter(Boolean);
   for (const field of fields) {
+    field.addEventListener("focus", onFieldFocus);
+    field.addEventListener("click", onFieldClick);
     field.addEventListener("input", onFieldInput);
     field.addEventListener("blur", onFieldBlur);
     field.addEventListener("keydown", onFieldKeydown);
@@ -425,6 +443,8 @@ export function initDurationInput(
     setDisabled,
     destroy() {
       for (const field of fields) {
+        field.removeEventListener("focus", onFieldFocus);
+        field.removeEventListener("click", onFieldClick);
         field.removeEventListener("input", onFieldInput);
         field.removeEventListener("blur", onFieldBlur);
         field.removeEventListener("keydown", onFieldKeydown);

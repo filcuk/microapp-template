@@ -11,7 +11,7 @@ When trimming: delete a feature’s JS only if unused; remove a **shared** CSS p
 | Area | Paths |
 | ---- | ----- |
 | Entry | `app/theme-init.js`, `app/config.js`, `app/version.js`, `app/main.js` (or other page modules), `app/styles.css` (fork entry), `app/css/template.css` (generated index), `app/css/app.css` (fork-owned) |
-| Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, `also-see.js`, `external-link.js`, `heading-link.js` |
+| Shell | `app/shell/shell.js`, `render-shell.js`, `theme.js`, `page-nav.js`, `sticky.js`, `heading-link.js`, `external-link.js`, `also-see.js`, `title-numbering.js` |
 | Infra | `app/utils/dom.js`, `document-listeners.js`, `icons.js`, `icons-template.js`, `icons-app.js`, `brand-icon.js` |
 | Shell-pulled components | `app/components/tooltip.js`, `app/components/banner.js` (imported by `shell.js`) |
 | Core CSS | `app/tokens.css`, `app/css/layout.css`, `app/css/controls-buttons.css`, `app/css/overlays.css` (tooltips + banners + modals styles) |
@@ -23,7 +23,7 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 
 | Partial (`app/css/`) | Features that need it |
 | -------------------- | --------------------- |
-| `layout.css` | Shell, section layout, page nav, footer, theme toggle, sticky |
+| `layout.css` | Shell, section layout, page nav, footer, theme toggle, sticky, title numbering |
 | `controls-buttons.css` | Buttons, toolbar (always with shell) |
 | `overlays.css` | tooltip, banner, dialog, callout |
 | `code-block.css` | code-block, expandable-surface |
@@ -51,7 +51,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | banner | `app/components/banner.js` | `overlays.css` | — | Markup: `note`, `info`, `success`, `important`, `warning`, `error` as used | `dom` | Always via `initShell` (error banner) |
 | dialog | `app/components/dialog.js` | `overlays.css` | — | — | `dom`, `document-listeners` | |
 | badge | `app/components/badge.js` | `controls-badges.css` | — | — | `dom` | |
-| chip | `app/components/chip.js` | `controls-chips.css` | — | `error` (remove) | `dom`, `icons` | |
+| chip | `app/components/chip.js` | `controls-chips.css` | — | — | `dom` | |
 | combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |
 | date-picker | `app/components/date-picker/` (`index.js`, `calendar.js`, `parse.js`) | `controls-fields.css` | — | Markup: `calendar` | `dom`, `document-listeners` | |
 | time-picker | `app/components/time-picker.js` | `controls-fields.css` | — | — | `dom` | Native `type="time"` |
@@ -95,6 +95,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | also-see | `app/shell/also-see.js` | Icon: `arrow-outward` |
 | theme-toggle | `app/shell/theme.js` + render-shell | Icons: `light-mode`, `dark-mode`, `auto-mode` |
 | sticky | `app/shell/sticky.js` | Optional `data-sticky-*` |
+| title-numbering | `app/shell/title-numbering.js` | Optional `data-title-numbering`; CSS `.title-number` in `layout.css` |
 
 ## Shell-required icons
 

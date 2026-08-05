@@ -56,6 +56,7 @@ export const CORE = {
     "app/shell/theme.js",
     "app/shell/page-nav.js",
     "app/shell/sticky.js",
+    "app/shell/title-numbering.js",
     "app/shell/also-see.js",
     "app/shell/external-link.js",
     "app/shell/heading-link.js",
@@ -363,7 +364,7 @@ export const CSS_ONLY = {
 
 /** Which features need each CSS partial (for trim / index generation). */
 export const CSS_PARTIAL_FEATURES = {
-  "layout.css": ["shell", "page-nav", "sticky", "theme-toggle"],
+  "layout.css": ["shell", "page-nav", "sticky", "title-numbering", "theme-toggle"],
   "controls-buttons.css": ["buttons", "toolbar"],
   "overlays.css": ["tooltip", "banner", "dialog", "callout"],
   "code-block.css": ["code-block", "expandable-surface"],

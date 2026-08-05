@@ -33,15 +33,21 @@
  * data-table-selectable — enable row checkboxes and select-all
  * data-table-disabled — disable interaction
  * data-sort-type on th — text | number | date (default text)
+ * data-table-sort-default on th — ascending | descending (initial sort for that column)
  */
 
 import { createIcon } from "../utils/icons.js";
 import { parseBooleanAttr, setHidden } from "../utils/dom.js";
 
 const SORT_TYPES = ["text", "number", "date"];
+const SORT_DIRECTIONS = ["ascending", "descending"];
 
 function parseSortType(value) {
   return SORT_TYPES.includes(value) ? value : "text";
+}
+
+function parseSortDirection(value) {
+  return SORT_DIRECTIONS.includes(value) ? value : null;
 }
 
 function resolveSortable(blockEl, sortableOption) {
@@ -106,9 +112,30 @@ function setSortButtonState(button, direction) {
   icon.replaceChildren(createIcon(iconName, { className: "table-sort-icon-svg" }));
 }
 
+function resolveDefaultSort(sortHeaders, defaultSortOption) {
+  if (defaultSortOption && typeof defaultSortOption === "object") {
+    const direction = parseSortDirection(defaultSortOption.direction);
+    if (direction === null) return null;
+
+    if (typeof defaultSortOption.columnIndex === "number") {
+      const th = sortHeaders.find(
+        (header) => header.cellIndex === defaultSortOption.columnIndex
+      );
+      return th ? { th, direction } : null;
+    }
+  }
+
+  for (const th of sortHeaders) {
+    const direction = parseSortDirection(th.dataset.tableSortDefault);
+    if (direction) return { th, direction };
+  }
+
+  return null;
+}
+
 export function initTable(
   blockEl,
-  { sortable, selectable, disabled, onSort, onSelectionChange } = {}
+  { sortable, selectable, disabled, defaultSort, onSort, onSelectionChange } = {}
 ) {
   if (!blockEl) return null;
 
@@ -140,6 +167,7 @@ export function initTable(
   const rowInputs = () => [
     ...tbody.querySelectorAll("[data-table-row-select]"),
   ];
+  const originalRowOrder = isSortable ? [...tbody.querySelectorAll("tr")] : [];
 
   function syncDisabledClass() {
     blockEl.classList.toggle("table-block--disabled", isDisabled);
@@ -192,6 +220,16 @@ export function initTable(
     }
   }
 
+  function restoreOriginalOrder() {
+    const known = new Set(originalRowOrder);
+    for (const row of originalRowOrder) {
+      if (row.parentNode === tbody) tbody.append(row);
+    }
+    for (const row of [...tbody.querySelectorAll("tr")]) {
+      if (!known.has(row)) tbody.append(row);
+    }
+  }
+
   function clearOtherSortStates(activeButton) {
     for (const button of sortButtons) {
       if (button !== activeButton) {
@@ -210,12 +248,16 @@ export function initTable(
       current === "ascending"
         ? "descending"
         : current === "descending"
-          ? "ascending"
+          ? null
           : "ascending";
 
     clearOtherSortStates(button);
     setSortButtonState(button, next);
-    sortByColumn(columnIndex, next, sortType);
+    if (next) {
+      sortByColumn(columnIndex, next, sortType);
+    } else {
+      restoreOriginalOrder();
+    }
 
     onSort?.({
       columnIndex,
@@ -290,6 +332,24 @@ export function initTable(
 
   syncDisabledClass();
   syncSelectAllState();
+
+  const initialSort = isSortable
+    ? resolveDefaultSort(sortHeaders, defaultSort)
+    : null;
+  if (initialSort) {
+    const { th, direction } = initialSort;
+    const button = th.querySelector(".table-sort-button");
+    const sortType = parseSortType(th.dataset.sortType);
+    clearOtherSortStates(button);
+    setSortButtonState(button, direction);
+    sortByColumn(th.cellIndex, direction, sortType);
+    onSort?.({
+      columnIndex: th.cellIndex,
+      direction,
+      sortType,
+      source: "default",
+    });
+  }
 
   return {
     getSelectedRows() {

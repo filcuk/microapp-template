@@ -298,6 +298,7 @@ app/
     external-link.js    # Arrow icon on outgoing links
     heading-link.js     # Copy section link on heading hover
     sticky.js           # Optional sticky header / section headings
+    title-numbering.js  # Optional hierarchical outline title prefixes
   utils/
     dom.js              # setHidden(), parseBooleanAttr(), focus helpers
     document-listeners.js
@@ -334,7 +335,8 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | -------- | ----------- |
 | **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
-| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-title` / `.segment-title` — see **Sticky chrome**). Outline: site `h1`; with tiers use `h2.segment-title` then `h3.section-title`; without tiers, `h2.section-title` is fine. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. |
+| **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-title` / `.segment-title` — see **Sticky chrome**). Outline: site `h1`; with tiers use `h2.segment-title` then `h3.section-title`; without tiers, `h2.section-title` is fine. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. Optional hierarchical title numbering (`data-title-numbering`) — see **Title numbering**. |
+| **Title numbering** | Optional `1.` / `1.1.` / `1.2.1.` prefixes on outline headings (`main :is(h2, h3, h4)[id]`). Off by default. [`app/shell/title-numbering.js`](app/shell/title-numbering.js). |
 | **Buttons** | `.btn` (default / standard height), `.btn-slim` (compact `--control-height-slim`; works with labeled and icon buttons), `.btn-primary`, `.btn-danger` (destructive primary), `.btn-icon`, `.btn-toggle` (`aria-pressed` — accent border when on), `.btn-link`, disabled state. |
 | **Badge** | Corner indicator on a control or text: normal readout or small `.badge--sm` dot. [`app/components/badge.js`](app/components/badge.js). |
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
@@ -365,7 +367,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
-| **Dialogs** | Accessible modal: backdrop, focus trap, Escape, focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/dialog.js`](app/dialog.js). |
+| **Dialogs** | Accessible modal: backdrop, focus trap, Escape, Enter (default action), focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/components/dialog.js`](app/components/dialog.js). |
 | **Heading links** | Hover a `main :is(h2, h3)[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
@@ -451,6 +453,31 @@ While stickiness is enabled but nothing is pinned yet, appearance is unchanged. 
 
 When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap), `--sticky-gap` between site header and tier, and per-tier `--sticky-tier-offset` (pinned title height + `--sticky-nest-gap` under the tier; the `.content-tier-lead` is hidden while the tier is pinned). Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
 
+### Title numbering
+
+Optional hierarchical prefixes on outline headings (`1.`, `1.1.`, `1.2.1.`, …). Off by default. Opt in with `data-title-numbering` on `<html>`, or call `setTitleNumbering(true)`. `initShell()` applies numbering before page nav so nav labels include the prefixes.
+
+| Opt-in / opt-out | Effect |
+| ---------------- | ------ |
+| `data-title-numbering` on `<html>` | Number `main :is(h2, h3, h4)[id]` in document order |
+| `data-no-title-number` on a heading | Skip that heading |
+
+```html
+<html lang="en" data-title-numbering>
+```
+
+```javascript
+import {
+  setTitleNumbering,
+  syncTitleNumbering,
+} from "./shell/title-numbering.js";
+
+setTitleNumbering(true);
+// After DOM changes that add or remove outline headings:
+syncTitleNumbering();
+```
+
+Numbers are injected as a leading `.title-number` span (picked up by page nav `textContent`). Depth follows heading level relative to the shallowest matched tag (typically `h2` → `1.`, nested `h3` → `1.1.`). Skipped levels fill with `0` (e.g. `h2` then `h4` → `1.` then `1.0.1.`).
 
 ### Dialog
 
@@ -465,6 +492,8 @@ const dialog = initDialog({
 ```
 
 Close controls use `data-dialog-close` on backdrop, × button, or footer buttons.
+
+**Default action / Enter:** mark the intended Enter target with `data-dialog-default` (focused on open). If omitted, Enter falls back to `.modal-footer-actions .btn-primary` (not `.btn-danger`). For destructive dialogs, put `data-dialog-default` on Cancel and style the primary action with `.btn-danger`.
 
 ### Tooltip
 
@@ -495,6 +524,9 @@ flashTooltip(copyBtn, {
 // Persistent mode — tutorial; dismiss only when intended
 const tipId = showPersistentTooltip(nextBtn, {
   text: "Click Next to continue",
+  // Optional: override data-tooltip-position so a hover tip on the same
+  // control can sit on another side (e.g. persistent top, hover bottom).
+  position: "top",
 });
 nextBtn.addEventListener(
   "click",
@@ -749,16 +781,16 @@ filters?.clear();
 initChipGroups(document);
 ```
 
-**Input chips** — type a value and press Enter or comma to add; remove with × or Backspace on an empty field.
+**Input chips** — type a value and press Enter or comma to add; chips render below the field. Click a chip to remove it.
 
 ```html
 <div class="chip-input" id="tag-input">
   <label class="field-label" for="tag-input-field">Tags</label>
   <div class="chip-input-control">
-    <div class="chip-input-list"></div>
     <input type="text" id="tag-input-field" class="input chip-input-field"
       placeholder="Add tag…" autocomplete="off" />
   </div>
+  <div class="chip-input-list"></div>
   <input type="hidden" class="chip-input-value" />
 </div>
 ```
@@ -779,7 +811,7 @@ tags?.clear();
 initChipInputs(document);
 ```
 
-`data-chip-value` on selectable chips sets the value (defaults to label text). `data-chip-input-disabled` disables the input field. Remove buttons reuse the existing `error` (cancel) icon.
+`data-chip-value` on selectable chips sets the value (defaults to label text). `data-chip-input-disabled` disables the input field.
 
 ### Inputs
 
@@ -930,7 +962,7 @@ initTimePickers(document);
 
 #### Duration input
 
-Segmented hours and minutes (optional seconds). Stores `H:MM` or `H:MM:SS` in `.duration-input-value`. Arrow Up/Down nudges the focused segment (carries across fields; saturates at 0 and the max instead of wrapping); `:` or Arrow Right moves to the next field.
+Segmented hours and minutes (optional seconds). Stores `H:MM` or `H:MM:SS` in `.duration-input-value`. Focusing or clicking a segment selects its full value (like a native time field). Arrow Up/Down nudges the focused segment (carries across fields; saturates at 0 and the max instead of wrapping); `:` or Arrow Right moves to the next field.
 
 ```html
 <div class="duration-input" id="my-duration" data-duration-default="1:30">
@@ -977,7 +1009,7 @@ Drag-and-drop or click-to-browse file picker. Selected files appear in a list wi
     <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
     <span class="file-dropzone-text">
       <span class="file-dropzone-primary">Drop files here</span>
-      <span class="file-dropzone-secondary">or browse</span>
+      <span class="file-dropzone-secondary">select to browse</span>
     </span>
   </button>
   <ul class="file-dropzone-list hidden" hidden></ul>
@@ -1001,6 +1033,8 @@ initFileDropzones(document); // wire every `.file-dropzone`
 ```
 
 `data-file-accept` maps to the hidden input's `accept`. `data-file-multiple` enables multi-select. `data-file-max` caps how many files can be added (extra files are trimmed; `onError` is called).
+
+On init, the prompt shows a `.file-dropzone-meta` line when there is something non-default to communicate: allowed types (from `accept`) and/or a multi-file count (`Up to N files` or `Multiple files`). A plain single-file dropzone with no `accept` shows no meta line. The element is created if missing.
 
 ### File download
 
@@ -1922,7 +1956,7 @@ initPaginations(document); // all `.pagination` blocks
 
 Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-block` and `.table-wrap`. Use `.table--striped` for alternating rows, `.table--compact` for tighter padding, and `.table-num` to right-align numeric columns.
 
-Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text.
+Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text. Set `data-table-sort-default="ascending"` or `"descending"` on one sortable `<th>` to sort that column on load (or pass `defaultSort: { columnIndex, direction }` to `initTable()`). Header clicks cycle **ascending → descending → unsorted** (restores the row order from init).
 
 Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks. Body rows highlight lightly on hover; when selectable, clicking anywhere on a row toggles that row (interactive controls inside the row are left alone).
 
@@ -1942,6 +1976,10 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
           <th scope="col" data-table-sort data-sort-type="text">
             <button type="button" class="table-sort-button">Title</button>
           </th>
+          <th scope="col" data-table-sort data-sort-type="date"
+            data-table-sort-default="descending" class="table-num">
+            <button type="button" class="table-sort-button">Updated</button>
+          </th>
           <th scope="col" data-table-sort data-sort-type="number" class="table-num">
             <button type="button" class="table-sort-button">Comments</button>
           </th>
@@ -1956,6 +1994,7 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
             </label>
           </td>
           <td>Fix nav overlap on mobile</td>
+          <td class="table-num">2026-03-01</td>
           <td class="table-num">3</td>
         </tr>
       </tbody>
@@ -1982,7 +2021,7 @@ table?.destroy();
 initTables(document);
 ```
 
-`data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. Add `.table-block--wide` to remove the default `40rem` max width.
+`data-table-sortable`, `data-table-selectable`, and `data-table-disabled` mirror the JS options. `data-table-sort-default` on a sortable `<th>` (or `defaultSort: { columnIndex, direction }`) sets the initial sort. Add `.table-block--wide` to remove the default `40rem` max width.
 
 ### Tabular input
 

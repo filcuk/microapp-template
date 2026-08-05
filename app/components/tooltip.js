@@ -35,6 +35,7 @@ let timerState = null;
  *   id: string,
  *   el: HTMLElement,
  *   target: HTMLElement,
+ *   position: "top" | "bottom" | "left" | "right",
  *   savedDescribedBy: string | null,
  * }>}
  */
@@ -107,15 +108,22 @@ function fillTipContent(el, text, tone) {
 }
 
 /**
- * @param {HTMLElement} target
+ * @param {string | undefined} value
  * @returns {"top" | "bottom" | "left" | "right"}
  */
-function getPosition(target) {
-  const value = target.dataset.tooltipPosition;
+function normalizePosition(value) {
   if (value === "bottom" || value === "left" || value === "right") {
     return value;
   }
   return "top";
+}
+
+/**
+ * @param {HTMLElement} target
+ * @returns {"top" | "bottom" | "left" | "right"}
+ */
+function getPosition(target) {
+  return normalizePosition(target.dataset.tooltipPosition);
 }
 
 /**
@@ -329,7 +337,7 @@ function repositionPersistent() {
       dismissPersistentTooltip(entry.id);
       continue;
     }
-    placeTip(entry.el, entry.target, getPosition(entry.target));
+    placeTip(entry.el, entry.target, entry.position);
   }
 }
 
@@ -414,18 +422,25 @@ export function flashTooltip(target, options) {
 
 /**
  * Persistent tip (tutorial). Independent of the hover/timer slot.
+ * Optional `position` overrides `data-tooltip-position` on the target so a
+ * hover tip on the same control can sit on a different side.
  *
  * @param {HTMLElement} target
  * @param {{
  *   text: string,
  *   tone?: TooltipTone,
  *   id?: string,
+ *   position?: "top" | "bottom" | "left" | "right",
  * }} options
  * @returns {string} Tip id for `dismissPersistentTooltip`
  */
 export function showPersistentTooltip(target, options) {
-  const { text, tone = "info", id } = options;
+  const { text, tone = "info", id, position: positionOpt } = options;
   const tipId = id || `tooltip-persistent-${++persistentSeq}`;
+  const position =
+    positionOpt !== undefined
+      ? normalizePosition(positionOpt)
+      : getPosition(target);
 
   dismissPersistentTooltip(tipId);
 
@@ -441,12 +456,13 @@ export function showPersistentTooltip(target, options) {
   ids.add(tipId);
   target.setAttribute("aria-describedby", [...ids].join(" "));
 
-  placeTip(el, target, getPosition(target));
+  placeTip(el, target, position);
 
   persistentById.set(tipId, {
     id: tipId,
     el,
     target,
+    position,
     savedDescribedBy: prevDescribedBy,
   });
 

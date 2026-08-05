@@ -6,6 +6,7 @@ import { initPageNavPanel } from "./page-nav.js";
 import { initTooltips } from "../components/tooltip.js";
 import { initExternalLinks } from "./external-link.js";
 import { initHeadingLinks } from "./heading-link.js";
+import { initTitleNumbering } from "./title-numbering.js";
 import { initStickyChrome } from "./sticky.js";
 import { showBanner } from "../components/banner.js";
 
@@ -78,6 +79,7 @@ export function initShell(options = {}) {
   initIcons();
   initExternalLinks(document);
   initHeadingLinks(document);
+  initTitleNumbering();
   void initAlsoSee(document, alsoSeeOptions);
   initTheme();
   initThemeToggle(document.getElementById("theme-toggle"));

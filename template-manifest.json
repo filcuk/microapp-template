@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-03T21:12:00.869Z",
+  "generatedAt": "2026-08-05T20:41:46.059Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -33,13 +33,13 @@
       "sha256": "ddbde42721c3f3f439c0e80493eb2857211c918249dd971149d8d10d3aea01d7"
     },
     "app/components/banner.js": {
-      "sha256": "e7865de4dfc1373725239e60705f997e953f569e7b9bfe8484c591b293a9078a"
+      "sha256": "715504dbfb0448c1a88d3752ef922ef8d818c0e722138d1a146b3ce85863dadc"
     },
     "app/components/checkbox.js": {
       "sha256": "9b982c2ac7f694df706189460ab2f780abfe7563d880e64c21d78622edfa24e3"
     },
     "app/components/chip.js": {
-      "sha256": "aee9db97405994b75cb7ed24e4b63561119b9efaa351e35dcd3b9f8130013a73"
+      "sha256": "ea5960e31a19da5a29c99a93d8d8659e4d1b6f41dbc1b44159ccdb19b02c56fe"
     },
     "app/components/code-block.js": {
       "sha256": "007526ca24962ac1c5d71efef266b93841ce91b1e235b2bb6207d71637c1e024"
@@ -63,7 +63,7 @@
       "sha256": "c070ae61a509bc2eab3601276790ac290fc93666c94269a2978740f2aca8cb9b"
     },
     "app/components/dialog.js": {
-      "sha256": "694355b84ad1ab31c316886a18cbfe7d5b551880a10ea9303d072c74f5f19155"
+      "sha256": "81103e0d8b908fc495a21f3a503a92c1f01f06a45460fcd4e9f0efe9519a4a33"
     },
     "app/components/dropdown-toggle.js": {
       "sha256": "83a1c4bb73cbe958b2db9f13a4913f4fe62a2449fb8a0f673b31303e78d44e94"
@@ -72,7 +72,7 @@
       "sha256": "10ea68596439e5598ed2b5a328f70709aa2c29c2442b49fd1829414cb3ff480f"
     },
     "app/components/duration-input.js": {
-      "sha256": "0ea58cf4524eba47cbacd953df3cf1eb9007133fa7368eb8930a8ddd856dab5b"
+      "sha256": "879d465a75f6e912dbfcabf0b4902c2ef96800c0b9b84259f98bcd87b90341f9"
     },
     "app/components/expand.js": {
       "sha256": "9b3f0ac0631f11ea21fd3b998de9bd1d33115e437860f3456171a3a070bde437"
@@ -84,7 +84,7 @@
       "sha256": "c2530b73c16516bd4d1e785a96f66ca9db169afbf5a9ba4bae4310fec70641cd"
     },
     "app/components/file-dropzone.js": {
-      "sha256": "22d03366fb2fefdbf8bbdfa68ca9c1fec46516d4eef19428aec65033f71c2de5"
+      "sha256": "d397a2b989468b7bf91f49db3cabaa340ad3c9a2fede9f00cb9ed9aad6ee884d"
     },
     "app/components/pagination.js": {
       "sha256": "d0717ac330d8042264ac3c6913e3cfca1bc1dea9f18b80836e18a380eaa24e99"
@@ -111,7 +111,7 @@
       "sha256": "0d3fcada4160cc4a912607b341d946bc18a02511dfcd9e47d478ac7cb28f22df"
     },
     "app/components/table.js": {
-      "sha256": "1c75486468043663a85e5b95db4b1e5ccf2ac6eb100348bc25411c32ef15098c"
+      "sha256": "0ad1df710c3892311352975c75bc672648a8ae66fe1c050f7c05fb5691b4aa51"
     },
     "app/components/tabs.js": {
       "sha256": "43709468cd60d208a356de53347d85b6dbb2ca3caa9d2f7cfb75659f52c984e4"
@@ -129,7 +129,7 @@
       "sha256": "e2f9c98506e8fffe580f864ea12ca023cb8026bb24ec48578f2c948f793f124a"
     },
     "app/components/tooltip.js": {
-      "sha256": "444ad6884bc68a6de1ea7d72f17e812c5962f5fcd5c78851bb2623dace9f0297"
+      "sha256": "38a44fbab0bf598709a4539554a9b04435e490603da6ccdce78a8be9451cea3b"
     },
     "app/css/code-block.css": {
       "sha256": "437c4840d29c902948368a1cb7ddd68fe4be73ef3068fc2ccdae24d6c95a62ee"
@@ -141,16 +141,16 @@
       "sha256": "6ab1963647512862f430187e76cab5429d66718b1ad049f0573fdce1174545d1"
     },
     "app/css/controls-chips.css": {
-      "sha256": "1e3000417144db5c4f874b044cf2496a701549cf338ffe824b5bab0fae4c10e8"
+      "sha256": "6df72b7c841860121c30bc9ebb7f773871d2b45b2a42efe04a643b652ca9c87c"
     },
     "app/css/controls-disclosure.css": {
       "sha256": "004a7221835f092d451c0550de95e736989fb47ff3421ee4c1a2338893bbdb1c"
     },
     "app/css/controls-fields.css": {
-      "sha256": "34018d8c2ac7ff5c633f06d85e89a73486abfaf114b2b469c7f4219f4a3698ce"
+      "sha256": "7a011a86a847bffa0f5814b9134135f01fa08793f518b72db83ece9abbdcc1bd"
     },
     "app/css/controls-file.css": {
-      "sha256": "6cbac29aa47ce8699f4b76fcb673b568c93500a0db444c7f5022c2a0c642f218"
+      "sha256": "9a82e4417c7aba5dc622a3c8c93ea2c96deda064f3fed2657240df6e35782a4e"
     },
     "app/css/controls-menus.css": {
       "sha256": "83c2f5fbd9e4164de0ea5d558b22cbfd03f7632df4d994583bac4279627e4844"
@@ -165,10 +165,10 @@
       "sha256": "baa6d9f0053e7db8082d2f0cbc3c3be5e1d2b475c2cf11fc6389281d76e701be"
     },
     "app/css/layout.css": {
-      "sha256": "c649be2b61f96c7bb5531bc155c329e67da8bf568b3bb0325a6b82c64c2423f2"
+      "sha256": "85ad9ad51d8d95f1cfa055f4c7fa98a51764b15b53310b37a65cd7dc9bb9c894"
     },
     "app/css/overlays.css": {
-      "sha256": "319104f74e721eea298c0b88338cdc86f8175d02070d83e884c45da042f51ca2"
+      "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
     },
     "app/css/rich-text-editor.css": {
       "sha256": "c35532f86573991144bf8d6813a75ff1732711690e496a6e0d143d0015272a2c"
@@ -186,22 +186,25 @@
       "sha256": "6a1e0d52b04d6f115419de2bac85b2e5581a7e0212fa6d6a32c64a8d0bb45fdc"
     },
     "app/shell/heading-link.js": {
-      "sha256": "3b216b3f3f6d1148be4de5a7881b7a0d54d0e41559739a366877594d59251fef"
+      "sha256": "656dd0292c1e551dded5afc6c93855ec332f3be49955c20db007954e1e453985"
     },
     "app/shell/page-nav.js": {
-      "sha256": "ca637def59462707cfd31ce93f7248feca08e8dcc7dfc22f1fdf357de8bb0341"
+      "sha256": "aef37fd63efd4589457bdbd1e859e980c73835dadcb4af752c99c4a8ea004ee9"
     },
     "app/shell/render-shell.js": {
       "sha256": "c9c2f5d6a50087483790d3463fd06d95715e9cf0a65719c32bcf1dc71ee94723"
     },
     "app/shell/shell.js": {
-      "sha256": "b5da67eae40806572a48c40a5b22062fdaea9c70de0163677c09c31f9dc5fb26"
+      "sha256": "7bc59c18faeecf7bcce15d586547c00c76fdc908a832c1206d9b4e4fdc2f165a"
     },
     "app/shell/sticky.js": {
-      "sha256": "51e8edb8c0443262fa79f01bbf259c0029265b972c02489af0cfac88aac0ed1a"
+      "sha256": "536146e00c2c973503f99ddd2ba6290aa1c2ce0d37d4f55c533a9f1e4677db59"
     },
     "app/shell/theme.js": {
       "sha256": "3b992e024cb2af8673730e9ab8cd8c100bd71fb7b4e6f549c0c8c161a8aee6aa"
+    },
+    "app/shell/title-numbering.js": {
+      "sha256": "71f81d3e79c02e755243aafedd79a05bcd369d74317739fdf412ca6dbe26320c"
     },
     "app/theme-init.js": {
       "sha256": "148c7609d71307e19f47b04282e196716f559033589cafb6563a79a784b7c606"
@@ -210,7 +213,7 @@
       "sha256": "3f9f55c503dec155b391c71c7a3ab3ed5c659de5df5695084831155e51e95f0b"
     },
     "app/tokens.css": {
-      "sha256": "ee255d42751f166d66d2ff6de484f165a3ce50c1008ae6e422e06141929888f0"
+      "sha256": "f5af64936aa40fb6a09a02649bfde69c9bffbd983645854a469120aec0c0caa3"
     },
     "app/utils/also-see-svg.js": {
       "sha256": "af1ff194fde0ba9ffe09edf885fde4562bac5f14592fd2f348c366296447e854"
@@ -274,6 +277,7 @@
       "app/shell/theme.js",
       "app/shell/page-nav.js",
       "app/shell/sticky.js",
+      "app/shell/title-numbering.js",
       "app/shell/also-see.js",
       "app/shell/external-link.js",
       "app/shell/heading-link.js",
@@ -883,6 +887,11 @@
       "css": [
         "controls-section-panel.css"
       ]
+    },
+    "callout": {
+      "css": [
+        "overlays.css"
+      ]
     }
   },
   "cssPartialFeatures": {
@@ -890,6 +899,7 @@
       "shell",
       "page-nav",
       "sticky",
+      "title-numbering",
       "theme-toggle"
     ],
     "controls-buttons.css": [
@@ -899,7 +909,8 @@
     "overlays.css": [
       "tooltip",
       "banner",
-      "dialog"
+      "dialog",
+      "callout"
     ],
     "code-block.css": [
       "code-block",

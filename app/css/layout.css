@@ -75,6 +75,12 @@ body > footer {
    Stack: site header → tier header → section heading.
    JS toggles data-sticky-stuck / data-sticky-stuck-edge while pinned. */
 
+/* Tier-lead collapse shifts layout above the viewport; disable scroll
+   anchoring so programmatic page-nav jumps keep their target Y. */
+:root[data-sticky-section-headings] {
+  overflow-anchor: none;
+}
+
 .content-tier {
   --sticky-tier-offset: 0px;
 }
@@ -229,6 +235,13 @@ main {
     var(--sticky-header-offset) + var(--sticky-gap) + var(--sticky-tier-offset, 0px) +
       1rem
   );
+}
+
+/* Optional outline prefixes — see app/shell/title-numbering.js */
+.title-number {
+  font-variant-numeric: tabular-nums;
+  /* Trailing nbsp is in the span text for page-nav labels; keep margin tight */
+  margin-inline-end: 0.1em;
 }
 
 .heading-anchor {
@@ -398,6 +411,52 @@ main {
   margin-inline: calc(-1 * var(--panel-padding, 1rem));
   border: none;
   border-top: 1px solid var(--border);
+}
+
+.demo-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  column-gap: 1.25rem;
+  align-items: stretch;
+  /* Bleed into card padding (top) and flex gap + following hr margin (bottom)
+   * so the vertical rule can meet the card edge and the horizontal divider. */
+  margin-block: calc(-1 * var(--panel-padding, 1rem));
+}
+
+.demo-split > .demo-fields {
+  /* Keep content inset while the split box itself full-bleeds vertically. */
+  padding-block: var(--panel-padding, 1rem);
+}
+
+.demo-divider.demo-divider--vertical {
+  width: 1px;
+  height: auto;
+  align-self: stretch;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: var(--border);
+}
+
+@media (max-width: 900px) {
+  .demo-split {
+    grid-template-columns: 1fr;
+    margin-block: 0;
+  }
+
+  .demo-split > .demo-fields {
+    padding-block: 0;
+  }
+
+  .demo-divider.demo-divider--vertical {
+    width: auto;
+    height: 0;
+    align-self: stretch;
+    margin-block: 0.35rem;
+    margin-inline: calc(-1 * var(--panel-padding, 1rem));
+    background-color: transparent;
+    border-top: 1px solid var(--border);
+  }
 }
 
 .demo-colour-grid {
