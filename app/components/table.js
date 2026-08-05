@@ -115,7 +115,7 @@ function setSortButtonState(button, direction) {
 function resolveDefaultSort(sortHeaders, defaultSortOption) {
   if (defaultSortOption && typeof defaultSortOption === "object") {
     const direction = parseSortDirection(defaultSortOption.direction);
-    if (direction == null) return null;
+    if (direction === null) return null;
 
     if (typeof defaultSortOption.columnIndex === "number") {
       const th = sortHeaders.find(
