@@ -5,9 +5,7 @@ Ready for GitHub Pages deployment. LLM skills included.
 
 Test all components: [demo](https://filcuk.github.io/microapp-template/demo.html)
 
-![Screenshot 1](res/screenshot1.png)
-![Screenshot 2](res/screenshot2.png)
-![Screenshot 3](res/screenshot3.png)
+![Scrolling demo](https://raw.githubusercontent.com/filcuk/microapp-template-res/refs/heads/main/readme/scroll.webp)
 
 ## Quick start
 
