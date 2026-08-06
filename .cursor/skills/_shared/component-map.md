@@ -68,8 +68,8 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | combo | `app/components/combo.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
 | dropdown | `app/components/dropdown.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
 | dropdown-toggle | `app/components/dropdown-toggle.js` | `controls-menus.css` | — | — | `menu`, badge | |
-| expand | `app/components/expand.js` | `controls-disclosure.css` | — | — | `dom` | |
-| accordion | `app/components/accordion.js` | `controls-disclosure.css` | — | — | `dom` | |
+| expand | `app/components/expand.js` | `controls-disclosure.css` | — | `chevron-right` | `dom`, `icons` | |
+| accordion | `app/components/accordion.js` | `controls-disclosure.css` | — | `chevron-right` | `dom`, `icons` | |
 | tabs | `app/components/tabs.js` | `controls-disclosure.css` | — | — | `dom` | |
 | progress-indicator | `app/components/progress-indicator.js` | `controls-disclosure.css` | — | — | `dom` | |
 | file-dropzone | `app/components/file-dropzone.js` | `controls-file.css` | — | Markup: `upload`; JS: `error` | `dom`, `icons` | |

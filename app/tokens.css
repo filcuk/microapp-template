@@ -155,7 +155,8 @@ a:hover {
     transition: none;
   }
 
-  .expand-notch::after {
+  .expand-icon,
+  .accordion-icon {
     transition: none;
   }
 

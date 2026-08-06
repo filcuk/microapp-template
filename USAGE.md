@@ -362,8 +362,8 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open; selection count via badge. [`app/components/dropdown-toggle.js`](app/components/dropdown-toggle.js). |
-| **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
-| **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
+| **Expand** | `.expand` disclosure with chevron + label trigger and collapsible `.expand-panel`; behaviour from [`app/components/expand.js`](app/components/expand.js). |
+| **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/components/accordion.js`](app/components/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
 | **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
@@ -1818,7 +1818,7 @@ Start the badge as `hidden` when the initial selection count is zero so it does 
 ```html
 <div class="expand">
   <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="my-expand-panel">
-    <span class="expand-notch" aria-hidden="true"></span>
+    <span class="expand-icon" data-icon="chevron-right" data-icon-class="expand-icon-svg" aria-hidden="true"></span>
     <span class="expand-label">Advanced options</span>
   </button>
   <div id="my-expand-panel" class="expand-panel hidden" hidden>
@@ -1847,7 +1847,8 @@ Vertical stack of sections. Each `.accordion-item` has a heading button and a co
     <h3 class="accordion-heading">
       <button type="button" class="accordion-trigger" id="acc-trigger-1" aria-expanded="false"
         aria-controls="acc-panel-1">
-        <span class="accordion-notch" aria-hidden="true"></span>
+        <span class="accordion-icon" data-icon="chevron-right" data-icon-class="accordion-icon-svg"
+          aria-hidden="true"></span>
         <span class="accordion-label">Section one</span>
       </button>
     </h3>

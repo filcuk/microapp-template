@@ -9,7 +9,8 @@ import { parseBooleanAttr, setHidden } from "../utils/dom.js";
  *       <h3 class="accordion-heading">
  *         <button type="button" class="accordion-trigger" id="acc-trigger-1"
  *           aria-expanded="false" aria-controls="acc-panel-1">
- *           <span class="accordion-notch" aria-hidden="true"></span>
+ *           <span class="accordion-icon" data-icon="chevron-right" data-icon-class="accordion-icon-svg"
+ *             aria-hidden="true"></span>
  *           <span class="accordion-label">Section one</span>
  *         </button>
  *       </h3>

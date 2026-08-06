@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-06T18:27:50.635Z",
+  "generatedAt": "2026-08-06T20:26:20.646Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -27,7 +27,7 @@
   },
   "files": {
     "app/components/accordion.js": {
-      "sha256": "043888857492c5380146ab0c713aaa333678d141e28a6b96401a70881cfbb487"
+      "sha256": "e65229543af29d705e262cabc0a595350d62fec0c2f50e67d158d0c3a540059d"
     },
     "app/components/badge.js": {
       "sha256": "ddbde42721c3f3f439c0e80493eb2857211c918249dd971149d8d10d3aea01d7"
@@ -81,7 +81,7 @@
       "sha256": "bbcca5b7ad4fb9c329e308e7e822468d4c3e59b12902ab144aa201c7bddbdad7"
     },
     "app/components/file-download.js": {
-      "sha256": "c2530b73c16516bd4d1e785a96f66ca9db169afbf5a9ba4bae4310fec70641cd"
+      "sha256": "a059ed3f44f61a53fd7035688f0cac0796050e240645caeca6d65a8232d32b81"
     },
     "app/components/file-dropzone.js": {
       "sha256": "d397a2b989468b7bf91f49db3cabaa340ad3c9a2fede9f00cb9ed9aad6ee884d"
@@ -138,19 +138,19 @@
       "sha256": "d74a9ffbd69ce66deac92733531be5c39b00d1e8d181800d7d4d557121e94ef5"
     },
     "app/css/controls-buttons.css": {
-      "sha256": "6ab1963647512862f430187e76cab5429d66718b1ad049f0573fdce1174545d1"
+      "sha256": "1b99e3df39ab0feb4f992c9dc7596b86bd014ca83b74d86c2edc2ba31b663e47"
     },
     "app/css/controls-chips.css": {
-      "sha256": "6df72b7c841860121c30bc9ebb7f773871d2b45b2a42efe04a643b652ca9c87c"
+      "sha256": "d9244ea37ac9792e694a8a99b7ee60326ee21666a349901d69f832fa937ce982"
     },
     "app/css/controls-disclosure.css": {
-      "sha256": "004a7221835f092d451c0550de95e736989fb47ff3421ee4c1a2338893bbdb1c"
+      "sha256": "26f59459eca02aa9e14acdc1572b6cc52dd7dd952e6cceaf13382ae733b3f7eb"
     },
     "app/css/controls-fields.css": {
       "sha256": "7a011a86a847bffa0f5814b9134135f01fa08793f518b72db83ece9abbdcc1bd"
     },
     "app/css/controls-file.css": {
-      "sha256": "9a82e4417c7aba5dc622a3c8c93ea2c96deda064f3fed2657240df6e35782a4e"
+      "sha256": "5b84c16908d56cc5c1c8d71d10abc5d351974379ffae342f9d114d4becd9544a"
     },
     "app/css/controls-menus.css": {
       "sha256": "83c2f5fbd9e4164de0ea5d558b22cbfd03f7632df4d994583bac4279627e4844"
@@ -162,7 +162,7 @@
       "sha256": "e63764fba1fbd95acc81e69314be87c4047cdfb827c808d003870126692eead7"
     },
     "app/css/controls-widgets.css": {
-      "sha256": "baa6d9f0053e7db8082d2f0cbc3c3be5e1d2b475c2cf11fc6389281d76e701be"
+      "sha256": "63edaea1e68cafe26c7885d67da15fd3df8f06eb1fd73bbf125b0a6255bc4125"
     },
     "app/css/layout.css": {
       "sha256": "85ad9ad51d8d95f1cfa055f4c7fa98a51764b15b53310b37a65cd7dc9bb9c894"
@@ -171,7 +171,7 @@
       "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
     },
     "app/css/rich-text-editor.css": {
-      "sha256": "cfb9061e1e061da1c4215a9adf2cc68adb5523271e162a0ec037f1f40f890e9d"
+      "sha256": "7f3498a7f96b6ce8933e5b1c44af53ce77268725d128562683e1a904dbabf0f9"
     },
     "app/css/table.css": {
       "sha256": "f203309f13f0d8671be31b8096db1a4cb9686ef85f5a3443ea6c70569e3f55d2"
@@ -213,7 +213,7 @@
       "sha256": "3f9f55c503dec155b391c71c7a3ab3ed5c659de5df5695084831155e51e95f0b"
     },
     "app/tokens.css": {
-      "sha256": "f5af64936aa40fb6a09a02649bfde69c9bffbd983645854a469120aec0c0caa3"
+      "sha256": "d5c28f38ec7f9adf6e520fa44266b493984ebc20a2da37fe03999e99d09882c1"
     },
     "app/utils/also-see-svg.js": {
       "sha256": "af1ff194fde0ba9ffe09edf885fde4562bac5f14592fd2f348c366296447e854"
@@ -231,7 +231,7 @@
       "sha256": "634496f84e49d4691f091de0effa74653d5c6f972532977d0e3adbee3975cc9b"
     },
     "app/utils/icons-template.js": {
-      "sha256": "dea12fcf6275fb5e8505ed3ffd72033a9c29f45d7b30fbf716d6b79e63e67450"
+      "sha256": "cea9dc41bb72bf02aeba03518d37a6795a7d6c0dc441a1058e3ea496616a025d"
     },
     "app/utils/icons.js": {
       "sha256": "38586a2febcb2bfd12fee172d3299f287d5ebd412fc22c7d227d22b94fb37121"
@@ -662,9 +662,12 @@
       ],
       "vendor": [],
       "vendorFiles": [],
-      "icons": [],
+      "icons": [
+        "chevron-right"
+      ],
       "infra": [
-        "dom"
+        "dom",
+        "icons"
       ]
     },
     "accordion": {
@@ -676,9 +679,12 @@
       ],
       "vendor": [],
       "vendorFiles": [],
-      "icons": [],
+      "icons": [
+        "chevron-right"
+      ],
       "infra": [
-        "dom"
+        "dom",
+        "icons"
       ]
     },
     "tabs": {
