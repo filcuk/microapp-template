@@ -60,7 +60,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |
 | checkbox | `app/components/checkbox.js` | `controls-widgets.css` | — | — | `dom` | Tri-state checkbox |
 | segmented-control | `app/components/segmented-control.js` | `controls-widgets.css` | — | — | `dom` | |
-| pagination | `app/components/pagination.js` | `controls-widgets.css` | — | — | `dom` | |
+| pagination | `app/components/pagination.js` | `controls-widgets.css` | — | `chevron-left`, `chevron-right` | `dom` | |
 | progress-bar | `app/components/progress-bar.js` | `controls-widgets.css` | — | — | `dom` | |
 | spinner | `app/components/spinner.js` | `controls-widgets.css` | — | — | `dom` | |
 | slider | `app/components/slider.js` | `controls-widgets.css` | — | — | `dom` | |

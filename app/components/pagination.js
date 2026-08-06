@@ -9,7 +9,8 @@
  *     </div>
  *     <nav class="pagination-nav" aria-label="Results pages">
  *       <button type="button" class="btn btn-icon pagination-prev" data-pagination-prev
- *         aria-label="Previous page" disabled>‹</button>
+ *         aria-label="Previous page" disabled
+ *         data-icon="chevron-left" data-icon-class="btn-icon-svg"></button>
  *       <ul class="pagination-list">
  *         <li class="pagination-item">
  *           <button type="button" class="pagination-page is-active" data-pagination-page="1"
@@ -17,7 +18,8 @@
  *         </li>
  *       </ul>
  *       <button type="button" class="btn btn-icon pagination-next" data-pagination-next
- *         aria-label="Next page">›</button>
+ *         aria-label="Next page"
+ *         data-icon="chevron-right" data-icon-class="btn-icon-svg"></button>
  *     </nav>
  *     <input type="hidden" class="pagination-value" value="1" />
  *   </div>
