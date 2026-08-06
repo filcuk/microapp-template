@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-05T20:41:46.059Z",
+  "generatedAt": "2026-08-06T18:27:50.635Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -96,7 +96,7 @@
       "sha256": "d757d5234d16110d89136612ae8c51078500fdb60d67bc98386e2677f32172b5"
     },
     "app/components/rich-text-editor.js": {
-      "sha256": "1c43d51c9df4faaece3e274fd9358d617e35b8ea2c32d3fc79049260e17e07f7"
+      "sha256": "6d0121de57928fbf1f5069f7d57328a557d5d982410b8c9d3794b88959006478"
     },
     "app/components/segmented-control.js": {
       "sha256": "da46f5c892bb605f92e385cd7037281b70d9c4323876c4ff725007172d2151ef"
@@ -171,7 +171,7 @@
       "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
     },
     "app/css/rich-text-editor.css": {
-      "sha256": "c35532f86573991144bf8d6813a75ff1732711690e496a6e0d143d0015272a2c"
+      "sha256": "cfb9061e1e061da1c4215a9adf2cc68adb5523271e162a0ec037f1f40f890e9d"
     },
     "app/css/table.css": {
       "sha256": "f203309f13f0d8671be31b8096db1a4cb9686ef85f5a3443ea6c70569e3f55d2"
@@ -840,10 +840,12 @@
     "rich-text-editor": {
       "files": [
         "app/components/rich-text-editor.js",
-        "app/components/toastui-editor.js"
+        "app/components/toastui-editor.js",
+        "app/components/segmented-control.js"
       ],
       "css": [
-        "rich-text-editor.css"
+        "rich-text-editor.css",
+        "controls-widgets.css"
       ],
       "vendor": [
         "app/vendor/toastui-editor/",
@@ -862,7 +864,8 @@
       "infra": [
         "config",
         "dom"
-      ]
+      ],
+      "notes": "Mode switch uses segmented-control"
     }
   },
   "cssOnly": {
@@ -940,7 +943,8 @@
       "spinner",
       "slider",
       "stepper",
-      "color-input"
+      "color-input",
+      "rich-text-editor"
     ],
     "controls-section-panel.css": [
       "section-panel"

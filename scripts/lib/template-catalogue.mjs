@@ -341,8 +341,9 @@ export const COMPONENTS = {
     files: [
       "app/components/rich-text-editor.js",
       "app/components/toastui-editor.js",
+      "app/components/segmented-control.js",
     ],
-    css: ["rich-text-editor.css"],
+    css: ["rich-text-editor.css", "controls-widgets.css"],
     vendor: [
       "app/vendor/toastui-editor/",
       "app/vendor/toastui-editor-plugin-table-merged-cell/",
@@ -350,6 +351,7 @@ export const COMPONENTS = {
     ],
     icons: [],
     infra: ["config", "dom"],
+    notes: "Mode switch uses segmented-control",
   },
 };
 
@@ -387,6 +389,7 @@ export const CSS_PARTIAL_FEATURES = {
     "slider",
     "stepper",
     "color-input",
+    "rich-text-editor",
   ],
   "controls-section-panel.css": ["section-panel"],
   "controls-menus.css": ["combo", "dropdown", "dropdown-toggle"],

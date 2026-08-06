@@ -78,7 +78,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | expandable-surface | `app/components/expandable-surface.js` | `code-block.css` | — | `fullscreen`, `fullscreen-exit` | `dom`, `document-listeners`, `icons`; closes `tooltip` | Code-block floating maximise respects `data-code-surface-actions` |
 | table | `app/components/table.js` | `table.css` | — | `chevron-up` (sort) | `dom`, `icons` | |
 | tabular-input | `app/components/tabular-input.js` | `controls-tabular-input.css` | — | `copy`, `paste`, `paste-special`, `plus`, `delete`, `remove`, `chevron-up`, `chevron-down` | `dom`, `document-listeners`, `menu`, `icons`, `clipboard`; closes `tooltip` | |
-| rich-text-editor | `app/components/rich-text-editor.js`, `toastui-editor.js` | `rich-text-editor.css` | `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/`, `app/toastui-editor.css` | — | `config`, `dom` | Large vendor bundle |
+| rich-text-editor | `app/components/rich-text-editor.js`, `toastui-editor.js`, `segmented-control.js` | `rich-text-editor.css`; mode switch also `controls-widgets.css` | `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/`, `app/toastui-editor.css` | — | `config`, `dom`; mode switch: segmented-control | Large vendor bundle; Markdown/WYSIWYG uses segmented control |
 
 ## CSS-only / shell patterns (no dedicated component module)
 

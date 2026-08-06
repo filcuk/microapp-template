@@ -2192,6 +2192,8 @@ const editor = initRichTextEditor(document.getElementById("my-editor"), {
 
 editor?.getMarkdown();
 editor?.getHTML();
+editor?.getEditType(); // `markdown` | `wysiwyg`
+editor?.setEditType("markdown");
 editor?.setMarkdown("…");
 editor?.setHTML("…"); // may not round-trip cleanly to Markdown
 editor?.destroy();
@@ -2201,7 +2203,7 @@ initRichTextEditors(document); // every `.rich-text-editor` with a mount node
 
 Theme (light/dark) follows the page `data-theme` attribute and updates on `microapp-theme-change` from [`app/theme.js`](app/theme.js).
 
-Switch between Markdown and WYSIWYG using Toast UI’s built-in mode control in the toolbar. Converting between Markdown and HTML is lossy for complex formatting (tables, nested lists, etc.) — treat one format as canonical when persisting content.
+Markdown ↔ WYSIWYG uses the template [segmented control](#segmented-control) in the editor footer (Toast UI’s native mode switch is hidden). Converting between Markdown and HTML is lossy for complex formatting (tables, nested lists, etc.) — treat one format as canonical when persisting content.
 
 ### Code highlighting (Prism)
 

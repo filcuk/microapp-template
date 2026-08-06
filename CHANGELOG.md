@@ -25,6 +25,7 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 
 ### Changed
 
+- Rich text editor Markdown / WYSIWYG switch uses the template segmented control (Toast UI’s native mode tabs are hidden).
 - Heading outline: site `h1`, tier `h2.segment-title` (was `.content-tier-title`), section `h3.section-title` (was `h2.section-heading`). Page nav and heading links default to `main :is(h2, h3)[id]`.
 - Content tier headers are plain larger titles with an underline instead of accent-edged cards (card chrome moved to `.callout`).
 - Sticky chrome stacks site header, tier header, and section headings; pinned bars fade in gap fill and a single edge hairline/shadow (`data-sticky-stuck` / `data-sticky-stuck-edge`) instead of always-on cover strips.
@@ -38,6 +39,8 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 
 ### Fixed
 
+- Rich text editor toolbar icon bleed — match Toast UI’s 1px border to the toolbar/`--code-bg` hover fill and clip the sprite to the padding box.
+- Rich text editor content panes use `--input-bg` (same as `.input` / `.textarea`); toolbar stays on `--surface`.
 - Sticky site-header border disappearing under the sticky cover strip once pinned.
 - Sticky section/tier cover strips masking content while headings were still in flow.
 
