@@ -24,6 +24,7 @@
   font-weight: 500;
   line-height: 1.25;
   white-space: nowrap;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 button.chip {
@@ -32,6 +33,7 @@ button.chip {
 
 button.chip:hover:not(:disabled) {
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
 }
 
 button.chip:focus-visible {
@@ -56,7 +58,9 @@ button.chip:disabled {
   text-overflow: ellipsis;
 }
 
-.chip--removable:hover:not(:disabled) {
+.chip[aria-pressed="true"]:hover:not(:disabled),
+.chip.is-selected:hover:not(:disabled),
+button.chip.chip--removable:hover:not(:disabled) {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   color: var(--accent);
