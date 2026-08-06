@@ -344,7 +344,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.time-picker`, `.duration-input`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
-| **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
+| **File download** | `.file-download` full-width button rows with on-demand download. [`app/components/file-download.js`](app/components/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list; optional multi-select (`data-combobox-multi`) with comma-separated summary and selection badge. [`app/components/combobox.js`](app/components/combobox.js). |
@@ -1040,16 +1040,18 @@ On init, the prompt shows a `.file-dropzone-meta` line when there is something n
 
 ### File download
 
-File rows styled like `.file-dropzone-item`. Content is generated on demand when the user clicks download.
+Full-width `.btn` rows (standard control height) with an inline download icon. Content is generated on demand when the user clicks the row.
 
 ```html
 <div class="file-download" id="my-download">
   <ul class="file-download-list">
-    <li class="file-download-item" data-file-download-name="export.txt">
-      <span class="file-download-item-name">export.txt</span>
-      <span class="file-download-item-meta">Plain text</span>
-      <button type="button" class="file-download-action btn btn-icon" aria-label="Download export.txt"
-        data-icon="upload" data-icon-class="file-download-action-icon"></button>
+    <li>
+      <button type="button" class="file-download-item btn" data-file-download-name="export.txt"
+        aria-label="Download export.txt">
+        <span class="file-download-item-name">export<span class="file-download-item-ext">.txt</span></span>
+        <span class="file-download-item-meta">Plain text</span>
+        <span data-icon="download" data-icon-class="btn-icon-svg"></span>
+      </button>
     </li>
   </ul>
 </div>

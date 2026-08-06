@@ -73,7 +73,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | tabs | `app/components/tabs.js` | `controls-disclosure.css` | — | — | `dom` | |
 | progress-indicator | `app/components/progress-indicator.js` | `controls-disclosure.css` | — | — | `dom` | |
 | file-dropzone | `app/components/file-dropzone.js` | `controls-file.css` | — | Markup: `upload`; JS: `error` | `dom`, `icons` | |
-| file-download | `app/components/file-download.js` | `controls-file.css` | — | `upload` | `icons` | |
+| file-download | `app/components/file-download.js` | `controls-file.css` | — | `download` | `icons` | |
 | code-block | `app/components/code-block.js` | `code-block.css` | `app/vendor/prism/`, `app/prism.css` | `clear`, `copy`, `paste`, `lines`, `highlight`, `fullscreen` | `dom`, `clipboard`, `icons` | Load Prism scripts on the page |
 | expandable-surface | `app/components/expandable-surface.js` | `code-block.css` | — | `fullscreen`, `fullscreen-exit` | `dom`, `document-listeners`, `icons`; closes `tooltip` | Code-block floating maximise respects `data-code-surface-actions` |
 | table | `app/components/table.js` | `table.css` | — | `chevron-up` (sort) | `dom`, `icons` | |
