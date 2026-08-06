@@ -294,10 +294,12 @@
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .pagination-page:hover:not(:disabled) {
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
 }
 
 .pagination-page:focus-visible {
@@ -311,6 +313,12 @@
   border-color: var(--accent);
   color: #ffffff;
   font-weight: 600;
+}
+
+.pagination-page.is-active:hover:not(:disabled),
+.pagination-page[aria-current="page"]:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 :root[data-theme="dark"] .pagination-page.is-active,
