@@ -20,7 +20,8 @@ Aligns with `.cursor/rules/icons.mdc` and [../_shared/invariants.md](../_shared/
 - **May** reuse existing `ICONS` ids or `{ ref: "existing-id" }`.
 - **May** add a blank `ICONS` stub (empty `markup`, correct `viewBox`) when the user agrees to supply the icon.
 - **May** wire HTML / `__MICROAPP__` / `brand-icon.js` paths to files the user will add.
-- Other lifecycle skills **must** use this skill for missing artwork instead of inventing it.
+- **UI icons from Icônes / Iconify:** use [`add-icon`](../add-icon/SKILL.md) (exact fetch) — do not invent paths or ask the user to paste when a collection id is known.
+- Other lifecycle skills **must** use this skill (or `add-icon` for catalogue pulls) for missing artwork instead of inventing it.
 
 ## Asset kinds
 
@@ -32,7 +33,7 @@ Aligns with `.cursor/rules/icons.mdc` and [../_shared/invariants.md](../_shared/
 | Inline UI icon | `app/utils/icons-app.js` `APP_ICONS` (forks) or `icons-template.js` `TEMPLATE_ICONS` (catalogue) | `data-icon="id"` or `createIcon("id")` via merged `icons.js` |
 | Other res | `app/res/…` | Reference from HTML/CSS/JS only after file exists or user commits to add it |
 
-Prefer [Icônes — Material Icons Round](https://icones.js.org/collection/ic?s=info&variant=Round) when asking the user for UI icon markup. Material icons use `viewBox: "0 0 24 24"`.
+Prefer [`add-icon`](../add-icon/SKILL.md) to pull UI icons from [Icônes — Material Icons Round](https://icones.js.org/collection/ic?s=info&variant=Round) (`viewBox: "0 0 24 24"`). Use this skill’s stub flow only when the user will supply custom artwork or a blank placeholder is enough for wiring.
 
 ## Workflow
 

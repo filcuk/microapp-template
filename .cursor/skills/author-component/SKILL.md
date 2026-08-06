@@ -19,7 +19,7 @@ Agree with the user:
 - Feature id / public API (`initX` and/or `initXs(root)`)
 - Markup classes and `data-*` attributes
 - Which `app/css/` partial (existing vs new + `template.css` `@import`)
-- Icons needed → **`handle-assets`** (never invent SVG)
+- Icons needed → **`add-icon`** for Icônes pulls, or **`handle-assets`** for brand/custom stubs (never invent SVG)
 - Whether demo section is required (default: yes for user-facing controls)
 
 ## 2. Scaffold

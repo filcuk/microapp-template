@@ -15,7 +15,8 @@ Multi-step workflows live under [`.cursor/skills/`](.cursor/skills/). Read the m
 | [`finalize-app`](.cursor/skills/finalize-app/SKILL.md) | Remove unused components before shipping |
 | [`author-component`](.cursor/skills/author-component/SKILL.md) | Add a **new** reusable component to the template itself |
 | [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION`, regenerate manifest, tag `vX.Y.Z` |
-| [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) | Wire logos/icons — never invent artwork; request files from the user |
+| [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) | Wire logos/favicons/res — never invent artwork; request files from the user |
+| [`add-icon`](.cursor/skills/add-icon/SKILL.md) | Pull Icônes / Iconify SVG into `icons-template.js` or `icons-app.js` (prefer `ic` Round; Material Symbols fallback) |
 | [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets, and `verify:template` |
 
 ## Confirm before complexity
@@ -126,9 +127,9 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 
 - Declare icons with `data-icon="name"` and optional `data-icon-class="…"` in HTML
 - Call `initIcons()` (via `initShell()`) to inject SVGs
-- **Agents must not invent or generate SVG paths** — see [`.cursor/rules/icons.mdc`](.cursor/rules/icons.mdc). If an icon is missing, ask the user to add it to `app/utils/icons-app.js` (forks) or `icons-template.js` (template catalogue); blank stubs are documented in those headers. Reuse existing ids or `{ ref: "other-icon" }` when appropriate.
-- Users add new icon paths in `icons-app.js` / `icons-template.js` only — `icons.js` merges them; do not duplicate SVG paths in HTML
-- Source SVGs from [Icônes — Google Material Icons (Round variant)](https://icones.js.org/collection/ic?s=info&variant=Round); copy path markup into `TEMPLATE_ICONS` / `APP_ICONS` and set `attribution` when required
+- **Agents must not invent or generate SVG paths** — see [`.cursor/rules/icons.mdc`](.cursor/rules/icons.mdc). If an icon is missing, reuse an existing id / `{ ref }`, or follow the [`add-icon`](.cursor/skills/add-icon/SKILL.md) skill to pull from Icônes (ask for app id + template vs app if needed). Blank stubs via [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) when the user will supply custom artwork.
+- Users / agents add icon entries in `icons-app.js` / `icons-template.js` only — `icons.js` merges them; do not duplicate SVG paths in HTML
+- Prefer [Icônes — Google Material Icons (Round)](https://icones.js.org/collection/ic?s=info&variant=Round) via `add-icon`; Material Symbols Rounded is the fallback. Set `name` to the collection id and `attribution` from `ICON_ATTRIBUTIONS`
 - For sourced icons, set `name` to the original collection id (e.g. `round-info`) — metadata for traceability; omit for custom or in-house icons. The merged `ICONS` object key remains the app id used in `data-icon`
 - To alias one app id to another, use `{ ref: "other-icon" }` instead of duplicating markup (e.g. `lines: { ref: "note" }`)
 - Third-party icons that require a license notice: set `attribution` on the icon definition (use `ICON_ATTRIBUTIONS` for common sets). Rendered as an SVG comment via `createIcon()` / `initIcons()`
