@@ -20,6 +20,7 @@
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 /* Compact height — works with labeled and icon buttons */
@@ -32,6 +33,7 @@
 
 .btn:hover:not(:disabled) {
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
 }
 
 .btn:disabled {
@@ -123,7 +125,8 @@
   cursor: pointer;
 }
 
-.btn-link:hover {
+.btn-link:hover:not(:disabled) {
   color: var(--accent-hover);
+  background: transparent;
 }
 
