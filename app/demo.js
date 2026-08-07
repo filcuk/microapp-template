@@ -196,30 +196,6 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
         active: true,
       },
     },
-    {
-      id: "r4",
-      cells: {
-        name: "Thingamajig",
-        sku: "T-400",
-        qty: 1,
-        price: 42,
-        category: "Kits",
-        supplier: "Initech",
-        active: false,
-      },
-    },
-    {
-      id: "r5",
-      cells: {
-        name: "Whatsit",
-        sku: "W-500",
-        qty: 24,
-        price: 3.75,
-        category: "Parts",
-        supplier: "Globex",
-        active: true,
-      },
-    },
   ],
 });
 
