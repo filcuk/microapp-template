@@ -100,12 +100,8 @@ initTimePicker(document.getElementById("demo-time-picker"));
 initDurationInput(document.getElementById("demo-duration-input"));
 
 initSlider(document.getElementById("demo-slider-integer"));
-initSlider(document.getElementById("demo-slider-decimal"));
-initSlider(document.getElementById("demo-slider-percentage"));
-initSlider(document.getElementById("demo-slider-disabled"));
 
 initStepper(document.getElementById("demo-stepper"));
-initStepper(document.getElementById("demo-stepper-decimal"));
 
 initColorInput(document.getElementById("demo-color-input"));
 initColorInput(document.getElementById("demo-color-input-empty"));

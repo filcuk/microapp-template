@@ -272,8 +272,8 @@
                 </div>
               </div>
               <div class="panel-stack">
-                <h3 class="demo-card-title" id="demo-radio-label">Radio</h3>
-                <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-labelledby="demo-radio-label">
+                <h3 class="demo-card-title">Radio</h3>
+                <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-label="Radio">
                   <label class="radio" for="demo-radio-a">
                     <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-a" value="a" checked />
                     <span>Option A</span>
@@ -343,11 +343,10 @@
         <section class="content-section" aria-labelledby="demo-sliders">
           <h3 id="demo-sliders" class="section-title">Sliders &amp; steppers</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Sliders</h3>
-            <div class="panel-stack">
-              <div class="demo-grid demo-grid-2">
+            <div class="panel-split">
+              <div class="panel-stack">
                 <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
-                  <label class="field-label" for="demo-slider-integer-range">Integer</label>
+                  <label class="field-label" for="demo-slider-integer-range">Slider</label>
                   <div class="slider-row">
                     <input type="range" id="demo-slider-integer-range" class="slider-range" />
                     <div class="slider-input-wrap">
@@ -357,69 +356,20 @@
                     <input type="hidden" class="slider-value" />
                   </div>
                 </div>
-                <div class="slider" id="demo-slider-decimal" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-default="0.5" data-slider-format="decimal">
-                  <label class="field-label" for="demo-slider-decimal-range">Decimal</label>
-                  <div class="slider-row">
-                    <input type="range" id="demo-slider-decimal-range" class="slider-range" />
-                    <div class="slider-input-wrap">
-                      <input type="text" class="input slider-input" inputmode="decimal" aria-label="Decimal value" />
-                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
-                    </div>
-                    <input type="hidden" class="slider-value" />
-                  </div>
-                </div>
               </div>
-              <div class="demo-grid demo-grid-2">
-                <div class="slider" id="demo-slider-percentage" data-slider-min="0" data-slider-max="100" data-slider-default="75" data-slider-format="percentage">
-                  <label class="field-label" for="demo-slider-percentage-range">Percentage</label>
-                  <div class="slider-row">
-                    <input type="range" id="demo-slider-percentage-range" class="slider-range" />
-                    <div class="slider-input-wrap">
-                      <input type="text" class="input slider-input" inputmode="decimal" aria-label="Percentage value" />
-                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
-                    </div>
-                    <input type="hidden" class="slider-value" />
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
+                <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
+                  <label class="field-label" for="demo-stepper-input">Stepper</label>
+                  <div class="stepper-control">
+                    <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
+                      aria-label="Decrease">−</button>
+                    <input type="text" id="demo-stepper-input" class="input stepper-input" inputmode="numeric"
+                      aria-label="Integer quantity" />
+                    <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
+                      aria-label="Increase">+</button>
+                    <input type="hidden" class="stepper-value" />
                   </div>
-                </div>
-                <div class="slider" id="demo-slider-disabled" data-slider-min="0" data-slider-max="10" data-slider-default="6" data-slider-format="integer" data-slider-disabled>
-                  <label class="field-label" for="demo-slider-disabled-range">Disabled</label>
-                  <div class="slider-row">
-                    <input type="range" id="demo-slider-disabled-range" class="slider-range" disabled />
-                    <div class="slider-input-wrap">
-                      <input type="text" class="input slider-input" inputmode="numeric" aria-label="Disabled value" disabled />
-                      <span class="slider-suffix hidden" aria-hidden="true">%</span>
-                    </div>
-                    <input type="hidden" class="slider-value" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <hr class="panel-divider" />
-            <h3 class="demo-card-title">Steppers</h3>
-            <div class="demo-grid demo-grid-2">
-              <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
-                <label class="field-label" for="demo-stepper-input">Integer</label>
-                <div class="stepper-control">
-                  <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
-                    aria-label="Decrease">−</button>
-                  <input type="text" id="demo-stepper-input" class="input stepper-input" inputmode="numeric"
-                    aria-label="Integer quantity" />
-                  <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
-                    aria-label="Increase">+</button>
-                  <input type="hidden" class="stepper-value" />
-                </div>
-              </div>
-              <div class="stepper" id="demo-stepper-decimal" data-stepper-min="0" data-stepper-max="5"
-                data-stepper-step="0.5" data-stepper-default="1.5" data-stepper-format="decimal">
-                <label class="field-label" for="demo-stepper-decimal-input">Decimal</label>
-                <div class="stepper-control">
-                  <button type="button" class="btn btn-icon stepper-decrement" data-stepper-decrement
-                    aria-label="Decrease">−</button>
-                  <input type="text" id="demo-stepper-decimal-input" class="input stepper-input" inputmode="decimal"
-                    aria-label="Decimal quantity" />
-                  <button type="button" class="btn btn-icon stepper-increment" data-stepper-increment
-                    aria-label="Increase">+</button>
-                  <input type="hidden" class="stepper-value" />
                 </div>
               </div>
             </div>
@@ -694,7 +644,6 @@
               </div>
             </div>
             <hr class="panel-divider" />
-            <h3 class="demo-card-title">Date &amp; time</h3>
             <div class="demo-grid demo-grid-4">
               <div class="field date-picker" id="demo-date-picker">
                 <label class="field-label" for="demo-date-picker-input">Date picker</label>
