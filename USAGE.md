@@ -346,6 +346,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
 | **File download** | `.file-download` full-width button rows with on-demand download. [`app/components/file-download.js`](app/components/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
+| **Panel split** | Side-by-side columns with full-bleed horizontal/vertical dividers inside padded panels (`.panel-split`, `.panel-divider`, `.panel-stack`). See **Panel split**. |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list; optional multi-select (`data-combobox-multi`) with comma-separated summary and selection badge. [`app/components/combobox.js`](app/components/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
@@ -1080,6 +1081,30 @@ initFileDownloads(document); // wire every `.file-download`
 ```
 
 Pass a `files` array with per-file `getContent` callbacks. File size is shown in `.file-download-item-meta` when content can be resolved at init time.
+
+### Panel split
+
+Side-by-side columns inside a padded panel (any host that sets `--panel-padding`, e.g. `.section-panel` or a bordered card). Columns are `.panel-stack` blocks separated by `.panel-divider.panel-divider--vertical`. Use `.panel-divider` alone for a full-bleed horizontal rule between stacked blocks. Add `.panel-split--3` for three columns (divider between each). Add `.panel-split--3x2` for a 3×2 grid with a single vertical rail after column 1 (child order: col1-row1, col1-row2, divider, col2-row1, col3-row1, col2-row2, col3-row2). Add `.panel-split--after-heading` when a title or hint sits above the split so the vertical rules do not bleed into that heading.
+
+```html
+<div class="section-panel">
+  <div class="panel-split">
+    <div class="panel-stack">
+      <h3 class="section-title">Left</h3>
+      <!-- … -->
+    </div>
+    <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+    <div class="panel-stack">
+      <h3 class="section-title">Right</h3>
+      <!-- … -->
+    </div>
+  </div>
+  <hr class="panel-divider" />
+  <p>Content below the split.</p>
+</div>
+```
+
+On narrow viewports the split stacks and vertical dividers become horizontal rules.
 
 ### Section panel
 

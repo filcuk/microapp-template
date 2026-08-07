@@ -136,8 +136,8 @@
         <section class="content-section" aria-labelledby="demo-options">
           <h3 id="demo-options" class="section-title">Options</h3>
           <div class="demo-card">
-            <div class="demo-split">
-              <div class="demo-fields">
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Sticky chrome</h3>
                 <p class="demo-hint">
                   Optional stickiness for the site header and section titles.
@@ -167,8 +167,8 @@
                   </div>
                 </div>
               </div>
-              <hr class="demo-divider demo-divider--vertical" aria-hidden="true" />
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Title numbering</h3>
                 <p class="demo-hint">
                   Prefix outline headings with hierarchical numbers (1., 1.1., 1.2.1.).
@@ -205,27 +205,34 @@
         <section class="content-section" aria-labelledby="demo-actions">
           <h3 id="demo-actions" class="section-title">Actions</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Buttons</h3>
-            <p class="demo-hint">Standard button size.</p>
-            <div class="demo-row">
-              <button type="button" class="btn">Default</button>
-              <button type="button" class="btn btn-primary">Primary</button>
-              <button type="button" class="btn" disabled>Disabled</button>
-              <button type="button" id="icon-toggle-btn" class="btn btn-icon btn-toggle" aria-pressed="false"
-                aria-label="Toggle feature" data-tooltip="Icon button with toggle state" data-icon="lines"
-                data-icon-class="btn-icon-svg"></button>
-              <button type="button" class="btn-link">Link button</button>
-            </div>
-            <h3 class="demo-card-title">Slim buttons</h3>
-            <p class="demo-hint">Typicall used for icon-only buttons or controls embedded in other elements.</p>
-            <div class="demo-row">
-              <button type="button" class="btn btn-slim">Slim</button>
-              <button type="button" class="btn btn-primary btn-slim">Slim primary</button>
-              <button type="button" class="btn btn-slim" disabled>Slim disabled</button>
-              <button type="button" class="btn btn-slim btn-icon btn-toggle" aria-pressed="false"
-                aria-label="Slim icon toggle" data-tooltip="Slim icon button" data-icon="lines"
-                data-icon-class="btn-icon-svg"></button>
-              <button type="button" class="btn btn-slim btn-danger">Slim danger</button>
+            <div class="panel-split">
+              <div class="panel-stack">
+                <h3 class="demo-card-title">Buttons</h3>
+                <p class="demo-hint">Standard button size.</p>
+                <div class="demo-row">
+                  <button type="button" class="btn">Default</button>
+                  <button type="button" class="btn btn-primary">Primary</button>
+                  <button type="button" class="btn" disabled>Disabled</button>
+                  <button type="button" id="icon-toggle-btn" class="btn btn-icon btn-toggle" aria-pressed="false"
+                    aria-label="Toggle feature" data-tooltip="Icon button with toggle state" data-icon="lines"
+                    data-icon-class="btn-icon-svg"></button>
+                  <button type="button" class="btn-link">Link button</button>
+                </div>
+              </div>
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
+                <h3 class="demo-card-title">Slim buttons</h3>
+                <p class="demo-hint">Typicall used for icon-only buttons or controls embedded in other elements.</p>
+                <div class="demo-row">
+                  <button type="button" class="btn btn-slim">Slim</button>
+                  <button type="button" class="btn btn-primary btn-slim">Slim primary</button>
+                  <button type="button" class="btn btn-slim" disabled>Slim disabled</button>
+                  <button type="button" class="btn btn-slim btn-icon btn-toggle" aria-pressed="false"
+                    aria-label="Slim icon toggle" data-tooltip="Slim icon button" data-icon="lines"
+                    data-icon-class="btn-icon-svg"></button>
+                  <button type="button" class="btn btn-slim btn-danger">Slim danger</button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -234,7 +241,7 @@
           <h3 id="demo-fields" class="section-title">Simple inputs</h3>
           <div class="demo-card">
             <div class="demo-grid demo-grid-2">
-              <div class="demo-fields">
+              <div class="panel-stack">
                 <label class="field" for="demo-input-single">
                   <span class="field-label">Single line</span>
                   <input type="text" id="demo-input-single" class="input" placeholder="Enter text…" />
@@ -264,7 +271,7 @@
                   </label>
                 </div>
               </div>
-              <div class="demo-fields">
+              <div class="panel-stack">
                 <h3 class="demo-card-title" id="demo-radio-label">Radio</h3>
                 <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-labelledby="demo-radio-label">
                   <label class="radio" for="demo-radio-a">
@@ -337,7 +344,7 @@
           <h3 id="demo-sliders" class="section-title">Sliders &amp; steppers</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">Sliders</h3>
-            <div class="demo-fields">
+            <div class="panel-stack">
               <div class="demo-grid demo-grid-2">
                 <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
                   <label class="field-label" for="demo-slider-integer-range">Integer</label>
@@ -387,7 +394,7 @@
                 </div>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Steppers</h3>
             <div class="demo-grid demo-grid-2">
               <div class="stepper" id="demo-stepper" data-stepper-min="0" data-stepper-max="10" data-stepper-default="2">
@@ -422,8 +429,8 @@
         <section class="content-section" aria-labelledby="demo-menus">
           <h3 id="demo-menus" class="section-title">Menus &amp; pickers</h3>
           <div class="demo-card">
-            <div class="demo-grid demo-grid-3">
-              <div class="demo-fields">
+            <div class="panel-split panel-split--3x2">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Combobox</h3>
                 <p class="demo-hint">Arrow key navigation, <kbd>Enter</kbd> selection, <kbd>Esc</kbd> to close.</p>
                 <div class="combobox" id="demo-combobox" style="max-width: 14rem">
@@ -467,87 +474,7 @@
                 </div>
               </div>
 
-              <div class="demo-fields">
-                <h3 class="demo-card-title">Combo button</h3>
-                <p class="demo-hint">Primary action plus a chevron menu.</p>
-                <div class="combo-btn" id="demo-combo">
-                  <button type="button" class="btn combo-btn-main" id="demo-combo-main">
-                    Pick random
-                  </button>
-                  <button type="button" class="btn combo-btn-toggle" id="demo-combo-toggle" aria-haspopup="menu"
-                    aria-expanded="false" aria-controls="demo-combo-menu" aria-label="Choose option">
-                    <span class="combo-btn-chevron" aria-hidden="true"></span>
-                  </button>
-                  <ul id="demo-combo-menu" class="combo-menu hidden" role="menu">
-                    <li role="none">
-                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-1">
-                        Example 1
-                      </button>
-                    </li>
-                    <li role="none">
-                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-2">
-                        Example 2
-                      </button>
-                    </li>
-                    <li role="none">
-                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-3">
-                        Example 3
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="demo-fields">
-                <h3 class="demo-card-title">Dropdown</h3>
-                <p class="demo-hint">Optional headers and context lines.</p>
-                <div class="dropdown" id="demo-dropdown">
-                  <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
-                    aria-expanded="false" aria-controls="demo-dropdown-menu">
-                    Choose item
-                    <span class="combo-btn-chevron" aria-hidden="true"></span>
-                  </button>
-                  <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
-                    <li role="presentation">
-                      <div class="dropdown-menu-group">Group A</div>
-                    </li>
-                    <li role="none">
-                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
-                        <span class="dropdown-menu-item-text">
-                          <span class="dropdown-menu-item-label">Example 1</span>
-                          <span class="dropdown-menu-item-subtitle">Short description for this option</span>
-                        </span>
-                      </button>
-                    </li>
-                    <li role="none">
-                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
-                        <span class="dropdown-menu-item-text">
-                          <span class="dropdown-menu-item-label">Example 2</span>
-                          <span class="dropdown-menu-item-subtitle">Another bit of helpful context</span>
-                        </span>
-                      </button>
-                    </li>
-                    <li role="presentation">
-                      <div class="dropdown-menu-group">Group B</div>
-                    </li>
-                    <li role="none">
-                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
-                        <span class="dropdown-menu-item-text">
-                          <span class="dropdown-menu-item-label">Example 3</span>
-                          <span class="dropdown-menu-item-subtitle">Grouped with Example 4</span>
-                        </span>
-                      </button>
-                    </li>
-                    <li role="none">
-                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-4">
-                        Example 4
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="demo-fields">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Multi-select combobox</h3>
                 <p class="demo-hint">Selection as a comma-separated list with a count badge.</p>
                 <div class="combobox" id="demo-combobox-multi" data-combobox-multi
@@ -599,7 +526,89 @@
                 </div>
               </div>
 
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+
+              <div class="panel-stack">
+                <h3 class="demo-card-title">Combo button</h3>
+                <p class="demo-hint">Primary action plus a chevron menu.</p>
+                <div class="combo-btn" id="demo-combo">
+                  <button type="button" class="btn combo-btn-main" id="demo-combo-main">
+                    Pick random
+                  </button>
+                  <button type="button" class="btn combo-btn-toggle" id="demo-combo-toggle" aria-haspopup="menu"
+                    aria-expanded="false" aria-controls="demo-combo-menu" aria-label="Choose option">
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-combo-menu" class="combo-menu hidden" role="menu">
+                    <li role="none">
+                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-1">
+                        Example 1
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-2">
+                        Example 2
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="combo-menu-item" role="menuitem" data-value="example-3">
+                        Example 3
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="panel-stack">
+                <h3 class="demo-card-title">Dropdown</h3>
+                <p class="demo-hint">Optional headers and context lines.</p>
+                <div class="dropdown" id="demo-dropdown">
+                  <button type="button" class="btn dropdown-trigger" id="demo-dropdown-trigger" aria-haspopup="menu"
+                    aria-expanded="false" aria-controls="demo-dropdown-menu">
+                    Choose item
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-dropdown-menu" class="dropdown-menu hidden" role="menu">
+                    <li role="presentation">
+                      <div class="dropdown-menu-group">Group A</div>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-1">
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example 1</span>
+                          <span class="dropdown-menu-item-subtitle">Short description for this option</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-2">
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example 2</span>
+                          <span class="dropdown-menu-item-subtitle">Another bit of helpful context</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="presentation">
+                      <div class="dropdown-menu-group">Group B</div>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-3">
+                        <span class="dropdown-menu-item-text">
+                          <span class="dropdown-menu-item-label">Example 3</span>
+                          <span class="dropdown-menu-item-subtitle">Grouped with Example 4</span>
+                        </span>
+                      </button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="example-4">
+                        Example 4
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Dropdown with icons</h3>
                 <p class="demo-hint">Optional light/dark mode icons and subtitles.</p>
                 <div class="dropdown" id="demo-dropdown-icons">
@@ -649,7 +658,7 @@
                 </div>
               </div>
 
-              <div class="demo-fields">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Toggle dropdown</h3>
                 <p class="demo-hint">Multi-select with a selection count badge.</p>
                 <div class="dropdown" id="demo-toggle-dropdown">
@@ -684,7 +693,7 @@
                 </div>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Date &amp; time</h3>
             <div class="demo-grid demo-grid-4">
               <div class="field date-picker" id="demo-date-picker">
@@ -766,8 +775,8 @@
         <section class="content-section" aria-labelledby="demo-info-notifications">
           <h3 id="demo-info-notifications" class="section-title">Information & promts</h3>
           <div class="demo-card">
-            <div class="demo-split">
-              <div class="demo-fields">
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Tooltips</h3>
                 <p class="demo-hint">
                   Tooltips can use optional position, timer, persistence and success/error state.
@@ -811,8 +820,8 @@
                   </button>
                 </div>
               </div>
-              <hr class="demo-divider demo-divider--vertical" aria-hidden="true" />
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Badges</h3>
                 <p class="demo-hint">Normal badge counts up; small badge is a dot.</p>
                 <div class="demo-row">
@@ -831,7 +840,7 @@
                 </div>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Callouts</h3>
             <aside class="callout" role="note">
               <h4 class="callout-title">Relevant information</h4>
@@ -839,7 +848,7 @@
                 Use a callout to highlight important information that should stay on the page.
               </p>
             </aside>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Banners</h3>
             <p class="demo-hint">
               Static and timed notification banners.
@@ -884,7 +893,7 @@
                 <span class="banner-body"><strong class="banner-body-label">Error:</strong> something that requires attention.</span>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Dialogs</h3>
             <p class="demo-hint">Modal overlays with focus trap. <kbd>Enter</kbd> activates the default action; destructive dialogs default to Cancel.</p>
             <div class="demo-row">
@@ -915,57 +924,61 @@
         <section class="content-section" aria-labelledby="demo-navigation">
           <h3 id="demo-navigation" class="section-title">Navigation</h3>
           <div class="demo-card">
-            <h3 class="demo-card-title">Segmented controls</h3>
-            <div class="demo-grid demo-grid-2">
-              <div class="field">
-                <span class="field-label" id="demo-segmented-view-label">View mode</span>
-                <div class="segmented-control segmented-control--full" id="demo-segmented-view"
-                  data-segmented-control-default="list" aria-labelledby="demo-segmented-view-label">
-                  <div class="segmented-control-list" role="radiogroup" aria-label="View mode">
-                    <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
-                      data-segmented-control-value="list">List</button>
-                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
-                      data-segmented-control-value="grid">Grid</button>
-                    <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
-                      data-segmented-control-value="map">Map</button>
+            <div class="panel-split">
+              <div class="panel-stack">
+                <div class="field">
+                  <span class="field-label" id="demo-segmented-view-label">Segment control</span>
+                  <div class="segmented-control segmented-control--full" id="demo-segmented-view"
+                    data-segmented-control-default="list" aria-labelledby="demo-segmented-view-label">
+                    <div class="segmented-control-list" role="radiogroup" aria-label="Segment control">
+                      <button type="button" class="segmented-control-item" role="radio" aria-checked="true"
+                        data-segmented-control-value="list">List</button>
+                      <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                        data-segmented-control-value="grid">Grid</button>
+                      <button type="button" class="segmented-control-item" role="radio" aria-checked="false"
+                        data-segmented-control-value="map">Map</button>
+                    </div>
+                    <input type="hidden" class="segmented-control-value" name="demo-view" value="list" />
                   </div>
-                  <input type="hidden" class="segmented-control-value" name="demo-view" value="list" />
                 </div>
               </div>
-              <div class="field">
-                <span class="field-label" id="demo-segmented-panels-label">With panels</span>
-                <div class="segmented-control segmented-control--full" id="demo-segmented-panels" data-segmented-control-default="week"
-                  aria-labelledby="demo-segmented-panels-label">
-                  <div class="segmented-control-list" role="radiogroup" aria-label="Time range">
-                    <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-day"
-                      aria-checked="false" aria-controls="demo-segmented-panel-day" data-segmented-control-value="day">Day</button>
-                    <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-week"
-                      aria-checked="true" aria-controls="demo-segmented-panel-week" data-segmented-control-value="week">Week</button>
-                    <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-month"
-                      aria-checked="false" aria-controls="demo-segmented-panel-month" data-segmented-control-value="month"
-                      disabled>Month</button>
-                  </div>
-                  <input type="hidden" class="segmented-control-value" value="week" />
-                  <div class="segmented-control-panels">
-                    <div class="segmented-control-panel" id="demo-segmented-panel-day" role="region"
-                      aria-labelledby="demo-segmented-day" hidden>
-                      <p>Daily breakdown: hourly totals and trends.</p>
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
+                <div class="field">
+                  <span class="field-label" id="demo-segmented-panels-label">Segment control with panels</span>
+                  <div class="segmented-control segmented-control--full" id="demo-segmented-panels" data-segmented-control-default="week"
+                    aria-labelledby="demo-segmented-panels-label">
+                    <div class="segmented-control-list" role="radiogroup" aria-label="Segment control with panels">
+                      <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-day"
+                        aria-checked="false" aria-controls="demo-segmented-panel-day" data-segmented-control-value="day">Day</button>
+                      <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-week"
+                        aria-checked="true" aria-controls="demo-segmented-panel-week" data-segmented-control-value="week">Week</button>
+                      <button type="button" class="segmented-control-item" role="radio" id="demo-segmented-month"
+                        aria-checked="false" aria-controls="demo-segmented-panel-month" data-segmented-control-value="month"
+                        disabled>Month</button>
                     </div>
-                    <div class="segmented-control-panel" id="demo-segmented-panel-week" role="region"
-                      aria-labelledby="demo-segmented-week">
-                      <p>Weekly overview: seven-day summary with comparisons.</p>
-                    </div>
-                    <div class="segmented-control-panel" id="demo-segmented-panel-month" role="region"
-                      aria-labelledby="demo-segmented-month" hidden>
-                      <p>Monthly rollup: calendar grid and month-over-month change.</p>
+                    <input type="hidden" class="segmented-control-value" value="week" />
+                    <div class="segmented-control-panels">
+                      <div class="segmented-control-panel" id="demo-segmented-panel-day" role="region"
+                        aria-labelledby="demo-segmented-day" hidden>
+                        <p>Daily breakdown: hourly totals and trends.</p>
+                      </div>
+                      <div class="segmented-control-panel" id="demo-segmented-panel-week" role="region"
+                        aria-labelledby="demo-segmented-week">
+                        <p>Weekly overview: seven-day summary with comparisons.</p>
+                      </div>
+                      <div class="segmented-control-panel" id="demo-segmented-panel-month" role="region"
+                        aria-labelledby="demo-segmented-month" hidden>
+                        <p>Monthly rollup: calendar grid and month-over-month change.</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <hr class="demo-divider" />
-            <div class="demo-grid demo-grid-2">
-              <div class="demo-fields">
+            <hr class="panel-divider" />
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Tabs</h3>
                 <p class="demo-hint">Arrow keys move between tabs when the tab list is focused.</p>
                 <div class="tabs" id="demo-tabs">
@@ -1002,7 +1015,8 @@
                   </div>
                 </div>
               </div>
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Pagination</h3>
                 <div class="pagination" id="demo-pagination" data-pagination-default="1">
                   <div class="pagination-panels">
@@ -1058,9 +1072,9 @@
                 </div>
               </div>
             </div>
-            <hr class="demo-divider" />
-            <div class="demo-grid demo-grid-2">
-              <div class="demo-fields">
+            <hr class="panel-divider" />
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Expand</h3>
                 <div class="expand" id="demo-expand">
                   <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="demo-expand-panel">
@@ -1077,7 +1091,8 @@
                   </div>
                 </div>
               </div>
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Accordion</h3>
                 <div class="accordion" id="demo-accordion" data-accordion-default-open="1">
                   <div class="accordion-item">
@@ -1145,10 +1160,9 @@
 
         <section class="content-section" aria-labelledby="demo-chips">
           <h3 id="demo-chips" class="section-title">Chips</h3>
-          <p class="demo-hint">Filtering and multi-value input</p>
           <div class="demo-card">
-            <div class="demo-split">
-              <div class="demo-fields">
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Filter categories</h3>
                 <p class="demo-hint">Static chips; select to filter.</p>
                 <div class="chip-group" id="demo-chip-filters" role="group" aria-label="Categories">
@@ -1167,8 +1181,8 @@
                   <li data-chip-category="release">Release: v1.2 changelog</li>
                 </ul>
               </div>
-              <hr class="demo-divider demo-divider--vertical" aria-hidden="true" />
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Input filters</h3>
                 <p class="demo-hint">Type a filter and press <kbd>Enter</kbd> or <kbd>,</kbd>. Click a chip to remove it.</p>
                 <div class="chip-input" id="demo-chip-input">
@@ -1187,10 +1201,9 @@
 
         <section class="content-section" aria-labelledby="demo-feedback">
           <h3 id="demo-feedback" class="section-title">Loading indicators</h3>
-          <p class="demo-hint">Loading indicators</p>
           <div class="demo-card spinner-host" id="demo-spinner-host">
-            <div class="demo-split">
-              <div class="demo-fields">
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Progress bars</h3>
                 <div class="dropdown" id="demo-progress-bar-variants">
                   <button type="button" class="btn dropdown-trigger" id="demo-progress-bar-variants-trigger"
@@ -1332,8 +1345,8 @@
                   </div>
                 </div>
               </div>
-              <hr class="demo-divider demo-divider--vertical" aria-hidden="true" />
-              <div class="demo-fields">
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Spinners</h3>
                 <div class="demo-row">
                   <button type="button" class="btn" id="demo-spinner-load">Show overlay</button>
@@ -1447,7 +1460,7 @@
                 </table>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Input table</h3>
             <p class="demo-hint">
               Typed columns, automatic type detection, tabular copy & paste, arrow key navigation and optional body overflow.
@@ -1513,8 +1526,8 @@
           <div class="demo-card">
             <h3 class="demo-card-title">Progress indicator</h3>
             <p class="demo-hint">Linear wizard flow; horizontal and vertical variants.</p>
-            <div class="demo-grid demo-grid-2">
-              <div>
+            <div class="panel-split panel-split--after-heading">
+              <div class="panel-stack">
                 <label class="field-label">Horizontal</label>
                 <div class="progress-indicator" id="demo-progress-indicator" data-progress-indicator-linear
                   data-progress-indicator-default="0">
@@ -1565,7 +1578,8 @@
                   </div>
                 </div>
               </div>
-              <div>
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
                 <label class="field-label">Vertical</label>
                 <div class="progress-indicator" id="demo-progress-indicator-vertical" data-progress-indicator-vertical
                   data-progress-indicator-linear data-progress-indicator-default="0">
@@ -1626,38 +1640,43 @@
           <h3 id="demo-files" class="section-title">Files</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">File dropzones</h3>
-            <div class="demo-grid demo-grid-2">
-              <div class="field">
-                <span class="field-label">Simple single file</span>
-                <div class="file-dropzone" id="demo-file-dropzone-single">
-                  <input type="file" class="file-dropzone-input" hidden />
-                  <button type="button" class="file-dropzone-prompt">
-                    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
-                    <span class="file-dropzone-text">
-                      <span class="file-dropzone-primary">Drop a file here</span>
-                      <span class="file-dropzone-secondary">select to browse</span>
-                    </span>
-                  </button>
-                  <ul class="file-dropzone-list hidden" hidden></ul>
+            <div class="panel-split panel-split--after-heading">
+              <div class="panel-stack">
+                <div class="field">
+                  <span class="field-label">Simple single file</span>
+                  <div class="file-dropzone" id="demo-file-dropzone-single">
+                    <input type="file" class="file-dropzone-input" hidden />
+                    <button type="button" class="file-dropzone-prompt">
+                      <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+                      <span class="file-dropzone-text">
+                        <span class="file-dropzone-primary">Drop a file here</span>
+                        <span class="file-dropzone-secondary">select to browse</span>
+                      </span>
+                    </button>
+                    <ul class="file-dropzone-list hidden" hidden></ul>
+                  </div>
                 </div>
               </div>
-              <div class="field">
-                <span class="field-label">Typed multi-file</span>
-                <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
-                  data-file-max="5">
-                  <input type="file" class="file-dropzone-input" hidden />
-                  <button type="button" class="file-dropzone-prompt">
-                    <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
-                    <span class="file-dropzone-text">
-                      <span class="file-dropzone-primary">Drop images here</span>
-                      <span class="file-dropzone-secondary">select to browse</span>
-                    </span>
-                  </button>
-                  <ul class="file-dropzone-list hidden" hidden></ul>
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
+                <div class="field">
+                  <span class="field-label">Typed multi-file</span>
+                  <div class="file-dropzone" id="demo-file-dropzone-multi" data-file-accept="image/*" data-file-multiple
+                    data-file-max="5">
+                    <input type="file" class="file-dropzone-input" hidden />
+                    <button type="button" class="file-dropzone-prompt">
+                      <span data-icon="upload" data-icon-class="file-dropzone-icon"></span>
+                      <span class="file-dropzone-text">
+                        <span class="file-dropzone-primary">Drop images here</span>
+                        <span class="file-dropzone-secondary">select to browse</span>
+                      </span>
+                    </button>
+                    <ul class="file-dropzone-list hidden" hidden></ul>
+                  </div>
                 </div>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">File downloads</h3>
             <p class="demo-hint">Sample files are generated in the browser.</p>
             <div class="field">
@@ -1765,7 +1784,7 @@ if __name__ == "__main__":
 </code></pre>
               </div>
             </div>
-            <hr class="demo-divider" />
+            <hr class="panel-divider" />
             <h3 class="demo-card-title">Rich text editor</h3>
             <p class="demo-hint">
               Markdown and WYSIWYG with

@@ -162,7 +162,7 @@ Keep HTML linking only `styles.css`. Edit tokens, `app/css/app.css`, or the rele
 
 ### Demo vs shared layout
 
-- **Shared layout** (usable in forks): `.content-section`, `.content-tier` / `.content-tier-header` / `.segment-title` / `.content-tier-lead` / `.content-tier-body`, `.section-title`, `.section-panel`, `.callout`, …
+- **Shared layout** (usable in forks): `.content-section`, `.content-tier` / `.content-tier-header` / `.segment-title` / `.content-tier-lead` / `.content-tier-body`, `.section-title`, `.section-panel`, `.panel-split` / `.panel-divider` / `.panel-stack`, `.callout`, …
 - **Demo-only helpers** (showcase arrangement): `.demo-row`, `.demo-grid`, `.demo-card`, `.demo-hint`, … — fine in `demo.html` / `app/demo.js`
 - Shell and shared CSS/JS must **not** select `demo-*` classes. If sticky, page-nav, or other chrome depends on markup, use generic names and document them in `USAGE.md`. See [`.cursor/rules/demo-isolation.mdc`](.cursor/rules/demo-isolation.mdc).
 

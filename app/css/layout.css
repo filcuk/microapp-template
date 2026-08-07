@@ -288,7 +288,7 @@ main {
   font-size: 0.875rem;
 }
 
-.demo-fields {
+.panel-stack {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -401,11 +401,10 @@ main {
   font-weight: 600;
 }
 
-/* Full-bleed rule inside padded panels (`.demo-card`, …).
+/* Full-bleed rule inside padded panels (`.demo-card`, `.section-panel`, …).
  * Place the divider as a direct child of the padded panel so `--panel-padding`
- * inherits; nested wrappers break the negative margin. Section panels use
- * `.section-panel__divider` in controls-section-panel.css. */
-.demo-divider {
+ * inherits; nested wrappers break the negative margin. */
+.panel-divider {
   align-self: stretch;
   margin-block: 0.35rem;
   margin-inline: calc(-1 * var(--panel-padding, 1rem));
@@ -413,22 +412,90 @@ main {
   border-top: 1px solid var(--border);
 }
 
-.demo-split {
+.panel-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   column-gap: 1.25rem;
   align-items: stretch;
-  /* Bleed into card padding (top) and flex gap + following hr margin (bottom)
-   * so the vertical rule can meet the card edge and the horizontal divider. */
+  /* Bleed into panel padding (top) and flex gap + following hr margin (bottom)
+   * so the vertical rule can meet the panel edge and the horizontal divider. */
   margin-block: calc(-1 * var(--panel-padding, 1rem));
 }
 
-.demo-split > .demo-fields {
+.panel-split--3 {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+/* Three equal columns, two rows; one vertical rail after column 1.
+ * Child order: col1-row1, col1-row2, vertical divider, col2-row1, col3-row1, col2-row2, col3-row2. */
+.panel-split--3x2 {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  row-gap: 1.25rem;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.panel-split--3x2 > .panel-divider {
+  grid-column: 2;
+  grid-row: 1 / -1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(4) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(5) {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(6) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(7) {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+/* Keep a normal gap under in-panel headings/hints; still bleed into adjacent hrs. */
+.panel-split--after-heading {
+  margin-top: 0;
+}
+
+.panel-split > .panel-stack {
   /* Keep content inset while the split box itself full-bleeds vertically. */
   padding-block: var(--panel-padding, 1rem);
 }
 
-.demo-divider.demo-divider--vertical {
+.panel-split--3x2 > .panel-stack:nth-child(1),
+.panel-split--3x2 > .panel-stack:nth-child(4),
+.panel-split--3x2 > .panel-stack:nth-child(5) {
+  padding-bottom: 0;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(2),
+.panel-split--3x2 > .panel-stack:nth-child(6),
+.panel-split--3x2 > .panel-stack:nth-child(7) {
+  padding-top: 0;
+}
+
+.panel-split--after-heading > .panel-stack {
+  padding-top: 0;
+}
+
+.panel-divider.panel-divider--vertical {
   width: 1px;
   height: auto;
   align-self: stretch;
@@ -439,16 +506,32 @@ main {
 }
 
 @media (max-width: 900px) {
-  .demo-split {
+  .panel-split,
+  .panel-split--3,
+  .panel-split--3x2 {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
     margin-block: 0;
+    row-gap: 0;
   }
 
-  .demo-split > .demo-fields {
+  .panel-split > .panel-stack,
+  .panel-split--3x2 > .panel-stack:nth-child(n) {
+    grid-column: auto;
+    grid-row: auto;
     padding-block: 0;
   }
 
-  .demo-divider.demo-divider--vertical {
+  .panel-split--after-heading > .panel-stack {
+    padding-top: 0;
+  }
+
+  .panel-split--3x2 > .panel-divider {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .panel-divider.panel-divider--vertical {
     width: auto;
     height: 0;
     align-self: stretch;
