@@ -1186,162 +1186,174 @@
 
 
         <section class="content-section" aria-labelledby="demo-feedback">
-          <h3 id="demo-feedback" class="section-title">Progress &amp; spinners</h3>
+          <h3 id="demo-feedback" class="section-title">Loading indicators</h3>
           <p class="demo-hint">Loading indicators</p>
           <div class="demo-card spinner-host" id="demo-spinner-host">
-            <h3 class="demo-card-title">Progress bars</h3>
-            <div class="segmented-control segmented-control--full" id="demo-progress-bar-variants"
-              data-segmented-control-default="simple" aria-label="Progress bar variant">
-              <div class="segmented-control-list" role="radiogroup" aria-label="Progress bar variant">
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-simple"
-                  aria-checked="true" aria-controls="demo-progress-panel-simple"
-                  data-segmented-control-value="simple">Simple</button>
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-percent"
-                  aria-checked="false" aria-controls="demo-progress-panel-percent"
-                  data-segmented-control-value="percent">Percent</button>
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-fraction"
-                  aria-checked="false" aria-controls="demo-progress-panel-fraction"
-                  data-segmented-control-value="fraction">Fraction</button>
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-error"
-                  aria-checked="false" aria-controls="demo-progress-panel-error"
-                  data-segmented-control-value="error">Error</button>
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-disabled"
-                  aria-checked="false" aria-controls="demo-progress-panel-disabled"
-                  data-segmented-control-value="disabled">Disabled</button>
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-indeterminate"
-                  aria-checked="false" aria-controls="demo-progress-panel-indeterminate"
-                  data-segmented-control-value="indeterminate">Indeterminate</button>
-                <button type="button" class="segmented-control-item" role="radio" id="demo-progress-seg-bounce"
-                  aria-checked="false" aria-controls="demo-progress-panel-bounce"
-                  data-segmented-control-value="bounce">Bounce</button>
+            <div class="demo-split">
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Progress bars</h3>
+                <div class="dropdown" id="demo-progress-bar-variants">
+                  <button type="button" class="btn dropdown-trigger" id="demo-progress-bar-variants-trigger"
+                    aria-haspopup="menu" aria-expanded="false" aria-controls="demo-progress-bar-variants-menu"
+                    aria-label="Progress bar style">
+                    <span class="dropdown-trigger-label">Simple</span>
+                    <span class="combo-btn-chevron" aria-hidden="true"></span>
+                  </button>
+                  <ul id="demo-progress-bar-variants-menu" class="dropdown-menu hidden" role="menu">
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="simple"
+                        data-panel="demo-progress-panel-simple">Simple</button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="percent"
+                        data-panel="demo-progress-panel-percent">Percent</button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="fraction"
+                        data-panel="demo-progress-panel-fraction">Fraction</button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="error"
+                        data-panel="demo-progress-panel-error">Error</button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="disabled"
+                        data-panel="demo-progress-panel-disabled">Disabled</button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="indeterminate"
+                        data-panel="demo-progress-panel-indeterminate">Indeterminate</button>
+                    </li>
+                    <li role="none">
+                      <button type="button" class="dropdown-menu-item" role="menuitem" data-value="bounce"
+                        data-panel="demo-progress-panel-bounce">Bounce</button>
+                    </li>
+                  </ul>
+                </div>
+                <div id="demo-progress-panels">
+                  <div id="demo-progress-panel-simple" role="region" aria-label="Simple progress bar">
+                    <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
+                      data-progress-bar-shine aria-labelledby="demo-progress-bar-label">
+                      <span class="field-label" id="demo-progress-bar-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                          aria-valuenow="40" aria-labelledby="demo-progress-bar-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" value="40" />
+                    </div>
+                  </div>
+                  <div id="demo-progress-panel-percent" role="region" aria-label="Percent progress bar" hidden>
+                    <div class="progress-bar" id="demo-progress-bar-percent" data-progress-bar-value="75"
+                      data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-shine
+                      aria-labelledby="demo-progress-bar-percent-label">
+                      <span class="field-label" id="demo-progress-bar-percent-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                          aria-valuenow="75" aria-labelledby="demo-progress-bar-percent-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                        <span class="progress-bar-label" aria-hidden="true">75%</span>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" value="75" />
+                    </div>
+                  </div>
+                  <div id="demo-progress-panel-fraction" role="region" aria-label="Fraction progress bar" hidden>
+                    <div class="progress-bar" id="demo-progress-bar-fraction" data-progress-bar-value="7"
+                      data-progress-bar-max="12" data-progress-bar-label="fraction" data-progress-bar-shine
+                      aria-labelledby="demo-progress-bar-fraction-label">
+                      <span class="field-label" id="demo-progress-bar-fraction-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="12"
+                          aria-valuenow="7" aria-labelledby="demo-progress-bar-fraction-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                        <span class="progress-bar-label" aria-hidden="true">7/12</span>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" value="7" />
+                    </div>
+                  </div>
+                  <div id="demo-progress-panel-error" role="region" aria-label="Error progress bar" hidden>
+                    <div class="progress-bar" id="demo-progress-bar-error" data-progress-bar-value="55"
+                      data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-error
+                      aria-labelledby="demo-progress-bar-error-label">
+                      <span class="field-label" id="demo-progress-bar-error-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                          aria-valuenow="55" aria-labelledby="demo-progress-bar-error-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                        <span class="progress-bar-label" aria-hidden="true">55%</span>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" value="55" />
+                    </div>
+                  </div>
+                  <div id="demo-progress-panel-disabled" role="region" aria-label="Disabled progress bar" hidden>
+                    <div class="progress-bar" id="demo-progress-bar-disabled" data-progress-bar-value="30"
+                      data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-disabled
+                      aria-labelledby="demo-progress-bar-disabled-label">
+                      <span class="field-label" id="demo-progress-bar-disabled-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                          aria-valuenow="30" aria-disabled="true" aria-labelledby="demo-progress-bar-disabled-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                        <span class="progress-bar-label" aria-hidden="true">30%</span>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" value="30" disabled />
+                    </div>
+                  </div>
+                  <div id="demo-progress-panel-indeterminate" role="region" aria-label="Indeterminate progress bar" hidden>
+                    <div class="progress-bar" id="demo-progress-bar-indeterminate" data-progress-bar-indeterminate
+                      aria-labelledby="demo-progress-bar-indeterminate-label">
+                      <span class="field-label" id="demo-progress-bar-indeterminate-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                          aria-labelledby="demo-progress-bar-indeterminate-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" />
+                    </div>
+                  </div>
+                  <div id="demo-progress-panel-bounce" role="region" aria-label="Bounce progress bar" hidden>
+                    <div class="progress-bar" id="demo-progress-bar-bounce" data-progress-bar-indeterminate
+                      data-progress-bar-indeterminate-mode="bounce" aria-labelledby="demo-progress-bar-bounce-label">
+                      <span class="field-label" id="demo-progress-bar-bounce-label">Progress</span>
+                      <div class="progress-bar-row">
+                        <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                          aria-labelledby="demo-progress-bar-bounce-label">
+                          <span class="progress-bar-fill"></span>
+                        </div>
+                      </div>
+                      <input type="hidden" class="progress-bar-value" />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <input type="hidden" class="segmented-control-value" value="simple" />
-              <div class="segmented-control-panels">
-                <div class="segmented-control-panel" id="demo-progress-panel-simple" role="region"
-                  aria-labelledby="demo-progress-seg-simple">
-                  <div class="progress-bar" id="demo-progress-bar" data-progress-bar-value="40" data-progress-bar-max="100"
-                    data-progress-bar-shine aria-labelledby="demo-progress-bar-label">
-                    <span class="field-label" id="demo-progress-bar-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                        aria-valuenow="40" aria-labelledby="demo-progress-bar-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" value="40" />
-                  </div>
+              <hr class="demo-divider demo-divider--vertical" aria-hidden="true" />
+              <div class="demo-fields">
+                <h3 class="demo-card-title">Spinners</h3>
+                <div class="demo-row">
+                  <button type="button" class="btn" id="demo-spinner-load">Show overlay</button>
                 </div>
-                <div class="segmented-control-panel" id="demo-progress-panel-percent" role="region"
-                  aria-labelledby="demo-progress-seg-percent" hidden>
-                  <div class="progress-bar" id="demo-progress-bar-percent" data-progress-bar-value="75"
-                    data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-shine
-                    aria-labelledby="demo-progress-bar-percent-label">
-                    <span class="field-label" id="demo-progress-bar-percent-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                        aria-valuenow="75" aria-labelledby="demo-progress-bar-percent-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                      <span class="progress-bar-label" aria-hidden="true">75%</span>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" value="75" />
+                <div class="demo-row">
+                  <div class="spinner spinner--sm" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                    <span class="spinner-indicator" aria-hidden="true"></span>
                   </div>
-                </div>
-                <div class="segmented-control-panel" id="demo-progress-panel-fraction" role="region"
-                  aria-labelledby="demo-progress-seg-fraction" hidden>
-                  <div class="progress-bar" id="demo-progress-bar-fraction" data-progress-bar-value="7"
-                    data-progress-bar-max="12" data-progress-bar-label="fraction" data-progress-bar-shine
-                    aria-labelledby="demo-progress-bar-fraction-label">
-                    <span class="field-label" id="demo-progress-bar-fraction-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="12"
-                        aria-valuenow="7" aria-labelledby="demo-progress-bar-fraction-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                      <span class="progress-bar-label" aria-hidden="true">7/12</span>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" value="7" />
+                  <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                    <span class="spinner-indicator" aria-hidden="true"></span>
                   </div>
-                </div>
-                <div class="segmented-control-panel" id="demo-progress-panel-error" role="region"
-                  aria-labelledby="demo-progress-seg-error" hidden>
-                  <div class="progress-bar" id="demo-progress-bar-error" data-progress-bar-value="55"
-                    data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-error
-                    aria-labelledby="demo-progress-bar-error-label">
-                    <span class="field-label" id="demo-progress-bar-error-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                        aria-valuenow="55" aria-labelledby="demo-progress-bar-error-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                      <span class="progress-bar-label" aria-hidden="true">55%</span>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" value="55" />
+                  <div class="spinner spinner--lg" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
+                    <span class="spinner-indicator" aria-hidden="true"></span>
                   </div>
-                </div>
-                <div class="segmented-control-panel" id="demo-progress-panel-disabled" role="region"
-                  aria-labelledby="demo-progress-seg-disabled" hidden>
-                  <div class="progress-bar" id="demo-progress-bar-disabled" data-progress-bar-value="30"
-                    data-progress-bar-max="100" data-progress-bar-label="percent" data-progress-bar-disabled
-                    aria-labelledby="demo-progress-bar-disabled-label">
-                    <span class="field-label" id="demo-progress-bar-disabled-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                        aria-valuenow="30" aria-disabled="true" aria-labelledby="demo-progress-bar-disabled-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                      <span class="progress-bar-label" aria-hidden="true">30%</span>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" value="30" disabled />
-                  </div>
-                </div>
-                <div class="segmented-control-panel" id="demo-progress-panel-indeterminate" role="region"
-                  aria-labelledby="demo-progress-seg-indeterminate" hidden>
-                  <div class="progress-bar" id="demo-progress-bar-indeterminate" data-progress-bar-indeterminate
-                    aria-labelledby="demo-progress-bar-indeterminate-label">
-                    <span class="field-label" id="demo-progress-bar-indeterminate-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                        aria-labelledby="demo-progress-bar-indeterminate-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" />
-                  </div>
-                </div>
-                <div class="segmented-control-panel" id="demo-progress-panel-bounce" role="region"
-                  aria-labelledby="demo-progress-seg-bounce" hidden>
-                  <div class="progress-bar" id="demo-progress-bar-bounce" data-progress-bar-indeterminate
-                    data-progress-bar-indeterminate-mode="bounce" aria-labelledby="demo-progress-bar-bounce-label">
-                    <span class="field-label" id="demo-progress-bar-bounce-label">Progress</span>
-                    <div class="progress-bar-row">
-                      <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                        aria-labelledby="demo-progress-bar-bounce-label">
-                        <span class="progress-bar-fill"></span>
-                      </div>
-                    </div>
-                    <input type="hidden" class="progress-bar-value" />
+                  <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
+                    <span class="spinner-indicator" aria-hidden="true"></span>
+                    <span class="spinner-label">Loading data…</span>
                   </div>
                 </div>
               </div>
-            </div>
-            <hr class="demo-divider" />
-            <h3 class="demo-card-title">Spinners</h3>
-            <div class="demo-row">
-              <div class="spinner spinner--sm" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-                <span class="spinner-indicator" aria-hidden="true"></span>
-              </div>
-              <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-                <span class="spinner-indicator" aria-hidden="true"></span>
-              </div>
-              <div class="spinner spinner--lg" role="status" aria-live="polite" aria-busy="true" aria-label="Loading">
-                <span class="spinner-indicator" aria-hidden="true"></span>
-              </div>
-              <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">
-                <span class="spinner-indicator" aria-hidden="true"></span>
-                <span class="spinner-label">Loading data…</span>
-              </div>
-              <button type="button" class="btn" id="demo-spinner-load">Show overlay</button>
             </div>
             <div class="spinner-overlay hidden" hidden>
               <div class="spinner" role="status" aria-live="polite" aria-busy="true" aria-label="Loading data">

@@ -37,6 +37,7 @@ import { initTable } from "./components/table.js";
 import { initTabularInput } from "./components/tabular-input.js";
 import { initBadge } from "./components/badge.js";
 import { initChipGroup, initChipInput } from "./components/chip.js";
+import { setHidden } from "./utils/dom.js";
 
 initShell();
 initExpands(document);
@@ -226,7 +227,23 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
   ],
 });
 
-initSegmentedControl(document.getElementById("demo-progress-bar-variants"));
+const demoProgressPanels = document.getElementById("demo-progress-panels");
+const demoProgressVariantTriggerLabel = document
+  .querySelector("#demo-progress-bar-variants-trigger .dropdown-trigger-label");
+
+initDropdown(document.getElementById("demo-progress-bar-variants"), {
+  onSelect: ({ label, item }) => {
+    if (demoProgressVariantTriggerLabel && label) {
+      demoProgressVariantTriggerLabel.textContent = label;
+    }
+    const panelId = item?.dataset.panel;
+    if (!demoProgressPanels || !panelId) return;
+    for (const panel of demoProgressPanels.children) {
+      setHidden(panel, panel.id !== panelId);
+    }
+  },
+});
+
 initProgressBar(document.getElementById("demo-progress-bar"));
 initProgressBar(document.getElementById("demo-progress-bar-percent"));
 initProgressBar(document.getElementById("demo-progress-bar-fraction"));
