@@ -367,7 +367,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/components/accordion.js`](app/components/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
-| **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
+| **Table** | Data table with striped layout, sortable columns (Shift+click multi-sort), and optional row selection. [`app/table.js`](app/table.js). |
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, Enter (default action), focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/components/dialog.js`](app/components/dialog.js). |
@@ -1988,7 +1988,7 @@ initPaginations(document); // all `.pagination` blocks
 
 Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-block` and `.table-wrap`. Use `.table--striped` for alternating rows, `.table--compact` for tighter padding, and `.table-num` to right-align numeric columns.
 
-Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text. Set `data-table-sort-default="ascending"` or `"descending"` on one sortable `<th>` to sort that column on load (or pass `defaultSort: { columnIndex, direction }` to `initTable()`). Header clicks cycle **ascending → descending → unsorted** (restores the row order from init).
+Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text. Set `data-table-sort-default="ascending"` or `"descending"` on one or more sortable `<th>` cells to sort on load (document order = primary, then secondary, …), or pass `defaultSort: { columnIndex, direction }` / `defaultSort: [{ columnIndex, direction }, …]` to `initTable()`. Header clicks cycle **ascending → descending → unsorted** (restores the row order from init). Hold **Shift** while clicking another header to add or cycle a secondary sort column without clearing the primary; Shift-click through descending removes that column from the sort stack. `onSort` receives the clicked column plus `columns` (ordered active sorts); `getSortColumns()` returns the same list.
 
 Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks. Body rows highlight lightly on hover; when selectable, clicking anywhere on a row toggles that row (interactive controls inside the row are left alone).
 
@@ -2010,9 +2010,10 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
           </th>
           <th scope="col" data-table-sort data-sort-type="date"
             data-table-sort-default="descending" class="table-num">
-            <button type="button" class="table-sort-button">Updated</button>
+            <button type="button" class="table-sort-button">Created</button>
           </th>
-          <th scope="col" data-table-sort data-sort-type="number" class="table-num">
+          <th scope="col" data-table-sort data-sort-type="number"
+            data-table-sort-default="ascending" class="table-num">
             <button type="button" class="table-sort-button">Comments</button>
           </th>
         </tr>
@@ -2041,11 +2042,13 @@ import { initTable, initTables } from "./components/table.js";
 const table = initTable(document.getElementById("issues-table"), {
   sortable: true,
   selectable: true,
-  onSort: ({ columnIndex, direction, sortType }) => console.log(columnIndex, direction, sortType),
+  onSort: ({ columnIndex, direction, sortType, columns }) =>
+    console.log(columnIndex, direction, sortType, columns),
   onSelectionChange: ({ selectedIds, selectedRows }) => console.log(selectedIds),
 });
 
 table?.getSelectedIds();
+table?.getSortColumns();
 table?.clearSelection();
 table?.setDisabled(true);
 table?.destroy();

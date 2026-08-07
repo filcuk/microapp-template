@@ -1330,7 +1330,7 @@
           <h3 id="demo-data-tables" class="section-title">Tables</h3>
           <div class="demo-card">
             <h3 class="demo-card-title">Data table</h3>
-            <p class="demo-hint">Sortable columns and selectable rows.</p>
+            <p class="demo-hint">Sortable columns (<kbd>Shift</kbd>+click for multi-column sort) and selectable rows.</p>
             <div class="table-block table-block--wide" id="demo-table" data-table-sortable data-table-selectable>
               <div class="table-wrap">
                 <table class="table table--striped" aria-label="Open issues">
@@ -1348,9 +1348,10 @@
                       <th scope="col" data-table-sort data-sort-type="text">Status</th>
                       <th scope="col" data-table-sort data-sort-type="date"
                         data-table-sort-default="descending" class="table-num">
-                        <button type="button" class="table-sort-button">Updated</button>
+                        <button type="button" class="table-sort-button">Created</button>
                       </th>
-                      <th scope="col" data-table-sort data-sort-type="number" class="table-num">
+                      <th scope="col" data-table-sort data-sort-type="number"
+                        data-table-sort-default="ascending" class="table-num">
                         <button type="button" class="table-sort-button">Comments</button>
                       </th>
                     </tr>
@@ -1364,8 +1365,8 @@
                         </label>
                       </td>
                       <td>Theme flash on slow networks</td>
-                      <td>Open</td>
-                      <td class="table-num">2026-03-12</td>
+                      <td>In review</td>
+                      <td class="table-num">2026-03-01</td>
                       <td class="table-num">7</td>
                     </tr>
                     <tr data-table-row-id="42">

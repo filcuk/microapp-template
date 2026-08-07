@@ -104,7 +104,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initChipInput()` / `initChipInputs()` | Text field that adds removable chips |
 | `initSegmentedControl()` / `initSegmentedControls()` | Segmented control (toggle button group) |
 | `initPagination()` / `initPaginations()` | Client-side pagination (numbered pages, no URL change) |
-| `initTable()` / `initTables()` | Data table with optional sortable columns and row selection |
+| `initTable()` / `initTables()` | Data table with optional sortable columns (Shift+click multi-sort) and row selection |
 | `initTabularInput()` / `initTabularInputs()` | Editable typed grid; paste; reset; add/remove rows and columns; rename / type |
 | `initProgressIndicator()` / `initProgressIndicators()` | Multi-step wizard with indicators, panels, and back/next |
 | `initRichTextEditor()` / `initRichTextEditors()` | Toast UI rich text editor (Markdown + WYSIWYG); requires vendor scripts |
