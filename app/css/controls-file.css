@@ -20,13 +20,14 @@
   color: var(--text);
   font: inherit;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out;
 }
 
 .file-dropzone-prompt:hover,
 .file-dropzone.is-dragover .file-dropzone-prompt {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  transition-duration: 0s;
 }
 
 .file-dropzone-prompt:focus-visible {

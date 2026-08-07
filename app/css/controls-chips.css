@@ -24,7 +24,7 @@
   font-weight: 500;
   line-height: 1.25;
   white-space: nowrap;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out, color var(--control-hover-ms) ease-out;
 }
 
 button.chip {
@@ -34,6 +34,7 @@ button.chip {
 button.chip:hover:not(:disabled) {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  transition-duration: 0s;
 }
 
 button.chip:focus-visible {

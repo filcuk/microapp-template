@@ -294,12 +294,13 @@
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out;
 }
 
 .pagination-page:hover:not(:disabled) {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  transition-duration: 0s;
 }
 
 .pagination-page:focus-visible {
