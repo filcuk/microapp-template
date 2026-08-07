@@ -240,16 +240,35 @@
         <section class="content-section" aria-labelledby="demo-fields">
           <h3 id="demo-fields" class="section-title">Simple inputs</h3>
           <div class="demo-card">
-            <div class="demo-grid demo-grid-2">
+            <div class="panel-split">
               <div class="panel-stack">
-                <label class="field" for="demo-input-single">
-                  <span class="field-label">Single line</span>
-                  <input type="text" id="demo-input-single" class="input" placeholder="Enter text…" />
-                </label>
                 <label class="field" for="demo-input-multiline">
-                  <span class="field-label">Multi-line</span>
+                  <span class="field-label">Multi-line input</span>
                   <textarea id="demo-input-multiline" class="textarea" rows="3" placeholder="Enter longer text…"></textarea>
                 </label>
+              </div>
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+              <div class="panel-stack">
+                <h3 class="demo-card-title">Radio</h3>
+                <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-label="Radio">
+                  <label class="radio" for="demo-radio-a">
+                    <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-a" value="a" checked />
+                    <span>Option A</span>
+                  </label>
+                  <label class="radio" for="demo-radio-b">
+                    <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-b" value="b" />
+                    <span>Option B</span>
+                  </label>
+                  <label class="radio" for="demo-radio-c">
+                    <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-c" value="c" disabled />
+                    <span>Option C (disabled)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr class="panel-divider" />
+            <div class="panel-split">
+              <div class="panel-stack">
                 <h3 class="demo-card-title">Checkbox</h3>
                 <div class="checkbox-group" id="demo-checkbox-group">
                   <label class="checkbox" for="demo-checkbox-default">
@@ -271,22 +290,8 @@
                   </label>
                 </div>
               </div>
+              <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
               <div class="panel-stack">
-                <h3 class="demo-card-title">Radio</h3>
-                <div class="radio-group" id="demo-radio-group" role="radiogroup" aria-label="Radio">
-                  <label class="radio" for="demo-radio-a">
-                    <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-a" value="a" checked />
-                    <span>Option A</span>
-                  </label>
-                  <label class="radio" for="demo-radio-b">
-                    <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-b" value="b" />
-                    <span>Option B</span>
-                  </label>
-                  <label class="radio" for="demo-radio-c">
-                    <input type="radio" class="radio-input" name="demo-radio" id="demo-radio-c" value="c" disabled />
-                    <span>Option C (disabled)</span>
-                  </label>
-                </div>
                 <h3 class="demo-card-title">Toggle</h3>
                 <div class="toggle-group" id="demo-toggle-group">
                   <div class="toggle" id="demo-toggle-off" data-toggle-default="false">
@@ -337,12 +342,7 @@
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-
-        <section class="content-section" aria-labelledby="demo-sliders">
-          <h3 id="demo-sliders" class="section-title">Sliders &amp; steppers</h3>
-          <div class="demo-card">
+            <hr class="panel-divider" />
             <div class="panel-split">
               <div class="panel-stack">
                 <div class="slider" id="demo-slider-integer" data-slider-min="0" data-slider-max="10" data-slider-default="4" data-slider-format="integer">
