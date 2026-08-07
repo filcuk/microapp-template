@@ -6,7 +6,7 @@
  * For third-party icons, set `name` to the collection id (e.g. `round-info`).
  * To reuse an existing template icon under another id, set `ref` to the target key.
  *
- * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, chevron-right, chevron-left, arrow-outward, link, fullscreen, fullscreen-exit, upload, download, calendar, check, plus, delete, remove, type-text, type-number, type-logical, copy, paste, paste-special, clear, highlight
+ * Available: light-mode, dark-mode, auto-mode, lines, info, success, note, warning, error, important, chevron-up, chevron-down, chevron-right, chevron-left, arrow-outward, link, fullscreen, fullscreen-exit, upload, download, calendar, check, minus, plus, delete, remove, type-text, type-number, type-logical, copy, paste, paste-special, clear, highlight
  */
 
 /** @typedef {{ viewBox: string, markup: string, attribution?: string, name?: string }} IconSvgDef */
@@ -146,9 +146,15 @@ export const TEMPLATE_ICONS = {
   },
   check: {
     viewBox: "0 0 24 24",
-    markup: `<path fill="currentColor" d="m9.55 15.15l8.475-8.475q.3-.3.7-.3t.7.3t.3.713t-.3.712l-9.175 9.2q-.3.3-.7.3t-.7-.3L4.55 13q-.3-.3-.288-.712t.313-.713t.713-.3t.712.3z"/>`,
-    attribution: ICON_ATTRIBUTIONS.materialSymbols,
-    name: "check-rounded",
+    markup: `<path fill="currentColor" d="M9 16.17L5.53 12.7a.996.996 0 1 0-1.41 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71a.996.996 0 1 0-1.41-1.41z"/>`,
+    attribution: ICON_ATTRIBUTIONS.materialIcons,
+    name: "round-check",
+  },
+  minus: {
+    viewBox: "0 0 24 24",
+    markup: `<path fill="currentColor" d="M18 12.998H6a1 1 0 0 1 0-2h12a1 1 0 0 1 0 2"/>`,
+    attribution: ICON_ATTRIBUTIONS.materialIcons,
+    name: "round-minus",
   },
   "plus": {
     viewBox: "0 0 24 24",

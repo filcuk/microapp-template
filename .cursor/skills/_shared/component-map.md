@@ -58,7 +58,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | duration-input | `app/components/duration-input.js` | `controls-fields.css` | — | — | `dom` | Hours:minutes; optional seconds |
 | color-input | `app/components/color-input.js` | `controls-widgets.css` | — | — | `dom` | Hex field + swatch; optional alpha; not a spectrum picker |
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |
-| checkbox | `app/components/checkbox.js` | `controls-widgets.css` | — | — | `dom` | Tri-state checkbox |
+| checkbox | `app/components/checkbox.js` | `controls-fields.css` | — | JS face: `check`, `minus` | `dom`, `icons` | Tri-state checkbox; faces via `initIcons` / `ensureCheckboxFace` |
 | segmented-control | `app/components/segmented-control.js` | `controls-widgets.css` | — | — | `dom` | |
 | pagination | `app/components/pagination.js` | `controls-widgets.css` | — | `chevron-left`, `chevron-right` | `dom` | |
 | progress-bar | `app/components/progress-bar.js` | `controls-widgets.css` | — | — | `dom` | |

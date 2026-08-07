@@ -507,17 +507,82 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  color: var(--text);
   font-size: inherit;
   line-height: 1.4;
 }
 
+/* Custom paint so checked glyphs match primary fills (white / dark-theme #0d1117).
+   Glyphs are `check` / `minus` icons mounted by initIcons / ensureCheckboxFace. */
+.checkbox-control {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
 .checkbox-input {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
   width: 1rem;
   height: 1rem;
   margin: 0;
-  accent-color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--input-bg);
+  color: #ffffff;
   cursor: pointer;
-  flex-shrink: 0;
+  grid-area: 1 / 1;
+}
+
+.checkbox-glyphs {
+  display: grid;
+  place-items: center;
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 0.75rem;
+  pointer-events: none;
+  color: #ffffff;
+}
+
+.checkbox-glyph {
+  display: none;
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 0.75rem;
+  overflow: visible;
+  /* Round Material paths read thin at 12px — stroke fattens the silhouette */
+  stroke: currentColor;
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
+.checkbox-control:has(.checkbox-input:checked) .checkbox-glyph--check,
+.checkbox-control:has(.checkbox-input:indeterminate) .checkbox-glyph--minus,
+.checkbox-control:has(.checkbox-input[aria-checked="mixed"]) .checkbox-glyph--minus {
+  display: block;
+}
+
+.checkbox-control:has(.checkbox-input:indeterminate) .checkbox-glyph--check,
+.checkbox-control:has(.checkbox-input[aria-checked="mixed"]) .checkbox-glyph--check {
+  display: none;
+}
+
+.checkbox-input:checked,
+.checkbox-input:indeterminate,
+.checkbox-input[aria-checked="mixed"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.checkbox-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .checkbox-input:disabled {
@@ -529,8 +594,8 @@
   opacity: 0.5;
 }
 
-.checkbox-input[aria-checked="mixed"] {
-  accent-color: var(--accent);
+:root[data-theme="dark"] .checkbox-glyphs {
+  color: #0d1117;
 }
 
 .radio-group {
@@ -544,17 +609,49 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  color: var(--text);
   font-size: inherit;
   line-height: 1.4;
 }
 
 .radio-input {
+  -webkit-appearance: none;
+  appearance: none;
+  display: grid;
+  place-content: center;
+  box-sizing: border-box;
   width: 1rem;
   height: 1rem;
   margin: 0;
-  accent-color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--input-bg);
+  color: #ffffff;
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.radio-input::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  transform: scale(0);
+}
+
+.radio-input:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.radio-input:checked::before {
+  transform: scale(1);
+}
+
+.radio-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .radio-input:disabled {
@@ -564,5 +661,21 @@
 .radio:has(.radio-input:disabled) {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+:root[data-theme="dark"] .radio-input:checked {
+  color: #0d1117;
+}
+
+@media (forced-colors: active) {
+  .checkbox-input,
+  .radio-input {
+    appearance: auto;
+  }
+
+  .checkbox-glyphs,
+  .radio-input::before {
+    display: none;
+  }
 }
 
