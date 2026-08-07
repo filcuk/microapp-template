@@ -76,7 +76,8 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  z-index: 10;
+  /* Match .dropdown-menu — above sticky chrome (20–41). */
+  z-index: 60;
   width: 100%;
   max-height: 12rem;
   margin: 0;
@@ -336,7 +337,8 @@
   position: absolute;
   top: calc(100% + 0.35rem);
   left: 0;
-  z-index: 30;
+  /* Match .dropdown-menu — above sticky chrome (20–41). */
+  z-index: 60;
   width: 18rem;
   max-width: calc(100vw - 2 * var(--page-padding-x));
   padding: 0.75rem;

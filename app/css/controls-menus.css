@@ -39,7 +39,8 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  z-index: 10;
+  /* Above sticky section/tier/header chrome (20–41); below expandable (90) / modals. */
+  z-index: 60;
   width: max-content;
   min-width: 100%;
   max-width: min(100vw - 3rem, 20rem);
