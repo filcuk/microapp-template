@@ -1104,46 +1104,6 @@ body > footer {
   white-space: normal;
 }
 
-/*
- * Keep wall-adjacent corners square so the highlight meets the menu edge;
- * round only free sides. Links are auto-placed row by row, so nth-child maps
- * onto the column. (Base `.dropdown-menu-item` radius stays 6px otherwise.)
- */
-.footer-also-see-menu[data-also-see-columns="2"]
-  .footer-also-see-topic-links
-  > li:nth-child(odd)
-  .dropdown-menu-item,
-.footer-also-see-menu[data-also-see-columns="3"]
-  .footer-also-see-topic-links
-  > li:nth-child(3n + 1)
-  .dropdown-menu-item {
-  border-start-start-radius: 0;
-  border-end-start-radius: 0;
-  border-start-end-radius: 6px;
-  border-end-end-radius: 6px;
-}
-
-.footer-also-see-menu[data-also-see-columns="2"]
-  .footer-also-see-topic-links
-  > li:nth-child(even)
-  .dropdown-menu-item,
-.footer-also-see-menu[data-also-see-columns="3"]
-  .footer-also-see-topic-links
-  > li:nth-child(3n)
-  .dropdown-menu-item {
-  border-start-start-radius: 6px;
-  border-end-start-radius: 6px;
-  border-start-end-radius: 0;
-  border-end-end-radius: 0;
-}
-
-.footer-also-see-menu[data-also-see-columns="3"]
-  .footer-also-see-topic-links
-  > li:nth-child(3n + 2)
-  .dropdown-menu-item {
-  border-radius: 6px;
-}
-
 /* Nested-grid fallback when `display: contents` is unavailable. */
 @supports not (display: contents) {
   .footer-also-see-topic-links {
@@ -1159,10 +1119,6 @@ body > footer {
   .footer-also-see-topic,
   .footer-also-see-topic-links {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .footer-also-see-topic-links .dropdown-menu-item {
-    border-radius: 0;
   }
 }
 

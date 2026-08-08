@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-08T10:53:02.465Z",
+  "generatedAt": "2026-08-08T20:05:51.940Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -22,7 +22,7 @@
   "derived": {
     "app/css/template.css": {
       "generator": "css-index",
-      "sha256": "626327c36678fa966b1ad726990c0c6b0c057a381c530d1eb8b658fe0bda5a2d"
+      "sha256": "f31c170c8b5a8689c9b58fb10595b84a3ebd364507523a3ae9554a224b73dc42"
     }
   },
   "files": {
@@ -92,6 +92,9 @@
     "app/components/pagination.js": {
       "sha256": "be41f293004dcbc0f15111d3b15b9ee35609bd314e7180f1d8938e4618611a75"
     },
+    "app/components/popover.js": {
+      "sha256": "c371e51bcf342547f513998e4707db7710a706d566dbee7db2ee8955b2ffa663"
+    },
     "app/components/progress-bar.js": {
       "sha256": "59666e299ef56baa1a1e51eeea7e430b32b514e46717cee2bc422837600233fb"
     },
@@ -132,7 +135,10 @@
       "sha256": "e2f9c98506e8fffe580f864ea12ca023cb8026bb24ec48578f2c948f793f124a"
     },
     "app/components/tooltip.js": {
-      "sha256": "38a44fbab0bf598709a4539554a9b04435e490603da6ccdce78a8be9451cea3b"
+      "sha256": "7a518b16783da12b9868b9dfe7e7bc939abdc96367555d7ee7fde27f96de22f2"
+    },
+    "app/components/tutorial.js": {
+      "sha256": "77a9e92f6abfe2f2fe1304dc788ad6df97324517bcd198cec0fe6869bdce9e76"
     },
     "app/css/code-block.css": {
       "sha256": "437c4840d29c902948368a1cb7ddd68fe4be73ef3068fc2ccdae24d6c95a62ee"
@@ -168,16 +174,19 @@
       "sha256": "b68c2fb288e433ecc0d8f6881f60111c0e10cf5baa1bfcec0d620ec9ee82634a"
     },
     "app/css/layout.css": {
-      "sha256": "e3c23b69dc2e5997ba0496716eb5581bce4f406e5a1bd6aeb75c7ceef3ccf704"
+      "sha256": "38200fdff68354e5bb8e51b55066df5927a6ed7b67622302e6a9c73dffee541a"
     },
     "app/css/overlays.css": {
-      "sha256": "24797b15eaeb9d6a1aae9d2aa897e5a39274d1495497fa89b2f7eb8aece2a16b"
+      "sha256": "f5e690965a7ee2569e85bcdcb31f86c872930a8ebbff9ccecb55cd67837530c2"
     },
     "app/css/rich-text-editor.css": {
       "sha256": "4d84f29a1bf8293bab17152f535c189b419677af04be7e66cde3b135ef292693"
     },
     "app/css/table.css": {
       "sha256": "9ff4e8c9eb6eaad983885fdf27f528b370ab5eb21d692ba3c5d58e119e0d8d3f"
+    },
+    "app/css/tutorial.css": {
+      "sha256": "c5386d468d0dd1af74448d977e6e9d2c8bc9d41a41ec7fe5e84e72e5cc397042"
     },
     "app/prism.css": {
       "sha256": "310795b886280e2cbd427bb727db90f2bd111f7197229e6a9880c98d8274929e"
@@ -195,7 +204,7 @@
       "sha256": "aef37fd63efd4589457bdbd1e859e980c73835dadcb4af752c99c4a8ea004ee9"
     },
     "app/shell/render-shell.js": {
-      "sha256": "fcf3b171654216e612c7115ed84d6a26dbba01bf3f28140ef9ed1b96427e46a5"
+      "sha256": "7b51031ef78819f6d46ade85a99f7ffea36455c69f66103768be2a500b088272"
     },
     "app/shell/shell.js": {
       "sha256": "7bc59c18faeecf7bcce15d586547c00c76fdc908a832c1206d9b4e4fdc2f165a"
@@ -404,6 +413,48 @@
         "document-listeners"
       ],
       "notes": "Also uses layout.css .tagline-link; wraps initDialog"
+    },
+    "popover": {
+      "files": [
+        "app/components/popover.js"
+      ],
+      "css": [
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "clear"
+      ],
+      "infra": [
+        "dom",
+        "document-listeners",
+        "icons"
+      ],
+      "notes": "Speech-bubble card; optional action icons (e.g. chevrons)"
+    },
+    "tutorial": {
+      "files": [
+        "app/components/tutorial.js",
+        "app/components/popover.js"
+      ],
+      "css": [
+        "tutorial.css",
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [
+        "clear",
+        "chevron-left",
+        "chevron-right"
+      ],
+      "infra": [
+        "dom",
+        "document-listeners",
+        "icons"
+      ],
+      "notes": "Spotlight tour; Escape priority 110; wraps initPopover"
     },
     "badge": {
       "files": [
@@ -941,7 +992,12 @@
       "banner",
       "dialog",
       "about-dialog",
-      "callout"
+      "callout",
+      "popover",
+      "tutorial"
+    ],
+    "tutorial.css": [
+      "tutorial"
     ],
     "code-block.css": [
       "code-block",
@@ -1015,6 +1071,7 @@
     "controls-disclosure.css",
     "controls-file.css",
     "overlays.css",
+    "tutorial.css",
     "rich-text-editor.css",
     "table.css",
     "controls-tabular-input.css"

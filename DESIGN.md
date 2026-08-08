@@ -22,7 +22,7 @@ Success and error **tooltips** (when used) use bold green / red styling (banner 
 | ---- | ---- | -------- |
 | **Hover** (default) | Describe a control on pointer over or focus | Until pointer/focus leaves |
 | **Timer** | Reaction feedback when in-place is not an option (e.g. icon-only copy → “Copied”) | Fixed duration; stays visible without hover |
-| **Persistent** | Tutorials / guided highlight | Until explicitly dismissed (e.g. user activates the highlighted control) |
+| **Persistent** | Single anchored tip that stays until dismissed (e.g. highlight one control) | Until explicitly dismissed (e.g. user activates the highlighted control) |
 
 ### Mutual exclusion
 
@@ -31,6 +31,18 @@ Success and error **tooltips** (when used) use bold green / red styling (banner 
 - Persistent tips are separate instances. They may coexist with each other and are **not** cancelled by hover/timer. Dismiss only via the intended action or dismiss API.
 
 With the exception of persistent tooltips, never show multiple tooltips at once.
+
+### Tooltips vs popovers vs tutorials
+
+| Need | Use |
+| ---- | --- |
+| Short text on hover / focus | **Tooltip** (hover) |
+| Brief reaction on an icon-only control | **Tooltip** (timer) or in-place label flash |
+| One lasting tip on a control, no chrome | **Persistent tooltip** |
+| Rich tip with title, longer copy, or buttons | **Popover** |
+| Multi-step guided walkthrough with dimmed page and back/next | **Tutorial** (builds on popover + spotlight) |
+
+Prefer a **tutorial** when the user must move through several steps. Prefer a **persistent tooltip** for a single highlight without navigation chrome. Prefer a **popover** when one tip needs actions but not a full tour.
 
 ## Selection highlights
 

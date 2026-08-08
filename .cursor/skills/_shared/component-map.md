@@ -25,7 +25,8 @@ Keep `app/utils/menu.js` if any popup menu remains (combo, dropdown, dropdown-to
 | -------------------- | --------------------- |
 | `layout.css` | Shell, section layout, page nav, footer, theme toggle, sticky, title numbering |
 | `controls-buttons.css` | Buttons, toolbar (always with shell) |
-| `overlays.css` | tooltip, banner, dialog, callout |
+| `overlays.css` | tooltip, banner, dialog, callout, popover |
+| `tutorial.css` | tutorial |
 | `code-block.css` | code-block, expandable-surface |
 | `controls-badges.css` | badge |
 | `controls-chips.css` | chip |
@@ -51,6 +52,8 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | banner | `app/components/banner.js` | `overlays.css` | — | Markup: `note`, `info`, `success`, `important`, `warning`, `error` as used | `dom` | Always via `initShell` (error banner) |
 | dialog | `app/components/dialog.js` | `overlays.css` | — | — | `dom`, `document-listeners` | |
 | about-dialog | `app/components/about-dialog.js` | `overlays.css`, `layout.css` (`.tagline-link`) | — | — | `dom`; wraps `dialog` | Tagline “What?” + progressive Huh? stages |
+| popover | `app/components/popover.js` | `overlays.css` | — | JS: `clear` (dismiss) | `dom`, `document-listeners`, `icons` | Speech-bubble card; optional action icons |
+| tutorial | `app/components/tutorial.js` | `tutorial.css`, `overlays.css` | — | Via popover: `clear`, `chevron-left`, `chevron-right` | `dom`, `document-listeners`; wraps `popover` | Spotlight tour; Escape priority 110 |
 | badge | `app/components/badge.js` | `controls-badges.css` | — | — | `dom` | |
 | chip | `app/components/chip.js` | `controls-chips.css` | — | — | `dom` | |
 | combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |

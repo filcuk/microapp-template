@@ -51,7 +51,7 @@ Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, de
 
 - Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, `--accent-hover`, `--accent-fg`, etc.)
 - Fork brand colour: override `--accent` (and `--accent-fg` when needed) in `app/css/app.css` — see **`manage-color`**; do not edit `tokens.css` in a fork for primary colour
-- Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.callout`, `.section-panel`, `.code-block`, `.theme-toggle`
+- Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.callout`, `.popover`, `.section-panel`, `.code-block`, `.theme-toggle`
 - Add or edit inline UI icons in `app/utils/icons-template.js` (catalogue) or `app/utils/icons-app.js` (fork) only — do not duplicate SVG paths in HTML
 - Do not introduce parallel styling systems (Tailwind, CSS-in-JS, component libraries)
 
@@ -80,7 +80,9 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 | `initCodeBlocks(root)` / `initCodeBlock(el)` | Prism code blocks with toolbar/surface actions, modes, copy/paste |
 | `initExpandableSurfaces(root)` | Maximize `[data-expandable-surface]` to page-width overlay |
 | `showBanner()` / `hideBanner()` | Show or hide `.banner` elements; respects `data-banner-expire` |
-| `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer reaction when in-place is not possible; persistent tutorial tips — see [`DESIGN.md`](DESIGN.md) |
+| `initTooltips()` / `flashTooltip()` / `showPersistentTooltip()` / `dismissPersistentTooltip()` | Hover tips; timer reaction when in-place is not possible; persistent tips — see [`DESIGN.md`](DESIGN.md) |
+| `initPopover()` | Anchored speech-bubble card with notch, title, body, and actions |
+| `initTutorial()` | Guided spotlight tour over a JS step script (uses popover); multiple scripts per page, one active |
 | `initPageNav()` / `initPageNavPanel()` | Page nav only — requires `PAGE_NAV_MARKUP` from `app/shell/render-shell.js` |
 | `initStickyChrome()` / `setStickyHeader()` / `setStickySectionHeadings()` | Optional sticky site header and section headings (`data-sticky-header`, `data-sticky-section-headings`) |
 | `initTitleNumbering()` / `setTitleNumbering()` / `syncTitleNumbering()` | Optional hierarchical outline prefixes (`data-title-numbering`) |
@@ -118,7 +120,7 @@ Optional `renderPageShell({ repoUrl, appUrl, alsoSee, alsoSeeUrl, alsoSeeTopics,
 `app/utils/document-listeners.js` registers **one** click and one keydown handler on `document`. Modules register callbacks:
 
 - **Click outside:** all handlers run on every click (menus close when click is outside)
-- **Escape:** handlers sorted by priority (higher first). Return `true` when handled. Dialogs use priority `100`, expandable surfaces `90`, menus use `50`.
+- **Escape:** handlers sorted by priority (higher first). Return `true` when handled. Tutorials use priority `110`, dialogs `100`, expandable surfaces `90`, menus / popovers use `50`.
 
 When a module registers listeners, store and call the returned unsubscribe in `destroy()` if provided.
 
@@ -156,7 +158,8 @@ Always use `setHidden()` from `app/utils/dom.js` when showing/hiding elements pr
 | `app/css/controls-menus.css` | Combo button, dropdown menus |
 | `app/css/controls-disclosure.css` | Expand, accordion, tabs, progress indicator |
 | `app/css/controls-file.css` | File dropzone, file download |
-| `app/css/overlays.css` | Banners, tooltips, modals |
+| `app/css/overlays.css` | Banners, tooltips, popovers, modals |
+| `app/css/tutorial.css` | Tutorial spotlight overlay and step chrome |
 | `app/css/rich-text-editor.css` | Rich text editor field layout and Toast UI token overrides |
 | `app/css/table.css` | Data table layout, sort controls, and selection column |
 | `app/css/controls-tabular-input.css` | Editable typed grid (tabular input) |

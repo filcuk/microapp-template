@@ -22,7 +22,7 @@ Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `render
 ## Visibility and listeners
 
 - Show/hide with `setHidden()` from `app/utils/dom.js` (class **and** `hidden` attribute).
-- Use `app/utils/document-listeners.js` for click-outside and Escape — do not add per-instance `document` listeners for those. Escape priorities: dialogs `100`, expandable surfaces `90`, menus `50`.
+- Use `app/utils/document-listeners.js` for click-outside and Escape — do not add per-instance `document` listeners for those. Escape priorities: tutorials `110`, dialogs `100`, expandable surfaces `90`, menus / popovers `50`.
 
 ## Icons and brand assets
 

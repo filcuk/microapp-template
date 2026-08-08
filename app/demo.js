@@ -18,6 +18,8 @@ import {
   showPersistentTooltip,
   dismissPersistentTooltip,
 } from "./components/tooltip.js";
+import { initPopover } from "./components/popover.js";
+import { initTutorial } from "./components/tutorial.js";
 import { initFileDropzone } from "./components/file-dropzone.js";
 import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
@@ -309,6 +311,91 @@ demoPersistentTarget?.addEventListener("click", () => {
     dismissPersistentTooltip(demoPersistentTipId);
     demoPersistentTipId = null;
   }
+});
+
+const demoPopoverAnchor = document.getElementById("demo-popover-anchor");
+const demoPopover = initPopover({
+  anchor: demoPopoverAnchor,
+  title: "Popover",
+  body: "A speech bubble with a notch aimed at the anchor. Use this for richer tips than a tooltip.",
+  position: "top",
+  actions: [
+    {
+      label: "Got it",
+      className: "btn btn-primary",
+    },
+  ],
+});
+
+document.getElementById("demo-popover-open")?.addEventListener("click", () => {
+  if (demoPopover?.isOpen()) demoPopover.close();
+  else demoPopover?.open();
+});
+
+/* Anchor is the pointed-at control; clicking it also toggles the popover. */
+demoPopoverAnchor?.addEventListener("click", () => {
+  if (demoPopover?.isOpen()) demoPopover.close();
+  else demoPopover?.open();
+});
+
+initTutorial({
+  id: "demo-overview",
+  startTriggers: "#demo-tutorial-overview",
+  steps: [
+    {
+      title: "Overview tour",
+      body: "This script walks the Information & prompts area using real controls — no extra demo targets.",
+    },
+    {
+      target: "#demo-info-prompts",
+      title: "This section",
+      body: "Tutorials can spotlight a whole section. Everything outside stays dimmed.",
+      position: "bottom",
+    },
+    {
+      target: "#demo-tutorials-panel",
+      title: "Tutorials",
+      body: "Or zoom in on a panel. These two buttons start the overview and interactive tours.",
+      position: "left",
+    },
+    {
+      target: "#demo-popovers-panel",
+      title: "Popovers",
+      body: "Show popover opens a speech bubble aimed at Anchor target.",
+      position: "right",
+    },
+    {
+      target: "#demo-tutorial-interactive",
+      title: "Interactive tour",
+      body: "Try the other tour next — it lets you click a real control to advance.",
+      position: "top",
+    },
+  ],
+});
+
+initTutorial({
+  id: "demo-interactive",
+  startTriggers: "#demo-tutorial-interactive",
+  steps: [
+    {
+      title: "Interactive tour",
+      body: "Most steps stay blocked. The next one lets you use the highlighted control.",
+    },
+    {
+      target: "#demo-popover-anchor",
+      title: "Try the anchor",
+      body: "Click Anchor target to advance. That also opens the popover.",
+      position: "top",
+      interactive: true,
+      advanceOn: "click",
+    },
+    {
+      target: "#demo-popover-open",
+      title: "Show popover",
+      body: "You can open the same bubble from this button. Press Done or Escape to finish.",
+      position: "bottom",
+    },
+  ],
 });
 
 const demoBadge = initBadge(document.getElementById("demo-badge-host"));

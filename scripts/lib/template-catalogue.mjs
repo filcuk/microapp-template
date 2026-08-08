@@ -40,6 +40,7 @@ export const CSS_INDEX_ORDER = [
   "controls-disclosure.css",
   "controls-file.css",
   "overlays.css",
+  "tutorial.css",
   "rich-text-editor.css",
   "table.css",
   "controls-tabular-input.css",
@@ -136,6 +137,25 @@ export const COMPONENTS = {
     icons: [],
     infra: ["dom", "document-listeners"],
     notes: "Also uses layout.css .tagline-link; wraps initDialog",
+  },
+  popover: {
+    files: ["app/components/popover.js"],
+    css: ["overlays.css"],
+    vendor: [],
+    icons: ["clear"],
+    infra: ["dom", "document-listeners", "icons"],
+    notes: "Speech-bubble card; optional action icons (e.g. chevrons)",
+  },
+  tutorial: {
+    files: [
+      "app/components/tutorial.js",
+      "app/components/popover.js",
+    ],
+    css: ["tutorial.css", "overlays.css"],
+    vendor: [],
+    icons: ["clear", "chevron-left", "chevron-right"],
+    infra: ["dom", "document-listeners", "icons"],
+    notes: "Spotlight tour; Escape priority 110; wraps initPopover",
   },
   badge: {
     files: ["app/components/badge.js"],
@@ -379,7 +399,8 @@ export const CSS_ONLY = {
 export const CSS_PARTIAL_FEATURES = {
   "layout.css": ["shell", "page-nav", "sticky", "title-numbering", "theme-toggle", "about-dialog"],
   "controls-buttons.css": ["buttons", "toolbar"],
-  "overlays.css": ["tooltip", "banner", "dialog", "about-dialog", "callout"],
+  "overlays.css": ["tooltip", "banner", "dialog", "about-dialog", "callout", "popover", "tutorial"],
+  "tutorial.css": ["tutorial"],
   "code-block.css": ["code-block", "expandable-surface"],
   "controls-badges.css": ["badge", "combobox", "dropdown-toggle"],
   "controls-chips.css": ["chip"],
