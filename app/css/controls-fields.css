@@ -99,6 +99,7 @@
   width: 100%;
   padding: calc(0.5rem - 1px) calc(1rem - 1px);
   border: 1px solid transparent;
+  border-radius: 6px;
   background: transparent;
   color: var(--text);
   font: inherit;
@@ -114,7 +115,6 @@
 .combobox-option:focus-visible,
 .combobox-option.is-active {
   border-color: var(--accent);
-  border-radius: 6px;
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
   color: var(--text);
   outline: none;
@@ -124,7 +124,6 @@
 .combobox-option.is-selected {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
-  border-radius: 6px;
   color: var(--text);
 }
 
