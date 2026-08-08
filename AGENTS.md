@@ -213,6 +213,10 @@ Match the established look (based on [pqm-stepper](https://github.com/filcuk/pqm
 
 Follow [`DESIGN.md`](DESIGN.md): prefer **in-place** label flashes when the control can show the outcome (Copy → Copied). Use timer-mode `flashTooltip()` with `tone: "success" | "error"` when in-place is not an option (icon-only controls). Use **banners** when page-level status is requested.
 
+### Selection highlights
+
+Two styles ([`DESIGN.md`](DESIGN.md)): **standard** (accent border + tinted background; neighbouring selected items join under one outer border — default for controls/lists) and **light** (lighter background only — theme switch). Match an existing control; do not invent a third look.
+
 ## Accessibility
 
 - Dialogs: focus trap, Escape to close (via document listener), restore focus, `aria-modal` and labelled titles

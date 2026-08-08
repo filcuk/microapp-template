@@ -31,3 +31,18 @@ Success and error **tooltips** (when used) use bold green / red styling (banner 
 - Persistent tips are separate instances. They may coexist with each other and are **not** cancelled by hover/timer. Dismiss only via the intended action or dismiss API.
 
 With the exception of persistent tooltips, never show multiple tooltips at once.
+
+## Selection highlights
+
+Two selection highlight styles. Prefer **standard** for selectable items in controls and lists; use **light** only for low-emphasis chrome (or when matching an existing light control).
+
+| Style | Appearance | Contiguous neighbours | Typical use |
+| ----- | ---------- | --------------------- | ----------- |
+| **Standard** | Accent (blue) border **and** accent-tinted background | Join under one outer border (drop shared edges; round only the run’s outer corners) | Most controls and lists — dropdown / combo menu items, combobox options, chips, similar selectable rows |
+| **Light** | Lighter background only (no accent selection border) | Not joined as a selection run | Theme switch (`.theme-toggle-btn[aria-pressed="true"]`) |
+
+**Standard** recipe (menus / list options): selected state uses something like `border-color: var(--accent)` and `background: color-mix(in srgb, var(--accent) 12%, var(--surface))`. When several selected items sit next to each other, CSS collapses the shared borders so the run reads as one outlined block.
+
+**Light** recipe: selected / pressed state uses a softer fill only (today: `background: var(--code-bg)` on the theme toggle), without the accent selection border used by standard.
+
+Do not invent a third selection look for new catalogue controls — pick **standard** or **light** and match an existing control’s CSS.

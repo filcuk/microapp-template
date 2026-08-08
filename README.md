@@ -22,7 +22,7 @@ Test all components: [demo](https://filcuk.github.io/microapp-template/demo.html
 | **[demo.html](demo.html)** | Interactive showcase of all components |
 | **[USAGE.md](USAGE.md)** | Forking the template, project layout, local preview, GitHub Pages, component catalogue, and markup/JS examples |
 | **[DEVELOPMENT.md](DEVELOPMENT.md)** | Maintainer tooling: lint/test, README demo scroll capture |
-| **[DESIGN.md](DESIGN.md)** | Design philosophy: action feedback, tooltip modes, aesthetics |
+| **[DESIGN.md](DESIGN.md)** | Design philosophy: action feedback, tooltip modes, selection highlights, aesthetics |
 | **[DISCLAIMER.md](DISCLAIMER.md)** | LLM assistance, warranty, and third-party license notices |
 | **[AGENTS.md](AGENTS.md)** | Rules for AI assistants (LLM skills & workflow automation) working in this repo |
 | **[.cursor/skills/](.cursor/skills/)** | LLM skills: multi-step automations for repo maintenance, codegen, upgrades, and more |
