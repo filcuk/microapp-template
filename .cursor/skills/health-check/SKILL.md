@@ -24,6 +24,7 @@ Health check:
 - [ ] Demo refs
 - [ ] config / version
 - [ ] Assets / icons
+- [ ] Accent colour (if app.css overrides --accent)
 - [ ] Template lock / verify
 - [ ] Lint / test (if node_modules)
 - [ ] Unused scan (optional)
@@ -70,7 +71,20 @@ Read `.github/workflows/pages.yml`:
 
 If assets are incomplete, point at the `handle-assets` skill.
 
-### 6. Template lock / verify (hard gate when present)
+### 6. Accent colour
+
+When `app/css/app.css` overrides `--accent` (light and/or dark):
+
+- [ ] Matching `--accent-fg` (or token default for that theme) yields WCAG AA ≥ 4.5:1 against `--accent`
+- [ ] Brand colour was not patched into synced `tokens.css` on a fork
+
+```bash
+node .cursor/skills/manage-color/scripts/contrast.mjs <accent-hex> [fg-hex]
+```
+
+**Fail** if contrast fails or accent was edited only in `tokens.css` on a fork. Point at **`manage-color`**. Skip when `app.css` does not set `--accent`.
+
+### 7. Template lock / verify (hard gate when present)
 
 When `template.lock.json` and `template-manifest.json` exist (template repo and modern forks):
 
@@ -86,7 +100,7 @@ npm run verify:template
 
 Skip with reason only on pre-manifest forks that have not adopted the lock yet — then recommend adding `template.lock.json` via migrate.
 
-### 7. Lint / test
+### 8. Lint / test
 
 If `node_modules` exists (or after `npm ci` if the user wants a full check):
 
@@ -97,7 +111,7 @@ npm test
 
 Skip with reason if deps are not installed and the user did not ask to install.
 
-### 8. Optional unused scan
+### 9. Optional unused scan
 
 When finalizing or on request: compare entry import graphs + markup hooks to [component-map.md](../_shared/component-map.md) (and/or `template.lock.json` components). Report unused catalogue ids / CSS partials / vendor — do not delete unless the user asked (`finalize-app`).
 

@@ -56,26 +56,19 @@ a.btn:hover {
 
 .btn-primary {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--accent-fg);
   border-color: var(--accent);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: #ffffff;
+  color: var(--accent-fg);
 }
 
 a.btn.btn-primary,
 a.btn.btn-primary:hover {
-  color: #ffffff;
-}
-
-:root[data-theme="dark"] .btn-primary,
-:root[data-theme="dark"] .btn-primary:hover:not(:disabled),
-:root[data-theme="dark"] a.btn.btn-primary,
-:root[data-theme="dark"] a.btn.btn-primary:hover {
-  color: #0d1117;
+  color: var(--accent-fg);
 }
 
 /* Primary destructive action (delete, reset, irreversible confirm) */

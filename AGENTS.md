@@ -16,6 +16,7 @@ Multi-step workflows live under [`.cursor/skills/`](.cursor/skills/). Read the m
 | [`author-component`](.cursor/skills/author-component/SKILL.md) | Add a **new** reusable component to the template itself |
 | [`release-template`](.cursor/skills/release-template/SKILL.md) | Bump `TEMPLATE_VERSION`, regenerate manifest, tag `vX.Y.Z` |
 | [`handle-assets`](.cursor/skills/handle-assets/SKILL.md) | Wire logos/favicons/res — never invent artwork; request files from the user |
+| [`manage-color`](.cursor/skills/manage-color/SKILL.md) | Set / validate light+dark `--accent` and `--accent-fg` (WCAG AA) in `app.css` |
 | [`add-icon`](.cursor/skills/add-icon/SKILL.md) | Pull Icônes / Iconify SVG into `icons-template.js` or `icons-app.js` (prefer `ic` Round; Material Symbols fallback) |
 | [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets, and `verify:template` |
 
@@ -48,7 +49,8 @@ Prose in documentation (`USAGE.md`, `README.md`, `CHANGELOG.md`, `DESIGN.md`, de
 
 ## Reuse the design system
 
-- Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, etc.)
+- Use CSS custom properties from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, `--accent-hover`, `--accent-fg`, etc.)
+- Fork brand colour: override `--accent` (and `--accent-fg` when needed) in `app/css/app.css` — see **`manage-color`**; do not edit `tokens.css` in a fork for primary colour
 - Use existing component classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.callout`, `.section-panel`, `.code-block`, `.theme-toggle`
 - Add or edit inline UI icons in `app/utils/icons-template.js` (catalogue) or `app/utils/icons-app.js` (fork) only — do not duplicate SVG paths in HTML
 - Do not introduce parallel styling systems (Tailwind, CSS-in-JS, component libraries)

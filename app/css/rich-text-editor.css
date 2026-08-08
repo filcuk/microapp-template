@@ -167,12 +167,8 @@
 }
 
 .rich-text-editor-mode .segmented-control-item[aria-checked="true"] {
-  color: #ffffff;
+  color: var(--accent-fg);
   font-weight: 600;
-}
-
-:root[data-theme="dark"] .rich-text-editor-mode .segmented-control-item[aria-checked="true"] {
-  color: #0d1117;
 }
 
 .rich-text-editor .toastui-editor-dark .rich-text-editor-mode {

@@ -64,7 +64,20 @@
                 <div class="demo-colour-swatch" style="background: var(--accent-hover)" aria-hidden="true"></div>
                 <div class="demo-colour-meta">
                   <h3 class="demo-colour-name"><code>--accent-hover</code></h3>
-                  <p class="demo-hint">Hover / pressed state for the primary accent.</p>
+                  <p class="demo-hint">Derived from <code>--accent</code> via <code>color-mix</code> (hover / pressed).</p>
+                </div>
+              </div>
+              <div class="demo-colour-item">
+                <div
+                  class="demo-colour-swatch"
+                  style="background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font-size: 0.75rem; font-weight: 600;"
+                  aria-hidden="true"
+                >
+                  Aa
+                </div>
+                <div class="demo-colour-meta">
+                  <h3 class="demo-colour-name"><code>--accent-fg</code></h3>
+                  <p class="demo-hint">Text and icons on accent fills (keep ≥ 4.5:1 contrast).</p>
                 </div>
               </div>
               <div class="demo-colour-item">

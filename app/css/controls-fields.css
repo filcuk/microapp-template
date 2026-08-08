@@ -498,12 +498,7 @@ li:not([hidden]):has(> .combobox-option.is-selected)
 .date-picker-choice.is-selected {
   background: var(--accent);
   border-color: var(--accent);
-  color: #ffffff;
-}
-
-:root[data-theme="dark"] .date-picker-day.is-selected,
-:root[data-theme="dark"] .date-picker-choice.is-selected {
-  color: #0d1117;
+  color: var(--accent-fg);
 }
 
 .date-picker-day.is-today:not(.is-selected) {
@@ -550,7 +545,7 @@ li:not([hidden]):has(> .combobox-option.is-selected)
   line-height: 1.4;
 }
 
-/* Custom paint so checked glyphs match primary fills (white / dark-theme #0d1117).
+/* Custom paint so checked glyphs match primary fills (`--accent-fg`).
    Glyphs are `check` / `minus` icons mounted by initIcons / ensureCheckboxFace. */
 .checkbox-control {
   position: relative;
@@ -571,7 +566,7 @@ li:not([hidden]):has(> .combobox-option.is-selected)
   border: 1px solid var(--border);
   border-radius: 3px;
   background: var(--input-bg);
-  color: #ffffff;
+  color: var(--accent-fg);
   cursor: pointer;
   grid-area: 1 / 1;
 }
@@ -583,7 +578,7 @@ li:not([hidden]):has(> .combobox-option.is-selected)
   width: 0.75rem;
   height: 0.75rem;
   pointer-events: none;
-  color: #ffffff;
+  color: var(--accent-fg);
 }
 
 .checkbox-glyph {
@@ -632,10 +627,6 @@ li:not([hidden]):has(> .combobox-option.is-selected)
   opacity: 0.5;
 }
 
-:root[data-theme="dark"] .checkbox-glyphs {
-  color: #0d1117;
-}
-
 .radio-group {
   display: flex;
   flex-direction: column;
@@ -664,7 +655,7 @@ li:not([hidden]):has(> .combobox-option.is-selected)
   border: 1px solid var(--border);
   border-radius: 50%;
   background: var(--input-bg);
-  color: #ffffff;
+  color: var(--accent-fg);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -699,10 +690,6 @@ li:not([hidden]):has(> .combobox-option.is-selected)
 .radio:has(.radio-input:disabled) {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-:root[data-theme="dark"] .radio-input:checked {
-  color: #0d1117;
 }
 
 @media (forced-colors: active) {

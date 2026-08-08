@@ -170,6 +170,6 @@
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
-  color: #ffffff;
+  color: var(--accent-fg);
 }
 

@@ -22,7 +22,7 @@
   border: none;
   border-radius: 999px;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--accent-fg);
   font-size: 0.6875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -43,10 +43,6 @@
   color: transparent;
   font-size: 0;
   line-height: 0;
-}
-
-:root[data-theme="dark"] .badge:not(.badge--sm) {
-  color: #0d1117;
 }
 
 .badge.hidden {

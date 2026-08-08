@@ -3,8 +3,8 @@ name: init-app
 description: >-
   Initialize a new app from microapp-template: collect fork details, configure
   config/version/HTML, choose keep-all or selective components, wire branding
-  via handle-assets, and trim demo/Pages. Use when forking, scaffolding, or
-  creating a new app from this template.
+  via handle-assets and manage-color, and trim demo/Pages. Use when forking,
+  scaffolding, or creating a new app from this template.
 ---
 
 # Init app
@@ -23,6 +23,7 @@ Ask for anything missing:
 | Theme storage key | Default `microapp-theme`, or rename in `config.js` + `__MICROAPP__` |
 | Also-see | Real links, remote `alsoSeeUrl`, topics whitelist, or `false` / `[]` to hide |
 | Logo mode | Pair (`app-light` / `app-dark`) or single (`app.svg`) — assets via `handle-assets` |
+| Primary accent | Light + dark `--accent` hex, or keep template defaults — via **`manage-color`** into `app/css/app.css` |
 | Keep demo? | Keep `demo.html` + `app/demo.js`, or delete and fix `pages.yml` |
 | Component strategy | **Keep all** (default) or **Selective** (list feature ids) |
 
@@ -39,6 +40,7 @@ Ask for anything missing:
 4. Ensure boot: `__MICROAPP__` (if needed) → `theme-init.js` → `styles.css` → `app/main.js` with `initShell()` first.
 5. Demo: keep, or delete `demo.html` + `app/demo.js` and drop `demo.html` from `.github/workflows/pages.yml`.
 6. Brand / new UI icons → follow **`handle-assets`** (wire only; request files; do not invent artwork).
+7. Primary accent → if the user supplied custom light/dark colours, follow **`manage-color`**; skip when keeping template defaults.
 
 ## 4. Deploy checklist
 
@@ -47,6 +49,7 @@ Ask for anything missing:
 - [ ] `app/main.js` is more than a bare `initShell()` when the app has UI logic
 - [ ] Demo decision reflected in files + `pages.yml`
 - [ ] Branding assets supplied or explicitly pending via `handle-assets`
+- [ ] Accent colour: template defaults kept, or `manage-color` applied to `app/css/app.css`
 - [ ] Remind user: GitHub **Settings → Pages → Source** = **GitHub Actions**
 
 ## 5. Finish
