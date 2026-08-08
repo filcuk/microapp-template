@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-08T09:45:29.082Z",
+  "generatedAt": "2026-08-08T10:53:02.465Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -153,7 +153,7 @@
       "sha256": "3eb0ceac813fe334a583b6f6c70fea108003e1d894fb0675d5df464acd7b7cdb"
     },
     "app/css/controls-file.css": {
-      "sha256": "3049edb5d4bae40f29ab6cded81d8a9232d3f28fdd63bc5d825bfc461c5409e1"
+      "sha256": "2dd93b29594da190aaa6b6a12f019e1a99fbce834ea928970106a9e83a0b4df3"
     },
     "app/css/controls-menus.css": {
       "sha256": "3d583f7c1572077865a5779cc597f0a7f9ce4a9433e0dee4ad14afad7174a667"
@@ -195,7 +195,7 @@
       "sha256": "aef37fd63efd4589457bdbd1e859e980c73835dadcb4af752c99c4a8ea004ee9"
     },
     "app/shell/render-shell.js": {
-      "sha256": "c9c2f5d6a50087483790d3463fd06d95715e9cf0a65719c32bcf1dc71ee94723"
+      "sha256": "fcf3b171654216e612c7115ed84d6a26dbba01bf3f28140ef9ed1b96427e46a5"
     },
     "app/shell/shell.js": {
       "sha256": "7bc59c18faeecf7bcce15d586547c00c76fdc908a832c1206d9b4e4fdc2f165a"
