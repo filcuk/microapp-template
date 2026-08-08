@@ -42,8 +42,6 @@ body.tutorial-open {
   border-radius: 6px;
   box-shadow: 0 0 0 max(100vw, 100vh) var(--tutorial-dim);
   pointer-events: none;
-  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  outline-offset: 0;
 }
 
 .tutorial-overlay__spotlight[hidden] {
