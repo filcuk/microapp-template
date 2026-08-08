@@ -12,11 +12,13 @@
  * Usage:
  *   npm run capture:demo
  *   npm run capture:demo -- --format webm
- *   npm run capture:demo -- --format gif,webp
+ *   npm run capture:demo -- --format webp,gif
  *   npm run capture:demo -- --theme dark --duration 12000 --width 900
  *   npm run capture:demo -- --preview
+ *   npm run capture:demo -- --show-titles
  *
- * Default output: res/demo-scroll.webp (animated). Use --format for webm/gif.
+ * Default output: res/demo-scroll.avif (animated). Use --format for webp/webm/gif.
+ * Titles (Theme, Properties, …) are stripped by default; pass --show-titles to keep.
  */
 
 import { spawnSync } from "node:child_process";
@@ -52,11 +54,12 @@ const MIME = {
   ".txt": "text/plain; charset=utf-8",
   ".wasm": "application/wasm",
   ".webp": "image/webp",
+  ".avif": "image/avif",
   ".woff": "font/woff",
   ".woff2": "font/woff2",
 };
 
-const OUTPUT_FORMATS = new Set(["webp", "webm", "gif"]);
+const OUTPUT_FORMATS = new Set(["avif", "webp", "webm", "gif"]);
 
 /**
  * @param {string[]} argv
@@ -66,21 +69,23 @@ function parseArgs(argv) {
   const out = {
     theme: "dark",
     width: "1400",
-    height: "1100",
-    duration: "50000",
-    fps: "60",
+    height: "1000",
+    duration: "45000",
+    fps: "30",
     dpr: "1",
     outDir: DEFAULT_OUT_DIR,
     basename: "demo-scroll",
     preview: false,
-    formats: ["webp"],
+    formats: ["avif"],
     headless: true,
     loop: true,
+    hideTitles: true,
     settleMs: "800",
-    webpQuality: "85",
-    webpFps: "10",
-    webpMaxMb: "10",
-    webpWidth: "800",
+    quality: "70",
+    outFps: "40",
+    maxMb: "10",
+    outWidth: "1000",
+    avifCrf: "32",
     reuseFrames: false,
     cleanFrames: false,
   };
@@ -89,6 +94,8 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--preview") out.preview = true;
     else if (arg === "--no-loop") out.loop = false;
+    else if (arg === "--hide-titles") out.hideTitles = true;
+    else if (arg === "--show-titles") out.hideTitles = false;
     else if (arg === "--headed") out.headless = false;
     else if (arg === "--reuse-frames") out.reuseFrames = true;
     else if (arg === "--clean-frames") out.cleanFrames = true;
@@ -101,10 +108,15 @@ function parseArgs(argv) {
     else if (arg === "--out-dir") out.outDir = path.resolve(argv[++i] || out.outDir);
     else if (arg === "--basename") out.basename = argv[++i] || out.basename;
     else if (arg === "--settle-ms") out.settleMs = argv[++i] || out.settleMs;
-    else if (arg === "--webp-quality") out.webpQuality = argv[++i] || out.webpQuality;
-    else if (arg === "--webp-fps") out.webpFps = argv[++i] || out.webpFps;
-    else if (arg === "--webp-max-mb") out.webpMaxMb = argv[++i] || out.webpMaxMb;
-    else if (arg === "--webp-width") out.webpWidth = argv[++i] || out.webpWidth;
+    else if (arg === "--quality" || arg === "--webp-quality") {
+      out.quality = argv[++i] || out.quality;
+    } else if (arg === "--out-fps" || arg === "--webp-fps") {
+      out.outFps = argv[++i] || out.outFps;
+    } else if (arg === "--max-mb" || arg === "--webp-max-mb") {
+      out.maxMb = argv[++i] || out.maxMb;
+    } else if (arg === "--out-width" || arg === "--webp-width") {
+      out.outWidth = argv[++i] || out.outWidth;
+    } else if (arg === "--avif-crf") out.avifCrf = argv[++i] || out.avifCrf;
     else if (arg === "--format" || arg === "--formats") {
       const raw = String(argv[++i] || "");
       out.formats = parseFormats(raw);
@@ -125,12 +137,12 @@ function parseFormats(raw) {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
   if (list.length === 0) {
-    throw new Error("--format needs at least one of: webp, webm, gif");
+    throw new Error("--format needs at least one of: avif, webp, webm, gif");
   }
   for (const fmt of list) {
     if (!OUTPUT_FORMATS.has(fmt)) {
       throw new Error(
-        `Unknown format "${fmt}". Use: webp, webm, gif (comma-separated ok)`
+        `Unknown format "${fmt}". Use: avif, webp, webm, gif (comma-separated ok)`
       );
     }
   }
@@ -160,6 +172,8 @@ function printHelp() {
 
 Site header/footer/page-nav are removed. #main is duplicated so scrolling one
 copy height overscrolls into the first section again (infinite carousel).
+Tier/section titles (Theme, Properties, …) and their gaps are stripped by
+default so the scroll is a continuous run of demo sections.
 Frames are captured only during the scroll — no frozen lead-in/outro.
 
 Options:
@@ -169,24 +183,29 @@ Options:
   --duration <ms>      Scroll duration for one loop (default: 50000)
   --fps <n>            Capture / encode frame rate (default: 60)
   --dpr <n>            Device scale factor (default: 1) — sharper capture pixels,
-                       NOT output downscale (use --webp-width for that)
+                       NOT output downscale (use --out-width for that)
   --out-dir <path>     Output directory (default: res/)
   --basename <name>    File basename (default: demo-scroll)
   --settle-ms <ms>     Wait after load before capture (default: 800; not in video)
-  --format <list>      Output format(s): webp (default), webm, gif
-                       Comma-separated for several, e.g. webp,gif or webm
-  --webp-quality <n>   WebP -quality start (default: 50; 0–100)
-  --webp-fps <n>       WebP delivery fps (default: 5; capture can stay higher)
-  --webp-max-mb <n>    Re-encode WebP until under this size (default: 10; 0 = off)
-  --webp-width <px>    Encode width (default: same as --width). E.g. capture 1400,
-                       export 900: --width 1400 --webp-width 900
+  --format <list>      Output format(s): avif (default), webp, webm, gif
+                       Comma-separated for several, e.g. avif,webp or webm
+  --out-fps <n>        Animated image delivery fps (avif/webp; default: 20)
+  --out-width <px>     Encode width for avif/webp (default: 1000). E.g. capture 1400,
+                       export 900: --width 1400 --out-width 900
+  --max-mb <n>         Re-encode until under this size (avif/webp; default: 10; 0 = off)
+  --quality <n>        WebP -quality start (default: 70; 0–100)
+  --avif-crf <n>       AV1 CRF for AVIF (default: 32; lower = sharper, 0–63)
   --reuse-frames       Skip browser capture; encode from existing
                        res/.demo-scroll-frames (see --clean-frames)
   --clean-frames       Delete the frames directory after encode (default: keep)
   --preview            Open prepared page (no recording)
   --headed             Show the browser while capturing frames
   --no-loop            Do not duplicate #main
+  --hide-titles        Strip tier/section titles and related gaps (default)
+  --show-titles        Keep Theme / Properties headings and spacing
   -h, --help           Show this help
+
+  Legacy aliases: --webp-fps, --webp-width, --webp-max-mb, --webp-quality
 
 Requires ffmpeg (system PATH or the ffmpeg-static npm package).
 `);
@@ -321,15 +340,16 @@ async function installCaptureInit(context, theme) {
 /**
  * @param {import("playwright").Page} page
  * @param {string} demoUrl
- * @param {{ loop: boolean, settleMs: number }} options
+ * @param {{ loop: boolean, settleMs: number, hideTitles?: boolean }} options
  * @returns {Promise<number>}
  */
-async function openPreparedDemo(page, demoUrl, { loop, settleMs }) {
+async function openPreparedDemo(page, demoUrl, { loop, settleMs, hideTitles = true }) {
   await page.goto(demoUrl, { waitUntil: "networkidle" });
   await page.waitForSelector("#main");
   await delay(settleMs);
   const result = await page.evaluate(applyCaptureLayout, {
     loop,
+    hideTitles,
     styleText: CAPTURE_STYLE,
   });
   const scrollBy =
@@ -549,6 +569,8 @@ function encodeWebpFromFrames(ffmpegBin, framesDir, webpPath, options) {
   function encodeOnce(q, fpsOut, w) {
     const evenWidth = w % 2 === 0 ? w : w - 1;
     // libwebp: use -quality (global -q:v is ignored for this encoder).
+    // Preset "picture" applies stronger deblocking than "drawing", which suits
+    // the anti-aliased UI capture and encodes ~7% smaller at equal quality.
     // Do not use -cr_threshold: on scrolling UIs it encodes false "unchanged"
     // blocks as transparency → white holes in many players.
     runFfmpeg(
@@ -567,7 +589,7 @@ function encodeWebpFromFrames(ffmpegBin, framesDir, webpPath, options) {
         "-lossless",
         "0",
         "-preset",
-        "drawing",
+        "picture",
         "-quality",
         String(q),
         "-loop",
@@ -618,6 +640,123 @@ function encodeWebpFromFrames(ffmpegBin, framesDir, webpPath, options) {
   if (maxMb > 0 && sizeMb > maxMb) {
     console.warn(
       `  warning: final webp is ${sizeMb.toFixed(2)} MB (over ${maxMb} MB budget)`
+    );
+  }
+}
+
+/**
+ * Encode animated AVIF (AV1) sized for README (~10MB by default).
+ * Much smaller than WebP at similar perceptual quality on this UI scroll.
+ *
+ * @param {string} ffmpegBin
+ * @param {string} framesDir
+ * @param {string} avifPath
+ * @param {object} options
+ * @param {number} options.captureFps
+ * @param {number} options.width
+ * @param {number} options.crf  AV1 CRF (0–63; lower = sharper)
+ * @param {number} options.deliveryFps
+ * @param {number} options.maxMb  0 disables size targeting
+ */
+function encodeAvifFromFrames(ffmpegBin, framesDir, avifPath, options) {
+  const captureFps = Number(options.captureFps);
+  const width = Number(options.width);
+  let crf = Number(options.crf);
+  let deliveryFps = Math.min(Number(options.deliveryFps), captureFps);
+  let encodeWidth = width;
+  const maxMb = Number(options.maxMb);
+
+  if (!Number.isFinite(captureFps) || captureFps <= 0) {
+    throw new Error(`encodeAvifFromFrames: invalid captureFps ${options.captureFps}`);
+  }
+  if (!Number.isFinite(width) || width <= 0) {
+    throw new Error(`encodeAvifFromFrames: invalid width ${options.width}`);
+  }
+  if (!Number.isFinite(crf)) crf = 32;
+  crf = Math.max(0, Math.min(63, Math.round(crf)));
+  if (!Number.isFinite(deliveryFps) || deliveryFps <= 0) deliveryFps = 20;
+
+  const pattern = path.join(framesDir, "frame-%05d.jpg");
+
+  /**
+   * @param {number} crfOut
+   * @param {number} fpsOut
+   * @param {number} w
+   */
+  function encodeOnce(crfOut, fpsOut, w) {
+    const evenWidth = w % 2 === 0 ? w : w - 1;
+    // libaom CRF needs -b:v 0. Muxer -loop 0 = infinite (also the default).
+    runFfmpeg(
+      ffmpegBin,
+      [
+        "-y",
+        "-framerate",
+        String(captureFps),
+        "-i",
+        pattern,
+        "-vf",
+        `fps=${fpsOut},scale=${evenWidth}:-1:flags=lanczos,format=yuv420p`,
+        "-an",
+        "-c:v",
+        "libaom-av1",
+        "-cpu-used",
+        "6",
+        "-row-mt",
+        "1",
+        "-crf",
+        String(crfOut),
+        "-b:v",
+        "0",
+        "-still-picture",
+        "0",
+        "-fps_mode",
+        "cfr",
+        "-loop",
+        "0",
+        avifPath,
+      ],
+      "avif encode"
+    );
+  }
+
+  encodeOnce(crf, deliveryFps, encodeWidth);
+  let sizeMb = fs.statSync(avifPath).size / (1024 * 1024);
+  console.log(
+    `  avif pass crf=${crf} fps=${deliveryFps} w=${encodeWidth} → ${sizeMb.toFixed(2)} MB`
+  );
+
+  if (!(maxMb > 0)) return;
+
+  let guard = 0;
+  while (sizeMb > maxMb && guard < 16) {
+    guard += 1;
+    if (crf < 40) {
+      crf = Math.min(40, crf + 3);
+    } else if (deliveryFps > 16) {
+      deliveryFps = Math.max(16, deliveryFps - 2);
+    } else if (encodeWidth > 900) {
+      encodeWidth = Math.max(900, Math.round(encodeWidth * 0.88));
+    } else if (crf < 48) {
+      crf = Math.min(48, crf + 2);
+    } else if (deliveryFps > 12) {
+      deliveryFps = Math.max(12, deliveryFps - 2);
+    } else {
+      console.warn(
+        `  avif still ${sizeMb.toFixed(2)} MB after compression passes (target ${maxMb} MB)`
+      );
+      break;
+    }
+
+    encodeOnce(crf, deliveryFps, encodeWidth);
+    sizeMb = fs.statSync(avifPath).size / (1024 * 1024);
+    console.log(
+      `  avif pass crf=${crf} fps=${deliveryFps} w=${encodeWidth} → ${sizeMb.toFixed(2)} MB`
+    );
+  }
+
+  if (maxMb > 0 && sizeMb > maxMb) {
+    console.warn(
+      `  warning: final avif is ${sizeMb.toFixed(2)} MB (over ${maxMb} MB budget)`
     );
   }
 }
@@ -793,28 +932,34 @@ async function main() {
     );
   }
   const settleMs = parsePositiveInt(args.settleMs, "--settle-ms");
-  const webpQuality = parsePositiveInt(args.webpQuality, "--webp-quality");
-  if (webpQuality > 100) {
-    throw new Error("--webp-quality must be 0–100");
+  const quality = parsePositiveInt(args.quality, "--quality");
+  if (quality > 100) {
+    throw new Error("--quality must be 0–100");
   }
-  const webpFps = parsePositiveInt(args.webpFps, "--webp-fps");
-  const webpMaxMb = Number(String(args.webpMaxMb).trim());
-  if (!Number.isFinite(webpMaxMb) || webpMaxMb < 0) {
-    throw new Error("--webp-max-mb must be a number ≥ 0 (0 disables targeting)");
+  const outFps = parsePositiveInt(args.outFps, "--out-fps");
+  const maxMb = Number(String(args.maxMb).trim());
+  if (!Number.isFinite(maxMb) || maxMb < 0) {
+    throw new Error("--max-mb must be a number ≥ 0 (0 disables targeting)");
   }
-  const webpWidthRaw = String(args.webpWidth ?? "").trim();
-  const webpWidth = webpWidthRaw
-    ? parsePositiveInt(webpWidthRaw, "--webp-width")
+  const outWidthRaw = String(args.outWidth ?? "").trim();
+  const outWidth = outWidthRaw
+    ? parsePositiveInt(outWidthRaw, "--out-width")
     : width;
-  if (webpWidth > width) {
+  if (outWidth > width) {
     throw new Error(
-      `--webp-width (${webpWidth}) cannot exceed capture --width (${width})`
+      `--out-width (${outWidth}) cannot exceed capture --width (${width})`
     );
   }
+  const avifCrfRaw = Number(String(args.avifCrf).trim());
+  if (!Number.isFinite(avifCrfRaw) || !Number.isInteger(avifCrfRaw) || avifCrfRaw < 0 || avifCrfRaw > 63) {
+    throw new Error("--avif-crf must be an integer 0–63");
+  }
+  const avifCrf = avifCrfRaw;
   const outDir = String(args.outDir);
   const basename = String(args.basename);
   const loop = Boolean(args.loop);
-  const formats = Array.isArray(args.formats) ? args.formats : ["webp"];
+  const hideTitles = Boolean(args.hideTitles);
+  const formats = Array.isArray(args.formats) ? args.formats : ["avif"];
   const reuseFrames = Boolean(args.reuseFrames);
   const cleanFrames = Boolean(args.cleanFrames);
 
@@ -846,7 +991,7 @@ async function main() {
     if (args.preview) {
       console.log(`
 Preview mode — chrome removed, #main duplicated for the carousel seam.
-Scroll one copy height to see the first section again after the last.
+${hideTitles ? "Tier/section titles hidden for a continuous section scroll.\n" : ""}Scroll one copy height to see the first section again after the last.
 Press Ctrl+C to stop.
 `);
       const { browser, context } = await createCaptureContext(playwright, {
@@ -857,7 +1002,11 @@ Press Ctrl+C to stop.
         headless: false,
       });
       const page = await context.newPage();
-      const scrollBy = await openPreparedDemo(page, demoUrl, { loop, settleMs });
+      const scrollBy = await openPreparedDemo(page, demoUrl, {
+        loop,
+        settleMs,
+        hideTitles,
+      });
       console.log(`Loop scroll distance: ${Math.round(scrollBy)}px`);
       await new Promise(() => {
         /* keep server + browser until Ctrl+C */
@@ -880,9 +1029,10 @@ Press Ctrl+C to stop.
       const scrollBy = await openPreparedDemo(page, demoUrl, {
         loop,
         settleMs,
+        hideTitles,
       });
       console.log(
-        `Capturing ${Math.round(scrollBy)}px over ${durationMs}ms (target ${fps} fps, scroll frames only)…`
+        `Capturing ${Math.round(scrollBy)}px over ${durationMs}ms (target ${fps} fps, scroll frames only${hideTitles ? ", titles hidden" : ""})…`
       );
       const captured = await captureScrollFrames(
         page,
@@ -920,13 +1070,21 @@ Press Ctrl+C to stop.
 
   for (const fmt of formats) {
     const outPath = path.join(outDir, `${basename}.${fmt}`);
-    if (fmt === "webp") {
+    if (fmt === "avif") {
+      encodeAvifFromFrames(ffmpegBin, framesDir, outPath, {
+        captureFps: encodeFps,
+        width: outWidth,
+        crf: avifCrf,
+        deliveryFps: outFps,
+        maxMb,
+      });
+    } else if (fmt === "webp") {
       encodeWebpFromFrames(ffmpegBin, framesDir, outPath, {
         captureFps: encodeFps,
-        width: webpWidth,
-        quality: webpQuality,
-        deliveryFps: webpFps,
-        maxMb: webpMaxMb,
+        width: outWidth,
+        quality,
+        deliveryFps: outFps,
+        maxMb,
       });
     } else if (fmt === "webm") {
       encodeWebmFromFrames(ffmpegBin, framesDir, outPath, encodeFps);
