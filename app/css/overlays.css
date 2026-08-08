@@ -401,6 +401,10 @@
   margin-top: 0.25rem;
 }
 
+.popover__footer .popover__action--icon {
+  gap: 0.35rem;
+}
+
 .popover__footer[hidden] {
   display: none !important;
 }

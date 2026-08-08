@@ -30,6 +30,8 @@ let popoverSeq = 0;
  *   className?: string,
  *   onClick?: (event: MouseEvent) => void,
  *   closeOnClick?: boolean,
+ *   disabled?: boolean,
+ *   icon?: string,
  * }} PopoverAction
  */
 
@@ -154,9 +156,12 @@ export function computePopoverPlacement(options) {
   if (requested === "auto") {
     /** @type {PopoverSide[]} */
     const order = ["bottom", "top", "right", "left"];
-    side = order.reduce((best, candidate) =>
-      spaceFor(candidate) > spaceFor(best) ? candidate : best,
-    );
+    const fitting = order.filter((candidate) => spaceFor(candidate) >= primarySize(candidate));
+    side =
+      fitting[0] ??
+      order.reduce((best, candidate) =>
+        spaceFor(candidate) > spaceFor(best) ? candidate : best,
+      );
   } else {
     side = requested;
     const needed = primarySize(side);
@@ -242,6 +247,7 @@ function nodesFromBody(body) {
  *   position?: PopoverPosition,
  *   actions?: PopoverAction[],
  *   dismissible?: boolean,
+ *   closeOnOutsideClick?: boolean,
  *   className?: string,
  *   gap?: number,
  *   notchSize?: number,
@@ -260,6 +266,10 @@ export function initPopover(options = {}) {
     notchSize = DEFAULT_NOTCH,
     onClose,
   } = options;
+  const closeOnOutsideClick =
+    options.closeOnOutsideClick !== undefined
+      ? Boolean(options.closeOnOutsideClick)
+      : dismissible;
 
   /** @type {HTMLElement | null} */
   let anchorEl = resolveAnchor(options.anchor);
@@ -333,7 +343,16 @@ export function initPopover(options = {}) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = action.className || "btn";
-      btn.textContent = action.label;
+      btn.disabled = Boolean(action.disabled);
+      if (action.icon) {
+        btn.append(
+          createIcon(action.icon, { className: "btn-icon-svg" }),
+          document.createTextNode(action.label),
+        );
+        btn.classList.add("popover__action--icon");
+      } else {
+        btn.textContent = action.label;
+      }
       btn.addEventListener("click", (event) => {
         action.onClick?.(event);
         if (action.closeOnClick !== false) {
@@ -470,7 +489,7 @@ export function initPopover(options = {}) {
   window.addEventListener("resize", onViewportChange);
 
   const removeClickOutside = onDocumentClickOutside((event) => {
-    if (!isOpen || !dismissible) return;
+    if (!isOpen || !closeOnOutsideClick) return;
     const target = event.target;
     if (!(target instanceof Node)) return;
     if (el.contains(target)) return;

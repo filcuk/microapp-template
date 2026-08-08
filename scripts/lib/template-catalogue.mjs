@@ -40,6 +40,7 @@ export const CSS_INDEX_ORDER = [
   "controls-disclosure.css",
   "controls-file.css",
   "overlays.css",
+  "tutorial.css",
   "rich-text-editor.css",
   "table.css",
   "controls-tabular-input.css",
