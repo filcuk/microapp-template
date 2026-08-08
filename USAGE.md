@@ -452,9 +452,13 @@ setStickySectionHeadings(true);
 syncStickyOffsets();
 ```
 
-While stickiness is enabled but nothing is pinned yet, appearance is unchanged. As each bar pins, it receives `data-sticky-stuck` (gap fill fades in above and below) and the bottom-most pinned element also gets `data-sticky-stuck-edge` (hairline + drop shadow).
+While stickiness is enabled but nothing is pinned yet, appearance is unchanged. As each bar pins, it receives `data-sticky-stuck` (gap fill fades in above and below) and the bottom-most *visible* pinned element also gets `data-sticky-stuck-edge` (hairline + drop shadow).
 
-When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap), `--sticky-gap` between site header and tier, and per-tier `--sticky-tier-offset` (pinned title height + `--sticky-nest-gap` under the tier; the `.content-tier-lead` is hidden while the tier is pinned). Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
+When both opts are on, the site header sticks at `top: 0` as its own bar. Content headings share a **single** slot under it (`top: headerOffset + gap`): a pinned tier shows its segment title alone, then **grows** to a breadcrumb **`Segment > Section`** when a section in that tier also pins (chevron separator; section chrome is ghosted via `data-sticky-crumb-merged`). If the tier has already scrolled away, the section title sticks alone in that slot. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap) and `--sticky-gap`; `--sticky-tier-offset` (pinned bar height) is used only by `scroll-margin-top` so page-nav jumps land headings below the bar. Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable (sections stick alone; no crumb).
+
+Pinning is deliberately **layout-neutral**: a pinned tier header hides its lead, and `--sticky-collapse-reserve` (measured by `sticky.js`) gives that height back as margin. Without it, pinning would shorten the page, lift the next tier, evict the pinned header, restore the lead, and oscillate at the boundary. For the same reason, pin state is derived from in-flow document Y plus `scrollY`, and eviction is measured against the containing `.content-tier` / `.content-section` rather than the header's own (pin-dependent) height.
+
+Subsection handoffs crossfade the crumb label (`--sticky-crumb-ms`) and **hold** the crumb for a short beat when no section is pinned, so fast scrolling does not flash the large segment title between subsections. Crumb labels (and pinned titles when the crumb is not showing) are links: click to jump to that heading with the same sticky clearance as page nav.
 
 ### Title numbering
 

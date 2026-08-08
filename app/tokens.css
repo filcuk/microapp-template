@@ -46,6 +46,8 @@
   --sticky-nest-gap: 0.15rem;
   --sticky-edge-pad: 0.5rem;
   --sticky-fade-ms: 150ms;
+  /* Segment ↔ crumb and crumb-label crossfade while scrolling subsections. */
+  --sticky-crumb-ms: 180ms;
   --sticky-shadow: rgb(0 0 0 / 0.2);
   --banner-fade-ms: 200ms;
   --control-hover-ms: 80ms;

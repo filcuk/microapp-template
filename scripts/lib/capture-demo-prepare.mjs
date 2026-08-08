@@ -106,14 +106,22 @@ export function applyCaptureLayout({ loop, styleText }) {
   root.style.removeProperty("--sticky-header-offset");
 
   document
-    .querySelectorAll("[data-sticky-stuck], [data-sticky-stuck-edge]")
+    .querySelectorAll(
+      "[data-sticky-stuck], [data-sticky-stuck-edge], [data-sticky-crumb], [data-sticky-crumb-merged]",
+    )
     .forEach((el) => {
       el.removeAttribute("data-sticky-stuck");
       el.removeAttribute("data-sticky-stuck-edge");
+      el.removeAttribute("data-sticky-crumb");
+      el.removeAttribute("data-sticky-crumb-merged");
     });
   document.querySelectorAll(".content-tier").forEach((tier) => {
     tier.style.removeProperty("--sticky-tier-offset");
   });
+  document.querySelectorAll(".content-tier-header").forEach((header) => {
+    header.style.removeProperty("--sticky-collapse-reserve");
+  });
+  document.querySelectorAll(".sticky-crumb").forEach((crumb) => crumb.remove());
 
   // Remove from the tree (not just hide) so they cannot appear mid-scroll.
   for (const selector of [
