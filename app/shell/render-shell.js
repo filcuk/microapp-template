@@ -666,9 +666,9 @@ export function renderAlsoSeeMarkup(sections) {
     .join("");
 
   return `<span class="footer-meta-sep" aria-hidden="true">·</span>
-        <span>also
+        <span>find
           <span class="footer-also-see dropdown" id="footer-also-see">
-            <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu" data-tooltip="find other apps and tools" data-tooltip-position="top">see links</button>
+            <button type="button" class="footer-also-see-trigger" id="footer-also-see-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="footer-also-see-menu" data-tooltip="find other apps and tools" data-tooltip-position="top">more stuff</button>
             <ul id="footer-also-see-menu" class="dropdown-menu footer-also-see-menu hidden" role="menu" hidden data-also-see-columns="${columns}" style="--also-see-columns: ${columns}">
               ${topicsMarkup}
             </ul>
