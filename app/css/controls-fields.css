@@ -97,26 +97,64 @@
 .combobox-option {
   display: block;
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
+  padding: calc(0.5rem - 1px) calc(1rem - 1px);
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text);
   font: inherit;
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out,
+    color var(--control-hover-ms) ease-out;
 }
 
 .combobox-option:hover,
 .combobox-option:focus-visible,
 .combobox-option.is-active {
-  background: var(--code-bg);
+  border-color: var(--accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  color: var(--text);
   outline: none;
+  transition-duration: 0s;
 }
 
-.combobox-option.is-selected,
-.combobox-option[aria-selected="true"] {
+.combobox-option.is-selected {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
+  border-radius: 6px;
   color: var(--text);
+}
+
+.combobox-option.is-selected:hover,
+.combobox-option.is-selected:focus-visible,
+.combobox-option.is-selected.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
+  color: var(--text);
+  transition-duration: 0s;
+}
+
+/* Contiguous selected runs share one outer border (skip hidden filtered siblings). */
+li:not([hidden]):has(> .combobox-option.is-selected):has(
+    + li:not([hidden]) > .combobox-option.is-selected
+  )
+  > .combobox-option.is-selected {
+  border-bottom-width: 0;
+  padding-bottom: 0.5rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+li:not([hidden]):has(> .combobox-option.is-selected)
+  + li:not([hidden])
+  > .combobox-option.is-selected {
+  border-top-width: 0;
+  padding-top: 0.5rem;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .combobox-empty {

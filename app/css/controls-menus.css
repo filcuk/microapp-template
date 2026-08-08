@@ -142,7 +142,8 @@ svg.dropdown-menu-item-icon {
 }
 
 .dropdown-menu-item.is-selected,
-.dropdown-menu-item[aria-checked="true"] {
+.dropdown-menu-item[aria-checked="true"],
+.combo-menu-item.is-selected {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
   border-radius: 0;
@@ -157,7 +158,9 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item.is-selected:hover,
 .dropdown-menu-item.is-selected:focus-visible,
 .dropdown-menu-item[aria-checked="true"]:hover,
-.dropdown-menu-item[aria-checked="true"]:focus-visible {
+.dropdown-menu-item[aria-checked="true"]:focus-visible,
+.combo-menu-item.is-selected:hover,
+.combo-menu-item.is-selected:focus-visible {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
   color: var(--text);
@@ -166,32 +169,87 @@ svg.dropdown-menu-item-icon {
 
 /* Contiguous selected runs share one outer border (no edge between neighbours).
    Drop shared border width (not just colour) so side borders meet with no 1px gap. */
-li:has(> .dropdown-menu-item:is(.is-selected, [aria-checked="true"])):has(
-    + li > .dropdown-menu-item:is(.is-selected, [aria-checked="true"])
+li:has(
+    > :is(
+      .dropdown-menu-item.is-selected,
+      .dropdown-menu-item[aria-checked="true"],
+      .combo-menu-item.is-selected
+    )
+  ):has(
+    + li
+      > :is(
+        .dropdown-menu-item.is-selected,
+        .dropdown-menu-item[aria-checked="true"],
+        .combo-menu-item.is-selected
+      )
   )
-  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  > :is(
+    .dropdown-menu-item.is-selected,
+    .dropdown-menu-item[aria-checked="true"],
+    .combo-menu-item.is-selected
+  ) {
   border-bottom-width: 0;
   padding-bottom: 0.5rem;
 }
 
-li:has(> .dropdown-menu-item:is(.is-selected, [aria-checked="true"]))
+li:has(
+    > :is(
+      .dropdown-menu-item.is-selected,
+      .dropdown-menu-item[aria-checked="true"],
+      .combo-menu-item.is-selected
+    )
+  )
   + li
-  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  > :is(
+    .dropdown-menu-item.is-selected,
+    .dropdown-menu-item[aria-checked="true"],
+    .combo-menu-item.is-selected
+  ) {
   border-top-width: 0;
   padding-top: 0.5rem;
 }
 
 /* Round only the outer corners of each contiguous selection run. */
-li:first-child > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]),
-li:not(:has(> .dropdown-menu-item:is(.is-selected, [aria-checked="true"])))
+li:first-child
+  > :is(
+    .dropdown-menu-item.is-selected,
+    .dropdown-menu-item[aria-checked="true"],
+    .combo-menu-item.is-selected
+  ),
+li:not(
+    :has(
+      > :is(
+        .dropdown-menu-item.is-selected,
+        .dropdown-menu-item[aria-checked="true"],
+        .combo-menu-item.is-selected
+      )
+    )
+  )
   + li
-  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  > :is(
+    .dropdown-menu-item.is-selected,
+    .dropdown-menu-item[aria-checked="true"],
+    .combo-menu-item.is-selected
+  ) {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
 }
 
-li:not(:has(+ li > .dropdown-menu-item:is(.is-selected, [aria-checked="true"])))
-  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+li:not(
+    :has(
+      + li
+        > :is(
+          .dropdown-menu-item.is-selected,
+          .dropdown-menu-item[aria-checked="true"],
+          .combo-menu-item.is-selected
+        )
+    )
+  )
+  > :is(
+    .dropdown-menu-item.is-selected,
+    .dropdown-menu-item[aria-checked="true"],
+    .combo-menu-item.is-selected
+  ) {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
 }

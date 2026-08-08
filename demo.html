@@ -427,7 +427,7 @@
 
               <div class="panel-stack">
                 <h3 class="demo-card-title">Multi-select combobox</h3>
-                <p class="demo-hint">Selection as a comma-separated list with a count badge.</p>
+                <p class="demo-hint">Selection as a comma-separated list with a count badge; list stays open while picking.</p>
                 <div class="combobox" id="demo-combobox-multi" data-combobox-multi
                   style="max-width: 14rem">
                   <span class="badge-host" data-badge-label="Cities">
@@ -449,7 +449,8 @@
                             aria-selected="true">Chicago</button>
                         </li>
                         <li role="presentation">
-                          <button type="button" class="combobox-option" role="option" data-value="hou">Houston</button>
+                          <button type="button" class="combobox-option" role="option" data-value="hou"
+                            aria-selected="true">Houston</button>
                         </li>
                         <li role="presentation">
                           <button type="button" class="combobox-option" role="option" data-value="phx">Phoenix</button>
@@ -471,9 +472,9 @@
                         </li>
                       </ul>
                     </div>
-                    <span class="badge" aria-hidden="true">2</span>
+                    <span class="badge" aria-hidden="true">3</span>
                   </span>
-                  <input type="hidden" class="combobox-value" value="nyc,chi" />
+                  <input type="hidden" class="combobox-value" value="nyc,chi,hou" />
                 </div>
               </div>
 
