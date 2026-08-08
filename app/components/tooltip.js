@@ -45,6 +45,14 @@ const boundRoots = new WeakSet();
 let globalListenersBound = false;
 let persistentSeq = 0;
 
+/** @type {ReturnType<typeof setTimeout> | null} */
+let hideCleanupTimer = null;
+/** @type {((event: TransitionEvent) => void) | null} */
+let hideTransitionHandler = null;
+
+/** Fallback after hide transition (matches `--control-hover-ms`, plus slack). */
+const HIDE_CLEANUP_MS = 120;
+
 function ensureTooltipElement() {
   if (tooltipEl) return tooltipEl;
 
@@ -132,6 +140,9 @@ function getPosition(target) {
  * @param {"top" | "bottom" | "left" | "right"} position
  */
 function placeTip(el, target, position) {
+  if (el === tooltipEl) {
+    cancelHideCleanup();
+  }
   el.classList.add("is-visible");
   el.hidden = false;
 
@@ -211,6 +222,27 @@ function restoreTimerTarget() {
   }
 }
 
+function cancelHideCleanup() {
+  if (hideCleanupTimer !== null) {
+    window.clearTimeout(hideCleanupTimer);
+    hideCleanupTimer = null;
+  }
+  if (hideTransitionHandler && tooltipEl) {
+    tooltipEl.removeEventListener("transitionend", hideTransitionHandler);
+  }
+  hideTransitionHandler = null;
+}
+
+/** Finish hide after opacity fade — keep content until then so the box does not collapse. */
+function finishHideSharedSlot() {
+  cancelHideCleanup();
+  if (!tooltipEl || tooltipEl.classList.contains("is-visible")) return;
+
+  tooltipEl.classList.remove(...TONE_CLASSES);
+  tooltipEl.hidden = true;
+  tooltipEl.replaceChildren();
+}
+
 function hideSharedSlot() {
   if (activeTarget) {
     unlinkDescribedBy(activeTarget);
@@ -220,9 +252,25 @@ function hideSharedSlot() {
 
   if (!tooltipEl) return;
 
-  tooltipEl.classList.remove("is-visible", ...TONE_CLASSES);
-  tooltipEl.hidden = true;
-  tooltipEl.replaceChildren();
+  /* Already fully dismissed. */
+  if (tooltipEl.hidden) {
+    tooltipEl.classList.remove("is-visible", ...TONE_CLASSES);
+    tooltipEl.replaceChildren();
+    return;
+  }
+
+  /* Fade already in progress — leave content until cleanup. */
+  if (!tooltipEl.classList.contains("is-visible")) return;
+
+  cancelHideCleanup();
+  tooltipEl.classList.remove("is-visible");
+
+  hideTransitionHandler = (event) => {
+    if (event.target !== tooltipEl || event.propertyName !== "opacity") return;
+    finishHideSharedSlot();
+  };
+  tooltipEl.addEventListener("transitionend", hideTransitionHandler);
+  hideCleanupTimer = window.setTimeout(finishHideSharedSlot, HIDE_CLEANUP_MS);
 }
 
 /** Cancel hover/timer slot; restore timer trigger if a flash was in progress. */

@@ -201,6 +201,11 @@
   transition: opacity var(--control-hover-ms) ease-out, visibility 0s linear var(--control-hover-ms);
 }
 
+/* Author `display: flex` would otherwise override the UA `[hidden]` rule. */
+.tooltip[hidden] {
+  display: none !important;
+}
+
 :root[data-theme="dark"] .tooltip {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
