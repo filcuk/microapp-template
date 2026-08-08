@@ -134,6 +134,8 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item:focus-visible {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  /* Beat `a:hover` / footer link accent so highlighted text stays --text. */
+  color: var(--text);
   outline: none;
   transition-duration: 0s;
 }
@@ -142,7 +144,7 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item[aria-checked="true"] {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--text);
 }
 
 .dropdown-menu-item.is-selected .dropdown-menu-item-subtitle,
@@ -156,6 +158,7 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item[aria-checked="true"]:focus-visible {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
+  color: var(--text);
   transition-duration: 0s;
 }
 

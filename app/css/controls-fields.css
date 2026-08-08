@@ -116,7 +116,7 @@
 
 .combobox-option.is-selected,
 .combobox-option[aria-selected="true"] {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .combobox-empty {

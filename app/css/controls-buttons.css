@@ -27,6 +27,11 @@
 a.btn {
   gap: 0.375rem;
   text-decoration: none;
+  color: var(--text);
+}
+
+a.btn:hover {
+  color: var(--text);
 }
 
 /* Compact height — works with labeled and icon buttons */
@@ -40,6 +45,7 @@ a.btn {
 .btn:hover:not(:disabled) {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  color: var(--text);
   transition-duration: 0s;
 }
 
@@ -57,9 +63,18 @@ a.btn {
 .btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
+  color: #ffffff;
 }
 
-:root[data-theme="dark"] .btn-primary {
+a.btn.btn-primary,
+a.btn.btn-primary:hover {
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] .btn-primary,
+:root[data-theme="dark"] .btn-primary:hover:not(:disabled),
+:root[data-theme="dark"] a.btn.btn-primary,
+:root[data-theme="dark"] a.btn.btn-primary:hover {
   color: #0d1117;
 }
 
