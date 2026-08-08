@@ -443,6 +443,266 @@ export const DERIVED_FILES = ["app/css/template.css"];
 export const DEFAULT_SOURCE = "filcuk/microapp-template";
 
 /**
+ * Template-owned Cursor skills (stable ids). `_shared` is always selected when
+ * any skill is selected. Fork-local skills use other folder names and are never listed here.
+ * Optional per entry: `previousFiles`, `forkFacing` (default true).
+ */
+export const AGENT_SKILLS = {
+  _shared: {
+    files: [
+      ".cursor/skills/_shared/component-map.md",
+      ".cursor/skills/_shared/invariants.md",
+    ],
+    always: true,
+    forkFacing: true,
+  },
+  "init-app": {
+    files: [".cursor/skills/init-app/SKILL.md"],
+    forkFacing: true,
+  },
+  "migrate-template": {
+    files: [".cursor/skills/migrate-template/SKILL.md"],
+    forkFacing: true,
+  },
+  "sync-shell": {
+    files: [".cursor/skills/sync-shell/SKILL.md"],
+    forkFacing: true,
+  },
+  "restore-component": {
+    files: [".cursor/skills/restore-component/SKILL.md"],
+    forkFacing: true,
+  },
+  "finalize-app": {
+    files: [".cursor/skills/finalize-app/SKILL.md"],
+    forkFacing: true,
+  },
+  "handle-assets": {
+    files: [".cursor/skills/handle-assets/SKILL.md"],
+    forkFacing: true,
+  },
+  "manage-color": {
+    files: [
+      ".cursor/skills/manage-color/SKILL.md",
+      ".cursor/skills/manage-color/scripts/contrast.mjs",
+    ],
+    forkFacing: true,
+  },
+  "add-icon": {
+    files: [
+      ".cursor/skills/add-icon/SKILL.md",
+      ".cursor/skills/add-icon/scripts/fetch-icon.mjs",
+    ],
+    forkFacing: true,
+  },
+  "health-check": {
+    files: [".cursor/skills/health-check/SKILL.md"],
+    forkFacing: true,
+  },
+  "author-component": {
+    files: [".cursor/skills/author-component/SKILL.md"],
+    forkFacing: false,
+  },
+  "release-template": {
+    files: [".cursor/skills/release-template/SKILL.md"],
+    forkFacing: false,
+  },
+};
+
+/** Template-owned Cursor rules (always synced with the agent set). */
+export const AGENT_RULES = [
+  ".cursor/rules/demo-isolation.mdc",
+  ".cursor/rules/icons.mdc",
+  ".cursor/rules/usage-docs.mdc",
+];
+
+/**
+ * Ids still shipped but marked deprecated (must remain in COMPONENTS / AGENT_SKILLS).
+ * Shape: { kind, replacedBy?, previousFiles?, deprecatedIn, notes? }
+ * @type {Record<string, object>}
+ */
+export const DEPRECATED = {};
+
+/**
+ * Ids removed from the live catalogue. `previousFiles` are prune candidates.
+ * Must include `deprecatedIn` from a prior release. Paths here must never be
+ * reused by a new live file.
+ * Shape: { kind, replacedBy?, previousFiles, deprecatedIn, retiredIn, notes? }
+ * @type {Record<string, object>}
+ */
+export const RETIRED = {};
+
+/**
+ * Collect every path the live catalogue currently owns (install surface).
+ * @param {{
+ *   components?: typeof COMPONENTS,
+ *   agentSkills?: typeof AGENT_SKILLS,
+ *   agentRules?: string[],
+ *   core?: typeof CORE,
+ *   infra?: typeof INFRA,
+ *   cssIndexOrder?: string[],
+ * }} [opts]
+ * @returns {Set<string>}
+ */
+export function collectLivePaths(opts = {}) {
+  const components = opts.components || COMPONENTS;
+  const agentSkills = opts.agentSkills || AGENT_SKILLS;
+  const agentRules = opts.agentRules || AGENT_RULES;
+  const core = opts.core || CORE;
+  const infra = opts.infra || INFRA;
+  const cssIndexOrder = opts.cssIndexOrder || CSS_INDEX_ORDER;
+
+  /** @type {Set<string>} */
+  const live = new Set();
+
+  const addAll = (paths) => {
+    for (const p of paths || []) live.add(p);
+  };
+
+  addAll(core.files);
+  for (const basename of cssIndexOrder) {
+    live.add(`app/css/${basename}`);
+  }
+  for (const paths of Object.values(infra)) {
+    addAll(paths);
+  }
+  for (const def of Object.values(components)) {
+    addAll(def.files);
+    addAll(def.vendor);
+    // Directory vendor prefixes stay as prefixes; concrete expand happens at manifest time
+  }
+  for (const def of Object.values(agentSkills)) {
+    addAll(def.files);
+  }
+  addAll(agentRules);
+
+  return live;
+}
+
+/**
+ * Collect previousFiles from live entries + deprecated + retired maps.
+ * @param {{
+ *   components?: typeof COMPONENTS,
+ *   agentSkills?: typeof AGENT_SKILLS,
+ *   deprecated?: typeof DEPRECATED,
+ *   retired?: typeof RETIRED,
+ * }} [opts]
+ * @returns {{ path: string, source: string }[]}
+ */
+export function collectPreviousFileEntries(opts = {}) {
+  const components = opts.components || COMPONENTS;
+  const agentSkills = opts.agentSkills || AGENT_SKILLS;
+  const deprecated = opts.deprecated || DEPRECATED;
+  const retired = opts.retired || RETIRED;
+
+  /** @type {{ path: string, source: string }[]} */
+  const out = [];
+
+  for (const [id, def] of Object.entries(components)) {
+    for (const p of def.previousFiles || []) {
+      out.push({ path: p, source: `components.${id}.previousFiles` });
+    }
+  }
+  for (const [id, def] of Object.entries(agentSkills)) {
+    for (const p of def.previousFiles || []) {
+      out.push({ path: p, source: `agentSkills.${id}.previousFiles` });
+    }
+  }
+  for (const [id, def] of Object.entries(deprecated)) {
+    for (const p of def.previousFiles || []) {
+      out.push({ path: p, source: `deprecated.${id}.previousFiles` });
+    }
+  }
+  for (const [id, def] of Object.entries(retired)) {
+    for (const p of def.previousFiles || []) {
+      out.push({ path: p, source: `retired.${id}.previousFiles` });
+    }
+  }
+
+  return out;
+}
+
+/**
+ * Validate deprecate/retire maps and path-reuse rules.
+ * @param {{
+ *   components?: typeof COMPONENTS,
+ *   agentSkills?: typeof AGENT_SKILLS,
+ *   agentRules?: string[],
+ *   core?: typeof CORE,
+ *   infra?: typeof INFRA,
+ *   cssIndexOrder?: string[],
+ *   deprecated?: typeof DEPRECATED,
+ *   retired?: typeof RETIRED,
+ *   livePaths?: Set<string>,
+ * }} [opts]
+ */
+export function validateLifecycleCatalogue(opts = {}) {
+  const components = opts.components || COMPONENTS;
+  const agentSkills = opts.agentSkills || AGENT_SKILLS;
+  const deprecated = opts.deprecated || DEPRECATED;
+  const retired = opts.retired || RETIRED;
+  const livePaths = opts.livePaths || collectLivePaths(opts);
+
+  /** @type {string[]} */
+  const errors = [];
+
+  for (const [id, def] of Object.entries(deprecated)) {
+    if (!(id in components) && !(id in agentSkills)) {
+      errors.push(
+        `deprecated.${id} must still exist in COMPONENTS or AGENT_SKILLS (still shipped)`
+      );
+    }
+    if (!def.deprecatedIn) {
+      errors.push(`deprecated.${id} missing deprecatedIn`);
+    }
+    if (def.kind !== "component" && def.kind !== "skill") {
+      errors.push(`deprecated.${id} kind must be "component" or "skill"`);
+    }
+  }
+
+  for (const [id, def] of Object.entries(retired)) {
+    if (id in components || id in agentSkills) {
+      errors.push(
+        `retired.${id} must not remain in COMPONENTS or AGENT_SKILLS`
+      );
+    }
+    if (!def.deprecatedIn) {
+      errors.push(
+        `retired.${id} missing deprecatedIn (retire only after a prior deprecated release)`
+      );
+    }
+    if (!def.retiredIn) {
+      errors.push(`retired.${id} missing retiredIn`);
+    }
+    if (!Array.isArray(def.previousFiles) || def.previousFiles.length === 0) {
+      errors.push(`retired.${id} must list previousFiles to prune`);
+    }
+    if (def.kind !== "component" && def.kind !== "skill") {
+      errors.push(`retired.${id} kind must be "component" or "skill"`);
+    }
+  }
+
+  for (const { path: rel, source } of collectPreviousFileEntries(opts)) {
+    if (livePaths.has(rel)) {
+      errors.push(
+        `path reuse forbidden: ${rel} is live and also listed in ${source}`
+      );
+    }
+    // Directory-prefix live vendor entries (trailing /)
+    for (const live of livePaths) {
+      if (live.endsWith("/") && (rel === live.slice(0, -1) || rel.startsWith(live))) {
+        errors.push(
+          `path reuse forbidden: ${rel} falls under live prefix ${live} (${source})`
+        );
+      }
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Lifecycle catalogue invalid:\n- ${errors.join("\n- ")}`);
+  }
+}
+
+/**
  * Build the full or trimmed `template.css` body (LF endings).
  * @param {string[]} [cssBasenames]
  */
