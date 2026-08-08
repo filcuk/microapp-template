@@ -71,6 +71,11 @@ body > footer {
   color: var(--accent);
 }
 
+.tagline-link {
+  margin-left: 0.35rem;
+  font-size: inherit;
+}
+
 /* Optional sticky chrome — opt in via data-sticky-* on :root.
    Stack: site header → single content slot (segment, or Segment > Section crumb).
    JS toggles data-sticky-stuck / data-sticky-stuck-edge / data-sticky-crumb*. */

@@ -34,6 +34,33 @@
   margin-top: 0.75rem;
 }
 
+/* About / “What?” dialog — progressive simplification layers */
+
+.about-extra-content .about-extra-block {
+  margin-top: 0.875rem;
+  padding-top: 0.875rem;
+  border-top: 1px dashed var(--border);
+}
+
+.about-extra-content .about-extra-block > :first-child {
+  margin-top: 0;
+}
+
+.about-extra-content .about-extra-block > :last-child {
+  margin-bottom: 0;
+}
+
+/* Once a stage is showing, earlier copy recedes so the newest block reads first */
+[data-about-dimmed] .modal-body,
+[data-about-dimmed] .about-extra-block {
+  color: var(--muted);
+  transition: color 240ms ease;
+}
+
+[data-about-dimmed] .about-extra-block[data-about-current] {
+  color: var(--text);
+}
+
 /* Banners */
 
 .banner {

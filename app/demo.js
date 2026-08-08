@@ -2,6 +2,7 @@ import { initShell } from "./shell/shell.js";
 import { setStickyHeader, setStickySectionHeadings } from "./shell/sticky.js";
 import { setTitleNumbering } from "./shell/title-numbering.js";
 import { initDialog } from "./components/dialog.js";
+import { initAboutDialog } from "./components/about-dialog.js";
 import { initCombobox } from "./components/combobox.js";
 import { initCombo } from "./components/combo.js";
 import { initDropdown } from "./components/dropdown.js";
@@ -339,6 +340,11 @@ initToggle(document.getElementById("demo-title-numbering"), {
   onChange: ({ checked }) => {
     setTitleNumbering(checked);
   },
+});
+
+initAboutDialog({
+  dialogEl: document.getElementById("about-dialog"),
+  openTriggers: "#about-open-btn",
 });
 
 initDialog({

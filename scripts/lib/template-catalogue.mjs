@@ -126,6 +126,17 @@ export const COMPONENTS = {
     icons: [],
     infra: ["dom", "document-listeners"],
   },
+  "about-dialog": {
+    files: [
+      "app/components/about-dialog.js",
+      "app/components/dialog.js",
+    ],
+    css: ["overlays.css"],
+    vendor: [],
+    icons: [],
+    infra: ["dom", "document-listeners"],
+    notes: "Also uses layout.css .tagline-link; wraps initDialog",
+  },
   badge: {
     files: ["app/components/badge.js"],
     css: ["controls-badges.css"],
@@ -366,9 +377,9 @@ export const CSS_ONLY = {
 
 /** Which features need each CSS partial (for trim / index generation). */
 export const CSS_PARTIAL_FEATURES = {
-  "layout.css": ["shell", "page-nav", "sticky", "title-numbering", "theme-toggle"],
+  "layout.css": ["shell", "page-nav", "sticky", "title-numbering", "theme-toggle", "about-dialog"],
   "controls-buttons.css": ["buttons", "toolbar"],
-  "overlays.css": ["tooltip", "banner", "dialog", "callout"],
+  "overlays.css": ["tooltip", "banner", "dialog", "about-dialog", "callout"],
   "code-block.css": ["code-block", "expandable-surface"],
   "controls-badges.css": ["badge", "combobox", "dropdown-toggle"],
   "controls-chips.css": ["chip"],

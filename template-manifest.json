@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-08T08:54:49.910Z",
+  "generatedAt": "2026-08-08T09:11:40.855Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -26,6 +26,9 @@
     }
   },
   "files": {
+    "app/components/about-dialog.js": {
+      "sha256": "d58b2ea2afa64379ce05f2e2085883f41aff4dfce853d966a214db2b67fb1db4"
+    },
     "app/components/accordion.js": {
       "sha256": "e65229543af29d705e262cabc0a595350d62fec0c2f50e67d158d0c3a540059d"
     },
@@ -138,7 +141,7 @@
       "sha256": "d74a9ffbd69ce66deac92733531be5c39b00d1e8d181800d7d4d557121e94ef5"
     },
     "app/css/controls-buttons.css": {
-      "sha256": "0922a17ef9dee0997e78a4c8785b21996f6f06160d7a0dda09f51864f32285fe"
+      "sha256": "f248570c44af76ff5d68a0d55f02ee76c982ab3424a227632a57c5476aace5c4"
     },
     "app/css/controls-chips.css": {
       "sha256": "1568970bc1a3dbba798f50cf63568539c6543152a37e38c7c66c5aca18305cce"
@@ -165,10 +168,10 @@
       "sha256": "91f35ce709fde7c97c136ad5ef7b9aa5d06bcacdcbf38873d123f845108b6ec8"
     },
     "app/css/layout.css": {
-      "sha256": "659b0fce5ef90e5f4f74164bb56d5d9770249c18e06196ab3e0ded097ebc21e1"
+      "sha256": "ea7d4ae5607e4b906a196aa8625118c4ff64b5d3df47150d5099ca6f8d727aae"
     },
     "app/css/overlays.css": {
-      "sha256": "7e83fc4bae7db54ef686e454e28a4d8581b4d7ee448b67d724a70fe9bce793f0"
+      "sha256": "df206df054435d95c74c075a521175a857b4f03ab46b0bdfbbff2d8e66b4bb9a"
     },
     "app/css/rich-text-editor.css": {
       "sha256": "7f3498a7f96b6ce8933e5b1c44af53ce77268725d128562683e1a904dbabf0f9"
@@ -384,6 +387,23 @@
         "dom",
         "document-listeners"
       ]
+    },
+    "about-dialog": {
+      "files": [
+        "app/components/about-dialog.js",
+        "app/components/dialog.js"
+      ],
+      "css": [
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom",
+        "document-listeners"
+      ],
+      "notes": "Also uses layout.css .tagline-link; wraps initDialog"
     },
     "badge": {
       "files": [
@@ -909,7 +929,8 @@
       "page-nav",
       "sticky",
       "title-numbering",
-      "theme-toggle"
+      "theme-toggle",
+      "about-dialog"
     ],
     "controls-buttons.css": [
       "buttons",
@@ -919,6 +940,7 @@
       "tooltip",
       "banner",
       "dialog",
+      "about-dialog",
       "callout"
     ],
     "code-block.css": [

@@ -371,6 +371,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, Enter (default action), focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/components/dialog.js`](app/components/dialog.js). |
+| **About dialog** | Tagline “What?” opener with progressive Huh? / Uhh… simplification stages. [`app/components/about-dialog.js`](app/components/about-dialog.js) (wraps dialog). |
 | **Heading links** | Hover a `main :is(h2, h3)[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
@@ -501,6 +502,69 @@ const dialog = initDialog({
 Close controls use `data-dialog-close` on backdrop, × button, or footer buttons.
 
 **Default action / Enter:** mark the intended Enter target with `data-dialog-default` (focused on open). If omitted, Enter falls back to `.modal-footer-actions .btn-primary` (not `.btn-danger`). For destructive dialogs, put `data-dialog-default` on Cancel and style the primary action with `.btn-danger`.
+
+### About dialog (“What?”)
+
+Pattern for explaining the app from the site tagline — same idea as [pqm-stepper](https://github.com/filcuk/pqm-stepper). A `.btn-link.tagline-link` opens a dialog; an optional **confused** button reveals progressively simpler copy, then hands over to a final link.
+
+All copy lives in the markup, so editing the explanation never means touching JS.
+
+```html
+<p class="tagline">
+  Short app pitch.
+  <button type="button" id="about-open-btn" class="btn btn-link tagline-link">What?</button>
+</p>
+
+<div id="about-dialog" class="modal hidden" role="dialog" aria-modal="true"
+  aria-labelledby="about-dialog-title" hidden>
+  <div class="modal-backdrop" data-dialog-close></div>
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h2 id="about-dialog-title">What does this do?</h2>
+      <button type="button" class="modal-close" aria-label="Close" data-dialog-close>×</button>
+    </div>
+    <div class="modal-body">
+      <p>Full explanation…</p>
+      <div class="about-extra-content" data-about-extra>
+        <div class="about-extra-block hidden" data-about-stage data-about-next-label="Uhh…" hidden>
+          <p>Simpler explanation…</p>
+        </div>
+        <div class="about-extra-block hidden" data-about-stage data-about-next-label="I don't get it" hidden>
+          <p>Even simpler…</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" data-about-confused>Huh?</button>
+      <a class="btn hidden" data-about-final href="https://example.com/help" hidden>I don't get it</a>
+      <div class="modal-footer-actions">
+        <button type="button" class="btn btn-primary" data-dialog-close data-dialog-default>Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initAboutDialog } from "./components/about-dialog.js";
+
+const about = initAboutDialog({
+  dialogEl: document.getElementById("about-dialog"),
+  openTriggers: "#about-open-btn",
+});
+// about.openDialog(), about.closeDialog(), about.isDialogOpen(), about.reset()
+```
+
+| Markup hook | Role |
+| ----------- | ---- |
+| `data-about-confused` | The progressive button; its HTML text is the initial label |
+| `data-about-stage` | One block per stage, revealed in DOM order (start them `hidden`) |
+| `data-about-next-label` | Optional label for the button once that stage is showing |
+| `data-about-final` | Optional element (usually an `<a href>`) shown after the last stage; the button hides |
+
+Stages reset every time the dialog opens or closes. Omit `data-about-stage` entirely and the confused button hides itself. See the live example on [`demo.html`](demo.html).
+
+Once the first stage is showing, the dialog gains `data-about-dimmed` and the newest stage gains `data-about-current`. The stylesheet uses those to fade earlier copy to `--muted` so the new block reads first — restyle or drop those rules if you want every layer at full contrast.
 
 ### Tooltip
 

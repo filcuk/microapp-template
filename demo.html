@@ -30,7 +30,8 @@
       <h1>Component demo</h1>
     </div>
     <p class="tagline">
-      Examples of <a href="index.html">template</a> building blocks.
+      A <em>big</em> catalogue for <em>micro</em> apps.
+      <button type="button" id="about-open-btn" class="btn btn-link tagline-link">What?</button>
     </p>
   </header>
 
@@ -1738,6 +1739,55 @@ if __name__ == "__main__":
       </div>
     </section>
   </main>
+
+  <div id="about-dialog" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="about-dialog-title"
+    hidden>
+    <div class="modal-backdrop" data-dialog-close></div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="about-dialog-title">What is this?</h2>
+        <button type="button" class="modal-close" aria-label="Close" data-dialog-close>
+          ×
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          This page is the <strong>component catalogue</strong> for the microapp template —
+          a vanilla HTML/CSS/JS kit for small static apps.
+          Each section shows a reusable building block with the markup and behaviour.
+        </p>
+        <p>
+          Use the page nav on the right to jump around, toggle sticky chrome under
+          <em>Theme → Options</em>, and open this dialog from the tagline whenever you need
+          a refresher.
+        </p>
+        <div class="about-extra-content" data-about-extra>
+          <div class="about-extra-block hidden" data-about-stage data-about-next-label="Uhh…" hidden>
+            <p>
+              In short: this site is a <em>living style guide</em>. Scroll the demo sections to
+              see each control, then copy the HTML and JS patterns into your own microapp fork.
+              Nothing here needs a build step.
+            </p>
+          </div>
+          <div class="about-extra-block hidden" data-about-stage data-about-next-label="I don't get it" hidden>
+            <p>Big page. Many box. Click box. See work. Is my box now. <em>Easy</em>.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-about-confused>Huh?</button>
+        <a class="btn hidden" data-about-final href="https://github.com/filcuk/microapp-template#readme"
+          target="_blank" rel="noopener noreferrer" hidden>
+          I don't get it
+        </a>
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-primary" data-dialog-close data-dialog-default>
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="info-dialog" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="info-dialog-title" hidden>
     <div class="modal-backdrop" data-dialog-close></div>
