@@ -105,7 +105,8 @@
   line-height: 0;
 }
 
-.table-select-col .checkbox-input {
+.table-select-col .checkbox-input,
+.table-select-col .checkbox-control {
   flex-shrink: 0;
 }
 

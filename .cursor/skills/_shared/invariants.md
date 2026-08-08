@@ -27,14 +27,16 @@ Do not duplicate footer, theme toggle, or `#page-nav` markup in HTML — `render
 ## Icons and brand assets
 
 - Inline UI icons: template catalogue in `app/utils/icons-template.js`, fork additions in `app/utils/icons-app.js`, merged API in `app/utils/icons.js` (`data-icon` / `createIcon()`).
-- **Never invent or generate** SVG path data or image bytes. Use existing ids, `{ ref: "…" }` aliases, or blank stubs — then ask the user (see `handle-assets` skill).
+- **Never invent or generate** SVG path data or image bytes. Use existing ids, `{ ref: "…" }` aliases, [`add-icon`](../add-icon/SKILL.md) for Icônes / Iconify pulls (prefer `ic` Round; Material Symbols fallback), or blank stubs via [`handle-assets`](../handle-assets/SKILL.md).
 - Brand rasters/SVGs live under `app/res/`. Same rule: wire paths; do not invent artwork.
-- Source UI icons from [Icônes — Material Icons Round](https://icones.js.org/collection/ic?s=info&variant=Round) when the user supplies markup; set `name` / `attribution` when required.
+- Sourced UI icons must keep `name` + `attribution` aligned with the collection id and `ICON_ATTRIBUTIONS`.
 
 ## Design system
 
-- Tokens from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, …).
+- Tokens from `app/tokens.css` (`--bg`, `--surface`, `--input-bg`, `--accent`, `--accent-hover`, `--accent-fg`, …).
+- Fork brand accent overrides belong in `app/css/app.css` (see **manage-color**).
 - Existing classes: `.btn`, `.btn-primary`, `.modal`, `.banner`, `.callout`, `.section-panel`, `.code-block`, `.theme-toggle`, etc.
+- **Selection highlights** (see [`DESIGN.md`](../../../DESIGN.md)): **standard** = accent border + tinted background, contiguous selected neighbours joined under one outer border (default for controls/lists); **light** = lighter background only (theme switch). Do not invent a third selection look.
 - Respect `prefers-reduced-motion` (tokens + `prefersReducedMotion()` in JS).
 - **Demo isolation:** showcase-only helpers may use `demo-*` in `demo.html` / `app/demo.js`. Shared shell, utils, and layout APIs must use generic class names (e.g. `.content-section`, `.content-tier`) — never hardcode `demo-*` selectors. See [`.cursor/rules/demo-isolation.mdc`](../../rules/demo-isolation.mdc).
 

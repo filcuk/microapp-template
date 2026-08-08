@@ -34,6 +34,33 @@
   margin-top: 0.75rem;
 }
 
+/* About / “What?” dialog — progressive simplification layers */
+
+.about-extra-content .about-extra-block {
+  margin-top: 0.875rem;
+  padding-top: 0.875rem;
+  border-top: 1px dashed var(--border);
+}
+
+.about-extra-content .about-extra-block > :first-child {
+  margin-top: 0;
+}
+
+.about-extra-content .about-extra-block > :last-child {
+  margin-bottom: 0;
+}
+
+/* Once a stage is showing, earlier copy recedes so the newest block reads first */
+[data-about-dimmed] .modal-body,
+[data-about-dimmed] .about-extra-block {
+  color: var(--muted);
+  transition: color 240ms ease;
+}
+
+[data-about-dimmed] .about-extra-block[data-about-current] {
+  color: var(--text);
+}
+
 /* Banners */
 
 .banner {
@@ -171,6 +198,7 @@
   line-height: 1.4;
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(31, 35, 40, 0.12);
+  transition: opacity var(--control-hover-ms) ease-out, visibility 0s linear var(--control-hover-ms);
 }
 
 :root[data-theme="dark"] .tooltip {
@@ -185,6 +213,9 @@
 .tooltip.is-visible {
   visibility: visible;
   opacity: 1;
+  /* Override hide transition (opacity duration + visibility delay) for instant show */
+  transition-duration: 0s;
+  transition-delay: 0s;
 }
 
 .tooltip__icon {

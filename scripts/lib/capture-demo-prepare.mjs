@@ -4,6 +4,7 @@
  *
  * Builds an infinite-carousel layout: site chrome removed, `#main` duplicated,
  * scroll distance = one copy so the last frame matches the first when looped.
+ * Optionally strips tier/section titles for a continuous section scroll.
  */
 
 export const CAPTURE_STYLE = `
@@ -48,6 +49,22 @@ html[data-capture] .section-title::before,
 html[data-capture] .section-title::after {
   content: none !important;
   display: none !important;
+}
+
+/* Continuous sections: one stack, one gap (no leftover tier/main spacing). */
+html[data-capture-hide-titles] main,
+html[data-capture-hide-titles] #main-capture-clone {
+  gap: 0 !important;
+}
+
+html[data-capture-hide-titles] .capture-section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+html[data-capture-hide-titles] .content-section {
+  gap: 0 !important;
 }
 
 html[data-capture] #main-capture-clone {
@@ -95,25 +112,35 @@ export function captureInitScript({ theme, storageKey }) {
  * Runs after demo load (icons painted). Strip chrome, clone `#main` for a
  * seamless carousel loop. Pass to `page.evaluate`.
  *
- * @param {{ loop: boolean, styleText: string }} opts
+ * @param {{ loop: boolean, styleText: string, hideTitles?: boolean }} opts
  * @returns {{ scrollBy: number, mainHeight: number }}
  */
-export function applyCaptureLayout({ loop, styleText }) {
+export function applyCaptureLayout({ loop, styleText, hideTitles = true }) {
   const root = document.documentElement;
   root.dataset.capture = "";
+  if (hideTitles) root.dataset.captureHideTitles = "";
+  else delete root.dataset.captureHideTitles;
   root.removeAttribute("data-sticky-section-headings");
   root.removeAttribute("data-sticky-header");
   root.style.removeProperty("--sticky-header-offset");
 
   document
-    .querySelectorAll("[data-sticky-stuck], [data-sticky-stuck-edge]")
+    .querySelectorAll(
+      "[data-sticky-stuck], [data-sticky-stuck-edge], [data-sticky-crumb], [data-sticky-crumb-merged]",
+    )
     .forEach((el) => {
       el.removeAttribute("data-sticky-stuck");
       el.removeAttribute("data-sticky-stuck-edge");
+      el.removeAttribute("data-sticky-crumb");
+      el.removeAttribute("data-sticky-crumb-merged");
     });
   document.querySelectorAll(".content-tier").forEach((tier) => {
     tier.style.removeProperty("--sticky-tier-offset");
   });
+  document.querySelectorAll(".content-tier-header").forEach((header) => {
+    header.style.removeProperty("--sticky-collapse-reserve");
+  });
+  document.querySelectorAll(".sticky-crumb").forEach((crumb) => crumb.remove());
 
   // Remove from the tree (not just hide) so they cannot appear mid-scroll.
   for (const selector of [
@@ -126,6 +153,13 @@ export function applyCaptureLayout({ loop, styleText }) {
     document.querySelectorAll(selector).forEach((el) => el.remove());
   }
 
+  if (hideTitles) {
+    // Tier headers (e.g. Theme + lead) and section titles (e.g. Properties).
+    document
+      .querySelectorAll(".content-tier-header, .section-title")
+      .forEach((el) => el.remove());
+  }
+
   if (!document.getElementById("capture-mode-style")) {
     const style = document.createElement("style");
     style.id = "capture-mode-style";
@@ -135,6 +169,20 @@ export function applyCaptureLayout({ loop, styleText }) {
 
   const main = document.getElementById("main");
   if (!main) return { scrollBy: 0, mainHeight: 0 };
+
+  if (hideTitles) {
+    // Lift every content-section into one flex stack so former tier boundaries
+    // (Theme → Basic → …) use the same gap as in-tier section pairs.
+    const sections = [...main.querySelectorAll(".content-section")];
+    if (sections.length > 0) {
+      const stack = document.createElement("div");
+      stack.className = "capture-section-stack";
+      for (const section of sections) {
+        stack.appendChild(section);
+      }
+      main.replaceChildren(stack);
+    }
+  }
 
   // Collapse margins so main | clone share a hard seam.
   main.style.marginTop = "0";

@@ -50,6 +50,7 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | tooltip | `app/components/tooltip.js` | `overlays.css` | — | — | — | Always via `initShell` |
 | banner | `app/components/banner.js` | `overlays.css` | — | Markup: `note`, `info`, `success`, `important`, `warning`, `error` as used | `dom` | Always via `initShell` (error banner) |
 | dialog | `app/components/dialog.js` | `overlays.css` | — | — | `dom`, `document-listeners` | |
+| about-dialog | `app/components/about-dialog.js` | `overlays.css`, `layout.css` (`.tagline-link`) | — | — | `dom`; wraps `dialog` | Tagline “What?” + progressive Huh? stages |
 | badge | `app/components/badge.js` | `controls-badges.css` | — | — | `dom` | |
 | chip | `app/components/chip.js` | `controls-chips.css` | — | — | `dom` | |
 | combobox | `app/components/combobox.js` | `controls-fields.css`; multi also `controls-badges.css` | — | — | `dom`, `document-listeners`; multi: badge | Multi via `data-combobox-multi` |
@@ -58,9 +59,9 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | duration-input | `app/components/duration-input.js` | `controls-fields.css` | — | — | `dom` | Hours:minutes; optional seconds |
 | color-input | `app/components/color-input.js` | `controls-widgets.css` | — | — | `dom` | Hex field + swatch; optional alpha; not a spectrum picker |
 | toggle | `app/components/toggle.js` | `controls-widgets.css` | — | Markup: `check`; tristate also `remove` | `dom`, `icons` | |
-| checkbox | `app/components/checkbox.js` | `controls-widgets.css` | — | — | `dom` | Tri-state checkbox |
+| checkbox | `app/components/checkbox.js` | `controls-fields.css` | — | JS face: `check`, `minus` | `dom`, `icons` | Tri-state checkbox; faces via `initIcons` / `ensureCheckboxFace` |
 | segmented-control | `app/components/segmented-control.js` | `controls-widgets.css` | — | — | `dom` | |
-| pagination | `app/components/pagination.js` | `controls-widgets.css` | — | — | `dom` | |
+| pagination | `app/components/pagination.js` | `controls-widgets.css` | — | `chevron-left`, `chevron-right` | `dom` | |
 | progress-bar | `app/components/progress-bar.js` | `controls-widgets.css` | — | — | `dom` | |
 | spinner | `app/components/spinner.js` | `controls-widgets.css` | — | — | `dom` | |
 | slider | `app/components/slider.js` | `controls-widgets.css` | — | — | `dom` | |
@@ -68,17 +69,17 @@ Icons listed are **required by the component JS or typical markup**. Banner/stat
 | combo | `app/components/combo.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
 | dropdown | `app/components/dropdown.js` | `controls-menus.css` | — | — (CSS chevron) | `menu` | |
 | dropdown-toggle | `app/components/dropdown-toggle.js` | `controls-menus.css` | — | — | `menu`, badge | |
-| expand | `app/components/expand.js` | `controls-disclosure.css` | — | — | `dom` | |
-| accordion | `app/components/accordion.js` | `controls-disclosure.css` | — | — | `dom` | |
+| expand | `app/components/expand.js` | `controls-disclosure.css` | — | `chevron-right` | `dom`, `icons` | |
+| accordion | `app/components/accordion.js` | `controls-disclosure.css` | — | `chevron-right` | `dom`, `icons` | |
 | tabs | `app/components/tabs.js` | `controls-disclosure.css` | — | — | `dom` | |
 | progress-indicator | `app/components/progress-indicator.js` | `controls-disclosure.css` | — | — | `dom` | |
 | file-dropzone | `app/components/file-dropzone.js` | `controls-file.css` | — | Markup: `upload`; JS: `error` | `dom`, `icons` | |
-| file-download | `app/components/file-download.js` | `controls-file.css` | — | `upload` | `icons` | |
+| file-download | `app/components/file-download.js` | `controls-file.css` | — | `download` | `icons` | |
 | code-block | `app/components/code-block.js` | `code-block.css` | `app/vendor/prism/`, `app/prism.css` | `clear`, `copy`, `paste`, `lines`, `highlight`, `fullscreen` | `dom`, `clipboard`, `icons` | Load Prism scripts on the page |
 | expandable-surface | `app/components/expandable-surface.js` | `code-block.css` | — | `fullscreen`, `fullscreen-exit` | `dom`, `document-listeners`, `icons`; closes `tooltip` | Code-block floating maximise respects `data-code-surface-actions` |
 | table | `app/components/table.js` | `table.css` | — | `chevron-up` (sort) | `dom`, `icons` | |
 | tabular-input | `app/components/tabular-input.js` | `controls-tabular-input.css` | — | `copy`, `paste`, `paste-special`, `plus`, `delete`, `remove`, `chevron-up`, `chevron-down` | `dom`, `document-listeners`, `menu`, `icons`, `clipboard`; closes `tooltip` | |
-| rich-text-editor | `app/components/rich-text-editor.js`, `toastui-editor.js` | `rich-text-editor.css` | `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/`, `app/toastui-editor.css` | — | `config`, `dom` | Large vendor bundle |
+| rich-text-editor | `app/components/rich-text-editor.js`, `toastui-editor.js`, `segmented-control.js` | `rich-text-editor.css`; mode switch also `controls-widgets.css` | `app/vendor/toastui-editor/`, `app/vendor/toastui-editor-plugin-table-merged-cell/`, `app/toastui-editor.css` | — | `config`, `dom`; mode switch: segmented-control | Large vendor bundle; Markdown/WYSIWYG uses segmented control |
 
 ## CSS-only / shell patterns (no dedicated component module)
 

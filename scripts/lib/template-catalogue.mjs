@@ -126,6 +126,17 @@ export const COMPONENTS = {
     icons: [],
     infra: ["dom", "document-listeners"],
   },
+  "about-dialog": {
+    files: [
+      "app/components/about-dialog.js",
+      "app/components/dialog.js",
+    ],
+    css: ["overlays.css"],
+    vendor: [],
+    icons: [],
+    infra: ["dom", "document-listeners"],
+    notes: "Also uses layout.css .tagline-link; wraps initDialog",
+  },
   badge: {
     files: ["app/components/badge.js"],
     css: ["controls-badges.css"],
@@ -262,15 +273,15 @@ export const COMPONENTS = {
     files: ["app/components/expand.js"],
     css: ["controls-disclosure.css"],
     vendor: [],
-    icons: [],
-    infra: ["dom"],
+    icons: ["chevron-right"],
+    infra: ["dom", "icons"],
   },
   accordion: {
     files: ["app/components/accordion.js"],
     css: ["controls-disclosure.css"],
     vendor: [],
-    icons: [],
-    infra: ["dom"],
+    icons: ["chevron-right"],
+    infra: ["dom", "icons"],
   },
   tabs: {
     files: ["app/components/tabs.js"],
@@ -341,8 +352,9 @@ export const COMPONENTS = {
     files: [
       "app/components/rich-text-editor.js",
       "app/components/toastui-editor.js",
+      "app/components/segmented-control.js",
     ],
-    css: ["rich-text-editor.css"],
+    css: ["rich-text-editor.css", "controls-widgets.css"],
     vendor: [
       "app/vendor/toastui-editor/",
       "app/vendor/toastui-editor-plugin-table-merged-cell/",
@@ -350,6 +362,7 @@ export const COMPONENTS = {
     ],
     icons: [],
     infra: ["config", "dom"],
+    notes: "Mode switch uses segmented-control",
   },
 };
 
@@ -364,9 +377,9 @@ export const CSS_ONLY = {
 
 /** Which features need each CSS partial (for trim / index generation). */
 export const CSS_PARTIAL_FEATURES = {
-  "layout.css": ["shell", "page-nav", "sticky", "title-numbering", "theme-toggle"],
+  "layout.css": ["shell", "page-nav", "sticky", "title-numbering", "theme-toggle", "about-dialog"],
   "controls-buttons.css": ["buttons", "toolbar"],
-  "overlays.css": ["tooltip", "banner", "dialog", "callout"],
+  "overlays.css": ["tooltip", "banner", "dialog", "about-dialog", "callout"],
   "code-block.css": ["code-block", "expandable-surface"],
   "controls-badges.css": ["badge", "combobox", "dropdown-toggle"],
   "controls-chips.css": ["chip"],
@@ -387,6 +400,7 @@ export const CSS_PARTIAL_FEATURES = {
     "slider",
     "stepper",
     "color-input",
+    "rich-text-editor",
   ],
   "controls-section-panel.css": ["section-panel"],
   "controls-menus.css": ["combo", "dropdown", "dropdown-toggle"],

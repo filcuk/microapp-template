@@ -99,11 +99,45 @@ export function mountIcon(element, name, { className = "", replace = true, inclu
   return svg;
 }
 
+/**
+ * Wrap a checkbox input with painted glyph hosts (`check` / `minus`).
+ * Safe to call more than once; no-ops when already enhanced.
+ * @param {Element | null | undefined} inputEl
+ */
+export function ensureCheckboxFace(inputEl) {
+  if (!(inputEl instanceof HTMLInputElement) || !inputEl.classList.contains("checkbox-input")) {
+    return;
+  }
+
+  let control = inputEl.parentElement;
+  if (!control?.classList.contains("checkbox-control")) {
+    control = document.createElement("span");
+    control.className = "checkbox-control";
+    inputEl.replaceWith(control);
+    control.append(inputEl);
+  }
+
+  if (control.querySelector(".checkbox-glyphs")) return;
+
+  const glyphs = document.createElement("span");
+  glyphs.className = "checkbox-glyphs";
+  glyphs.setAttribute("aria-hidden", "true");
+  glyphs.append(
+    createIcon("check", { className: "checkbox-glyph checkbox-glyph--check" }),
+    createIcon("minus", { className: "checkbox-glyph checkbox-glyph--minus" }),
+  );
+  control.append(glyphs);
+}
+
 /** Mount icons on elements with `data-icon` (optional `data-icon-class`). */
 export function initIcons(root = document) {
   root.querySelectorAll("[data-icon]").forEach((element) => {
     mountIcon(element, element.dataset.icon, {
       className: element.dataset.iconClass || "",
     });
+  });
+
+  root.querySelectorAll("input.checkbox-input").forEach((input) => {
+    ensureCheckboxFace(input);
   });
 }

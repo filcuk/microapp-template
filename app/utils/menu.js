@@ -1,6 +1,13 @@
 import { setHidden } from "./dom.js";
 import { onDocumentClickOutside, onDocumentEscape } from "./document-listeners.js";
 
+/**
+ * Open popup menus (dropdown, combo, also-see, …). Toggle clicks use
+ * `stopPropagation`, so peers never see an outside click — close them here.
+ * @type {Set<(options?: { restoreFocus?: boolean }) => void>}
+ */
+const openPopupMenus = new Set();
+
 /** Primary label for a menu item (ignores `.dropdown-menu-item-subtitle`). */
 export function menuItemLabel(item) {
   if (!item) return "";
@@ -12,6 +19,8 @@ export function menuItemLabel(item) {
 
 /**
  * Shared open/close behaviour for anchored popup menus (combo chevron, dropdown).
+ *
+ * Only one popup menu is open at a time: opening one closes any other.
  *
  * @param {object} options
  * @param {boolean} [options.fixed=false] Position with `position: fixed` so the
@@ -109,19 +118,27 @@ export function initPopupMenu({
     }
   }
 
-  function closeMenu() {
+  /**
+   * @param {{ restoreFocus?: boolean }} [options]
+   */
+  function closeMenu({ restoreFocus = true } = {}) {
     if (!isOpen) return;
     isOpen = false;
+    openPopupMenus.delete(closeMenu);
     setHidden(menuEl, true);
     clearFixedPosition();
     toggleEl?.setAttribute("aria-expanded", "false");
-    if (toggleEl?.isConnected) {
+    if (restoreFocus && toggleEl?.isConnected) {
       toggleEl.focus();
     }
   }
 
   function openMenu() {
+    for (const closePeer of [...openPopupMenus]) {
+      if (closePeer !== closeMenu) closePeer({ restoreFocus: false });
+    }
     isOpen = true;
+    openPopupMenus.add(closeMenu);
     setHidden(menuEl, false);
     toggleEl?.setAttribute("aria-expanded", "true");
     positionFixedMenu();
@@ -138,10 +155,7 @@ export function initPopupMenu({
     // defer focus restore until afterward — focusing a trigger that is about
     // to be destroyed (e.g. remove column) would flash its tooltip.
     if (closeOnSelect) {
-      isOpen = false;
-      setHidden(menuEl, true);
-      clearFixedPosition();
-      toggleEl?.setAttribute("aria-expanded", "false");
+      closeMenu({ restoreFocus: false });
     }
     onSelect?.({
       containerEl,
@@ -167,10 +181,7 @@ export function initPopupMenu({
       // Modified clicks: let the browser open a new tab; only close the menu.
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
         if (closeOnSelect) {
-          isOpen = false;
-          setHidden(menuEl, true);
-          clearFixedPosition();
-          toggleEl?.setAttribute("aria-expanded", "false");
+          closeMenu({ restoreFocus: false });
         }
         return;
       }
@@ -242,6 +253,7 @@ export function initPopupMenu({
     toggleMenu,
     isOpen: () => isOpen,
     destroy() {
+      openPopupMenus.delete(closeMenu);
       toggleEl?.removeEventListener("click", onToggleClick);
       menuEl.removeEventListener("click", onMenuClick);
       menuEl.removeEventListener("keydown", onMenuKeydown);

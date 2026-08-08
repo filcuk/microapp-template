@@ -2,6 +2,8 @@
  * Rich text editor — Toast UI Editor wrapper (Markdown + WYSIWYG).
  *
  * Requires vendor scripts and `app/toastui-editor.css` on the page. See `app/toastui-editor.js`.
+ * Mode switching uses the template segmented control (Toast UI’s native switch is hidden).
+ * Toolbar tips use template `data-tooltip` (Toast UI’s native tooltip is hidden).
  *
  * Markup:
  *   <div class="field rich-text-editor" id="my-editor"
@@ -26,6 +28,7 @@ import {
   getToastUiEditor,
   isToastUiEditorReady,
 } from "./toastui-editor.js";
+import { initSegmentedControl } from "./segmented-control.js";
 import { APP_CONFIG } from "../config.js";
 import { parseBooleanAttr } from "../utils/dom.js";
 
@@ -92,6 +95,100 @@ function readImageAsDataUrl(blob) {
   });
 }
 
+function createModeSwitch(defaultValue) {
+  const wrap = document.createElement("div");
+  wrap.className = "rich-text-editor-mode";
+
+  const control = document.createElement("div");
+  control.className = "segmented-control";
+  control.dataset.segmentedControlDefault = defaultValue;
+
+  const list = document.createElement("div");
+  list.className = "segmented-control-list";
+  list.setAttribute("role", "radiogroup");
+  list.setAttribute("aria-label", "Editor mode");
+
+  for (const value of EDIT_TYPES) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "segmented-control-item";
+    item.setAttribute("role", "radio");
+    item.setAttribute("aria-checked", value === defaultValue ? "true" : "false");
+    item.dataset.segmentedControlValue = value;
+    item.textContent = value === "markdown" ? "Markdown" : "WYSIWYG";
+    list.appendChild(item);
+  }
+
+  control.appendChild(list);
+  wrap.appendChild(control);
+  return wrap;
+}
+
+function mountModeSwitch(mountEl, editor, defaultValue) {
+  const uiRoot = mountEl.querySelector(".toastui-editor-defaultUI");
+  if (!uiRoot) return null;
+
+  const modeWrap = createModeSwitch(defaultValue);
+  uiRoot.appendChild(modeWrap);
+
+  const controlEl = modeWrap.querySelector(".segmented-control");
+  const modeControl = initSegmentedControl(controlEl, {
+    defaultValue,
+    onChange({ value, source }) {
+      if (source === "init") return;
+      editor.changeMode(value);
+    },
+  });
+
+  function onEditorModeChange(mode) {
+    const next = parseEditType(mode);
+    if (modeControl.getValue() === next) return;
+    modeControl.selectValue(next, { source: "editor", emit: false });
+  }
+
+  editor.on("changeMode", onEditorModeChange);
+
+  return {
+    modeWrap,
+    modeControl,
+    onEditorModeChange,
+  };
+}
+
+/** Map Toast UI toolbar `aria-label`s onto template `data-tooltip` (initTooltips). */
+function wireToolbarTooltips(mountEl) {
+  const uiRoot = mountEl.querySelector(".toastui-editor-defaultUI");
+  if (!uiRoot) return null;
+
+  const BUTTON_SEL =
+    ".toastui-editor-defaultUI-toolbar button[aria-label], .toastui-editor-dropdown-toolbar button[aria-label]";
+
+  function sync() {
+    uiRoot.querySelectorAll(BUTTON_SEL).forEach((btn) => {
+      const label = btn.getAttribute("aria-label")?.trim();
+      if (!label) {
+        delete btn.dataset.tooltip;
+        delete btn.dataset.tooltipPosition;
+        return;
+      }
+      btn.dataset.tooltip = label;
+      btn.dataset.tooltipPosition = "bottom";
+    });
+  }
+
+  sync();
+
+  const observer = new MutationObserver(sync);
+  observer.observe(uiRoot, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["aria-label"],
+  });
+
+  return () => observer.disconnect();
+}
+
 export function initRichTextEditor(
   rootEl,
   {
@@ -134,6 +231,7 @@ export function initRichTextEditor(
     placeholder: resolvedPlaceholder || undefined,
     initialValue: resolvedInitialValue,
     autofocus: resolvedAutofocus,
+    hideModeSwitch: true,
     theme: resolveTheme(),
     plugins: resolvePlugins(plugins),
     hooks: {
@@ -146,6 +244,9 @@ export function initRichTextEditor(
   });
 
   applyEditorTheme(mountEl, resolveTheme());
+
+  const modeSwitch = mountModeSwitch(mountEl, editor, resolvedEditType);
+  const unwireToolbarTooltips = wireToolbarTooltips(mountEl);
 
   if (!resolvedAutofocus && typeof editor.blur === "function") {
     editor.blur();
@@ -182,6 +283,17 @@ export function initRichTextEditor(
     getHTML() {
       return editor.getHTML();
     },
+    getEditType() {
+      if (typeof editor.isMarkdownMode === "function" && editor.isMarkdownMode()) {
+        return "markdown";
+      }
+      return "wysiwyg";
+    },
+    setEditType(value) {
+      const next = parseEditType(value);
+      editor.changeMode(next);
+      modeSwitch?.modeControl.selectValue(next, { source: "api", emit: false });
+    },
     setMarkdown(value) {
       editor.setMarkdown(value ?? "");
       emitChange("setMarkdown");
@@ -194,6 +306,11 @@ export function initRichTextEditor(
       if (destroyed) return;
       destroyed = true;
       editor.off("change", onEditorChange);
+      unwireToolbarTooltips?.();
+      if (modeSwitch) {
+        editor.off("changeMode", modeSwitch.onEditorModeChange);
+        modeSwitch.modeWrap.remove();
+      }
       document.removeEventListener(APP_CONFIG.themeChangeEvent, onThemeChange);
       editor.destroy();
     },

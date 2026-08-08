@@ -4,7 +4,7 @@ How to fork this template into your own app, deploy it, and use the design syste
 
 ## Creating a new app from this template
 
-Cursor agents can drive this with skills under [`.cursor/skills/`](.cursor/skills/): **`init-app`** (fork setup), **`handle-assets`** (logos/icons — user supplies files), **`finalize-app`** (trim unused components before ship), plus migrate/sync/restore helpers listed in [`AGENTS.md`](AGENTS.md#lifecycle-skills). Forks created before template lock/versioning should follow [How to bootstrap pre-v0.9.0 upgrades](#how-to-bootstrap-pre-v090-upgrades).
+Cursor agents can drive this with skills under [`.cursor/skills/`](.cursor/skills/): **`init-app`** (fork setup), **`handle-assets`** (logos/icons — user supplies files), **`manage-color`** (primary accent + contrast), **`finalize-app`** (trim unused components before ship), plus migrate/sync/restore helpers listed in [`AGENTS.md`](AGENTS.md#lifecycle-skills). Forks created before template lock/versioning should follow [How to bootstrap pre-v0.9.0 upgrades](#how-to-bootstrap-pre-v090-upgrades).
 
 ### 1. Create the repository
 
@@ -175,6 +175,8 @@ Theme-aware swapping for pair mode is handled in CSS (`brand-icon--light` / `bra
 
 For pair-mode header logos, set a meaningful `alt` on the visible theme variant and `aria-hidden="true"` on the duplicate variant so screen readers are not announced twice.
 
+**Primary accent** — set light and dark `--accent` in [`app/css/app.css`](app/css/app.css) (fork-owned; sync will not overwrite it). `--accent-hover` is derived in [`tokens.css`](app/tokens.css) via `color-mix`. Set `--accent-fg` so text/icons on accent fills meet WCAG AA (≥ 4.5:1). Agents: use the **`manage-color`** skill.
+
 ### 6. Checklist before first deploy
 
 - [ ] `index.html` title, heading, and content updated
@@ -335,7 +337,7 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 
 | Feature | Description |
 | -------- | ----------- |
-| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent, banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
+| **Design tokens** | CSS custom properties in [`app/tokens.css`](app/tokens.css) for background, surface, section panels, `--input-bg` (form fields — lighter than page/section chrome), `--table-header-bg`, `--control-height` / `--control-height-slim` (standard and compact single-line controls), text, borders, accent (`--accent`, derived `--accent-hover`, `--accent-fg` on accent fills), banners, and code blocks. Light and dark values via `[data-theme="dark"]`. Override brand accent in fork-owned [`app/css/app.css`](app/css/app.css) (never edit `tokens.css` in a fork for colour — sync can overwrite it); keep `--accent-fg` at WCAG AA ≥ 4.5:1 against `--accent` (see **`manage-color`**). Component styles in [`app/css/`](app/css/) partials (indexed by [`template.css`](app/css/template.css); [`app/styles.css`](app/styles.css) also pulls fork-owned [`app.css`](app/css/app.css)). |
 | **Theme toggle** | Footer control (injected by `initShell()`): light, dark, or system (`auto`). Stored in `localStorage` under `microapp-theme`. `app/theme-init.js` runs in `<head>` to avoid flash of wrong theme. |
 | **Layout shell** | Semantic `header` / `main` / `footer` (footer rendered by JS), max-width 1200px, flex column page. Content grouping via `.content-section` and optional `.content-tier` bands (sticky with `.section-title` / `.segment-title` — see **Sticky chrome**). Outline: site `h1`; with tiers use `h2.segment-title` then `h3.section-title`; without tiers, `h2.section-title` is fine. App version in footer; template version on hover. Optional footer **also see** related-apps menu in a responsive topic grid (`APP_CONFIG.alsoSee` / `alsoSeeUrl` / `alsoSeeTopics` / `alsoSeeIncludeLocal`, optional `order` and `iconSvg*`, or `initShell({ alsoSee, alsoSeeUrl, alsoSeeTopics, alsoSeeIncludeLocal })`; `[]` / `false` disables when there is no remote list). Optional sticky site header (`data-sticky-header`) and sticky section headings (`data-sticky-section-headings`) — see **Sticky chrome**. Optional hierarchical title numbering (`data-title-numbering`) — see **Title numbering**. |
 | **Title numbering** | Optional `1.` / `1.1.` / `1.2.1.` prefixes on outline headings (`main :is(h2, h3, h4)[id]`). Off by default. [`app/shell/title-numbering.js`](app/shell/title-numbering.js). |
@@ -344,8 +346,9 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Chips** | Selectable filter tags and removable input chips. [`app/components/chip.js`](app/components/chip.js). |
 | **Inputs** | `.field` / `.field-label` with `.input`, `.textarea`, `.checkbox`, `.radio`, `.toggle`, `.segmented-control`, `.progress-bar`, `.spinner`, `.date-picker`, `.time-picker`, `.duration-input`, `.slider`, `.stepper`, `.color-input`, and `.combobox`. |
 | **File dropzone** | `.file-dropzone` drag-and-drop / browse picker with file list and remove buttons. [`app/file-dropzone.js`](app/file-dropzone.js). |
-| **File download** | `.file-download` file list rows (like dropzone items) with on-demand download. [`app/file-download.js`](app/file-download.js). |
+| **File download** | `.file-download` full-width button rows with on-demand download. [`app/components/file-download.js`](app/components/file-download.js). |
 | **Section panel** | `.section-panel` three-column grid rows, divider, submit row with expiring banner. See [`demo.html`](demo.html). |
+| **Panel split** | Side-by-side columns with full-bleed horizontal/vertical dividers inside padded panels (`.panel-split`, `.panel-divider`, `.panel-stack`). See **Panel split**. |
 | **Combo button** | Split `.combo-btn` with main action + chevron menu; behaviour from [`app/combo.js`](app/combo.js). |
 | **Combobox** | Text input with filterable suggestion list; optional multi-select (`data-combobox-multi`) with comma-separated summary and selection badge. [`app/components/combobox.js`](app/components/combobox.js). |
 | **Slider** | Range control with editable value field; integer, decimal, percentage; optional disabled. [`app/slider.js`](app/slider.js). |
@@ -362,14 +365,15 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Progress indicator** | Linear multi-step wizard; horizontal (default) or vertical step list. [`app/progress-indicator.js`](app/progress-indicator.js). |
 | **Dropdown** | `.dropdown` with `.dropdown-trigger` and `.dropdown-menu`; optional `.dropdown-menu-group` headers, `.dropdown-menu-item-subtitle` context lines, and leading `.dropdown-menu-item-icon-wrap` icons. Behaviour from [`app/dropdown.js`](app/dropdown.js). |
 | **Toggle dropdown** | Multi-select dropdown; items toggle with `aria-checked`, menu stays open; selection count via badge. [`app/components/dropdown-toggle.js`](app/components/dropdown-toggle.js). |
-| **Expand** | `.expand` disclosure with notch + label trigger and collapsible `.expand-panel`; behaviour from [`app/expand.js`](app/expand.js). |
-| **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/accordion.js`](app/accordion.js). |
+| **Expand** | `.expand` disclosure with chevron + label trigger and collapsible `.expand-panel`; behaviour from [`app/components/expand.js`](app/components/expand.js). |
+| **Accordion** | `.accordion` vertical stack of collapsible sections; one open at a time by default. [`app/components/accordion.js`](app/components/accordion.js). |
 | **Tabs** | `.tabs` block with `.tabs-list` / `.tabs-tab` and `.tabs-panel` content; behaviour from [`app/tabs.js`](app/tabs.js). |
 | **Pagination** | In-page page navigation with prev/next and numbered pages; no URL change. [`app/pagination.js`](app/pagination.js). |
-| **Table** | Data table with striped layout, sortable columns, and optional row selection. [`app/table.js`](app/table.js). |
+| **Table** | Data table with striped layout, sortable columns (Shift+click multi-sort), and optional row selection. [`app/table.js`](app/table.js). |
 | **Tabular input** | Editable typed grid (text / number / logical); add/remove/reset; Excel/TSV paste (in-place or replace via footer buttons) with type detection; centered canvas breakout when wide. [`app/components/tabular-input.js`](app/components/tabular-input.js). |
 | **Page navigation** | Fixed `#page-nav`: always-visible jump up/down (shared progress ring), section links on hover. Group nested headings under `data-page-nav-tier` parents. [`app/page-nav.js`](app/page-nav.js). |
 | **Dialogs** | Accessible modal: backdrop, focus trap, Escape, Enter (default action), focus restore. Markup uses `.modal` / `.modal-panel`; behaviour from [`app/components/dialog.js`](app/components/dialog.js). |
+| **About dialog** | Tagline “What?” opener with progressive Huh? / Uhh… simplification stages. [`app/components/about-dialog.js`](app/components/about-dialog.js) (wraps dialog). |
 | **Heading links** | Hover a `main :is(h2, h3)[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
@@ -451,9 +455,13 @@ setStickySectionHeadings(true);
 syncStickyOffsets();
 ```
 
-While stickiness is enabled but nothing is pinned yet, appearance is unchanged. As each bar pins, it receives `data-sticky-stuck` (gap fill fades in above and below) and the bottom-most pinned element also gets `data-sticky-stuck-edge` (hairline + drop shadow).
+While stickiness is enabled but nothing is pinned yet, appearance is unchanged. As each bar pins, it receives `data-sticky-stuck` (gap fill fades in above and below) and the bottom-most *visible* pinned element also gets `data-sticky-stuck-edge` (hairline + drop shadow).
 
-When both opts are on, bars stack downward and stay visible: site header (`top: 0`) → tier header → section heading. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap), `--sticky-gap` between site header and tier, and per-tier `--sticky-tier-offset` (pinned title height + `--sticky-nest-gap` under the tier; the `.content-tier-lead` is hidden while the tier is pinned). Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable.
+When both opts are on, the site header sticks at `top: 0` as its own bar. Content headings share a **single** slot under it (`top: headerOffset + gap`): a pinned tier shows its segment title alone, then **grows** to a breadcrumb **`Segment > Section`** when a section in that tier also pins (chevron separator; section chrome is ghosted via `data-sticky-crumb-merged`). If the tier has already scrolled away, the section title sticks alone in that slot. Clearance uses `--sticky-header-offset` (live bottom of the site header, no gap) and `--sticky-gap`; `--sticky-tier-offset` (pinned bar height) is used only by `scroll-margin-top` so page-nav jumps land headings below the bar. Peer handoff is native sticky (a section heading cannot leave its `.content-section`; a tier header cannot leave its `.content-tier`). Below about `700px` viewport height, tier headers leave the stack so short screens stay usable (sections stick alone; no crumb).
+
+Pinning is deliberately **layout-neutral**: a pinned tier header hides its lead, and `--sticky-collapse-reserve` (measured by `sticky.js`) gives that height back as margin. Without it, pinning would shorten the page, lift the next tier, evict the pinned header, restore the lead, and oscillate at the boundary. For the same reason, pin state is derived from in-flow document Y plus `scrollY`, and eviction is measured against the containing `.content-tier` / `.content-section` rather than the header's own (pin-dependent) height.
+
+Subsection handoffs crossfade the crumb label (`--sticky-crumb-ms`) and **hold** the crumb for a short beat when no section is pinned, so fast scrolling does not flash the large segment title between subsections. Crumb labels (and pinned titles when the crumb is not showing) are links: click to jump to that heading with the same sticky clearance as page nav.
 
 ### Title numbering
 
@@ -496,6 +504,69 @@ const dialog = initDialog({
 Close controls use `data-dialog-close` on backdrop, × button, or footer buttons.
 
 **Default action / Enter:** mark the intended Enter target with `data-dialog-default` (focused on open). If omitted, Enter falls back to `.modal-footer-actions .btn-primary` (not `.btn-danger`). For destructive dialogs, put `data-dialog-default` on Cancel and style the primary action with `.btn-danger`.
+
+### About dialog (“What?”)
+
+Pattern for explaining the app from the site tagline — same idea as [pqm-stepper](https://github.com/filcuk/pqm-stepper). A `.btn-link.tagline-link` opens a dialog; an optional **confused** button reveals progressively simpler copy, then hands over to a final link.
+
+All copy lives in the markup, so editing the explanation never means touching JS.
+
+```html
+<p class="tagline">
+  Short app pitch.
+  <button type="button" id="about-open-btn" class="btn btn-link tagline-link">What?</button>
+</p>
+
+<div id="about-dialog" class="modal hidden" role="dialog" aria-modal="true"
+  aria-labelledby="about-dialog-title" hidden>
+  <div class="modal-backdrop" data-dialog-close></div>
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h2 id="about-dialog-title">What does this do?</h2>
+      <button type="button" class="modal-close" aria-label="Close" data-dialog-close>×</button>
+    </div>
+    <div class="modal-body">
+      <p>Full explanation…</p>
+      <div class="about-extra-content" data-about-extra>
+        <div class="about-extra-block hidden" data-about-stage data-about-next-label="Uhh…" hidden>
+          <p>Simpler explanation…</p>
+        </div>
+        <div class="about-extra-block hidden" data-about-stage data-about-next-label="I don't get it" hidden>
+          <p>Even simpler…</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" data-about-confused>Huh?</button>
+      <a class="btn hidden" data-about-final href="https://example.com/help" hidden>I don't get it</a>
+      <div class="modal-footer-actions">
+        <button type="button" class="btn btn-primary" data-dialog-close data-dialog-default>Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+import { initAboutDialog } from "./components/about-dialog.js";
+
+const about = initAboutDialog({
+  dialogEl: document.getElementById("about-dialog"),
+  openTriggers: "#about-open-btn",
+});
+// about.openDialog(), about.closeDialog(), about.isDialogOpen(), about.reset()
+```
+
+| Markup hook | Role |
+| ----------- | ---- |
+| `data-about-confused` | The progressive button; its HTML text is the initial label |
+| `data-about-stage` | One block per stage, revealed in DOM order (start them `hidden`) |
+| `data-about-next-label` | Optional label for the button once that stage is showing |
+| `data-about-final` | Optional element (usually an `<a href>`) shown after the last stage; the button hides |
+
+Stages reset every time the dialog opens or closes. Omit `data-about-stage` entirely and the confused button hides itself. See the live example on [`demo.html`](demo.html).
+
+Once the first stage is showing, the dialog gains `data-about-dimmed` and the newest stage gains `data-about-current`. The stylesheet uses those to fade earlier copy to `--muted` so the new block reads first — restyle or drop those rules if you want every layer at full contrast.
 
 ### Tooltip
 
@@ -871,7 +942,7 @@ partial?.cycle();
 initTriStateCheckboxes(document); // all `[data-checkbox-tristate]` inputs
 ```
 
-`data-checkbox-default` accepts `"true"`, `"false"`, or `"mixed"`. Click cycles **unchecked → checked → mixed**. Native `indeterminate` is set for mixed; `aria-checked` mirrors the state. Use a wrapping `<label>` **or** `for` (not both) so a single click does not activate the control twice.
+`data-checkbox-default` accepts `"true"`, `"false"`, or `"mixed"`. Click cycles **unchecked → checked → mixed**. Native `indeterminate` is set for mixed; `aria-checked` mirrors the state. Use a wrapping `<label>` **or** `for` (not both) so a single click does not activate the control twice. Checked / mixed glyphs (`check`, `minus`) are mounted by `initIcons()` (via `initShell`); for checkboxes created later, call `ensureCheckboxFace(input)` from `app/utils/icons.js`.
 
 #### Date picker
 
@@ -1040,16 +1111,18 @@ On init, the prompt shows a `.file-dropzone-meta` line when there is something n
 
 ### File download
 
-File rows styled like `.file-dropzone-item`. Content is generated on demand when the user clicks download.
+Full-width `.btn` rows (standard control height) with an inline download icon. Content is generated on demand when the user clicks the row.
 
 ```html
 <div class="file-download" id="my-download">
   <ul class="file-download-list">
-    <li class="file-download-item" data-file-download-name="export.txt">
-      <span class="file-download-item-name">export.txt</span>
-      <span class="file-download-item-meta">Plain text</span>
-      <button type="button" class="file-download-action btn btn-icon" aria-label="Download export.txt"
-        data-icon="upload" data-icon-class="file-download-action-icon"></button>
+    <li>
+      <button type="button" class="file-download-item btn" data-file-download-name="export.txt"
+        aria-label="Download export.txt">
+        <span class="file-download-item-name">export<span class="file-download-item-ext">.txt</span></span>
+        <span class="file-download-item-meta">Plain text</span>
+        <span data-icon="download" data-icon-class="btn-icon-svg"></span>
+      </button>
     </li>
   </ul>
 </div>
@@ -1078,6 +1151,30 @@ initFileDownloads(document); // wire every `.file-download`
 ```
 
 Pass a `files` array with per-file `getContent` callbacks. File size is shown in `.file-download-item-meta` when content can be resolved at init time.
+
+### Panel split
+
+Side-by-side columns inside a padded panel (any host that sets `--panel-padding`, e.g. `.section-panel` or a bordered card). Columns are `.panel-stack` blocks separated by `.panel-divider.panel-divider--vertical`. Use `.panel-divider` alone for a full-bleed horizontal rule between stacked blocks. Add `.panel-split--3` for three columns (divider between each). Add `.panel-split--3x2` for a 3×2 grid with a single vertical rail after column 1 (child order: col1-row1, col1-row2, divider, col2-row1, col3-row1, col2-row2, col3-row2). Add `.panel-split--after-heading` when a title or hint sits above the split so the vertical rules do not bleed into that heading.
+
+```html
+<div class="section-panel">
+  <div class="panel-split">
+    <div class="panel-stack">
+      <h3 class="section-title">Left</h3>
+      <!-- … -->
+    </div>
+    <hr class="panel-divider panel-divider--vertical" aria-hidden="true" />
+    <div class="panel-stack">
+      <h3 class="section-title">Right</h3>
+      <!-- … -->
+    </div>
+  </div>
+  <hr class="panel-divider" />
+  <p>Content below the split.</p>
+</div>
+```
+
+On narrow viewports the split stacks and vertical dividers become horizontal rules.
 
 ### Section panel
 
@@ -1196,7 +1293,7 @@ Keyboard: ArrowDown / ArrowUp navigate suggestions, Enter selects, Escape closes
 
 #### Multi-select
 
-Set `data-combobox-multi` (or `multi: true`) to toggle multiple options. Behaviour matches single-select (filter, arrows, Enter, Escape, list closes after a pick); the input shows selected labels as a comma-separated list. Typing replaces that summary with a filter query; the summary is restored when the list closes (including when the filter is emptied — selection is not cleared by blur). Clear the selection with `setValues([])` / `setValue("")`. Option `data-value`s and custom free-text values must not contain commas (the `.combobox-value` / `getValue()` delimiter); comma-containing values are rejected. Selection count uses a [Badge](#badge) on the control (wrap `.combobox-control` in `.badge-host` with a `.badge`, or omit that markup and let `initCombobox` create it). Initial selection: `aria-selected="true"` on options, a comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
+Set `data-combobox-multi` (or `multi: true`) to toggle multiple options. Behaviour matches single-select for filter, arrows, and Escape; the list **stays open** while toggling options (closes on Escape, blur, or outside click). The input shows selected labels as a comma-separated list. Typing replaces that summary with a filter query; the summary is restored when the list closes (including when the filter is emptied — selection is not cleared by blur). Clear the selection with `setValues([])` / `setValue("")`. Option `data-value`s and custom free-text values must not contain commas (the `.combobox-value` / `getValue()` delimiter); comma-containing values are rejected. Selection count uses a [Badge](#badge) on the control (wrap `.combobox-control` in `.badge-host` with a `.badge`, or omit that markup and let `initCombobox` create it). Initial selection: `aria-selected="true"` on options, a comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS.
 
 ```html
 <div class="combobox" id="my-combobox-multi" data-combobox-multi>
@@ -1816,7 +1913,7 @@ Start the badge as `hidden` when the initial selection count is zero so it does 
 ```html
 <div class="expand">
   <button type="button" class="expand-trigger" aria-expanded="false" aria-controls="my-expand-panel">
-    <span class="expand-notch" aria-hidden="true"></span>
+    <span class="expand-icon" data-icon="chevron-right" data-icon-class="expand-icon-svg" aria-hidden="true"></span>
     <span class="expand-label">Advanced options</span>
   </button>
   <div id="my-expand-panel" class="expand-panel hidden" hidden>
@@ -1845,7 +1942,8 @@ Vertical stack of sections. Each `.accordion-item` has a heading button and a co
     <h3 class="accordion-heading">
       <button type="button" class="accordion-trigger" id="acc-trigger-1" aria-expanded="false"
         aria-controls="acc-panel-1">
-        <span class="accordion-notch" aria-hidden="true"></span>
+        <span class="accordion-icon" data-icon="chevron-right" data-icon-class="accordion-icon-svg"
+          aria-hidden="true"></span>
         <span class="accordion-label">Section one</span>
       </button>
     </h3>
@@ -1916,7 +2014,8 @@ Split content across numbered pages and navigate in place — no full reload and
   </div>
   <nav class="pagination-nav" aria-label="Results pages">
     <button type="button" class="btn btn-icon pagination-prev" data-pagination-prev
-      aria-label="Previous page" disabled>‹</button>
+      aria-label="Previous page" disabled
+      data-icon="chevron-left" data-icon-class="btn-icon-svg"></button>
     <ul class="pagination-list">
       <li class="pagination-item">
         <button type="button" class="pagination-page is-active" data-pagination-page="1"
@@ -1927,7 +2026,8 @@ Split content across numbered pages and navigate in place — no full reload and
       </li>
     </ul>
     <button type="button" class="btn btn-icon pagination-next" data-pagination-next
-      aria-label="Next page">›</button>
+      aria-label="Next page"
+      data-icon="chevron-right" data-icon-class="btn-icon-svg"></button>
   </nav>
   <input type="hidden" class="pagination-value" name="page" value="1" />
 </div>
@@ -1958,7 +2058,7 @@ initPaginations(document); // all `.pagination` blocks
 
 Styled data tables for lists of records. Wrap a semantic `<table>` in `.table-block` and `.table-wrap`. Use `.table--striped` for alternating rows, `.table--compact` for tighter padding, and `.table-num` to right-align numeric columns.
 
-Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text. Set `data-table-sort-default="ascending"` or `"descending"` on one sortable `<th>` to sort that column on load (or pass `defaultSort: { columnIndex, direction }` to `initTable()`). Header clicks cycle **ascending → descending → unsorted** (restores the row order from init).
+Optional **sortable** columns: set `data-table-sortable` on `.table-block` and `data-table-sort` on `<th>` cells. Add `data-sort-type="text"`, `"number"`, or `"date"` (default `text`). Put a `.table-sort-button` inside the header or let `initTable()` create one from the header text. Set `data-table-sort-default="ascending"` or `"descending"` on one or more sortable `<th>` cells to sort on load (document order = primary, then secondary, …), or pass `defaultSort: { columnIndex, direction }` / `defaultSort: [{ columnIndex, direction }, …]` to `initTable()`. Header clicks cycle **ascending → descending → unsorted** (restores the row order from init). Hold **Shift** while clicking another header to add or cycle a secondary sort column without clearing the primary; Shift-click through descending removes that column from the sort stack. `onSort` receives the clicked column plus `columns` (ordered active sorts); `getSortColumns()` returns the same list.
 
 Optional **row selection**: set `data-table-selectable` on `.table-block`, a `data-table-select-all` checkbox in the header row, and `data-table-row-select` on each row. Pair rows with `data-table-row-id` for stable ids in callbacks. Body rows highlight lightly on hover; when selectable, clicking anywhere on a row toggles that row (interactive controls inside the row are left alone).
 
@@ -1980,9 +2080,10 @@ Optional **row selection**: set `data-table-selectable` on `.table-block`, a `da
           </th>
           <th scope="col" data-table-sort data-sort-type="date"
             data-table-sort-default="descending" class="table-num">
-            <button type="button" class="table-sort-button">Updated</button>
+            <button type="button" class="table-sort-button">Created</button>
           </th>
-          <th scope="col" data-table-sort data-sort-type="number" class="table-num">
+          <th scope="col" data-table-sort data-sort-type="number"
+            data-table-sort-default="ascending" class="table-num">
             <button type="button" class="table-sort-button">Comments</button>
           </th>
         </tr>
@@ -2011,11 +2112,13 @@ import { initTable, initTables } from "./components/table.js";
 const table = initTable(document.getElementById("issues-table"), {
   sortable: true,
   selectable: true,
-  onSort: ({ columnIndex, direction, sortType }) => console.log(columnIndex, direction, sortType),
+  onSort: ({ columnIndex, direction, sortType, columns }) =>
+    console.log(columnIndex, direction, sortType, columns),
   onSelectionChange: ({ selectedIds, selectedRows }) => console.log(selectedIds),
 });
 
 table?.getSelectedIds();
+table?.getSortColumns();
 table?.clearSelection();
 table?.setDisabled(true);
 table?.destroy();
@@ -2192,6 +2295,8 @@ const editor = initRichTextEditor(document.getElementById("my-editor"), {
 
 editor?.getMarkdown();
 editor?.getHTML();
+editor?.getEditType(); // `markdown` | `wysiwyg`
+editor?.setEditType("markdown");
 editor?.setMarkdown("…");
 editor?.setHTML("…"); // may not round-trip cleanly to Markdown
 editor?.destroy();
@@ -2201,7 +2306,7 @@ initRichTextEditors(document); // every `.rich-text-editor` with a mount node
 
 Theme (light/dark) follows the page `data-theme` attribute and updates on `microapp-theme-change` from [`app/theme.js`](app/theme.js).
 
-Switch between Markdown and WYSIWYG using Toast UI’s built-in mode control in the toolbar. Converting between Markdown and HTML is lossy for complex formatting (tables, nested lists, etc.) — treat one format as canonical when persisting content.
+Markdown ↔ WYSIWYG uses the template [segmented control](#segmented-control) in the editor footer (Toast UI’s native mode switch is hidden). Toolbar icon tips use template [tooltips](#tooltips) (`data-tooltip`); Toast UI’s native tooltip is hidden. Converting between Markdown and HTML is lossy for complex formatting (tables, nested lists, etc.) — treat one format as canonical when persisting content.
 
 ### Code highlighting (Prism)
 

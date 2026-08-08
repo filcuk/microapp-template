@@ -2,6 +2,7 @@ import { initShell } from "./shell/shell.js";
 import { setStickyHeader, setStickySectionHeadings } from "./shell/sticky.js";
 import { setTitleNumbering } from "./shell/title-numbering.js";
 import { initDialog } from "./components/dialog.js";
+import { initAboutDialog } from "./components/about-dialog.js";
 import { initCombobox } from "./components/combobox.js";
 import { initCombo } from "./components/combo.js";
 import { initDropdown } from "./components/dropdown.js";
@@ -37,6 +38,7 @@ import { initTable } from "./components/table.js";
 import { initTabularInput } from "./components/tabular-input.js";
 import { initBadge } from "./components/badge.js";
 import { initChipGroup, initChipInput } from "./components/chip.js";
+import { setHidden } from "./utils/dom.js";
 
 initShell();
 initExpands(document);
@@ -99,12 +101,8 @@ initTimePicker(document.getElementById("demo-time-picker"));
 initDurationInput(document.getElementById("demo-duration-input"));
 
 initSlider(document.getElementById("demo-slider-integer"));
-initSlider(document.getElementById("demo-slider-decimal"));
-initSlider(document.getElementById("demo-slider-percentage"));
-initSlider(document.getElementById("demo-slider-disabled"));
 
 initStepper(document.getElementById("demo-stepper"));
-initStepper(document.getElementById("demo-stepper-decimal"));
 
 initColorInput(document.getElementById("demo-color-input"));
 initColorInput(document.getElementById("demo-color-input-empty"));
@@ -199,34 +197,26 @@ initTabularInput(document.getElementById("demo-tabular-input"), {
         active: true,
       },
     },
-    {
-      id: "r4",
-      cells: {
-        name: "Thingamajig",
-        sku: "T-400",
-        qty: 1,
-        price: 42,
-        category: "Kits",
-        supplier: "Initech",
-        active: false,
-      },
-    },
-    {
-      id: "r5",
-      cells: {
-        name: "Whatsit",
-        sku: "W-500",
-        qty: 24,
-        price: 3.75,
-        category: "Parts",
-        supplier: "Globex",
-        active: true,
-      },
-    },
   ],
 });
 
-initSegmentedControl(document.getElementById("demo-progress-bar-variants"));
+const demoProgressPanels = document.getElementById("demo-progress-panels");
+const demoProgressVariantTriggerLabel = document
+  .querySelector("#demo-progress-bar-variants-trigger .dropdown-trigger-label");
+
+initDropdown(document.getElementById("demo-progress-bar-variants"), {
+  onSelect: ({ label, item }) => {
+    if (demoProgressVariantTriggerLabel && label) {
+      demoProgressVariantTriggerLabel.textContent = label;
+    }
+    const panelId = item?.dataset.panel;
+    if (!demoProgressPanels || !panelId) return;
+    for (const panel of demoProgressPanels.children) {
+      setHidden(panel, panel.id !== panelId);
+    }
+  },
+});
+
 initProgressBar(document.getElementById("demo-progress-bar"));
 initProgressBar(document.getElementById("demo-progress-bar-percent"));
 initProgressBar(document.getElementById("demo-progress-bar-fraction"));
@@ -350,6 +340,11 @@ initToggle(document.getElementById("demo-title-numbering"), {
   onChange: ({ checked }) => {
     setTitleNumbering(checked);
   },
+});
+
+initAboutDialog({
+  dialogEl: document.getElementById("about-dialog"),
+  openTriggers: "#about-open-btn",
 });
 
 initDialog({

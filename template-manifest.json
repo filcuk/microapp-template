@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-05T20:41:46.059Z",
+  "generatedAt": "2026-08-08T09:45:29.082Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -26,8 +26,11 @@
     }
   },
   "files": {
+    "app/components/about-dialog.js": {
+      "sha256": "d58b2ea2afa64379ce05f2e2085883f41aff4dfce853d966a214db2b67fb1db4"
+    },
     "app/components/accordion.js": {
-      "sha256": "043888857492c5380146ab0c713aaa333678d141e28a6b96401a70881cfbb487"
+      "sha256": "e65229543af29d705e262cabc0a595350d62fec0c2f50e67d158d0c3a540059d"
     },
     "app/components/badge.js": {
       "sha256": "ddbde42721c3f3f439c0e80493eb2857211c918249dd971149d8d10d3aea01d7"
@@ -51,7 +54,7 @@
       "sha256": "a0a43f7e59f6f8e13ec4f6e89e1f96d02cfd1283dbaa868fcd511140b9bdb04f"
     },
     "app/components/combobox.js": {
-      "sha256": "183ccf5bc99a72a3056a667332629ed25308c4f2ffe0103ba558a0d25f18f26d"
+      "sha256": "f650d9e7005c76cdaaa07cb18fecc73c53f62d1bc1d7f41981753feef510604c"
     },
     "app/components/date-picker/calendar.js": {
       "sha256": "97363b28d82da42733d867150fba07d7d55bb9d4b663f3057362b901194877be"
@@ -81,13 +84,13 @@
       "sha256": "bbcca5b7ad4fb9c329e308e7e822468d4c3e59b12902ab144aa201c7bddbdad7"
     },
     "app/components/file-download.js": {
-      "sha256": "c2530b73c16516bd4d1e785a96f66ca9db169afbf5a9ba4bae4310fec70641cd"
+      "sha256": "a059ed3f44f61a53fd7035688f0cac0796050e240645caeca6d65a8232d32b81"
     },
     "app/components/file-dropzone.js": {
       "sha256": "d397a2b989468b7bf91f49db3cabaa340ad3c9a2fede9f00cb9ed9aad6ee884d"
     },
     "app/components/pagination.js": {
-      "sha256": "d0717ac330d8042264ac3c6913e3cfca1bc1dea9f18b80836e18a380eaa24e99"
+      "sha256": "be41f293004dcbc0f15111d3b15b9ee35609bd314e7180f1d8938e4618611a75"
     },
     "app/components/progress-bar.js": {
       "sha256": "59666e299ef56baa1a1e51eeea7e430b32b514e46717cee2bc422837600233fb"
@@ -96,13 +99,13 @@
       "sha256": "d757d5234d16110d89136612ae8c51078500fdb60d67bc98386e2677f32172b5"
     },
     "app/components/rich-text-editor.js": {
-      "sha256": "1c43d51c9df4faaece3e274fd9358d617e35b8ea2c32d3fc79049260e17e07f7"
+      "sha256": "939be36a98bd98b9b2e0248f352a581912f6f306c9e90a3098147c38ef1b5312"
     },
     "app/components/segmented-control.js": {
       "sha256": "da46f5c892bb605f92e385cd7037281b70d9c4323876c4ff725007172d2151ef"
     },
     "app/components/slider.js": {
-      "sha256": "d6868b63866c1fef44c992bb1eba77d90247747838f26835e7742774ce84aee0"
+      "sha256": "26e83fe72898f1ed26702efce8a8289bf32dd8ce653ce11e882b462b140d7064"
     },
     "app/components/spinner.js": {
       "sha256": "01171c4add024fb8e3ad2422ec41f4d99bd3130d40fcf188827ee5111697d342"
@@ -111,13 +114,13 @@
       "sha256": "0d3fcada4160cc4a912607b341d946bc18a02511dfcd9e47d478ac7cb28f22df"
     },
     "app/components/table.js": {
-      "sha256": "0ad1df710c3892311352975c75bc672648a8ae66fe1c050f7c05fb5691b4aa51"
+      "sha256": "8ac06a8b91a68bd93b0741bbfa82ce993bdf35765b7c2d0bdbf331577b335194"
     },
     "app/components/tabs.js": {
       "sha256": "43709468cd60d208a356de53347d85b6dbb2ca3caa9d2f7cfb75659f52c984e4"
     },
     "app/components/tabular-input.js": {
-      "sha256": "d11d0da0e38b357ba94a86568dc524a1158c5471f63b9a46d7ff43bb65502518"
+      "sha256": "482f54c360cf314c7e7391f2a8156c7cf9bd995dc892074c56eaafcc5212b597"
     },
     "app/components/time-picker.js": {
       "sha256": "97435605bb9c3b5398a28f495fa58020d690eac565b0d76af1804d0e40e6eae4"
@@ -135,25 +138,25 @@
       "sha256": "437c4840d29c902948368a1cb7ddd68fe4be73ef3068fc2ccdae24d6c95a62ee"
     },
     "app/css/controls-badges.css": {
-      "sha256": "d74a9ffbd69ce66deac92733531be5c39b00d1e8d181800d7d4d557121e94ef5"
+      "sha256": "74d52ca34230dc95f2f7557eb863e02df07651585bdec3d0632951a77d5ec928"
     },
     "app/css/controls-buttons.css": {
-      "sha256": "6ab1963647512862f430187e76cab5429d66718b1ad049f0573fdce1174545d1"
+      "sha256": "cde1a0a8a0faabbc9388c7960c40c0b365112660dc8a19783370992f71f504ef"
     },
     "app/css/controls-chips.css": {
-      "sha256": "6df72b7c841860121c30bc9ebb7f773871d2b45b2a42efe04a643b652ca9c87c"
+      "sha256": "1568970bc1a3dbba798f50cf63568539c6543152a37e38c7c66c5aca18305cce"
     },
     "app/css/controls-disclosure.css": {
-      "sha256": "004a7221835f092d451c0550de95e736989fb47ff3421ee4c1a2338893bbdb1c"
+      "sha256": "2853382c0386badb73f3090132f35fd744d9ee57995174e4ff4372c634c57f69"
     },
     "app/css/controls-fields.css": {
-      "sha256": "7a011a86a847bffa0f5814b9134135f01fa08793f518b72db83ece9abbdcc1bd"
+      "sha256": "3eb0ceac813fe334a583b6f6c70fea108003e1d894fb0675d5df464acd7b7cdb"
     },
     "app/css/controls-file.css": {
-      "sha256": "9a82e4417c7aba5dc622a3c8c93ea2c96deda064f3fed2657240df6e35782a4e"
+      "sha256": "3049edb5d4bae40f29ab6cded81d8a9232d3f28fdd63bc5d825bfc461c5409e1"
     },
     "app/css/controls-menus.css": {
-      "sha256": "83c2f5fbd9e4164de0ea5d558b22cbfd03f7632df4d994583bac4279627e4844"
+      "sha256": "3d583f7c1572077865a5779cc597f0a7f9ce4a9433e0dee4ad14afad7174a667"
     },
     "app/css/controls-section-panel.css": {
       "sha256": "1cfb674b5260bef0baa01f1354c43505424d6f8b198bb68ae0f2658fa8915719"
@@ -162,19 +165,19 @@
       "sha256": "e63764fba1fbd95acc81e69314be87c4047cdfb827c808d003870126692eead7"
     },
     "app/css/controls-widgets.css": {
-      "sha256": "baa6d9f0053e7db8082d2f0cbc3c3be5e1d2b475c2cf11fc6389281d76e701be"
+      "sha256": "b68c2fb288e433ecc0d8f6881f60111c0e10cf5baa1bfcec0d620ec9ee82634a"
     },
     "app/css/layout.css": {
-      "sha256": "85ad9ad51d8d95f1cfa055f4c7fa98a51764b15b53310b37a65cd7dc9bb9c894"
+      "sha256": "e3c23b69dc2e5997ba0496716eb5581bce4f406e5a1bd6aeb75c7ceef3ccf704"
     },
     "app/css/overlays.css": {
-      "sha256": "dfd5c349faabe42614228cce899a9389ddb6d5e6ce1c05a26dab3910df967d04"
+      "sha256": "24797b15eaeb9d6a1aae9d2aa897e5a39274d1495497fa89b2f7eb8aece2a16b"
     },
     "app/css/rich-text-editor.css": {
-      "sha256": "c35532f86573991144bf8d6813a75ff1732711690e496a6e0d143d0015272a2c"
+      "sha256": "4d84f29a1bf8293bab17152f535c189b419677af04be7e66cde3b135ef292693"
     },
     "app/css/table.css": {
-      "sha256": "f203309f13f0d8671be31b8096db1a4cb9686ef85f5a3443ea6c70569e3f55d2"
+      "sha256": "9ff4e8c9eb6eaad983885fdf27f528b370ab5eb21d692ba3c5d58e119e0d8d3f"
     },
     "app/prism.css": {
       "sha256": "310795b886280e2cbd427bb727db90f2bd111f7197229e6a9880c98d8274929e"
@@ -198,7 +201,7 @@
       "sha256": "7bc59c18faeecf7bcce15d586547c00c76fdc908a832c1206d9b4e4fdc2f165a"
     },
     "app/shell/sticky.js": {
-      "sha256": "536146e00c2c973503f99ddd2ba6290aa1c2ce0d37d4f55c533a9f1e4677db59"
+      "sha256": "3e8e8c532bd3a76b4660894e15a47b51e09f753e36e9690658b8815255f01336"
     },
     "app/shell/theme.js": {
       "sha256": "3b992e024cb2af8673730e9ab8cd8c100bd71fb7b4e6f549c0c8c161a8aee6aa"
@@ -213,7 +216,7 @@
       "sha256": "3f9f55c503dec155b391c71c7a3ab3ed5c659de5df5695084831155e51e95f0b"
     },
     "app/tokens.css": {
-      "sha256": "f5af64936aa40fb6a09a02649bfde69c9bffbd983645854a469120aec0c0caa3"
+      "sha256": "aafa3bef83481fc5793bd73210600c78fd50da144bc94fb64edcf0a77c03683f"
     },
     "app/utils/also-see-svg.js": {
       "sha256": "af1ff194fde0ba9ffe09edf885fde4562bac5f14592fd2f348c366296447e854"
@@ -231,13 +234,13 @@
       "sha256": "634496f84e49d4691f091de0effa74653d5c6f972532977d0e3adbee3975cc9b"
     },
     "app/utils/icons-template.js": {
-      "sha256": "dea12fcf6275fb5e8505ed3ffd72033a9c29f45d7b30fbf716d6b79e63e67450"
+      "sha256": "9af1348d44a619eed92a19c03a3c0b6d51dcad15c04d60753fa6ce3bd38b35c8"
     },
     "app/utils/icons.js": {
-      "sha256": "38586a2febcb2bfd12fee172d3299f287d5ebd412fc22c7d227d22b94fb37121"
+      "sha256": "ba304e051e7753012afd1ddbaea1c120d0ea3d20be913f89aa8bddfdb8eacbda"
     },
     "app/utils/menu.js": {
-      "sha256": "bdb8a72f50342459a381de065b52405a9307852ec1ff5ce04aef815983947e4d"
+      "sha256": "e58869226dfd2ccef4f91738582f70a85909346c0abf1885d9664b8f7b4d0a29"
     },
     "app/vendor/prism/prism-line-numbers.min.js": {
       "sha256": "f5c99feed70b757a4ab0f8bfd80584f773db6694e9e0ce2dab3164fa55a89a35"
@@ -384,6 +387,23 @@
         "dom",
         "document-listeners"
       ]
+    },
+    "about-dialog": {
+      "files": [
+        "app/components/about-dialog.js",
+        "app/components/dialog.js"
+      ],
+      "css": [
+        "overlays.css"
+      ],
+      "vendor": [],
+      "vendorFiles": [],
+      "icons": [],
+      "infra": [
+        "dom",
+        "document-listeners"
+      ],
+      "notes": "Also uses layout.css .tagline-link; wraps initDialog"
     },
     "badge": {
       "files": [
@@ -662,9 +682,12 @@
       ],
       "vendor": [],
       "vendorFiles": [],
-      "icons": [],
+      "icons": [
+        "chevron-right"
+      ],
       "infra": [
-        "dom"
+        "dom",
+        "icons"
       ]
     },
     "accordion": {
@@ -676,9 +699,12 @@
       ],
       "vendor": [],
       "vendorFiles": [],
-      "icons": [],
+      "icons": [
+        "chevron-right"
+      ],
       "infra": [
-        "dom"
+        "dom",
+        "icons"
       ]
     },
     "tabs": {
@@ -840,10 +866,12 @@
     "rich-text-editor": {
       "files": [
         "app/components/rich-text-editor.js",
-        "app/components/toastui-editor.js"
+        "app/components/toastui-editor.js",
+        "app/components/segmented-control.js"
       ],
       "css": [
-        "rich-text-editor.css"
+        "rich-text-editor.css",
+        "controls-widgets.css"
       ],
       "vendor": [
         "app/vendor/toastui-editor/",
@@ -862,7 +890,8 @@
       "infra": [
         "config",
         "dom"
-      ]
+      ],
+      "notes": "Mode switch uses segmented-control"
     }
   },
   "cssOnly": {
@@ -900,7 +929,8 @@
       "page-nav",
       "sticky",
       "title-numbering",
-      "theme-toggle"
+      "theme-toggle",
+      "about-dialog"
     ],
     "controls-buttons.css": [
       "buttons",
@@ -910,6 +940,7 @@
       "tooltip",
       "banner",
       "dialog",
+      "about-dialog",
       "callout"
     ],
     "code-block.css": [
@@ -940,7 +971,8 @@
       "spinner",
       "slider",
       "stepper",
-      "color-input"
+      "color-input",
+      "rich-text-editor"
     ],
     "controls-section-panel.css": [
       "section-panel"

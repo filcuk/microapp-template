@@ -10,11 +10,13 @@
 .chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.2rem;
   box-sizing: border-box;
   max-width: 100%;
   min-height: 1.75rem;
-  padding: 0 0.7rem;
+  /* Extra bottom padding optically centres Latin caps (baseline sits low). */
+  padding: 0 0.9rem 1px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
@@ -22,8 +24,9 @@
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
-  line-height: 1.25;
+  line-height: 1;
   white-space: nowrap;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out, color var(--control-hover-ms) ease-out;
 }
 
 button.chip {
@@ -32,6 +35,8 @@ button.chip {
 
 button.chip:hover:not(:disabled) {
   border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  transition-duration: 0s;
 }
 
 button.chip:focus-visible {
@@ -48,7 +53,7 @@ button.chip:disabled {
 .chip.is-selected {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--text);
 }
 
 .chip-label {
@@ -56,10 +61,12 @@ button.chip:disabled {
   text-overflow: ellipsis;
 }
 
-.chip--removable:hover:not(:disabled) {
+.chip[aria-pressed="true"]:hover:not(:disabled),
+.chip.is-selected:hover:not(:disabled),
+button.chip.chip--removable:hover:not(:disabled) {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-  color: var(--accent);
+  color: var(--text);
 }
 
 .chip-input {

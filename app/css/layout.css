@@ -71,9 +71,14 @@ body > footer {
   color: var(--accent);
 }
 
+.tagline-link {
+  margin-left: 0.35rem;
+  font-size: inherit;
+}
+
 /* Optional sticky chrome — opt in via data-sticky-* on :root.
-   Stack: site header → tier header → section heading.
-   JS toggles data-sticky-stuck / data-sticky-stuck-edge while pinned. */
+   Stack: site header → single content slot (segment, or Segment > Section crumb).
+   JS toggles data-sticky-stuck / data-sticky-stuck-edge / data-sticky-crumb*. */
 
 /* Tier-lead collapse shifts layout above the viewport; disable scroll
    anchoring so programmatic page-nav jumps keep their target Y. */
@@ -100,7 +105,7 @@ body > footer {
 :root[data-sticky-section-headings] .content-tier-header {
   position: sticky;
   top: calc(var(--sticky-header-offset) + var(--sticky-gap));
-  /* Below site header; above section headings so rising sections slide underneath */
+  /* Below site header; above section titles so crumbs paint over merged ghosts */
   z-index: 30;
 }
 
@@ -109,8 +114,12 @@ body > footer {
   background: var(--bg);
   /* Stack edge hairline replaces the title rule while pinned. */
   border-bottom-color: transparent;
-  /* Tighter band under the title when stacked above a section heading. */
+  /* Tighter band under the title while pinned. */
   padding-bottom: 0.25rem;
+  /* Give back the height lost to lead collapse + tighter padding, measured by
+     sticky.js. Pinning must not shorten the page: otherwise the next tier
+     rises, evicts this header, the lead returns, and the boundary oscillates. */
+  margin-bottom: var(--sticky-collapse-reserve, 0px);
 }
 
 /* Drop the lead while pinned so the sticky band stays title-height only. */
@@ -118,19 +127,151 @@ body > footer {
   display: none;
 }
 
+/* Breadcrumb trail — stacked on the segment title so height does not jump.
+   Opacity (not display/visibility snaps) crossfades segment ↔ crumb. */
+.sticky-crumb {
+  display: none;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--sticky-crumb-ms, 180ms) ease;
+}
+
+/* While the tier is pinned, keep segment + crumb in one grid cell so we can
+   crossfade instead of snapping the large segment title back in. */
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] .segment-title,
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] .sticky-crumb {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] .segment-title {
+  transition: opacity var(--sticky-crumb-ms, 180ms) ease;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-crumb] .segment-title {
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] .sticky-crumb {
+  display: flex;
+  align-self: center;
+  width: 100%;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-crumb] .sticky-crumb {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck] .content-tier-lead {
+  grid-column: 1;
+}
+
+.sticky-crumb-primary,
+.sticky-crumb-current {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sticky-crumb-primary {
+  flex: 0 1 auto;
+  color: var(--muted);
+}
+
+.sticky-crumb-current {
+  flex: 1 1 auto;
+  color: var(--text);
+  transition: opacity calc(var(--sticky-crumb-ms, 180ms) * 0.55) ease;
+}
+
+.sticky-crumb-primary:hover,
+.sticky-crumb-current:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.sticky-crumb-primary:focus-visible,
+.sticky-crumb-current:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.sticky-crumb-primary[aria-disabled="true"],
+.sticky-crumb-current[aria-disabled="true"] {
+  cursor: default;
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.sticky-crumb-current.is-swapping {
+  opacity: 0;
+}
+
+.sticky-crumb-sep {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: var(--muted);
+}
+
+.sticky-crumb-sep-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Pinned titles (no crumb overlay) are also clickable jump targets. */
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]:not([data-sticky-crumb]) .segment-title,
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck]:not([data-sticky-crumb-merged]) {
+  cursor: pointer;
+}
+
+:root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]:not([data-sticky-crumb]) .segment-title:hover,
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck]:not([data-sticky-crumb-merged]):hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
 :root[data-sticky-section-headings] .section-title {
   position: sticky;
-  /* Site gap + tier band (height + nest gap). Nest gap is inside --sticky-tier-offset. */
-  top: calc(
-    var(--sticky-header-offset) + var(--sticky-gap) + var(--sticky-tier-offset, 0px)
-  );
+  /* Same content slot as the tier header (breadcrumb merge, not vertical stack). */
+  top: calc(var(--sticky-header-offset) + var(--sticky-gap));
   z-index: 20;
 }
 
 :root[data-sticky-section-headings] .section-title[data-sticky-stuck] {
   z-index: 21;
   background: var(--bg);
-  padding-bottom: 0.5rem;
+}
+
+/* Merged into the tier crumb — keep sticky containment, hide chrome.
+   visibility keeps box size so merging does not shift scroll geometry. */
+:root[data-sticky-section-headings] .section-title[data-sticky-crumb-merged] {
+  visibility: hidden;
+  background: transparent;
+  pointer-events: none;
+  z-index: 19;
 }
 
 /* Gap fill above + full-bleed page-bg wings while stuck (center stays clear so
@@ -160,17 +301,6 @@ body > footer {
   transition: opacity var(--sticky-fade-ms, 150ms) ease;
 }
 
-/* Section headings nest under the tier with a tighter gap fill. */
-:root[data-sticky-section-headings] .section-title::before {
-  top: calc(-1 * var(--sticky-nest-gap));
-  background: linear-gradient(
-    to bottom,
-    var(--bg) 0,
-    var(--bg) var(--sticky-nest-gap),
-    transparent var(--sticky-nest-gap)
-  );
-}
-
 :root[data-sticky-header] body > header::after,
 :root[data-sticky-section-headings] .content-tier-header::after,
 :root[data-sticky-section-headings] .section-title::after {
@@ -191,9 +321,15 @@ body > footer {
 :root[data-sticky-header] body > header[data-sticky-stuck]::after,
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]::before,
 :root[data-sticky-section-headings] .content-tier-header[data-sticky-stuck]::after,
-:root[data-sticky-section-headings] .section-title[data-sticky-stuck]::before,
-:root[data-sticky-section-headings] .section-title[data-sticky-stuck]::after {
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck]:not([data-sticky-crumb-merged])::before,
+:root[data-sticky-section-headings] .section-title[data-sticky-stuck]:not([data-sticky-crumb-merged])::after {
   opacity: 1;
+}
+
+:root[data-sticky-section-headings] .section-title[data-sticky-crumb-merged]::before,
+:root[data-sticky-section-headings] .section-title[data-sticky-crumb-merged]::after {
+  opacity: 0;
+  transition: none;
 }
 
 /* Full-viewport hairline + drop shadow on the bottom-most pinned element. */
@@ -206,7 +342,7 @@ body > footer {
     0 18px 36px -10px var(--sticky-shadow);
 }
 
-/* Short viewports: drop the middle stack level so content stays usable. */
+/* Short viewports: drop the tier from the stack so content stays usable. */
 @media (max-height: 700px) {
   :root[data-sticky-section-headings] .content-tier-header {
     position: static;
@@ -231,9 +367,10 @@ main {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
+  /* Clear the pinned tier bar (--sticky-tier-offset) so jumps land the heading
+     below the crumb rather than behind it. */
   scroll-margin-top: calc(
-    var(--sticky-header-offset) + var(--sticky-gap) + var(--sticky-tier-offset, 0px) +
-      1rem
+    var(--sticky-header-offset) + var(--sticky-gap) + var(--sticky-tier-offset, 0px) + 0.75rem
   );
 }
 
@@ -288,7 +425,7 @@ main {
   font-size: 0.875rem;
 }
 
-.demo-fields {
+.panel-stack {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -401,11 +538,10 @@ main {
   font-weight: 600;
 }
 
-/* Full-bleed rule inside padded panels (`.demo-card`, …).
+/* Full-bleed rule inside padded panels (`.demo-card`, `.section-panel`, …).
  * Place the divider as a direct child of the padded panel so `--panel-padding`
- * inherits; nested wrappers break the negative margin. Section panels use
- * `.section-panel__divider` in controls-section-panel.css. */
-.demo-divider {
+ * inherits; nested wrappers break the negative margin. */
+.panel-divider {
   align-self: stretch;
   margin-block: 0.35rem;
   margin-inline: calc(-1 * var(--panel-padding, 1rem));
@@ -413,22 +549,90 @@ main {
   border-top: 1px solid var(--border);
 }
 
-.demo-split {
+.panel-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   column-gap: 1.25rem;
   align-items: stretch;
-  /* Bleed into card padding (top) and flex gap + following hr margin (bottom)
-   * so the vertical rule can meet the card edge and the horizontal divider. */
+  /* Bleed into panel padding (top) and flex gap + following hr margin (bottom)
+   * so the vertical rule can meet the panel edge and the horizontal divider. */
   margin-block: calc(-1 * var(--panel-padding, 1rem));
 }
 
-.demo-split > .demo-fields {
+.panel-split--3 {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+/* Three equal columns, two rows; one vertical rail after column 1.
+ * Child order: col1-row1, col1-row2, vertical divider, col2-row1, col3-row1, col2-row2, col3-row2. */
+.panel-split--3x2 {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  row-gap: 1.25rem;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.panel-split--3x2 > .panel-divider {
+  grid-column: 2;
+  grid-row: 1 / -1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(4) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(5) {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(6) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(7) {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+/* Keep a normal gap under in-panel headings/hints; still bleed into adjacent hrs. */
+.panel-split--after-heading {
+  margin-top: 0;
+}
+
+.panel-split > .panel-stack {
   /* Keep content inset while the split box itself full-bleeds vertically. */
   padding-block: var(--panel-padding, 1rem);
 }
 
-.demo-divider.demo-divider--vertical {
+.panel-split--3x2 > .panel-stack:nth-child(1),
+.panel-split--3x2 > .panel-stack:nth-child(4),
+.panel-split--3x2 > .panel-stack:nth-child(5) {
+  padding-bottom: 0;
+}
+
+.panel-split--3x2 > .panel-stack:nth-child(2),
+.panel-split--3x2 > .panel-stack:nth-child(6),
+.panel-split--3x2 > .panel-stack:nth-child(7) {
+  padding-top: 0;
+}
+
+.panel-split--after-heading > .panel-stack {
+  padding-top: 0;
+}
+
+.panel-divider.panel-divider--vertical {
   width: 1px;
   height: auto;
   align-self: stretch;
@@ -439,16 +643,32 @@ main {
 }
 
 @media (max-width: 900px) {
-  .demo-split {
+  .panel-split,
+  .panel-split--3,
+  .panel-split--3x2 {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
     margin-block: 0;
+    row-gap: 0;
   }
 
-  .demo-split > .demo-fields {
+  .panel-split > .panel-stack,
+  .panel-split--3x2 > .panel-stack:nth-child(n) {
+    grid-column: auto;
+    grid-row: auto;
     padding-block: 0;
   }
 
-  .demo-divider.demo-divider--vertical {
+  .panel-split--after-heading > .panel-stack {
+    padding-top: 0;
+  }
+
+  .panel-split--3x2 > .panel-divider {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .panel-divider.panel-divider--vertical {
     width: auto;
     height: 0;
     align-self: stretch;
@@ -765,8 +985,8 @@ body > footer {
   position: relative;
   display: inline;
   align-self: center;
-  /* Keep the menu above in-flow main content when not using fixed positioning. */
-  z-index: 20;
+  /* Keep the menu above sticky chrome when not using fixed positioning. */
+  z-index: 60;
 }
 
 .footer-also-see-trigger {
@@ -885,8 +1105,9 @@ body > footer {
 }
 
 /*
- * Round the highlight only on edges that are clear of the menu wall. Links are
- * auto-placed row by row, so nth-child maps directly onto the column.
+ * Keep wall-adjacent corners square so the highlight meets the menu edge;
+ * round only free sides. Links are auto-placed row by row, so nth-child maps
+ * onto the column. (Base `.dropdown-menu-item` radius stays 6px otherwise.)
  */
 .footer-also-see-menu[data-also-see-columns="2"]
   .footer-also-see-topic-links
@@ -896,6 +1117,8 @@ body > footer {
   .footer-also-see-topic-links
   > li:nth-child(3n + 1)
   .dropdown-menu-item {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
   border-start-end-radius: 6px;
   border-end-end-radius: 6px;
 }
@@ -910,6 +1133,8 @@ body > footer {
   .dropdown-menu-item {
   border-start-start-radius: 6px;
   border-end-start-radius: 6px;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
 }
 
 .footer-also-see-menu[data-also-see-columns="3"]

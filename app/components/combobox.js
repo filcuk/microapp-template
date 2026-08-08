@@ -26,10 +26,10 @@ import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-list
  *   selection); the summary is restored when the list closes (including when the filter
  *   is emptied — clear selection with setValues([]) / setValue("")). Selection count
  *   uses a badge (wrap `.combobox-control` in `.badge-host` with a `.badge`, or let this
- *   init create that markup). Options toggle; list closes after each pick like
- *   single-select. Initial selection: `aria-selected="true"` on options, comma-separated
- *   `.combobox-value`, or `defaultValues` / `defaultValue` in JS. Option and custom values
- *   must not contain commas (the `.combobox-value` delimiter).
+ *   init create that markup). Options toggle; list stays open while picking (close via
+ *   Escape, blur, or outside click). Initial selection: `aria-selected="true"` on options,
+ *   comma-separated `.combobox-value`, or `defaultValues` / `defaultValue` in JS. Option and
+ *   custom values must not contain commas (the `.combobox-value` delimiter).
  *
  * data-combobox-allow-custom — accept free text on blur/commit (default: list values only)
  * data-combobox-multi — multi-select mode
@@ -312,7 +312,7 @@ export function initCombobox(
     input.removeAttribute("aria-activedescendant");
   }
 
-  function setActiveOption(index) {
+  function setActiveOption(index, { scroll = true } = {}) {
     const visible = getVisibleOptions();
     clearActiveOption();
     if (!visible.length) return;
@@ -325,7 +325,7 @@ export function initCombobox(
       option.element.setAttribute("aria-selected", "true");
     }
     input.setAttribute("aria-activedescendant", option.element.id);
-    option.element.scrollIntoView({ block: "nearest" });
+    if (scroll) option.element.scrollIntoView({ block: "nearest" });
   }
 
   function ensureEmptyState(visibleCount) {
@@ -431,10 +431,14 @@ export function initCombobox(
     }
 
     setValueInputFromState();
-    syncMultiInputDisplay();
     updateSelectionBadge();
     syncOptionSelectedState();
     input.removeAttribute("aria-invalid");
+
+    // Keep an in-progress filter while the list stays open for further picks.
+    if (!(isOpen && filterQuery)) {
+      syncMultiInputDisplay();
+    }
 
     if (emitEvent) {
       onToggle?.({
@@ -451,7 +455,7 @@ export function initCombobox(
     return true;
   }
 
-  function selectOption(option, { close = true } = {}) {
+  function selectOption(option, { close = !isMulti } = {}) {
     if (!option) return;
 
     if (isMulti) {
@@ -470,7 +474,8 @@ export function initCombobox(
         option: option.element,
       });
       if (close) closeList();
-      else renderList();
+      // Selection chrome is already synced in setMultiSelected — avoid re-render
+      // (that would reset the active option and scroll the list).
       return;
     }
 
@@ -601,7 +606,9 @@ export function initCombobox(
         if (!filterQuery && input.value === multiSummary()) input.select();
       });
     }
-    openList();
+    // Already open (e.g. after a multi-select click that re-focuses the input) —
+    // do not re-render or the list jumps back to the active option.
+    if (!isOpen) openList();
   }
 
   function onInputBlur(event) {
@@ -656,6 +663,11 @@ export function initCombobox(
     if (!optionEl) return;
     const record = optionRecords.find((option) => option.element === optionEl);
     selectOption(record);
+    if (isMulti && isOpen && record) {
+      const visible = getVisibleOptions();
+      const idx = visible.indexOf(record);
+      if (idx >= 0) setActiveOption(idx, { scroll: false });
+    }
     input.focus();
   }
 

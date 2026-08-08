@@ -76,7 +76,8 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  z-index: 10;
+  /* Match .dropdown-menu — above sticky chrome (20–41). */
+  z-index: 60;
   width: 100%;
   max-height: 12rem;
   margin: 0;
@@ -96,26 +97,63 @@
 .combobox-option {
   display: block;
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
+  padding: calc(0.5rem - 1px) calc(1rem - 1px);
+  border: 1px solid transparent;
+  border-radius: 6px;
   background: transparent;
   color: var(--text);
   font: inherit;
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out,
+    color var(--control-hover-ms) ease-out;
 }
 
 .combobox-option:hover,
 .combobox-option:focus-visible,
 .combobox-option.is-active {
-  background: var(--code-bg);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  color: var(--text);
   outline: none;
+  transition-duration: 0s;
 }
 
-.combobox-option.is-selected,
-.combobox-option[aria-selected="true"] {
-  color: var(--accent);
+.combobox-option.is-selected {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.combobox-option.is-selected:hover,
+.combobox-option.is-selected:focus-visible,
+.combobox-option.is-selected.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
+  color: var(--text);
+  transition-duration: 0s;
+}
+
+/* Contiguous selected runs share one outer border (skip hidden filtered siblings). */
+li:not([hidden]):has(> .combobox-option.is-selected):has(
+    + li:not([hidden]) > .combobox-option.is-selected
+  )
+  > .combobox-option.is-selected {
+  border-bottom-width: 0;
+  padding-bottom: 0.5rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+li:not([hidden]):has(> .combobox-option.is-selected)
+  + li:not([hidden])
+  > .combobox-option.is-selected {
+  border-top-width: 0;
+  padding-top: 0.5rem;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .combobox-empty {
@@ -336,7 +374,8 @@
   position: absolute;
   top: calc(100% + 0.35rem);
   left: 0;
-  z-index: 30;
+  /* Match .dropdown-menu — above sticky chrome (20–41). */
+  z-index: 60;
   width: 18rem;
   max-width: calc(100vw - 2 * var(--page-padding-x));
   padding: 0.75rem;
@@ -458,12 +497,7 @@
 .date-picker-choice.is-selected {
   background: var(--accent);
   border-color: var(--accent);
-  color: #ffffff;
-}
-
-:root[data-theme="dark"] .date-picker-day.is-selected,
-:root[data-theme="dark"] .date-picker-choice.is-selected {
-  color: #0d1117;
+  color: var(--accent-fg);
 }
 
 .date-picker-day.is-today:not(.is-selected) {
@@ -505,17 +539,82 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  color: var(--text);
   font-size: inherit;
   line-height: 1.4;
 }
 
+/* Custom paint so checked glyphs match primary fills (`--accent-fg`).
+   Glyphs are `check` / `minus` icons mounted by initIcons / ensureCheckboxFace. */
+.checkbox-control {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
 .checkbox-input {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
   width: 1rem;
   height: 1rem;
   margin: 0;
-  accent-color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--input-bg);
+  color: var(--accent-fg);
   cursor: pointer;
-  flex-shrink: 0;
+  grid-area: 1 / 1;
+}
+
+.checkbox-glyphs {
+  display: grid;
+  place-items: center;
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 0.75rem;
+  pointer-events: none;
+  color: var(--accent-fg);
+}
+
+.checkbox-glyph {
+  display: none;
+  grid-area: 1 / 1;
+  width: 0.75rem;
+  height: 0.75rem;
+  overflow: visible;
+  /* Round Material paths read thin at 12px — stroke fattens the silhouette */
+  stroke: currentColor;
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
+.checkbox-control:has(.checkbox-input:checked) .checkbox-glyph--check,
+.checkbox-control:has(.checkbox-input:indeterminate) .checkbox-glyph--minus,
+.checkbox-control:has(.checkbox-input[aria-checked="mixed"]) .checkbox-glyph--minus {
+  display: block;
+}
+
+.checkbox-control:has(.checkbox-input:indeterminate) .checkbox-glyph--check,
+.checkbox-control:has(.checkbox-input[aria-checked="mixed"]) .checkbox-glyph--check {
+  display: none;
+}
+
+.checkbox-input:checked,
+.checkbox-input:indeterminate,
+.checkbox-input[aria-checked="mixed"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.checkbox-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .checkbox-input:disabled {
@@ -525,10 +624,6 @@
 .checkbox:has(.checkbox-input:disabled) {
   cursor: not-allowed;
   opacity: 0.5;
-}
-
-.checkbox-input[aria-checked="mixed"] {
-  accent-color: var(--accent);
 }
 
 .radio-group {
@@ -542,17 +637,49 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+  color: var(--text);
   font-size: inherit;
   line-height: 1.4;
 }
 
 .radio-input {
+  -webkit-appearance: none;
+  appearance: none;
+  display: grid;
+  place-content: center;
+  box-sizing: border-box;
   width: 1rem;
   height: 1rem;
   margin: 0;
-  accent-color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--input-bg);
+  color: var(--accent-fg);
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.radio-input::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  transform: scale(0);
+}
+
+.radio-input:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.radio-input:checked::before {
+  transform: scale(1);
+}
+
+.radio-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .radio-input:disabled {
@@ -562,5 +689,17 @@
 .radio:has(.radio-input:disabled) {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+@media (forced-colors: active) {
+  .checkbox-input,
+  .radio-input {
+    appearance: auto;
+  }
+
+  .checkbox-glyphs,
+  .radio-input::before {
+    display: none;
+  }
 }
 

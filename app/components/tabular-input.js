@@ -33,7 +33,7 @@
  */
 
 import { parseBooleanAttr, setHidden, getFocusableElements, FOCUSABLE_SELECTOR } from "../utils/dom.js";
-import { createIcon } from "../utils/icons.js";
+import { createIcon, ensureCheckboxFace } from "../utils/icons.js";
 import { initPopupMenu } from "../utils/menu.js";
 import { onDocumentClickOutside, onDocumentEscape } from "../utils/document-listeners.js";
 import { copyText, readText, armPasteCapture } from "../utils/clipboard.js";
@@ -876,6 +876,7 @@ export function initTabularInput(
       });
 
       label.append(input);
+      ensureCheckboxFace(input);
       return label;
     }
 
