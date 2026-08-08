@@ -6,13 +6,16 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import {
+  collectPrunePaths,
+  isPathReferencedInAppOwned,
   mergeVersionJs,
   resolveCssIndex,
+  resolveSelectedSkillIds,
   resolveSelection,
   verifyTemplateTree,
 } from "../scripts/lib/template-resolve.mjs";
 import { runVerify } from "../scripts/verify-template.mjs";
-import { runSync } from "../scripts/sync-template.mjs";
+import { buildUpdatedLock, pruneRetiredPaths, runSync } from "../scripts/sync-template.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -30,6 +33,43 @@ test("resolveSelection with * includes core shell files and all css partials", (
   assert.ok(selection.files.includes("app/components/dialog.js"));
   assert.ok(selection.files.includes("template-manifest.json"));
   assert.equal(selection.css.length, manifest.cssIndexOrder.length);
+});
+
+test("resolveSelection includes agent files by default and respects -skill exclusions", () => {
+  const manifest = loadManifest();
+  const all = resolveSelection(
+    { templateVersion: "0.9.0", components: ["dialog"], skills: ["*"] },
+    manifest
+  );
+  assert.ok(all.skills.includes("init-app"));
+  assert.ok(all.skills.includes("_shared"));
+  assert.ok(all.agentFiles.includes(".cursor/skills/init-app/SKILL.md"));
+  assert.ok(all.agentFiles.includes(".cursor/skills/_shared/invariants.md"));
+  assert.ok(all.agentFiles.includes(".cursor/rules/icons.mdc"));
+
+  const excluded = resolveSelection(
+    {
+      templateVersion: "0.9.0",
+      components: ["dialog"],
+      skills: ["*", "-init-app"],
+    },
+    manifest
+  );
+  assert.equal(excluded.skills.includes("init-app"), false);
+  assert.ok(excluded.skills.includes("_shared"));
+  assert.equal(
+    excluded.agentFiles.includes(".cursor/skills/init-app/SKILL.md"),
+    false
+  );
+  assert.ok(excluded.agentFiles.includes(".cursor/skills/_shared/invariants.md"));
+});
+
+test("resolveSelectedSkillIds treats exclusion-only lists as star minus ids", () => {
+  const manifest = loadManifest();
+  const ids = resolveSelectedSkillIds({ skills: ["-release-template"] }, manifest);
+  assert.ok(ids.includes("init-app"));
+  assert.ok(ids.includes("_shared"));
+  assert.equal(ids.includes("release-template"), false);
 });
 
 test("resolveSelection for dialog pulls overlays css and dialog.js only among optional components", () => {
@@ -66,6 +106,25 @@ test("mergeVersionJs preserves APP_VERSION and takes upstream TEMPLATE_VERSION",
   assert.match(merged, /APP_VERSION = "1\.2\.3"/);
 });
 
+test("buildUpdatedLock preserves skills and bumps schemaVersion", () => {
+  const manifest = loadManifest();
+  const next = buildUpdatedLock(
+    {
+      schemaVersion: 1,
+      templateVersion: "0.9.0",
+      components: ["dialog"],
+      skills: ["*", "-release-template"],
+      customNote: "keep-me",
+    },
+    manifest,
+    "filcuk/microapp-template"
+  );
+  assert.equal(next.schemaVersion, 2);
+  assert.deepEqual(next.skills, ["*", "-release-template"]);
+  assert.equal(next.customNote, "keep-me");
+  assert.equal(next.source, "filcuk/microapp-template");
+});
+
 test("verifyTemplateTree passes on this repository", () => {
   const manifest = loadManifest();
   const lock = JSON.parse(fs.readFileSync(path.join(ROOT, "template.lock.json"), "utf8"));
@@ -74,11 +133,80 @@ test("verifyTemplateTree passes on this repository", () => {
   assert.equal(report.summary.modified, 0);
   assert.equal(report.summary.missing, 0);
   assert.equal(report.summary.unexpected, 0);
+  assert.equal(report.summary.agentModified, 0);
+  assert.equal(report.summary.agentMissing, 0);
+  assert.ok(report.skills.length > 0);
+});
+
+test("agent file drift is soft and does not fail verify ok", () => {
+  const manifest = structuredClone(loadManifest());
+  const lock = JSON.parse(fs.readFileSync(path.join(ROOT, "template.lock.json"), "utf8"));
+  const agentPath = ".cursor/skills/init-app/SKILL.md";
+  assert.ok(manifest.files[agentPath]);
+  manifest.files[agentPath] = { sha256: "0".repeat(64) };
+
+  const report = verifyTemplateTree(ROOT, lock, manifest);
+  assert.equal(report.ok, true, JSON.stringify(report.summary));
+  assert.equal(report.summary.agentModified, 1);
+  assert.equal(report.summary.modified, 0);
+  const row = report.results.find((r) => r.path === agentPath);
+  assert.equal(row?.status, "agentModified");
 });
 
 test("runVerify CLI succeeds on this repository", () => {
   const report = runVerify([`--root`, ROOT]);
   assert.equal(report.ok, true);
+});
+
+test("prune deletes previousFiles when safe and skips when referenced", () => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), "microapp-prune-test-"));
+  try {
+    const stale = "app/legacy-widget.js";
+    const referenced = "app/legacy-referenced.js";
+    fs.mkdirSync(path.join(temp, "app"), { recursive: true });
+    fs.writeFileSync(path.join(temp, ...stale.split("/")), "stale\n");
+    fs.writeFileSync(path.join(temp, ...referenced.split("/")), "ref\n");
+    fs.writeFileSync(
+      path.join(temp, "app", "main.js"),
+      `import "./legacy-referenced.js";\n`
+    );
+
+    const manifest = {
+      appOwned: [
+        "app/main.js",
+        "app/demo.js",
+        "app/config.js",
+        "app/styles.css",
+        "app/css/app.css",
+        "app/utils/icons-app.js",
+        "app/res/",
+        "index.html",
+        "demo.html",
+      ],
+      components: {},
+      agent: { skills: {}, rules: [] },
+      retired: {
+        "legacy-widget": {
+          kind: "component",
+          previousFiles: [stale, referenced],
+          deprecatedIn: "1.0.0",
+          retiredIn: "1.1.0",
+        },
+      },
+    };
+    const selection = { components: [], skills: [] };
+    assert.deepEqual(collectPrunePaths(manifest, selection), [referenced, stale].sort());
+    assert.equal(isPathReferencedInAppOwned(temp, referenced, manifest.appOwned), true);
+    assert.equal(isPathReferencedInAppOwned(temp, stale, manifest.appOwned), false);
+
+    const result = pruneRetiredPaths(temp, manifest, selection);
+    assert.deepEqual(result.pruned, [stale]);
+    assert.deepEqual(result.skipped, [referenced]);
+    assert.equal(fs.existsSync(path.join(temp, ...stale.split("/"))), false);
+    assert.equal(fs.existsSync(path.join(temp, ...referenced.split("/"))), true);
+  } finally {
+    fs.rmSync(temp, { recursive: true, force: true });
+  }
 });
 
 test("sync --from self into a temp root with dialog-only lock", async () => {
@@ -100,6 +228,7 @@ test("sync --from self into a temp root with dialog-only lock", async () => {
           templateVersion: "0.9.0",
           source: "filcuk/microapp-template",
           components: ["dialog"],
+          skills: ["*", "-release-template"],
         },
         null,
         2
@@ -112,6 +241,12 @@ test("sync --from self into a temp root with dialog-only lock", async () => {
     assert.ok(fs.existsSync(path.join(temp, "app", "shell", "shell.js")));
     assert.equal(fs.existsSync(path.join(temp, "app", "components", "table.js")), false);
     assert.equal(fs.existsSync(path.join(temp, "app", "styles.css")), true);
+    assert.ok(fs.existsSync(path.join(temp, ".cursor", "skills", "init-app", "SKILL.md")));
+    assert.equal(
+      fs.existsSync(path.join(temp, ".cursor", "skills", "release-template", "SKILL.md")),
+      false
+    );
+    assert.ok(fs.existsSync(path.join(temp, ".cursor", "rules", "icons.mdc")));
 
     const version = fs.readFileSync(path.join(temp, "app", "version.js"), "utf8");
     assert.match(version, /TEMPLATE_VERSION = "0\.9\.0"/);
@@ -125,8 +260,11 @@ test("sync --from self into a temp root with dialog-only lock", async () => {
       fs.readFileSync(path.join(temp, "template-manifest.json"), "utf8")
     );
     const lock = JSON.parse(fs.readFileSync(path.join(temp, "template.lock.json"), "utf8"));
+    assert.equal(lock.schemaVersion, 2);
+    assert.deepEqual(lock.skills, ["*", "-release-template"]);
     const report = verifyTemplateTree(temp, lock, manifest);
     assert.equal(report.ok, true, JSON.stringify(report.summary));
+    assert.equal(report.skills.includes("release-template"), false);
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }

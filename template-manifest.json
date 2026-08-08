@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-08T20:05:51.940Z",
+  "generatedAt": "2026-08-08T20:27:17.359Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -277,6 +277,60 @@
     },
     "app/version.js": {
       "sha256": "81749a49d5655e2ad20c836f6984f8ea40221c8156ab962edc521158193e00e0"
+    },
+    ".cursor/rules/demo-isolation.mdc": {
+      "sha256": "c3b54ede01da4e28263086993067158810f3db781f869eff709751ba8b54324f"
+    },
+    ".cursor/rules/icons.mdc": {
+      "sha256": "62b3855317cc749c6082073602d4395767d0c8dc578ec28971c6c09775fcf077"
+    },
+    ".cursor/rules/usage-docs.mdc": {
+      "sha256": "7bf8d6c2ce63462b929d50e6c7646748e4a7232c5c68ce790a8778a9697ccd82"
+    },
+    ".cursor/skills/_shared/component-map.md": {
+      "sha256": "b3ba5d762e227d967e02da9cd1e112d1d9109811f661c7f53b4a576e4fabe01e"
+    },
+    ".cursor/skills/_shared/invariants.md": {
+      "sha256": "c5894ee77f4505215424fc0ac51e8e3fecbeb500c3869f783958a719fb51164b"
+    },
+    ".cursor/skills/add-icon/SKILL.md": {
+      "sha256": "7393b8d72b4d5e78a7e2a0666b4695797b13a1eea6a8cfa03289c84fd6302789"
+    },
+    ".cursor/skills/add-icon/scripts/fetch-icon.mjs": {
+      "sha256": "622f1d12f32b7f19100d6a94298a4808960b5f029512131594e15ffc3582542e"
+    },
+    ".cursor/skills/author-component/SKILL.md": {
+      "sha256": "baa57e0923d15a5b876d584e935e21aa6350d9126f7eefe83e9221695f3b21e8"
+    },
+    ".cursor/skills/finalize-app/SKILL.md": {
+      "sha256": "1fa503b27e65b0f5b901112af92e85cf7bb1de9b093543c50a99b72c11c1d892"
+    },
+    ".cursor/skills/handle-assets/SKILL.md": {
+      "sha256": "074c69598d57bc4d82a691b73f99f885d4e300941c46ddaa531f16c08b7d93ff"
+    },
+    ".cursor/skills/health-check/SKILL.md": {
+      "sha256": "0d61abcdc79a3671eacedb50ec74e790fb13ccea4855a9755805983e915c454b"
+    },
+    ".cursor/skills/init-app/SKILL.md": {
+      "sha256": "501b26aa0ed9a8b709c04daed9519ea538198ca4e5b3d9c85288731c3df9661f"
+    },
+    ".cursor/skills/manage-color/SKILL.md": {
+      "sha256": "992c829286618a8cfa484d5cf4b60da070d55051e07292dfb0293096cf8b4a7c"
+    },
+    ".cursor/skills/manage-color/scripts/contrast.mjs": {
+      "sha256": "348c94a4ca9fda3dbac1f1ed02f631f3d8d0a04bfc78398503830fc805db7098"
+    },
+    ".cursor/skills/migrate-template/SKILL.md": {
+      "sha256": "02d08bf46eb07896855b8932b10cf09fad013529896fc5c9f40bcbb2b658a097"
+    },
+    ".cursor/skills/release-template/SKILL.md": {
+      "sha256": "f71c8514745d20dd39bb6c5941b1ea181ae1754f52a49ca2fc6d278144e28ea0"
+    },
+    ".cursor/skills/restore-component/SKILL.md": {
+      "sha256": "9f865544de78aedee781a3d5e81b713be36feb1462e18faecbebfe1a5a50496d"
+    },
+    ".cursor/skills/sync-shell/SKILL.md": {
+      "sha256": "f2c8fed9cedd2bc5af220339ad16b45303014f597a6bee1ff0ed4683912c0492"
     }
   },
   "core": {
@@ -945,6 +999,93 @@
       "notes": "Mode switch uses segmented-control"
     }
   },
+  "agent": {
+    "skills": {
+      "_shared": {
+        "files": [
+          ".cursor/skills/_shared/component-map.md",
+          ".cursor/skills/_shared/invariants.md"
+        ],
+        "always": true,
+        "forkFacing": true
+      },
+      "init-app": {
+        "files": [
+          ".cursor/skills/init-app/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "migrate-template": {
+        "files": [
+          ".cursor/skills/migrate-template/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "sync-shell": {
+        "files": [
+          ".cursor/skills/sync-shell/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "restore-component": {
+        "files": [
+          ".cursor/skills/restore-component/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "finalize-app": {
+        "files": [
+          ".cursor/skills/finalize-app/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "handle-assets": {
+        "files": [
+          ".cursor/skills/handle-assets/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "manage-color": {
+        "files": [
+          ".cursor/skills/manage-color/SKILL.md",
+          ".cursor/skills/manage-color/scripts/contrast.mjs"
+        ],
+        "forkFacing": true
+      },
+      "add-icon": {
+        "files": [
+          ".cursor/skills/add-icon/SKILL.md",
+          ".cursor/skills/add-icon/scripts/fetch-icon.mjs"
+        ],
+        "forkFacing": true
+      },
+      "health-check": {
+        "files": [
+          ".cursor/skills/health-check/SKILL.md"
+        ],
+        "forkFacing": true
+      },
+      "author-component": {
+        "files": [
+          ".cursor/skills/author-component/SKILL.md"
+        ],
+        "forkFacing": false
+      },
+      "release-template": {
+        "files": [
+          ".cursor/skills/release-template/SKILL.md"
+        ],
+        "forkFacing": false
+      }
+    },
+    "rules": [
+      ".cursor/rules/demo-isolation.mdc",
+      ".cursor/rules/icons.mdc",
+      ".cursor/rules/usage-docs.mdc"
+    ]
+  },
+  "deprecated": {},
+  "retired": {},
   "cssOnly": {
     "buttons": {
       "css": [

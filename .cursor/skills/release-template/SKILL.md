@@ -29,17 +29,21 @@ Maintain root `CHANGELOG.md` in [Keep a Changelog](https://keepachangelog.com/) 
 2. Group under Added / Changed / Fixed / Removed as needed.
 3. Leave an empty `[Unreleased]` section for the next cycle.
 
-## Manifest and lock
+## Catalogue, agent files, and lifecycle
 
-1. Ensure [../_shared/component-map.md](../_shared/component-map.md) and [`scripts/lib/template-catalogue.mjs`](../../../scripts/lib/template-catalogue.mjs) match the tree.
-2. Regenerate and commit the manifest:
+1. Ensure [../_shared/component-map.md](../_shared/component-map.md) and [`scripts/lib/template-catalogue.mjs`](../../../scripts/lib/template-catalogue.mjs) match the tree (components **and** `AGENT_SKILLS` / `AGENT_RULES`).
+2. **Moves (same id):** keep the id; set new `files`; list old paths in `previousFiles`. Never put a `previousFiles` / retired path back into a live `files` entry — `npm run manifest:template` rejects path reuse.
+3. **Deprecate → retire (two releases minimum):**
+   - First release: add the id to `DEPRECATED` (still in `COMPONENTS` / `AGENT_SKILLS`) with `deprecatedIn`, optional `replacedBy` / `previousFiles`.
+   - Later release: remove from the live map; add to `RETIRED` with `deprecatedIn`, `retiredIn`, and `previousFiles`. Manifest generation refuses retire without `deprecatedIn`.
+4. Regenerate and commit the manifest:
 
 ```bash
 npm run manifest:template
 ```
 
-3. Set `template.lock.json` `templateVersion` to `X.Y.Z` (this repo keeps `"components": ["*"]`).
-4. Run:
+5. Set `template.lock.json` to `templateVersion` `X.Y.Z`, `schemaVersion` `2`, `"components": ["*"]`, `"skills": ["*"]`.
+6. Run:
 
 ```bash
 npm run verify:template
@@ -51,8 +55,9 @@ npm test
 
 - [ ] `app/version.js` `TEMPLATE_VERSION` matches the new changelog section
 - [ ] `.cursor/skills/_shared/component-map.md` matches the current component tree
-- [ ] `scripts/lib/template-catalogue.mjs` matches the component map; `template-manifest.json` regenerated
-- [ ] `template.lock.json` `templateVersion` matches
+- [ ] `scripts/lib/template-catalogue.mjs` matches the component map + agent catalogues; `template-manifest.json` regenerated (schema v2)
+- [ ] Deprecate/retire / `previousFiles` updates follow the two-stage rules; no retired path reuse
+- [ ] `template.lock.json` `templateVersion` / `skills` match
 - [ ] `npm run verify:template` exits 0
 - [ ] USAGE / AGENTS / demo updated for any shipped API (see `usage-docs.mdc`)
 - [ ] Optional: regenerate README scroll media with `npm run capture:demo` when the demo changed materially (see [DEVELOPMENT.md](../../../DEVELOPMENT.md))

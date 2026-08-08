@@ -5,16 +5,20 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import {
+  AGENT_RULES,
+  AGENT_SKILLS,
   APP_OWNED,
   COMPONENTS,
   CSS_INDEX_ORDER,
   DERIVED_FILES,
+  validateLifecycleCatalogue,
 } from "../scripts/lib/template-catalogue.mjs";
 import { renderTemplateCssIndex } from "../scripts/lib/template-catalogue.mjs";
 import {
   buildManifest,
   hashFile,
   isAppOwnedPath,
+  listAgentCatalogueFiles,
   readTemplateVersion,
   sha256Hex,
 } from "../scripts/generate-template-manifest.mjs";
@@ -58,6 +62,21 @@ test("buildManifest hashes match on-disk bytes for every file entry", () => {
   }
 });
 
+test("buildManifest includes hashed agent skill and rule paths", () => {
+  const manifest = buildManifest();
+  assert.equal(manifest.schemaVersion, 2);
+  const agentPaths = listAgentCatalogueFiles();
+  assert.ok(agentPaths.length >= AGENT_RULES.length + 2);
+  for (const rel of agentPaths) {
+    assert.ok(manifest.files[rel]?.sha256, rel);
+    assert.equal(manifest.files[rel].sha256, hashFile(rel), rel);
+  }
+  assert.deepEqual(Object.keys(manifest.agent.skills).sort(), Object.keys(AGENT_SKILLS).sort());
+  assert.deepEqual(manifest.agent.rules, AGENT_RULES);
+  assert.deepEqual(manifest.deprecated, {});
+  assert.deepEqual(manifest.retired, {});
+});
+
 test("hashFile is stable across CRLF and LF line endings", () => {
   const rel = "app/components/accordion.js";
   const abs = path.join(ROOT, ...rel.split("/"));
@@ -72,15 +91,66 @@ test("checked-in template-manifest.json matches a fresh build (stable fields)", 
   const onDisk = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
   const fresh = buildManifest();
 
-  assert.equal(onDisk.schemaVersion, 1);
+  assert.equal(onDisk.schemaVersion, 2);
   assert.equal(onDisk.templateVersion, fresh.templateVersion);
   assert.deepEqual(onDisk.appOwned, fresh.appOwned);
   assert.deepEqual(onDisk.appOwnedFields, fresh.appOwnedFields);
   assert.deepEqual(onDisk.core, fresh.core);
   assert.deepEqual(onDisk.cssIndexOrder, fresh.cssIndexOrder);
   assert.deepEqual(Object.keys(onDisk.components).sort(), Object.keys(COMPONENTS).sort());
+  assert.deepEqual(onDisk.agent, fresh.agent);
+  assert.deepEqual(onDisk.deprecated, fresh.deprecated);
+  assert.deepEqual(onDisk.retired, fresh.retired);
   assert.deepEqual(onDisk.files, fresh.files);
   assert.deepEqual(onDisk.derived, fresh.derived);
+});
+
+test("validateLifecycleCatalogue rejects retired path reuse and missing deprecatedIn", () => {
+  assert.doesNotThrow(() => validateLifecycleCatalogue());
+
+  assert.throws(
+    () =>
+      validateLifecycleCatalogue({
+        retired: {
+          "legacy-dialog": {
+            kind: "component",
+            previousFiles: ["app/components/dialog.js"],
+            deprecatedIn: "1.0.0",
+            retiredIn: "1.1.0",
+          },
+        },
+      }),
+    /path reuse forbidden/
+  );
+
+  assert.throws(
+    () =>
+      validateLifecycleCatalogue({
+        retired: {
+          gone: {
+            kind: "component",
+            previousFiles: ["app/gone.js"],
+            retiredIn: "1.1.0",
+          },
+        },
+      }),
+    /missing deprecatedIn/
+  );
+
+  assert.throws(
+    () =>
+      validateLifecycleCatalogue({
+        retired: {
+          dialog: {
+            kind: "component",
+            previousFiles: ["app/old-dialog.js"],
+            deprecatedIn: "1.0.0",
+            retiredIn: "1.1.0",
+          },
+        },
+      }),
+    /must not remain in COMPONENTS/
+  );
 });
 
 test("renderTemplateCssIndex matches checked-in template.css", () => {

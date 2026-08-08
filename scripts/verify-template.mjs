@@ -5,8 +5,9 @@
  *   node scripts/verify-template.mjs
  *   node scripts/verify-template.mjs --root . --json
  *
- * Exit 0 when every selected template file is identical and no unexpected
- * catalogue files remain; non-zero otherwise.
+ * Exit 0 when every selected catalogue file is identical and no unexpected
+ * catalogue files remain. Agent skill/rule drift is reported softly and does
+ * not fail the run.
  */
 
 import fs from "node:fs";
@@ -56,17 +57,25 @@ export function runVerify(argv = process.argv.slice(2)) {
   if (args.json === "true") {
     console.log(JSON.stringify(report, null, 2));
   } else {
+    const skillCount = report.skills?.length || 0;
     console.log(
       `Template verify ${report.ok ? "OK" : "FAILED"} ` +
-        `(v${report.templateVersion}, ${report.components.length} components)`
+        `(v${report.templateVersion}, ${report.components.length} components` +
+        (skillCount ? `, ${skillCount} skills` : "") +
+        `)`
     );
     console.log(
       `  identical=${report.summary.identical} modified=${report.summary.modified} ` +
-        `missing=${report.summary.missing} unexpected=${report.summary.unexpected}`
+        `missing=${report.summary.missing} unexpected=${report.summary.unexpected}` +
+        ` agentModified=${report.summary.agentModified || 0}` +
+        ` agentMissing=${report.summary.agentMissing || 0}`
     );
+    for (const warning of report.warnings || []) {
+      console.warn(`  warning    ${warning}`);
+    }
     for (const row of report.results) {
       if (row.status === "identical") continue;
-      console.log(`  ${row.status.padEnd(11)} ${row.path}`);
+      console.log(`  ${row.status.padEnd(13)} ${row.path}`);
     }
   }
 

@@ -5,10 +5,12 @@
  *   node scripts/sync-template.mjs --from ../microapp-template
  *   node scripts/sync-template.mjs --version 0.9.0
  *   node scripts/sync-template.mjs --from . --dry-run
+ *   node scripts/sync-template.mjs --from . --prune
  *
- * Reads `template.lock.json` for version + component selection. Never overwrites
- * app-owned paths. Regenerates `app/css/template.css`. Merges `APP_VERSION` when
- * updating `app/version.js`.
+ * Reads `template.lock.json` for version + component/skill selection. Never
+ * overwrites app-owned paths. Regenerates `app/css/template.css`. Merges
+ * `APP_VERSION` when updating `app/version.js`. With `--prune`, deletes
+ * `previousFiles` / retired paths when safe.
  */
 
 import { execFileSync } from "node:child_process";
@@ -19,7 +21,9 @@ import { fileURLToPath } from "node:url";
 
 import { renderTemplateCssIndex } from "./lib/template-catalogue.mjs";
 import {
+  collectPrunePaths,
   isAppOwnedPath,
+  isPathReferencedInAppOwned,
   mergeVersionJs,
   parseArgs,
   resolveSelection,
@@ -48,6 +52,36 @@ function readJson(root, relative) {
 function writeJson(absPath, value) {
   fs.mkdirSync(path.dirname(absPath), { recursive: true });
   fs.writeFileSync(absPath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+/**
+ * Preserve fork lock fields while refreshing version / source / defaults.
+ * @param {object} lock
+ * @param {object} manifest
+ * @param {string} source
+ */
+export function buildUpdatedLock(lock, manifest, source) {
+  const schemaVersion = Math.max(
+    Number(lock.schemaVersion) || 1,
+    Number(manifest.schemaVersion) || 1
+  );
+
+  /** @type {Record<string, unknown>} */
+  const next = {
+    ...lock,
+    schemaVersion,
+    templateVersion: lock.templateVersion,
+    source,
+    components: lock.components,
+  };
+
+  if (manifest.agent) {
+    if (!Array.isArray(next.skills) || next.skills.length === 0) {
+      next.skills = ["*"];
+    }
+  }
+
+  return next;
 }
 
 /**
@@ -97,12 +131,51 @@ function copyFileRelative(fromRoot, toRoot, relativePosix, { dryRun = false } = 
 }
 
 /**
+ * @param {string} root
+ * @param {object} manifest
+ * @param {{ components: string[], skills: string[] }} selection
+ * @param {{ dryRun?: boolean }} [options]
+ */
+export function pruneRetiredPaths(root, manifest, selection, { dryRun = false } = {}) {
+  const appOwned = manifest.appOwned || [];
+  /** @type {string[]} */
+  const pruned = [];
+  /** @type {string[]} */
+  const skipped = [];
+
+  for (const rel of collectPrunePaths(manifest, selection)) {
+    if (isAppOwnedPath(rel, appOwned)) {
+      skipped.push(rel);
+      console.warn(`  prune skip (app-owned path): ${rel}`);
+      continue;
+    }
+
+    const abs = resolveUnder(root, rel);
+    if (!fs.existsSync(abs)) continue;
+
+    if (isPathReferencedInAppOwned(root, rel, appOwned)) {
+      skipped.push(rel);
+      console.warn(`  prune skip (still referenced from app-owned files): ${rel}`);
+      continue;
+    }
+
+    if (!dryRun) {
+      fs.rmSync(abs, { force: true });
+    }
+    pruned.push(rel);
+  }
+
+  return { pruned, skipped };
+}
+
+/**
  * @param {string[]} argv
  */
 export async function runSync(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
   const root = path.resolve(args.root || DEFAULT_ROOT);
   const dryRun = args["dry-run"] === "true";
+  const prune = args.prune === "true";
   const lockPath = args.lock || "template.lock.json";
 
   /** @type {object} */
@@ -178,28 +251,38 @@ export async function runSync(argv = process.argv.slice(2)) {
       fs.writeFileSync(cssAbs, cssBody, "utf8");
     }
 
+    /** @type {{ pruned: string[], skipped: string[] }} */
+    let pruneResult = { pruned: [], skipped: [] };
+    if (prune) {
+      pruneResult = pruneRetiredPaths(root, manifest, selection, { dryRun });
+    }
+
     if (!dryRun) {
-      writeJson(resolveUnder(root, lockPath), {
-        schemaVersion: 1,
-        templateVersion: lock.templateVersion,
-        source,
-        components: lock.components,
-      });
+      writeJson(resolveUnder(root, lockPath), buildUpdatedLock(lock, manifest, source));
     }
 
     console.log(
       `Template sync ${dryRun ? "(dry-run) " : ""}` +
         `v${lock.templateVersion}: ${copied.length} files, ` +
-        `${selection.css.length} css partials, skipped app-owned=${skipped.length}`
+        `${selection.css.length} css partials, skipped app-owned=${skipped.length}` +
+        (prune
+          ? `, pruned=${pruneResult.pruned.length}, prune-skipped=${pruneResult.skipped.length}`
+          : "")
     );
     console.log(`  components: ${selection.components.join(", ")}`);
+    if (selection.skills.length > 0) {
+      console.log(`  skills: ${selection.skills.join(", ")}`);
+    }
 
     return {
       ok: true,
       dryRun,
+      prune,
       templateVersion: lock.templateVersion,
       copied,
       skipped,
+      pruned: pruneResult.pruned,
+      pruneSkipped: pruneResult.skipped,
       selection,
     };
   } finally {

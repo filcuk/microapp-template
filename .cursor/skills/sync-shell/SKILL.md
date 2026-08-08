@@ -37,6 +37,7 @@ Do **not** replace unless the user explicitly expands scope:
 - `app/main.js` / app page logic
 - `app/config.js` fork settings
 - Custom `app/res/` artwork
+- **Cursor agent skills/rules** (`.cursor/skills/`, `.cursor/rules/`) — owned by `migrate-template` / `npm run sync:template`, not this light shell sync
 
 ## Icons merge
 

@@ -10,6 +10,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  AGENT_RULES,
+  AGENT_SKILLS,
   APP_OWNED,
   APP_OWNED_FIELDS,
   COMPONENTS,
@@ -18,9 +20,13 @@ import {
   CSS_ONLY,
   CSS_PARTIAL_FEATURES,
   DEFAULT_SOURCE,
+  DEPRECATED,
   DERIVED_FILES,
   INFRA,
+  RETIRED,
+  collectLivePaths,
   renderTemplateCssIndex,
+  validateLifecycleCatalogue,
 } from "./lib/template-catalogue.mjs";
 import { canonicalizeNewlines } from "./lib/template-resolve.mjs";
 
@@ -124,6 +130,36 @@ export function listAppFiles() {
   return listFilesRecursive("app");
 }
 
+/**
+ * Concrete agent file paths listed in the catalogue.
+ * @returns {string[]}
+ */
+export function listAgentCatalogueFiles() {
+  /** @type {Set<string>} */
+  const paths = new Set(AGENT_RULES);
+  for (const def of Object.values(AGENT_SKILLS)) {
+    for (const rel of def.files || []) paths.add(rel);
+  }
+  return [...paths].sort();
+}
+
+/**
+ * Serialize a deprecate/retire map entry for the manifest.
+ * @param {object} def
+ */
+function serializeLifecycleEntry(def) {
+  return {
+    kind: def.kind,
+    ...(def.replacedBy ? { replacedBy: def.replacedBy } : {}),
+    ...(Array.isArray(def.previousFiles) && def.previousFiles.length > 0
+      ? { previousFiles: [...def.previousFiles] }
+      : {}),
+    ...(def.deprecatedIn ? { deprecatedIn: def.deprecatedIn } : {}),
+    ...(def.retiredIn ? { retiredIn: def.retiredIn } : {}),
+    ...(def.notes ? { notes: def.notes } : {}),
+  };
+}
+
 export { renderTemplateCssIndex };
 
 /**
@@ -131,13 +167,31 @@ export { renderTemplateCssIndex };
  */
 export function buildManifest() {
   const templateVersion = readTemplateVersion();
+
+  // Expand vendor dirs so path-reuse checks see concrete files too
+  /** @type {Set<string>} */
+  const livePaths = collectLivePaths();
+  for (const def of Object.values(COMPONENTS)) {
+    for (const entry of def.vendor || []) {
+      for (const rel of expandPathEntry(entry)) livePaths.add(rel);
+    }
+  }
+  validateLifecycleCatalogue({ livePaths });
+
   const appFiles = listAppFiles();
+  const agentFiles = listAgentCatalogueFiles();
 
   /** @type {Record<string, { sha256: string }>} */
   const files = {};
   for (const rel of appFiles) {
     if (isAppOwnedPath(rel)) continue;
     if (DERIVED_FILES.includes(rel)) continue;
+    files[rel] = { sha256: hashFile(rel) };
+  }
+  for (const rel of agentFiles) {
+    if (!fs.existsSync(resolveRepoPath(rel))) {
+      throw new Error(`Agent catalogue path missing on disk: ${rel}`);
+    }
     files[rel] = { sha256: hashFile(rel) };
   }
 
@@ -155,6 +209,7 @@ export function buildManifest() {
   const components = {};
   for (const [id, def] of Object.entries(COMPONENTS)) {
     const expandedVendor = def.vendor.flatMap((entry) => expandPathEntry(entry));
+    const deprecatedMeta = DEPRECATED[id];
     components[id] = {
       files: [...def.files],
       css: [...def.css],
@@ -164,11 +219,58 @@ export function buildManifest() {
       infra: [...def.infra],
       ...(def.always ? { always: true } : {}),
       ...(def.notes ? { notes: def.notes } : {}),
+      ...(Array.isArray(def.previousFiles) && def.previousFiles.length > 0
+        ? { previousFiles: [...def.previousFiles] }
+        : {}),
+      ...(deprecatedMeta
+        ? {
+            deprecated: true,
+            deprecatedIn: deprecatedMeta.deprecatedIn,
+            ...(deprecatedMeta.replacedBy
+              ? { replacedBy: deprecatedMeta.replacedBy }
+              : {}),
+          }
+        : {}),
     };
   }
 
+  /** @type {Record<string, object>} */
+  const agentSkills = {};
+  for (const [id, def] of Object.entries(AGENT_SKILLS)) {
+    const deprecatedMeta = DEPRECATED[id];
+    agentSkills[id] = {
+      files: [...def.files],
+      ...(def.always ? { always: true } : {}),
+      ...(def.forkFacing === false ? { forkFacing: false } : { forkFacing: true }),
+      ...(Array.isArray(def.previousFiles) && def.previousFiles.length > 0
+        ? { previousFiles: [...def.previousFiles] }
+        : {}),
+      ...(deprecatedMeta
+        ? {
+            deprecated: true,
+            deprecatedIn: deprecatedMeta.deprecatedIn,
+            ...(deprecatedMeta.replacedBy
+              ? { replacedBy: deprecatedMeta.replacedBy }
+              : {}),
+          }
+        : {}),
+    };
+  }
+
+  /** @type {Record<string, object>} */
+  const deprecated = {};
+  for (const [id, def] of Object.entries(DEPRECATED)) {
+    deprecated[id] = serializeLifecycleEntry(def);
+  }
+
+  /** @type {Record<string, object>} */
+  const retired = {};
+  for (const [id, def] of Object.entries(RETIRED)) {
+    retired[id] = serializeLifecycleEntry(def);
+  }
+
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     templateVersion,
     generatedAt: new Date().toISOString(),
     source: DEFAULT_SOURCE,
@@ -183,6 +285,12 @@ export function buildManifest() {
     },
     infra: { ...INFRA },
     components,
+    agent: {
+      skills: agentSkills,
+      rules: [...AGENT_RULES],
+    },
+    deprecated,
+    retired,
     cssOnly: { ...CSS_ONLY },
     cssPartialFeatures: { ...CSS_PARTIAL_FEATURES },
     cssIndexOrder: [...CSS_INDEX_ORDER],
@@ -206,8 +314,12 @@ if (isMain) {
   const manifest = writeManifest();
   const fileCount = Object.keys(manifest.files).length;
   const derivedCount = Object.keys(manifest.derived).length;
+  const agentSkillCount = Object.keys(manifest.agent?.skills || {}).length;
+  const agentRuleCount = (manifest.agent?.rules || []).length;
   console.log(
     `Wrote ${toPosix(path.relative(ROOT, MANIFEST_PATH))} ` +
-      `(${manifest.templateVersion}, ${fileCount} files, ${derivedCount} derived)`
+      `(${manifest.templateVersion}, schema v${manifest.schemaVersion}, ` +
+      `${fileCount} files, ${derivedCount} derived, ` +
+      `${agentSkillCount} skills, ${agentRuleCount} rules)`
   );
 }
