@@ -344,25 +344,31 @@ initTutorial({
   steps: [
     {
       title: "Overview tour",
-      body: "This script walks a few controls on this card. The rest of the page is dimmed.",
+      body: "This script walks the Information & prompts area using real controls — no extra demo targets.",
     },
     {
-      target: "#demo-popover-open",
-      title: "Popovers",
-      body: "Open a standalone popover anchored to a nearby control.",
+      target: "#demo-info-prompts",
+      title: "This section",
+      body: "Tutorials can spotlight a whole section. Everything outside stays dimmed.",
       position: "bottom",
     },
     {
-      target: "#demo-tutorial-target-theme",
-      title: "Spotlight",
-      body: "Only the highlighted control stays clear of the dim overlay.",
-      position: "top",
+      target: "#demo-tutorials-panel",
+      title: "Tutorials",
+      body: "Or zoom in on a panel. These two buttons start the overview and interactive tours.",
+      position: "left",
+    },
+    {
+      target: "#demo-popovers-panel",
+      title: "Popovers",
+      body: "Show popover opens a speech bubble aimed at Anchor target.",
+      position: "right",
     },
     {
       target: "#demo-tutorial-interactive",
-      title: "Another tour",
-      body: "Start the interactive tour anytime — only one tutorial runs at once.",
-      position: "left",
+      title: "Interactive tour",
+      body: "Try the other tour next — it lets you click a real control to advance.",
+      position: "top",
     },
   ],
 });
@@ -373,21 +379,21 @@ initTutorial({
   steps: [
     {
       title: "Interactive tour",
-      body: "Some steps stay blocked; others let you use the highlighted control.",
+      body: "Most steps stay blocked. The next one lets you use the highlighted control.",
     },
     {
-      target: "#demo-tutorial-target-action",
-      title: "Try it",
-      body: "This step is interactive — click the highlighted button to advance.",
+      target: "#demo-popover-anchor",
+      title: "Try the anchor",
+      body: "Click Anchor target to advance. That also opens the popover.",
       position: "top",
       interactive: true,
       advanceOn: "click",
     },
     {
-      target: "#demo-tutorial-target-done",
-      title: "Done",
-      body: "Last step. Press Done or Escape to close the tutorial.",
-      position: "top",
+      target: "#demo-popover-open",
+      title: "Show popover",
+      body: "You can open the same bubble from this button. Press Done or Escape to finish.",
+      position: "bottom",
     },
   ],
 });
