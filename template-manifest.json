@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "templateVersion": "0.9.0",
-  "generatedAt": "2026-08-08T19:43:44.668Z",
+  "generatedAt": "2026-08-08T20:05:51.940Z",
   "source": "filcuk/microapp-template",
   "appOwned": [
     "app/main.js",
@@ -93,7 +93,7 @@
       "sha256": "be41f293004dcbc0f15111d3b15b9ee35609bd314e7180f1d8938e4618611a75"
     },
     "app/components/popover.js": {
-      "sha256": "f99c4c95701ed441bc3c3a8475fa983518d97a6f980380c9426c68ee3ef3c928"
+      "sha256": "c371e51bcf342547f513998e4707db7710a706d566dbee7db2ee8955b2ffa663"
     },
     "app/components/progress-bar.js": {
       "sha256": "59666e299ef56baa1a1e51eeea7e430b32b514e46717cee2bc422837600233fb"
@@ -186,7 +186,7 @@
       "sha256": "9ff4e8c9eb6eaad983885fdf27f528b370ab5eb21d692ba3c5d58e119e0d8d3f"
     },
     "app/css/tutorial.css": {
-      "sha256": "480cc60f838314bc0419e899dbe48335c3e76fcc46a82fbe8479900a7d42e2fd"
+      "sha256": "c5386d468d0dd1af74448d977e6e9d2c8bc9d41a41ec7fe5e84e72e5cc397042"
     },
     "app/prism.css": {
       "sha256": "310795b886280e2cbd427bb727db90f2bd111f7197229e6a9880c98d8274929e"
