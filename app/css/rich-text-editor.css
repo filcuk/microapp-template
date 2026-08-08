@@ -48,34 +48,56 @@
    matches the toolbar to mask adjacent tiles; keep that, and clip the background
    to the padding box. Never set the `background` shorthand on these buttons. */
 
-.rich-text-editor .toastui-editor-defaultUI-toolbar button {
+.rich-text-editor .toastui-editor-defaultUI-toolbar button,
+.rich-text-editor .toastui-editor-dropdown-toolbar button {
   border: 1px solid var(--surface);
   border-radius: 4px;
   background-clip: padding-box;
   overflow: hidden;
+  transition: border-color var(--control-hover-ms) ease-out,
+    background-color var(--control-hover-ms) ease-out;
 }
 
-.rich-text-editor .toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
-  background-color: var(--code-bg);
-  border-color: var(--code-bg);
+.rich-text-editor .toastui-editor-defaultUI-toolbar button:not(:disabled):hover,
+.rich-text-editor .toastui-editor-dropdown-toolbar button:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  border-color: var(--accent);
+  transition-duration: 0s;
 }
 
-.rich-text-editor .toastui-editor-defaultUI-toolbar button:focus-visible {
+.rich-text-editor .toastui-editor-defaultUI-toolbar button:focus-visible,
+.rich-text-editor .toastui-editor-dropdown-toolbar button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
 
-.rich-text-editor .toastui-editor-toolbar-icons {
-  border-color: var(--surface);
-}
-
+.rich-text-editor .toastui-editor-toolbar-icons,
 .rich-text-editor .toastui-editor-dark .toastui-editor-toolbar-icons {
   border-color: var(--surface);
 }
 
+/* Keep the default (non-primary) sprite row when toggled — selection is border/fill only */
+.rich-text-editor .toastui-editor-toolbar-icons:not(:disabled).active {
+  background-position-y: 3px;
+  border-color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.rich-text-editor .toastui-editor-dark .toastui-editor-toolbar-icons:not(:disabled).active {
+  background-position-y: -49px;
+  border-color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
 .rich-text-editor .toastui-editor-dark .toastui-editor-toolbar-icons:not(:disabled):hover {
-  background-color: var(--code-bg);
-  border-color: var(--code-bg);
+  background-color: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  border-color: var(--accent);
+  transition-duration: 0s;
+}
+
+/* Prefer template tooltips (`data-tooltip`); Toast sets inline display:block on hover. */
+.rich-text-editor .toastui-editor-tooltip {
+  display: none !important;
 }
 
 .rich-text-editor .toastui-editor-defaultUI-toolbar .scroll-sync:before,
@@ -162,7 +184,8 @@
   font-weight: 500;
   line-height: 1.25;
   color: var(--muted);
-  border: none;
+  /* Keep 1px transparent border so hover/selected accent borders match .segmented-control-item */
+  border: 1px solid transparent;
   border-radius: 4px;
 }
 

@@ -213,7 +213,9 @@
 .tooltip.is-visible {
   visibility: visible;
   opacity: 1;
+  /* Override hide transition (opacity duration + visibility delay) for instant show */
   transition-duration: 0s;
+  transition-delay: 0s;
 }
 
 .tooltip__icon {

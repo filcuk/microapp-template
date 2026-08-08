@@ -3,6 +3,7 @@
  *
  * Requires vendor scripts and `app/toastui-editor.css` on the page. See `app/toastui-editor.js`.
  * Mode switching uses the template segmented control (Toast UI’s native switch is hidden).
+ * Toolbar tips use template `data-tooltip` (Toast UI’s native tooltip is hidden).
  *
  * Markup:
  *   <div class="field rich-text-editor" id="my-editor"
@@ -154,6 +155,40 @@ function mountModeSwitch(mountEl, editor, defaultValue) {
   };
 }
 
+/** Map Toast UI toolbar `aria-label`s onto template `data-tooltip` (initTooltips). */
+function wireToolbarTooltips(mountEl) {
+  const uiRoot = mountEl.querySelector(".toastui-editor-defaultUI");
+  if (!uiRoot) return null;
+
+  const BUTTON_SEL =
+    ".toastui-editor-defaultUI-toolbar button[aria-label], .toastui-editor-dropdown-toolbar button[aria-label]";
+
+  function sync() {
+    uiRoot.querySelectorAll(BUTTON_SEL).forEach((btn) => {
+      const label = btn.getAttribute("aria-label")?.trim();
+      if (!label) {
+        delete btn.dataset.tooltip;
+        delete btn.dataset.tooltipPosition;
+        return;
+      }
+      btn.dataset.tooltip = label;
+      btn.dataset.tooltipPosition = "bottom";
+    });
+  }
+
+  sync();
+
+  const observer = new MutationObserver(sync);
+  observer.observe(uiRoot, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["aria-label"],
+  });
+
+  return () => observer.disconnect();
+}
+
 export function initRichTextEditor(
   rootEl,
   {
@@ -211,6 +246,7 @@ export function initRichTextEditor(
   applyEditorTheme(mountEl, resolveTheme());
 
   const modeSwitch = mountModeSwitch(mountEl, editor, resolvedEditType);
+  const unwireToolbarTooltips = wireToolbarTooltips(mountEl);
 
   if (!resolvedAutofocus && typeof editor.blur === "function") {
     editor.blur();
@@ -270,6 +306,7 @@ export function initRichTextEditor(
       if (destroyed) return;
       destroyed = true;
       editor.off("change", onEditorChange);
+      unwireToolbarTooltips?.();
       if (modeSwitch) {
         editor.off("changeMode", modeSwitch.onEditorModeChange);
         modeSwitch.modeWrap.remove();
