@@ -133,6 +133,7 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item:hover,
 .dropdown-menu-item:focus-visible {
   border-color: var(--accent);
+  border-radius: 6px;
   background: color-mix(in srgb, var(--accent) 6%, var(--surface));
   /* Beat `a:hover` / footer link accent so highlighted text stays --text. */
   color: var(--text);
@@ -144,6 +145,7 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item[aria-checked="true"] {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   border-color: var(--accent);
+  border-radius: 0;
   color: var(--text);
 }
 
@@ -160,6 +162,38 @@ svg.dropdown-menu-item-icon {
   border-color: var(--accent);
   color: var(--text);
   transition-duration: 0s;
+}
+
+/* Contiguous selected runs share one outer border (no edge between neighbours).
+   Drop shared border width (not just colour) so side borders meet with no 1px gap. */
+li:has(> .dropdown-menu-item:is(.is-selected, [aria-checked="true"])):has(
+    + li > .dropdown-menu-item:is(.is-selected, [aria-checked="true"])
+  )
+  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  border-bottom-width: 0;
+  padding-bottom: 0.5rem;
+}
+
+li:has(> .dropdown-menu-item:is(.is-selected, [aria-checked="true"]))
+  + li
+  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  border-top-width: 0;
+  padding-top: 0.5rem;
+}
+
+/* Round only the outer corners of each contiguous selection run. */
+li:first-child > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]),
+li:not(:has(> .dropdown-menu-item:is(.is-selected, [aria-checked="true"])))
+  + li
+  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+li:not(:has(+ li > .dropdown-menu-item:is(.is-selected, [aria-checked="true"])))
+  > .dropdown-menu-item:is(.is-selected, [aria-checked="true"]) {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 
 .dropdown-menu-group {
