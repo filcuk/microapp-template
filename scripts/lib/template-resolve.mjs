@@ -62,6 +62,15 @@ export function isAppOwnedPath(relativePosix, patterns) {
 }
 
 /**
+ * Template-owned Cursor agent paths (skills + rules).
+ * @param {string} relativePosix
+ */
+export function isAgentPath(relativePosix) {
+  const p = toPosix(relativePosix);
+  return p.startsWith(".cursor/skills/") || p.startsWith(".cursor/rules/");
+}
+
+/**
  * @param {object} lock
  * @param {object} manifest
  * @returns {string[]}
@@ -100,6 +109,66 @@ export function resolveSelectedComponentIds(lock, manifest) {
 }
 
 /**
+ * Resolve lock `skills` (`*` / explicit ids / `-id` exclusions).
+ * Omitted `skills` defaults to `["*"]` when the manifest has an agent section.
+ * Schema v1 manifests without `agent` yield an empty selection.
+ * @param {object} lock
+ * @param {object} manifest
+ * @returns {string[]}
+ */
+export function resolveSelectedSkillIds(lock, manifest) {
+  const skillsMap = manifest.agent?.skills || {};
+  const allIds = Object.keys(skillsMap);
+  if (allIds.length === 0) return [];
+
+  const requested =
+    Array.isArray(lock.skills) && lock.skills.length > 0 ? lock.skills : ["*"];
+
+  /** @type {string[]} */
+  const positives = [];
+  /** @type {string[]} */
+  const exclusions = [];
+  for (const entry of requested) {
+    if (entry === "*") continue;
+    if (entry.startsWith("-") && entry.length > 1) {
+      exclusions.push(entry.slice(1));
+      continue;
+    }
+    if (manifest.retired?.[entry]) {
+      throw new Error(`Skill "${entry}" is retired and cannot be selected`);
+    }
+    if (!(entry in skillsMap)) {
+      throw new Error(`Unknown skill in lock: ${entry}`);
+    }
+    positives.push(entry);
+  }
+
+  const star = requested.includes("*") || positives.length === 0;
+  const selected = new Set();
+
+  if (star) {
+    for (const id of allIds) selected.add(id);
+  } else {
+    for (const id of positives) selected.add(id);
+  }
+
+  for (const id of exclusions) {
+    selected.delete(id);
+  }
+
+  // Always-on skills (e.g. `_shared`) return after exclusions when anything remains
+  // or when the selection is non-empty / star was used with only exclusions.
+  const keepAlways = selected.size > 0 || star || positives.length > 0;
+  if (keepAlways) {
+    for (const [id, def] of Object.entries(skillsMap)) {
+      if (def.always) selected.add(id);
+    }
+  }
+
+  return [...selected].sort();
+}
+
+/**
  * @param {object} manifest
  * @param {string[]} selectedIds
  * @returns {string[]}
@@ -123,15 +192,80 @@ export function resolveCssIndex(manifest, selectedIds) {
 }
 
 /**
+ * Paths eligible for `sync --prune` (live `previousFiles` + retired).
+ * @param {object} manifest
+ * @param {{ components: string[], skills: string[] }} selection
+ * @returns {string[]}
+ */
+export function collectPrunePaths(manifest, selection) {
+  /** @type {Set<string>} */
+  const paths = new Set();
+
+  for (const id of selection.components || []) {
+    for (const rel of manifest.components?.[id]?.previousFiles || []) {
+      paths.add(rel);
+    }
+  }
+  for (const id of selection.skills || []) {
+    for (const rel of manifest.agent?.skills?.[id]?.previousFiles || []) {
+      paths.add(rel);
+    }
+  }
+  for (const def of Object.values(manifest.retired || {})) {
+    for (const rel of def.previousFiles || []) {
+      paths.add(rel);
+    }
+  }
+
+  return [...paths].sort();
+}
+
+/**
+ * True when an app-owned text file still mentions the path (or its basename).
+ * Used as a soft safety gate before prune deletes a retired/moved file.
+ * @param {string} root
+ * @param {string} relativePosix
+ * @param {string[]} appOwned
+ */
+export function isPathReferencedInAppOwned(root, relativePosix, appOwned) {
+  const rel = toPosix(relativePosix);
+  const base = rel.split("/").pop() || rel;
+  const baseNoExt = base.replace(/\.m?js$/, "");
+
+  /** @type {string[]} */
+  const needles = [rel, base];
+  if (baseNoExt && baseNoExt !== base) needles.push(baseNoExt);
+
+  for (const pattern of appOwned || []) {
+    if (pattern.endsWith("/")) continue;
+    const abs = resolveUnder(root, pattern);
+    if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) continue;
+    let text;
+    try {
+      text = fs.readFileSync(abs, "utf8");
+    } catch {
+      continue;
+    }
+    for (const needle of needles) {
+      if (needle && text.includes(needle)) return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Concrete template-owned paths required for the lock selection.
  * @param {object} lock
  * @param {object} manifest
- * @returns {{ components: string[], files: string[], css: string[] }}
+ * @returns {{ components: string[], skills: string[], files: string[], agentFiles: string[], css: string[] }}
  */
 export function resolveSelection(lock, manifest) {
   const components = resolveSelectedComponentIds(lock, manifest);
+  const skills = resolveSelectedSkillIds(lock, manifest);
   /** @type {Set<string>} */
   const files = new Set(manifest.core?.files || []);
+  /** @type {Set<string>} */
+  const agentFiles = new Set();
 
   for (const id of components) {
     const comp = manifest.components[id];
@@ -154,12 +288,28 @@ export function resolveSelection(lock, manifest) {
     files.add(`app/css/${basename}`);
   }
 
+  for (const id of skills) {
+    const def = manifest.agent?.skills?.[id];
+    for (const file of def?.files || []) {
+      files.add(file);
+      agentFiles.add(file);
+    }
+  }
+  if (skills.length > 0) {
+    for (const file of manifest.agent?.rules || []) {
+      files.add(file);
+      agentFiles.add(file);
+    }
+  }
+
   // Manifest itself is part of a synced tree so verify can run offline
   files.add("template-manifest.json");
 
   return {
     components,
+    skills,
     files: [...files].sort(),
+    agentFiles: [...agentFiles].sort(),
     css,
   };
 }
@@ -196,11 +346,48 @@ export function mergeVersionJs(existingSource, upstreamSource) {
 export function verifyTemplateTree(root, lock, manifest) {
   const selection = resolveSelection(lock, manifest);
   const appOwned = manifest.appOwned || [];
+  const agentFileSet = new Set(selection.agentFiles || []);
 
   /** @type {{ path: string, status: string, expected?: string, actual?: string }[]} */
   const results = [];
+  /** @type {string[]} */
+  const warnings = [];
+
+  for (const id of selection.components) {
+    if (manifest.deprecated?.[id] || manifest.components?.[id]?.deprecated) {
+      const replacedBy =
+        manifest.deprecated?.[id]?.replacedBy ||
+        manifest.components?.[id]?.replacedBy;
+      warnings.push(
+        `Deprecated component "${id}" is still selected` +
+          (replacedBy ? ` (replacedBy: ${replacedBy})` : "")
+      );
+    }
+  }
+  for (const id of selection.skills || []) {
+    if (manifest.deprecated?.[id] || manifest.agent?.skills?.[id]?.deprecated) {
+      const replacedBy =
+        manifest.deprecated?.[id]?.replacedBy ||
+        manifest.agent?.skills?.[id]?.replacedBy;
+      warnings.push(
+        `Deprecated skill "${id}" is still selected` +
+          (replacedBy ? ` (replacedBy: ${replacedBy})` : "")
+      );
+    }
+  }
+
+  const prunePaths = collectPrunePaths(manifest, selection);
+  for (const rel of prunePaths) {
+    if (fs.existsSync(resolveUnder(root, rel))) {
+      warnings.push(
+        `Prune candidate still on disk: ${rel} (run sync with --prune)`
+      );
+    }
+  }
 
   for (const rel of selection.files) {
+    const soft = agentFileSet.has(rel);
+
     if (rel === "template-manifest.json") {
       const abs = resolveUnder(root, rel);
       if (!fs.existsSync(abs)) {
@@ -240,7 +427,7 @@ export function verifyTemplateTree(root, lock, manifest) {
     if (!meta) {
       // Expected path not hashed upstream (should not happen for catalogue files)
       if (!fs.existsSync(abs)) {
-        results.push({ path: rel, status: "missing" });
+        results.push({ path: rel, status: soft ? "agentMissing" : "missing" });
       } else {
         results.push({ path: rel, status: "identical" });
       }
@@ -248,7 +435,11 @@ export function verifyTemplateTree(root, lock, manifest) {
     }
 
     if (!fs.existsSync(abs)) {
-      results.push({ path: rel, status: "missing", expected: meta.sha256 });
+      results.push({
+        path: rel,
+        status: soft ? "agentMissing" : "missing",
+        expected: meta.sha256,
+      });
       continue;
     }
 
@@ -258,7 +449,7 @@ export function verifyTemplateTree(root, lock, manifest) {
     } else {
       results.push({
         path: rel,
-        status: "modified",
+        status: soft ? "agentModified" : "modified",
         expected: meta.sha256,
         actual,
       });
@@ -290,13 +481,14 @@ export function verifyTemplateTree(root, lock, manifest) {
     }
   }
 
-  // Unexpected: known template files present but not selected
+  // Unexpected: known template files present but not selected (app catalogue only)
   const expectedSet = new Set(selection.files);
   expectedSet.add(derivedPath);
   for (const rel of Object.keys(manifest.files)) {
     if (expectedSet.has(rel)) continue;
     if (isAppOwnedPath(rel, appOwned)) continue;
     if (DERIVED_FILES.includes(rel)) continue;
+    if (isAgentPath(rel)) continue;
     const abs = resolveUnder(root, rel);
     if (fs.existsSync(abs)) {
       results.push({ path: rel, status: "unexpected" });
@@ -308,6 +500,8 @@ export function verifyTemplateTree(root, lock, manifest) {
     modified: results.filter((r) => r.status === "modified").length,
     missing: results.filter((r) => r.status === "missing").length,
     unexpected: results.filter((r) => r.status === "unexpected").length,
+    agentModified: results.filter((r) => r.status === "agentModified").length,
+    agentMissing: results.filter((r) => r.status === "agentMissing").length,
   };
 
   const ok =
@@ -317,15 +511,17 @@ export function verifyTemplateTree(root, lock, manifest) {
     ok,
     templateVersion: lock.templateVersion,
     components: selection.components,
+    skills: selection.skills,
     css: selection.css,
     summary,
     results,
+    warnings,
     expectedCss,
   };
 }
 
 /**
- * @param {string} text
+ * @param {string[]} argv
  * @returns {Record<string, string>}
  */
 export function parseArgs(argv) {
