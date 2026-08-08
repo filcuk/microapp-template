@@ -332,6 +332,12 @@ document.getElementById("demo-popover-open")?.addEventListener("click", () => {
   else demoPopover?.open();
 });
 
+/* Anchor is the pointed-at control; clicking it also toggles the popover. */
+demoPopoverAnchor?.addEventListener("click", () => {
+  if (demoPopover?.isOpen()) demoPopover.close();
+  else demoPopover?.open();
+});
+
 initTutorial({
   id: "demo-overview",
   startTriggers: "#demo-tutorial-overview",

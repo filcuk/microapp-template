@@ -333,6 +333,8 @@ export function initPopover(options = {}) {
   document.body.append(el);
 
   let isOpen = false;
+  /** Ignore the document click that opened us (same event bubbles to `document`). */
+  let ignoreOutsideClick = false;
   /** @type {Element | null} */
   let previouslyFocused = null;
 
@@ -453,6 +455,12 @@ export function initPopover(options = {}) {
     setHidden(el, false);
     el.classList.add("is-open");
     isOpen = true;
+    /* Opening often happens inside a click handler; that same click reaches the
+       document outside listener and would close us immediately. */
+    ignoreOutsideClick = true;
+    window.setTimeout(() => {
+      ignoreOutsideClick = false;
+    }, 0);
     applyPlacement();
     /* Second pass after layout settles (actions / wrapping can change size). */
     applyPlacement();
@@ -489,7 +497,7 @@ export function initPopover(options = {}) {
   window.addEventListener("resize", onViewportChange);
 
   const removeClickOutside = onDocumentClickOutside((event) => {
-    if (!isOpen || !closeOnOutsideClick) return;
+    if (!isOpen || !closeOnOutsideClick || ignoreOutsideClick) return;
     const target = event.target;
     if (!(target instanceof Node)) return;
     if (el.contains(target)) return;
