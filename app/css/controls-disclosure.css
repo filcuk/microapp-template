@@ -228,10 +228,14 @@
   margin-bottom: -1px;
   text-align: center;
   white-space: nowrap;
+  transition: background var(--control-hover-ms) ease-out, color var(--control-hover-ms) ease-out,
+    border-color var(--control-hover-ms) ease-out;
 }
 
 .tabs-tab:hover {
   color: var(--text);
+  background: color-mix(in srgb, var(--accent) 6%, var(--code-bg));
+  transition-duration: 0s;
 }
 
 .tabs-tab:focus-visible {
@@ -244,6 +248,11 @@
   color: var(--text);
   background: var(--surface);
   border-bottom-color: var(--accent);
+}
+
+.tabs-tab[aria-selected="true"]:hover {
+  background: var(--surface);
+  transition-duration: 0s;
 }
 
 .tabs-panel {

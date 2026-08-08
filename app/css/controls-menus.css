@@ -62,8 +62,8 @@
 .dropdown-menu-item {
   display: block;
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
+  padding: calc(0.5rem - 1px) calc(1rem - 1px);
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text);
   font: inherit;
@@ -72,6 +72,8 @@
   white-space: nowrap;
   cursor: pointer;
   box-sizing: border-box;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out,
+    color var(--control-hover-ms) ease-out;
 }
 
 .dropdown-menu-item:has(.dropdown-menu-item-subtitle) {
@@ -130,13 +132,16 @@ svg.dropdown-menu-item-icon {
 .combo-menu-item:focus-visible,
 .dropdown-menu-item:hover,
 .dropdown-menu-item:focus-visible {
-  background: var(--code-bg);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
   outline: none;
+  transition-duration: 0s;
 }
 
 .dropdown-menu-item.is-selected,
 .dropdown-menu-item[aria-checked="true"] {
-  background: var(--code-bg);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
   color: var(--accent);
 }
 
@@ -149,7 +154,9 @@ svg.dropdown-menu-item-icon {
 .dropdown-menu-item.is-selected:focus-visible,
 .dropdown-menu-item[aria-checked="true"]:hover,
 .dropdown-menu-item[aria-checked="true"]:focus-visible {
-  background: var(--code-bg);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--accent);
+  transition-duration: 0s;
 }
 
 .dropdown-menu-group {

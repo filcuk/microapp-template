@@ -160,8 +160,8 @@
 .segmented-control-item {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 0.35rem 0.875rem;
-  border: none;
+  padding: calc(0.35rem - 1px) calc(0.875rem - 1px);
+  border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
   color: var(--muted);
@@ -172,10 +172,15 @@
   cursor: pointer;
   text-align: center;
   white-space: nowrap;
+  transition: border-color var(--control-hover-ms) ease-out, background var(--control-hover-ms) ease-out,
+    color var(--control-hover-ms) ease-out;
 }
 
 .segmented-control-item:hover:not(:disabled):not([aria-disabled="true"]) {
   color: var(--text);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--code-bg));
+  transition-duration: 0s;
 }
 
 .segmented-control-item:focus-visible {
@@ -186,11 +191,20 @@
 
 .segmented-control-item[aria-checked="true"] {
   background: var(--accent);
+  border-color: var(--accent);
   color: #ffffff;
   font-weight: 600;
 }
 
-:root[data-theme="dark"] .segmented-control-item[aria-checked="true"] {
+.segmented-control-item[aria-checked="true"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #ffffff;
+  transition-duration: 0s;
+}
+
+:root[data-theme="dark"] .segmented-control-item[aria-checked="true"],
+:root[data-theme="dark"] .segmented-control-item[aria-checked="true"]:hover:not(:disabled):not([aria-disabled="true"]) {
   color: #0d1117;
 }
 

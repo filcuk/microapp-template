@@ -171,6 +171,7 @@
   line-height: 1.4;
   pointer-events: none;
   box-shadow: 0 4px 12px rgba(31, 35, 40, 0.12);
+  transition: opacity var(--control-hover-ms) ease-out, visibility 0s linear var(--control-hover-ms);
 }
 
 :root[data-theme="dark"] .tooltip {
@@ -185,6 +186,7 @@
 .tooltip.is-visible {
   visibility: visible;
   opacity: 1;
+  transition-duration: 0s;
 }
 
 .tooltip__icon {
