@@ -20,6 +20,8 @@ Multi-step workflows live under [`.cursor/skills/`](.cursor/skills/). Read the m
 | [`add-icon`](.cursor/skills/add-icon/SKILL.md) | Pull Icônes / Iconify SVG into `icons-template.js` or `icons-app.js` (prefer `ic` Round; Material Symbols fallback) |
 | [`health-check`](.cursor/skills/health-check/SKILL.md) | Verify boot, Pages, config, assets, and `verify:template` |
 
+Template lock, manifest hashes, sync/verify, deprecate→retire, and forking skills: see **[Template lock, manifest, and upgrades](USAGE.md#template-lock-manifest-and-upgrades)** in `USAGE.md`.
+
 ## Confirm before complexity
 
 Ask the user before adding:
@@ -194,7 +196,7 @@ npm run lint
 npm test
 ```
 
-CI runs the same checks on push and pull requests (`.github/workflows/ci.yml`). Template maintainers regenerate `template-manifest.json` with `npm run manifest:template` when the catalogue or hashed files change. Forks pin a revision in `template.lock.json` and use `npm run sync:template` / `npm run verify:template`.
+CI runs the same checks on push and pull requests (`.github/workflows/ci.yml`). Template maintainers regenerate `template-manifest.json` with `npm run manifest:template` when the catalogue or hashed files change (including `.cursor/skills/` and `.cursor/rules/`). Forks pin a revision in `template.lock.json` (`components` + `skills`) and use `npm run sync:template` / `npm run verify:template`. Details: [USAGE.md — Template lock, manifest, and upgrades](USAGE.md#template-lock-manifest-and-upgrades).
 
 ## Keep GitHub Pages deployable
 
