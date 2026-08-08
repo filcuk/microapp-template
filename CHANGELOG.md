@@ -10,6 +10,8 @@ for `TEMPLATE_VERSION` in `app/version.js`.
 
 ### Added
 
+- Popover (`initPopover`) — anchored speech-bubble card with a notch, title, body, and actions; pure `computePopoverPlacement` for flip/clamp positioning.
+- Tutorial (`initTutorial`) — guided spotlight tour over a JS step script (back / next / close); multiple scripts per page with one active at a time; optional interactive steps (`advanceOn: "click"`).
 - About dialog (`initAboutDialog`) — tagline “What?” opener with progressive Huh? / Uhh… simplification stages declared in markup (`data-about-stage`, `data-about-next-label`, `data-about-final`), same pattern as [pqm-stepper](https://github.com/filcuk/pqm-stepper); demo on `demo.html`.
 - Optional automatic title numbering (`data-title-numbering` / `setTitleNumbering`) — hierarchical `1.` / `1.1.` / `1.2.1.` prefixes on outline headings; demo toggle beside sticky chrome.
 - Callout cards (`.callout`) — accent-edged tip panels for standing information (CSS-only; former content-tier header chrome).

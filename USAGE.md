@@ -377,6 +377,8 @@ Component CSS lives under `app/css/` (indexed by `css/template.css`, linked via 
 | **Heading links** | Hover a `main :is(h2, h3)[id]` heading to reveal a link icon; tooltip says “Get link”; click copies the URL and shows a timer success/error tip (icon-only — no in-place label). [`app/shell/heading-link.js`](app/shell/heading-link.js). |
 | **External links** | Outgoing `http(s)` links get an arrow-outward icon via `initShell()` / [`app/external-link.js`](app/external-link.js). Opt out with `data-no-external-icon`. |
 | **Tooltips** | Hover (default), timer (`flashTooltip` when in-place feedback is not possible), and persistent modes. `data-tooltip`, optional `data-tooltip-position`, `data-tooltip-tone="success\|error"`. See [`DESIGN.md`](DESIGN.md) and [`app/components/tooltip.js`](app/components/tooltip.js). |
+| **Popovers** | Anchored speech-bubble card with a notch, title, body, and actions. [`app/components/popover.js`](app/components/popover.js). Prefer over tooltips when the tip needs buttons or rich content. |
+| **Tutorials** | Guided spotlight tour over a JS step script (back / next / close). Dims the page except the target; optional interactive steps. [`app/components/tutorial.js`](app/components/tutorial.js) (uses popover). |
 | **Banners** | `.banner.banner-*` variants with `data-icon`. Optional auto-hide via `data-banner-expire` (ms) and [`app/banner.js`](app/banner.js) (`showBanner` / `hideBanner`). Expire overlay + fade-out. |
 | **Callouts** | `.callout` accent-edged tip cards for standing information (CSS-only). See **Callouts** under Using components. |
 | **Code blocks** | `.code-block` with Prism highlighting, configurable toolbar (top/bottom/none), hover copy/maximise, view/select/edit modes. [`app/code-block.js`](app/code-block.js). |
@@ -609,6 +611,90 @@ nextBtn.addEventListener(
 ```
 
 `initShell()` already calls `initTooltips(document)`. Modes and mutual exclusion are documented in [`DESIGN.md`](DESIGN.md).
+
+For multi-step guided tours with a dimmed page and back/next controls, use **Tutorials** (below) instead of chaining persistent tooltips. For a single rich tip with actions, use **Popovers**.
+
+### Popover
+
+Anchored speech-bubble card (notch points at the target). Use when a tip needs a title, longer copy, or action buttons. Tooltips stay text-only and non-interactive.
+
+```javascript
+import { initPopover } from "./components/popover.js";
+
+const popover = initPopover({
+  anchor: "#help-target", // selector, element, or null for a centred card
+  title: "Keyboard shortcuts",
+  body: "Press ? to open this help anytime.",
+  position: "auto", // auto | top | bottom | left | right
+  dismissible: true, // close button + Escape
+  closeOnOutsideClick: true, // defaults to dismissible
+  actions: [
+    {
+      label: "Got it",
+      className: "btn btn-primary",
+      // closeOnClick defaults to true
+    },
+  ],
+});
+
+popover.open();
+// popover.update({ title, body, position, actions })
+// popover.setAnchor(otherEl)
+// popover.close() / popover.destroy()
+```
+
+`computePopoverPlacement()` is also exported for tests or custom positioning. See the live example on [`demo.html`](demo.html).
+
+### Tutorial
+
+Walk a JS-defined script: dim the page, spotlight a target, and show a popover with back / next / close. Register any number of tutorials per page; only one runs at a time (starting another stops the first).
+
+```javascript
+import { initTutorial } from "./components/tutorial.js";
+
+const tour = initTutorial({
+  id: "getting-started",
+  startTriggers: "#start-tour",
+  padding: 8,
+  steps: [
+    {
+      title: "Welcome",
+      body: "A short intro with no target — the whole page is dimmed.",
+    },
+    {
+      target: "#save-btn", // selector, element, or () => element
+      title: "Save",
+      body: "Your work is saved here.",
+      position: "bottom",
+    },
+    {
+      target: "#next-control",
+      title: "Try it",
+      body: "This step lets you click the control; the tour advances on click.",
+      interactive: true,
+      advanceOn: "click",
+    },
+  ],
+  onFinish: ({ reason }) => {
+    // reason: done | close | escape | stop | …
+  },
+});
+
+tour?.start(); // or rely on startTriggers
+// tour.next() / tour.back() / tour.goTo(i) / tour.stop() / tour.destroy()
+```
+
+| Step field | Role |
+| ---------- | ---- |
+| `target` | Element to spotlight; omit for a centred intro/outro card |
+| `title` / `body` | Popover content (`body` may be a string or a DOM node) |
+| `position` | Popover side (`auto` preferred) |
+| `interactive` | When true, the target stays clickable (page is not `inert`) |
+| `advanceOn` | `"click"` — advance when the interactive target is clicked |
+| `padding` | Spotlight padding around the target (px) |
+| `scroll` | Scroll the target into view (default `true`) |
+
+Escape closes the active tutorial (priority above dialogs). See [`DESIGN.md`](DESIGN.md) for when to prefer a tutorial vs a persistent tooltip. Demo: [`demo.html`](demo.html).
 
 ### Banners
 
