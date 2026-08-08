@@ -18,6 +18,8 @@ import {
   showPersistentTooltip,
   dismissPersistentTooltip,
 } from "./components/tooltip.js";
+import { initPopover } from "./components/popover.js";
+import { initTutorial } from "./components/tutorial.js";
 import { initFileDropzone } from "./components/file-dropzone.js";
 import { initFileDownload } from "./components/file-download.js";
 import { initDatePicker } from "./components/date-picker/index.js";
@@ -309,6 +311,79 @@ demoPersistentTarget?.addEventListener("click", () => {
     dismissPersistentTooltip(demoPersistentTipId);
     demoPersistentTipId = null;
   }
+});
+
+const demoPopoverAnchor = document.getElementById("demo-popover-anchor");
+const demoPopover = initPopover({
+  anchor: demoPopoverAnchor,
+  title: "Popover",
+  body: "A speech bubble with a notch aimed at the anchor. Use this for richer tips than a tooltip.",
+  position: "top",
+  actions: [
+    {
+      label: "Got it",
+      className: "btn btn-primary",
+    },
+  ],
+});
+
+document.getElementById("demo-popover-open")?.addEventListener("click", () => {
+  if (demoPopover?.isOpen()) demoPopover.close();
+  else demoPopover?.open();
+});
+
+initTutorial({
+  id: "demo-overview",
+  startTriggers: "#demo-tutorial-overview",
+  steps: [
+    {
+      title: "Overview tour",
+      body: "This script walks a few controls on this card. The rest of the page is dimmed.",
+    },
+    {
+      target: "#demo-popover-open",
+      title: "Popovers",
+      body: "Open a standalone popover anchored to a nearby control.",
+      position: "bottom",
+    },
+    {
+      target: "#demo-tutorial-target-theme",
+      title: "Spotlight",
+      body: "Only the highlighted control stays clear of the dim overlay.",
+      position: "top",
+    },
+    {
+      target: "#demo-tutorial-interactive",
+      title: "Another tour",
+      body: "Start the interactive tour anytime — only one tutorial runs at once.",
+      position: "left",
+    },
+  ],
+});
+
+initTutorial({
+  id: "demo-interactive",
+  startTriggers: "#demo-tutorial-interactive",
+  steps: [
+    {
+      title: "Interactive tour",
+      body: "Some steps stay blocked; others let you use the highlighted control.",
+    },
+    {
+      target: "#demo-tutorial-target-action",
+      title: "Try it",
+      body: "This step is interactive — click the highlighted button to advance.",
+      position: "top",
+      interactive: true,
+      advanceOn: "click",
+    },
+    {
+      target: "#demo-tutorial-target-done",
+      title: "Done",
+      body: "Last step. Press Done or Escape to close the tutorial.",
+      position: "top",
+    },
+  ],
 });
 
 const demoBadge = initBadge(document.getElementById("demo-badge-host"));
